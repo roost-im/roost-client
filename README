@@ -10,7 +10,7 @@ Building:
   grunt
   # output will go into dist directory
 
-Running prod server:
+Running server on built files:
   grunt server:dist
 
 Change default config by passing command-line arguments to grunt:
