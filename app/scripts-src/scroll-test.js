@@ -148,7 +148,7 @@ MockMessageTail.prototype.fireRequest_ = function(immediate) {
 
 var api, model, messageView, selectionTracker, ticketManager;  // For debugging.
 $(function() {
-  ticketManager = new TicketManager("https://webathena.mit.edu");
+  ticketManager = new TicketManager(CONFIG.webathena);
 
   var dialog = null;
   ticketManager.on("ticket-needed", function() {
@@ -182,9 +182,7 @@ $(function() {
   });
 
 
-  api = new API("https://roost-api.mit.edu",
-                "HTTP/roost-api.mit.edu",
-                ticketManager);
+  api = new API(CONFIG.server, CONFIG.serverPrincipal, ticketManager);
   model = new MessageModel(api);
   messageView = new MessageView(model, document.getElementById("messagelist"));
   selectionTracker = new SelectionTracker(messageView);

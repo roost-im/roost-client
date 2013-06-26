@@ -1,7 +1,5 @@
-var ticketManager = new TicketManager("https://webathena.mit.edu");
-var api = new API("https://roost-api.mit.edu",
-                  "HTTP/roost-api.mit.edu",
-                  ticketManager);
+var ticketManager = new TicketManager(CONFIG.webathena);
+var api = new API(CONFIG.server, CONFIG.serverPrincipal, ticketManager);
 
 var dialog = null;
 ticketManager.on("ticket-needed", function() {
