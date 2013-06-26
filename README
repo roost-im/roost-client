@@ -1,0 +1,19 @@
+Getting started:
+  npm install -g bower grunt
+  npm install
+  bower install
+
+Running dev server:
+  grunt server
+
+Building:
+  grunt
+  # output will go into dist directory
+
+Running prod server:
+  grunt server:dist
+
+Change default config by passing command-line arguments to grunt:
+
+  # Point to a different roost backend.
+  grunt --server=http://localhost:8080 server
