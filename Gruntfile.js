@@ -132,7 +132,7 @@ module.exports = function (grunt) {
             options: {
                 dest: '<%= yeoman.dist %>'
             },
-            html: '<%= yeoman.app %>/index.html'
+            html: '<%= yeoman.app %>/*.html'
         },
         usemin: {
             options: {
@@ -156,6 +156,9 @@ module.exports = function (grunt) {
                         'images/{,*/}*.{png,jpg,jpeg}',
                         'images/{,*/}*.svg',
                         'styles/{,*/}*.css',
+			// Anything to be compiled goes in scripts-src/. This
+			// directory is things that are already minified.
+                        'scripts/{,*/}*.js',
                         '*.html'
                     ]
                 }, {

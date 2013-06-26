@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>Roost</title>
     <link rel="stylesheet" href="/styles/style.css">
 
@@ -36,13 +35,35 @@
     <script src="/scripts-src/ztext.js"></script>
     <script src="/scripts-src/messageview.js"></script>
     <!-- endbuild -->
-    <!-- build:js /scripts/scroll-test.min.js -->
-    <script src="/scripts-src/scroll-test.js"></script>
-    <!-- endbuild -->
   </head>
+  <style>
+    #log {
+      height: 500px;
+      overflow: scroll;
+    }
+  </style>
   <body>
-    <div id="messagelist">
-    </div>
+    <button id="clearlog">Clear log</button>
+    <form id="subscribe">
+      <input name="class">
+      <input name="instance" value="*">
+      <input name="recipient" value="">
+      <input type="submit" value="Subscribe">
+    </form>
+    <br>
+    <form id="unsubscribe">
+      <input name="class">
+      <input name="instance" value="*">
+      <input name="recipient" value="">
+      <input type="submit" value="Unsubscribe">
+    </form>
+    <form id="getmessages">
+      <input name="offset">
+      <input type="submit" value="Load messages">
+    </form>
+    <button id="checkdemon">Check inner demon</button>
+    <button id="refreshcreds">Refresh zephyr creds</button>
+    <pre id="log"></pre>
 
     <div id="renew-template" hidden>
       <div class="dialog-overlay"></div>
@@ -66,5 +87,9 @@
         </div>
       </div>
     </div>
+
+    <!-- build:js /scripts/api-test.min.js -->
+    <script src="/scripts-src/api-test.js"></script>
+    <!-- endbuild -->
   </body>
 </html>
