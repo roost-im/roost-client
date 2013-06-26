@@ -1,7 +1,7 @@
 "use strict";
 
 var api, model, messageView, selectionTracker, ticketManager;  // For debugging.
-$(function() {
+document.addEventListener("DOMContentLoaded", function() {
   ticketManager = new TicketManager(CONFIG.webathena);
 
   var dialog = null;
