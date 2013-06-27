@@ -49,7 +49,7 @@ module.exports = function (grunt) {
     var csp = "default-src 'self'; connect-src " +
         appConfig.server + ' ' + websocketHost;
     var headers = {
-        // Standad header; Chrome 25+
+        // Standard header; Chrome 25+
         'Content-Security-Policy': csp,
         // Firefox and IE. Firefox uses a non-standard version of
         // connect-src (xhr-src).
