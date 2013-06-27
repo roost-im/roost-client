@@ -33,7 +33,7 @@ ticketManager.on("webathena-error", function() {
 });
 
 function checkCreds() {
-  api.get("/api/v1/zephyrcreds").then(function(result) {
+  api.get("/v1/zephyrcreds").then(function(result) {
     if (result.needsRefresh) {
       log("Needs credential refresh");
     } else {
@@ -65,7 +65,7 @@ document.getElementById("subscribe").addEventListener("submit", function(ev) {
       recipient: msgRecipient
     },
   };
-  return api.post("/api/v1/subscribe", data, {
+  return api.post("/v1/subscribe", data, {
     withZephyr: withZephyr,
     interactive: true
   }).then(function() {
@@ -92,7 +92,7 @@ document.getElementById("unsubscribe").addEventListener("submit", function(ev) {
       recipient: msgRecipient
     }
   };
-  api.post("/api/v1/unsubscribe", data, {interactive:true}).then(function() {
+  api.post("/v1/unsubscribe", data, {interactive:true}).then(function() {
     log("Unsubscribed from " + msgClass);
   }, function(err) {
     log("Failed to unsubscribed from " + msgClass + ": " + err);
@@ -107,7 +107,7 @@ document.getElementById("getmessages").addEventListener("submit", function(ev) {
     offset: this.offset.value,
     count: '10'
   };
-  api.get("/api/v1/messages", params, {
+  api.get("/v1/messages", params, {
     interactive:true
   }).then(function(result) {
     result.messages.forEach(function(msg) {
@@ -121,7 +121,7 @@ document.getElementById("getmessages").addEventListener("submit", function(ev) {
 });
 
 document.getElementById("checkdemon").addEventListener("click", function(ev) {
-  api.get("/api/v1/zephyrcreds", {}, {interactive:true}).then(function(result) {
+  api.get("/v1/zephyrcreds", {}, {interactive:true}).then(function(result) {
     if (result.needsRefresh) {
       log("Needs credential refresh");
     } else {
@@ -133,7 +133,7 @@ document.getElementById("checkdemon").addEventListener("click", function(ev) {
 });
 
 document.getElementById("refreshcreds").addEventListener("click", function(ev) {
-  api.post("/api/v1/zephyrcreds", {}, {
+  api.post("/v1/zephyrcreds", {}, {
     withZephyr: true,
     interactive: true
   }).then(function() {
@@ -148,7 +148,7 @@ function log(msg) {
 }
 
 (function() {
-  api.get("/api/v1/subscriptions").then(function(subs) {
+  api.get("/v1/subscriptions").then(function(subs) {
     log("Currently subscribed to:");
     subs.forEach(function(sub) {
       log(" <" + sub.class + "," + sub.instance + "," + sub.recipient + ">");

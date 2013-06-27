@@ -103,7 +103,7 @@ API.prototype.refreshAuthToken_ = function(interactive) {
     // TODO(davidben): On auth error, reject the ticket and wait for a
     // new one? And on other errors, some sort of exponential back-off
     // I guess.
-    return corsRequest("POST", this.urlBase_ + "/api/v1/auth", {
+    return corsRequest("POST", this.urlBase_ + "/v1/auth", {
       principal: ticket.client.toString(),
       token: arrayutils.toBase64(gssToken),
       // TODO(davidben): Only do this for the initial one?
