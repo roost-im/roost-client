@@ -6,6 +6,15 @@ var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
 };
 
+var addHeaders = function(headers) {
+    return function(req, res, next) {
+        for (var key in headers) {
+            res.setHeader(key, headers[key]);
+        }
+        next();
+    };
+}
+
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
@@ -33,6 +42,31 @@ module.exports = function (grunt) {
         appConfig.serverPrincipal = grunt.option('server-principal');
     if (grunt.option('webathena'))
         appConfig.webathena = grunt.option('webathena');
+
+    // Declare non-HSTS headers here, so they can be emitted both to
+    // .htaccess and in the dev server.
+    var websocketHost = appConfig.server.replace(/^http/, 'ws');
+    var csp = "default-src 'self'; connect-src " +
+        appConfig.server + ' ' + websocketHost;
+    var headers = {
+        // Standad header; Chrome 25+
+        'Content-Security-Policy': csp,
+        // Firefox and IE. Firefox uses a non-standard version of
+        // connect-src (xhr-src).
+        'X-Content-Security-Policy': csp +
+            '; xhr-src ' + appConfig.server + ' ' + websocketHost,
+        // Safari 6+ and Chrome < 25
+        'X-WebKit-CSP': csp,
+        // XSS filters can sometimes be abused to selectively disable
+        // script tags. With inline script disabled, it's probably
+        // fine, but it's configure them to hard-fail anyway.
+        'X-XSS-Protection': '1; mode=block',
+        // Disallow iframes to do a bit against click-jacking.
+        'X-Frame-Options': 'deny',
+        // Disable content sniffing, per Tangled Web. Though it's not
+        // a huge deal as we're completely static.
+        'X-Content-Options': 'nosniff'
+    };
 
     grunt.initConfig({
         app: appConfig,
@@ -64,6 +98,7 @@ module.exports = function (grunt) {
                     middleware: function (connect) {
                         return [
                             lrSnippet,
+                            addHeaders(headers),
                             mountFolder(connect, '.tmp'),
                             mountFolder(connect, yeomanConfig.app)
                         ];
@@ -84,6 +119,7 @@ module.exports = function (grunt) {
                 options: {
                     middleware: function (connect) {
                         return [
+                            addHeaders(headers),
                             mountFolder(connect, yeomanConfig.dist)
                         ];
                     }
@@ -192,6 +228,17 @@ module.exports = function (grunt) {
     grunt.registerTask('config', function() {
         grunt.file.write(yeomanConfig.app + '/scripts-src/config.js',
                          'var CONFIG = ' + JSON.stringify(appConfig) + ';');
+
+        var htaccess = grunt.file.read(yeomanConfig.app + '/.htaccess-header');
+        htaccess += '\n';
+        for (var key in headers) {
+            htaccess += 'Header add ' + key + ' "' +
+                headers[key].replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
+            if (key == 'X-WebKit-CSP')
+                htaccess += ' env=!broken_safari';
+            htaccess += '\n';
+        }
+        grunt.file.write(yeomanConfig.app + '/.htaccess', htaccess);
     });
 
     grunt.registerTask('server', function (target) {
