@@ -6,12 +6,6 @@ var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
 };
 
-var DEFAULT_CONFIG = {
-  server: 'https://roost-api.mit.edu',
-  serverPrincipal: 'HTTP/roost-api.mit.edu',
-  webathena: 'https://webathena.mit.edu'
-};
-
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
@@ -28,7 +22,20 @@ module.exports = function (grunt) {
         dist: 'dist'
     };
 
+    var appConfig = {
+        server: 'https://roost-api.mit.edu',
+        serverPrincipal: 'HTTP/roost-api.mit.edu',
+        webathena: 'https://webathena.mit.edu'
+    };
+    if (grunt.option('server'))
+        appConfig.server = grunt.option('server');
+    if (grunt.option('server-principal'))
+        appConfig.serverPrincipal = grunt.option('server-principal');
+    if (grunt.option('webathena'))
+        appConfig.webathena = grunt.option('webathena');
+
     grunt.initConfig({
+        app: appConfig,
         yeoman: yeomanConfig,
         watch: {
             options: {
@@ -183,18 +190,8 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('config', function() {
-      var config = { };
-      for (var key in DEFAULT_CONFIG) {
-        config[key] = DEFAULT_CONFIG[key];
-      }
-      if (grunt.option('server'))
-        config.server = grunt.option('server');
-      if (grunt.option('server-principal'))
-        config.serverPrincipal = grunt.option('server-principal');
-      if (grunt.option('webathena'))
-        config.webathena = grunt.option('webathena');
-      grunt.file.write(yeomanConfig.app + '/scripts-src/config.js',
-                       'var CONFIG = ' + JSON.stringify(config) + ';');
+        grunt.file.write(yeomanConfig.app + '/scripts-src/config.js',
+                         'var CONFIG = ' + JSON.stringify(appConfig) + ';');
     });
 
     grunt.registerTask('server', function (target) {
