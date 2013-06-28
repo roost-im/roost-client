@@ -167,7 +167,7 @@ API.prototype.request = function(method, path, params, data, opts, isRetry) {
 };
 
 API.prototype.get = function(path, params, opts) {
-  return this.request("GET", path, params, opts);
+  return this.request("GET", path, params, undefined, opts);
 };
 
 API.prototype.post = function(path, data, opts) {
