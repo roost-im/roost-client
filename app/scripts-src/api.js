@@ -1,3 +1,5 @@
+"use strict";
+
 function NetworkError(msg) {
   this.msg = msg;
 }
