@@ -28,7 +28,7 @@ function webathenaRequest(webathenaRoot, params) {
 var MINIMUM_LIFETIME = 10 * 60 * 1000;
 
 function TicketManager(webathenaRoot) {
-  io.EventEmitter.call(this);
+  EventEmitter.call(this);
 
   this.webathenaRoot_ = webathenaRoot;
   this.sessions_ = null;
@@ -40,7 +40,7 @@ function TicketManager(webathenaRoot) {
   window.addEventListener("storage", this.loadFromStorage_.bind(this));
   this.loadFromStorage_();
 }
-TicketManager.prototype = Object.create(io.EventEmitter.prototype);
+TicketManager.prototype = Object.create(EventEmitter.prototype);
 
 TicketManager.prototype.checkUser_ = function(sessions) {
   var principal = sessions.server.client.toString();

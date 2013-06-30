@@ -61,7 +61,7 @@ var RECONNECT_DELAY = 500;
 var RECONNECT_TRIES = 10;
 
 function API(urlBase, servicePrincipal, ticketManager) {
-  io.EventEmitter.call(this);
+  EventEmitter.call(this);
 
   this.urlBase_ = urlBase;
   // Socket.IO has COMPLETELY confused port handling. Bypass it completely.
@@ -88,7 +88,7 @@ function API(urlBase, servicePrincipal, ticketManager) {
   // If we go online, try to reconnect then and there.
   window.addEventListener("online", this.tryConnectSocket_.bind(this));
 }
-API.prototype = Object.create(io.EventEmitter.prototype);
+API.prototype = Object.create(EventEmitter.prototype);
 
 API.prototype.refreshAuthToken_ = function(interactive) {
   return this.ticketManager_.getTicket(

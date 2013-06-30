@@ -36,7 +36,7 @@ function matchKey(ev, keyCode, mods) {
 }
 
 function MessageView(model, container) {
-  io.EventEmitter.call(this);
+  EventEmitter.call(this);
 
   this.model_ = model;
   this.container_ = container;
@@ -83,7 +83,7 @@ function MessageView(model, container) {
   this.container_.addEventListener("scroll", this.checkBuffers_.bind(this));
   this.container_.addEventListener("keydown", this.onKeydown_.bind(this));
 }
-MessageView.prototype = Object.create(io.EventEmitter.prototype);
+MessageView.prototype = Object.create(EventEmitter.prototype);
 
 MessageView.prototype.container = function() {
   return this.container_;
