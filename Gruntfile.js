@@ -46,7 +46,7 @@ module.exports = function (grunt) {
     // Declare non-HSTS headers here, so they can be emitted both to
     // .htaccess and in the dev server.
     var websocketHost = appConfig.server.replace(/^http/, 'ws');
-    var csp = "default-src 'self'; connect-src " +
+    var csp = "default-src 'self'; object-src 'none'; connect-src " +
         appConfig.server + ' ' + websocketHost;
     var headers = {
         // Standard header; Chrome 25+
