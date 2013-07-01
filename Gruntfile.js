@@ -97,7 +97,8 @@ module.exports = function (grunt) {
                 options: {
                     middleware: function (connect) {
                         return [
-                            lrSnippet,
+                            // livereload and CSP don't play well.
+                            // lrSnippet,
                             addHeaders(headers),
                             mountFolder(connect, '.tmp'),
                             mountFolder(connect, yeomanConfig.app)
