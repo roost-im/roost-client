@@ -37,7 +37,7 @@ function MessageTail(model, start, inclusive, cb) {
   // The ID of the tail.
   this.tailId_ = null;
   // The value of the most recent extend-tail message.
-  this.lastExtend_ = -1;
+  this.lastExtend_ = 0;
 
   // Hold onto these so we can unregister them.
   this.connectedCb_ = this.onConnect_.bind(this);
@@ -94,7 +94,7 @@ MessageTail.prototype.createTail_ = function() {
   if (this.socket_) {
     this.tailId_ = this.model_.api_.allocateTailId();
     this.messagesSentRecent_ = 0;  // New tail, so we reset offset.
-    this.lastExtend_ = -1;  // Also reset what we've requested.
+    this.lastExtend_ = 0;  // Also reset what we've requested.
     this.socket_.send({
       type: "new-tail",
       id: this.tailId_,
