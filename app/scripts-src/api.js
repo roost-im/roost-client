@@ -57,6 +57,23 @@ function corsRequest(method, url, data) {
   return deferred.promise;
 }
 
+function RoostSocket(sockJS) {
+  EventEmitter.call(this);
+  this.sockJS_ = sockJS;
+  this.sockJS_.addEventListener("message", this.onMessage_.bind(this));
+};
+RoostSocket.prototype = Object.create(EventEmitter.prototype);
+RoostSocket.prototype.sockJS = function() {
+  return this.sockJS_;
+};
+RoostSocket.prototype.onMessage_ = function(ev) {
+  var msg = JSON.parse(ev.data);
+  this.emit(msg.type, msg);
+};
+RoostSocket.prototype.send = function(msg) {
+  this.sockJS_.send(JSON.stringify(msg));
+};
+
 var RECONNECT_DELAY = 500;
 var RECONNECT_TRIES = 10;
 
@@ -64,13 +81,6 @@ function API(urlBase, servicePrincipal, ticketManager) {
   EventEmitter.call(this);
 
   this.urlBase_ = urlBase;
-  // Socket.IO has COMPLETELY confused port handling. Bypass it completely.
-  this.socketUrlBase_ = this.urlBase_;
-  var m;
-  if (!/:[0-9]+$/.exec(this.socketUrlBase_) &&
-      (m = /^(https?):\/\//.exec(this.socketUrlBase_))) {
-    this.socketUrlBase_ += m[1] == "https" ? ":443" : ":80";
-  }
   this.ticketManager_ = ticketManager;
   this.peer_ = gss.Name.importName(servicePrincipal,
                                    gss.KRB5_NT_PRINCIPAL_NAME);
@@ -190,17 +200,14 @@ API.prototype.tryConnectSocket_ = function() {
 
   this.socketPending_ = true;
   this.getAuthToken_(false).then(function(token) {
-    // Socket.IO's reconnect behavior is weird (it buffers up what you
-    // send and such). Don't bother. Also implementing it ourselves
-    // means we can integrate with navigator.onLine and the like.
-    var url =
-        this.socketUrlBase_ + "/?access_token=" + encodeURIComponent(token);
-    var socket = io.connect(url, {
-      "reconnect": false,
-      "force new connection": true
+    var socket = new RoostSocket(new SockJS(this.urlBase_ + "/v1/socket"));
+    socket.sockJS().addEventListener("open", function() {
+      socket.send({type: "auth", token: token});
     });
 
-    socket.once("connect", function() {
+    var connected = false;
+    socket.once("ready", function() {
+      connected = true;
       this.socketPending_ = false;
       this.socket_ = socket;
       // Reset reconnect state.
@@ -208,43 +215,28 @@ API.prototype.tryConnectSocket_ = function() {
       this.reconnectTries_ = RECONNECT_TRIES;
 
       this.emit("connect");
-      this.socket_.once("disconnect", function() {
+    }.bind(this));
+
+    var onClose = function(ev) {
+      socket.sockJS().removeEventListener("close", onClose);
+      console.log("Disconnected", ev);
+      if (connected) {
         this.emit("disconnect");
         this.socket_ = null;
 
         setTimeout(this.tryConnectSocket_.bind(this), this.reconnectDelay_);
-      }.bind(this));
-    }.bind(this));
-
-    // Ensure only one of error and connect_failed are handled.
-    var cancelled = false;
-    socket.once("error", function(err) {
-      if (cancelled) return;
-      cancelled = true;
-      this.socketPending_ = false;
-      // Blegh. Retry with a new token.
-      if (err == "handshake unauthorized") {
-        this.badToken_(token);
+      } else {
+        this.socketPending_ = false;
+        if (ev.code == 4003)
+          this.badToken_(token);
+        // Reconnect with exponential back-off.
+        this.reconnectDelay_ *= 2;
+        if (this.reconnectTries_-- > 0) {
+          setTimeout(this.tryConnectSocket_.bind(this), this.reconnectDelay_);
+        }
       }
-
-      // Reconnect with exponential back-off.
-      this.reconnectDelay_ *= 2;
-      if (this.reconnectTries_-- > 0) {
-        setTimeout(this.tryConnectSocket_.bind(this), this.reconnectDelay_);
-      }
-    }.bind(this));
-
-    socket.once("connect_failed", function() {
-      if (cancelled) return;
-      cancelled = true;
-      this.socketPending_ = false;
-      // Reconnect with exponential back-off.
-      this.reconnectDelay_ *= 2;
-      if (this.reconnectTries_-- > 0) {
-        setTimeout(this.tryConnectSocket_.bind(this), this.reconnectDelay_);
-      }
-    }.bind(this));
-
+    }.bind(this);
+    socket.sockJS().addEventListener("close", onClose);
   }.bind(this), function(err) {
     // Failure to get auth token... should this also reconnect?
     this.socketPending_ = false;

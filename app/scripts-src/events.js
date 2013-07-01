@@ -33,3 +33,10 @@ EventEmitter.prototype.emit = function(type) {
     }
   }
 };
+EventEmitter.prototype.once = function(type, cb) {
+  var wrapper = function() {
+    this.removeListener(type, wrapper);
+    cb.apply(this, arguments);
+  };
+  this.addListener(type, wrapper);
+};

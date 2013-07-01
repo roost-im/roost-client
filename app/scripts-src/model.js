@@ -53,7 +53,7 @@ MessageTail.prototype.onConnect_ = function() {
   this.socket_ = this.model_.api_.socket();
   if (this.socket_) {
     this.socket_.on("messages", this.messagesCb_);
-    this.socket_.on("disconnect", this.disconnectCb_);
+    this.socket_.sockJS().addEventListener("close", this.disconnectCb_);
     // Reset everything.
     this.createTail_();
     this.expandTo(0);
@@ -62,7 +62,7 @@ MessageTail.prototype.onConnect_ = function() {
 MessageTail.prototype.onDisconnect_ = function() {
   if (this.socket_) {
     this.socket_.removeListener("messages", this.messagesCb_);
-    this.socket_.removeListener("disconnect", this.disconnectCb_);
+    this.socket_.sockJS().removeEventListener("close", this.disconnectCb_);
     this.socket_ = null;
   }
 };
@@ -71,13 +71,21 @@ MessageTail.prototype.expandTo = function(count) {
                                   count - this.messagesSentTotal_);
   var newExtend = this.messagesWanted_ + this.messagesSentRecent_;
   if (this.socket_ && this.lastExtend_ < newExtend) {
-    this.socket_.emit("extend-tail", this.tailId_, newExtend);
+    this.socket_.send({
+      type: "extend-tail",
+      id: this.tailId_,
+      count:newExtend
+    });
     this.lastExtend_ = newExtend;
   }
 };
 MessageTail.prototype.close = function() {
-  if (this.socket_)
-    this.socket_.emit("close-tail", this.tailId_);
+  if (this.socket_) {
+    this.socket_.send({
+      type: "close-tail",
+      id: this.tailId_
+    });
+  }
   this.onDisconnect_();
   this.model_.api_.removeListener("connect", this.connectedCb_);
   this.cb_ = null;
@@ -87,22 +95,26 @@ MessageTail.prototype.createTail_ = function() {
     this.tailId_ = this.model_.api_.allocateTailId();
     this.messagesSentRecent_ = 0;  // New tail, so we reset offset.
     this.lastExtend_ = -1;  // Also reset what we've requested.
-    this.socket_.emit("new-tail",
-                      this.tailId_, this.lastSent_, this.inclusive_);
+    this.socket_.send({
+      type: "new-tail",
+      id: this.tailId_,
+      start: this.lastSent_,
+      inclusive: this.inclusive_
+    });
   }
 };
-MessageTail.prototype.onMessages_ = function(id, msgs, isDone) {
-  if (id != this.tailId_)
+MessageTail.prototype.onMessages_ = function(msg) {
+  if (msg.id != this.tailId_)
     return;
-  if (msgs.length) {
-    this.lastSent_ = msgs[msgs.length - 1].id;
+  if (msg.messages.length) {
+    this.lastSent_ = msg.messages[msg.messages.length - 1].id;
     this.inclusive_ = false;
-    this.messagesSentTotal_ += msgs.length;
-    this.messagesSentRecent_ += msgs.length;
-    this.messagesWanted -= msgs.length;
+    this.messagesSentTotal_ += msg.messages.length;
+    this.messagesSentRecent_ += msg.messages.length;
+    this.messagesWanted -= msg.messages.length;
   }
   if (this.cb_)
-    this.cb_(msgs, isDone);
+    this.cb_(msg.messages, msg.isDone);
 };
 
 function MessageReverseTail(model, start, cb) {
