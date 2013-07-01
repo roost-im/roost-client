@@ -43,7 +43,7 @@ function MessageTail(model, start, inclusive, cb) {
   this.connectedCb_ = this.onConnect_.bind(this);
   this.disconnectCb_ = this.onDisconnect_.bind(this);
   this.messagesCb_ = this.onMessages_.bind(this);
-  this.model_.api_.on("connect", this.connectedCb_);
+  this.model_.api_.addEventListener("connect", this.connectedCb_);
 
   this.onConnect_();
 }
@@ -52,7 +52,7 @@ MessageTail.prototype.onConnect_ = function() {
   this.onDisconnect_();
   this.socket_ = this.model_.api_.socket();
   if (this.socket_) {
-    this.socket_.on("messages", this.messagesCb_);
+    this.socket_.addEventListener("messages", this.messagesCb_);
     this.socket_.sockJS().addEventListener("close", this.disconnectCb_);
     // Reset everything.
     this.createTail_();
@@ -61,7 +61,7 @@ MessageTail.prototype.onConnect_ = function() {
 };
 MessageTail.prototype.onDisconnect_ = function() {
   if (this.socket_) {
-    this.socket_.removeListener("messages", this.messagesCb_);
+    this.socket_.removeEventListener("messages", this.messagesCb_);
     this.socket_.sockJS().removeEventListener("close", this.disconnectCb_);
     this.socket_ = null;
   }
@@ -87,7 +87,7 @@ MessageTail.prototype.close = function() {
     });
   }
   this.onDisconnect_();
-  this.model_.api_.removeListener("connect", this.connectedCb_);
+  this.model_.api_.removeEventListener("connect", this.connectedCb_);
   this.cb_ = null;
 };
 MessageTail.prototype.createTail_ = function() {
@@ -129,7 +129,7 @@ function MessageReverseTail(model, start, cb) {
   this.throttle_ = 500;
 
   this.reconnectCb_ = this.onReconnect_.bind(this);
-  this.model_.api_.on("connect", this.reconnectCb_);
+  this.model_.api_.addEventListener("connect", this.reconnectCb_);
 }
 MessageReverseTail.prototype.expandTo = function(count) {
   this.messagesWanted_ = Math.max(this.messagesWanted_,
@@ -138,7 +138,7 @@ MessageReverseTail.prototype.expandTo = function(count) {
 };
 MessageReverseTail.prototype.close = function() {
   this.cb_ = null;
-  this.model_.api_.removeListener("connect", this.reconnectCb_);
+  this.model_.api_.removeEventListener("connect", this.reconnectCb_);
 };
 MessageReverseTail.prototype.fireRequest_ = function() {
   if (this.pending_ || this.throttleTimer_ ||

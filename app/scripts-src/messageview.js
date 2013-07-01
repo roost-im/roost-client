@@ -36,7 +36,7 @@ function matchKey(ev, keyCode, mods) {
 }
 
 function MessageView(model, container) {
-  EventEmitter.call(this);
+  RoostEventTarget.call(this);
 
   this.model_ = model;
   this.container_ = container;
@@ -83,7 +83,7 @@ function MessageView(model, container) {
   this.container_.addEventListener("scroll", this.checkBuffers_.bind(this));
   this.container_.addEventListener("keydown", this.onKeydown_.bind(this));
 }
-MessageView.prototype = Object.create(EventEmitter.prototype);
+MessageView.prototype = Object.create(RoostEventTarget.prototype);
 
 MessageView.prototype.container = function() {
   return this.container_;
@@ -273,7 +273,7 @@ MessageView.prototype.appendMessages_ = function(msgs, isDone) {
   this.setAtBottom_(isDone);
   // If we were waiting to select a message that hadn't arrived yet,
   // refresh that.
-  this.emit("cachechanged");
+  this.dispatchEvent({type: "cachechanged"});
   this.checkBuffers_();
 };
 
@@ -319,7 +319,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
 
   // If we were waiting to select a message that hadn't arrived yet,
   // refresh that.
-  this.emit("cachechanged");
+  this.dispatchEvent({type: "cachechanged"});
   this.checkBuffers_();
 };
 
@@ -507,7 +507,10 @@ MessageView.prototype.onKeydown_ = function(ev) {
 };
 
 MessageView.prototype.onClickMessage_ = function(idx, ev) {
-  this.emit("messageclick", idx - this.listOffset_);
+  this.dispatchEvent({
+    type: "messageclick",
+    cacheIndex: idx - this.listOffset_
+  });
 };
 
 // Split the selection logic out for sanity.
@@ -517,7 +520,7 @@ function SelectionTracker(messageView) {
   this.selected_ = null;  // The id of the selected message.
   this.selectedMessage_ = null;  // null if we never saw the message.
 
-  this.messageView_.on("cachechanged", this.onCacheChanged_.bind(this));
+  this.messageView_.addEventListener("cachechanged", this.onCacheChanged_.bind(this));
   this.messageView_.container().addEventListener("keydown",
                                                  this.onKeydown_.bind(this));
 };

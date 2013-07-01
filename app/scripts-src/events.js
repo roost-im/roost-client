@@ -2,22 +2,17 @@
 
 // The DOM really should provide this for you, so you don't have to
 // keep reimplementing it.
-//
-// TODO(davidben): Make this DOM-style (EventTarget) instead of
-// node-style. When we use SockJS, there won't be anything else
-// node-style in the client.
 
-function EventEmitter() {
+function RoostEventTarget() {
   this.listeners_ = {};
 };
-EventEmitter.prototype.addListener = function(type, cb) {
+RoostEventTarget.prototype.addEventListener = function(type, cb) {
   if (!(type in this.listeners_))
     this.listeners_[type] = [];
   if (this.listeners_[type].indexOf(cb) == -1)
     this.listeners_[type].push(cb);
 };
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-EventEmitter.prototype.removeListener = function(type, cb) {
+RoostEventTarget.prototype.removeEventListener = function(type, cb) {
   if (!(type in this.listeners_))
     return;
   var idx = this.listeners_[type].indexOf(cb);
@@ -25,18 +20,11 @@ EventEmitter.prototype.removeListener = function(type, cb) {
     return;
   this.listeners_[type].splice(idx, 1);
 };
-EventEmitter.prototype.emit = function(type) {
-  var args = [].slice.call(arguments, 1);
+RoostEventTarget.prototype.dispatchEvent = function(ev) {
+  var type = ev.type;
   if (type in this.listeners_) {
     for (var i = 0; i < this.listeners_[type].length; i++) {
-      this.listeners_[type][i].apply(this, args);
+      this.listeners_[type][i].call(this, ev);
     }
   }
-};
-EventEmitter.prototype.once = function(type, cb) {
-  var wrapper = function() {
-    this.removeListener(type, wrapper);
-    cb.apply(this, arguments);
-  };
-  this.addListener(type, wrapper);
 };

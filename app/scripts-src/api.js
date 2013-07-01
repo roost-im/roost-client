@@ -58,17 +58,17 @@ function corsRequest(method, url, data) {
 }
 
 function RoostSocket(sockJS) {
-  EventEmitter.call(this);
+  RoostEventTarget.call(this);
   this.sockJS_ = sockJS;
   this.sockJS_.addEventListener("message", this.onMessage_.bind(this));
 };
-RoostSocket.prototype = Object.create(EventEmitter.prototype);
+RoostSocket.prototype = Object.create(RoostEventTarget.prototype);
 RoostSocket.prototype.sockJS = function() {
   return this.sockJS_;
 };
 RoostSocket.prototype.onMessage_ = function(ev) {
   var msg = JSON.parse(ev.data);
-  this.emit(msg.type, msg);
+  this.dispatchEvent(msg);
 };
 RoostSocket.prototype.send = function(msg) {
   this.sockJS_.send(JSON.stringify(msg));
@@ -78,7 +78,7 @@ var RECONNECT_DELAY = 500;
 var RECONNECT_TRIES = 10;
 
 function API(urlBase, servicePrincipal, ticketManager) {
-  EventEmitter.call(this);
+  RoostEventTarget.call(this);
 
   this.urlBase_ = urlBase;
   this.ticketManager_ = ticketManager;
@@ -98,7 +98,7 @@ function API(urlBase, servicePrincipal, ticketManager) {
   // If we go online, try to reconnect then and there.
   window.addEventListener("online", this.tryConnectSocket_.bind(this));
 }
-API.prototype = Object.create(EventEmitter.prototype);
+API.prototype = Object.create(RoostEventTarget.prototype);
 
 API.prototype.refreshAuthToken_ = function(interactive) {
   return this.ticketManager_.getTicket(
@@ -206,7 +206,8 @@ API.prototype.tryConnectSocket_ = function() {
     });
 
     var connected = false;
-    socket.once("ready", function() {
+    var onReady = function() {
+      socket.removeEventListener("ready", onReady);
       connected = true;
       this.socketPending_ = false;
       this.socket_ = socket;
@@ -214,14 +215,15 @@ API.prototype.tryConnectSocket_ = function() {
       this.reconnectDelay_ = RECONNECT_DELAY;
       this.reconnectTries_ = RECONNECT_TRIES;
 
-      this.emit("connect");
-    }.bind(this));
+      this.dispatchEvent({type: "connect"});
+    }.bind(this);
+    socket.addEventListener("ready", onReady);
 
     var onClose = function(ev) {
       socket.sockJS().removeEventListener("close", onClose);
       console.log("Disconnected", ev);
       if (connected) {
-        this.emit("disconnect");
+        this.dispatchEvent({type: "disconnect"});
         this.socket_ = null;
 
         setTimeout(this.tryConnectSocket_.bind(this), this.reconnectDelay_);

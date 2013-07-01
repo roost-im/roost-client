@@ -2,7 +2,7 @@ var ticketManager = new TicketManager(CONFIG.webathena);
 var api = new API(CONFIG.server, CONFIG.serverPrincipal, ticketManager);
 
 var dialog = null;
-ticketManager.on("ticket-needed", function() {
+ticketManager.addEventListener("ticket-needed", function() {
   if (dialog)
     return;
   var dialogTemplate = document.getElementById(
@@ -25,10 +25,10 @@ ticketManager.on("ticket-needed", function() {
 
   document.body.appendChild(dialog);
 });
-ticketManager.on("user-mismatch", function() {
+ticketManager.addEventListener("user-mismatch", function() {
   console.log("User mismatch do something useful");
 });
-ticketManager.on("webathena-error", function() {
+ticketManager.addEventListener("webathena-error", function() {
   console.log("Webathena error do something useful");
 });
 

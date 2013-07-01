@@ -28,7 +28,7 @@ function webathenaRequest(webathenaRoot, params) {
 var MINIMUM_LIFETIME = 10 * 60 * 1000;
 
 function TicketManager(webathenaRoot) {
-  EventEmitter.call(this);
+  RoostEventTarget.call(this);
 
   this.webathenaRoot_ = webathenaRoot;
   this.sessions_ = null;
@@ -40,20 +40,28 @@ function TicketManager(webathenaRoot) {
   window.addEventListener("storage", this.loadFromStorage_.bind(this));
   this.loadFromStorage_();
 }
-TicketManager.prototype = Object.create(EventEmitter.prototype);
+TicketManager.prototype = Object.create(RoostEventTarget.prototype);
 
 TicketManager.prototype.checkUser_ = function(sessions) {
   var principal = sessions.server.client.toString();
   if (this.expectedPrincipal_ == null) {
     this.expectedPrincipal_ = principal;
   } else if (this.expectedPrincipal_ !== principal) {
-    this.emit("user-mismatch", principal, this.expectedPrincipal_);
+    this.dispatchEvent({
+      type: "user-mismatch",
+      actual: principal,
+      expected: this.expectedPrincipal_
+    });
     return false;
   }
 
   principal = sessions.zephyr.client.toString();
   if (this.expectedPrincipal_ !== principal) {
-    this.emit("user-mismatch", principal, this.expectedPrincipal_);
+    this.dispatchEvent({
+      type: "user-mismatch",
+      actual: principal,
+      expected: this.expectedPrincipal_
+    });
     return false;
   }
   return true;
@@ -121,7 +129,10 @@ TicketManager.prototype.refreshInteractive_ = function() {
     this.handleNewSessions_(sessions);
   }.bind(this), function(err) {
     this.pendingRequest_ = null;
-    this.emit("webathena-error", err);
+    this.dispatchEvent({
+      type: "webathena-error",
+      error: err
+    });
   }.bind(this)).done();
 };
 
@@ -143,7 +154,10 @@ TicketManager.prototype.getTicket = function(which, interactive, data) {
   if (interactive) {
     this.refreshInteractive_();
   } else {
-    this.emit("ticket-needed", data);
+    this.dispatchEvent({
+      type: "ticket-needed",
+      data: data
+    });
   }
 
   return this.waitForSession_.promise.then(function(sessions) {
