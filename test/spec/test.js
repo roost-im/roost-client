@@ -3,7 +3,6 @@
 (function () {
   describe('ztext parser', function() {
     function ztextTreeEquals(a, b) {
-      console.log(a, b);
       if (a.length !== b.length)
         return false;
       for (var i = 0; i < a.length; i++) {
