@@ -29,6 +29,9 @@ var MAX_ZTEXT_DEPTH = 32;
 function parseZtextHelper(str, startInd, stopRegex, maxDepth) {
   var ret = [ ];
   function pushText(t) {
+    // Don't insert empty strings.
+    if (t == "")
+      return;
     if (ret.length && typeof ret[ret.length - 1] == "string") {
       ret[ret.length - 1] += t;
     } else {
