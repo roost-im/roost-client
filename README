@@ -27,6 +27,9 @@ Building:
 Running server on built files:
   grunt server:dist
 
+Running unit tests:
+  grunt test
+
 Change default config by passing command-line arguments to grunt:
 
   # Point to a different roost backend.

@@ -1,5 +1,13 @@
 /*global describe, it */
 'use strict';
+
+/*
+Yes, I know the syntax is really weird.  Yeoman set that up... I do
+not understand JavaScript developers. But this thing has a cute
+phantomjs runner so let's just stick with it unless
+expect(it).gets.to.be.way.too.irritating.
+*/
+
 (function () {
   describe('ztext parser', function() {
     function ztextTreeEquals(a, b) {
