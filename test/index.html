@@ -13,7 +13,33 @@
     <script src="lib/chai.js"></script>
     <script>var expect = chai.expect</script>
 
-    <!-- include source files here... -->
+    <!-- build:js /scripts/q.min.js -->
+    <script src="/bower_components/q/q.js"></script>
+    <!-- endbuild -->
+    <script src="/scripts/sockjs.min.js"></script>
+    <!-- build:js /scripts/winchan.min.js -->
+    <script src="/bower_components/winchan/winchan.js"></script>
+    <!-- endbuild -->
+
+    <script src="/scripts/cryptojs-des.js"></script>
+    <script src="/scripts/sjcl.js"></script>
+
+    <script src="/scripts/webathena.js"></script>
+    <!-- build:js /scripts/gss.min.js -->
+    <script src="/bower_components/webathena/web_scripts/js/gss.js"></script>
+    <!-- endbuild -->
+
+    <!-- build:js /scripts/roost.min.js -->
+    <script src="/scripts-src/config.js"></script>
+    <script src="/scripts-src/polyfills.js"></script>
+    <script src="/scripts-src/events.js"></script>
+    <script src="/scripts-src/tickets.js"></script>
+    <script src="/scripts-src/api.js"></script>
+    <script src="/scripts-src/model.js"></script>
+    <script src="/scripts-src/colors.js"></script>
+    <script src="/scripts-src/ztext.js"></script>
+    <script src="/scripts-src/messageview.js"></script>
+    <!-- endbuild -->
 
     <!-- include spec files here... -->
     <script src="spec/test.js"></script>
