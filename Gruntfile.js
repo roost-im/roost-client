@@ -148,7 +148,6 @@ module.exports = function (grunt) {
                '<%= yeoman.app %>/scripts-src/config.js'
             ]
         },
-/*
         mocha: {
             all: {
                 options: {
@@ -157,7 +156,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-*/
         // not used since Uglify task does concat,
         // but still available if needed
         /*concat: {
@@ -256,13 +254,11 @@ module.exports = function (grunt) {
         ]);
     });
 
-/*
     grunt.registerTask('test', [
         'clean:server',
         'connect:test',
         'mocha'
     ]);
-*/
 
     grunt.registerTask('build', [
         'clean:dist',
@@ -276,7 +272,7 @@ module.exports = function (grunt) {
     ]);
 
     grunt.registerTask('default', [
-        //'test',
+        'test',
         'build'
     ]);
 };
