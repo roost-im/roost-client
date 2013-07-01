@@ -520,7 +520,8 @@ function SelectionTracker(messageView) {
   this.selected_ = null;  // The id of the selected message.
   this.selectedMessage_ = null;  // null if we never saw the message.
 
-  this.messageView_.addEventListener("cachechanged", this.onCacheChanged_.bind(this));
+  this.messageView_.addEventListener("cachechanged",
+                                     this.onCacheChanged_.bind(this));
   this.messageView_.container().addEventListener("keydown",
                                                  this.onKeydown_.bind(this));
 };
