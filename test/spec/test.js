@@ -89,4 +89,43 @@ expect(it).gets.to.be.way.too.irritating.
       )).to.be.true;
     });
   })
+
+  describe('event target', function() {
+    it('should behave correctly when manipulated mid-dispatch', function() {
+      var handlerLog = [];
+      var target = new RoostEventTarget();
+
+      function handler0() {
+        handlerLog.push(0);
+      }
+      function handler1() {
+        handlerLog.push(1);
+        target.removeEventListener("test", handler0);
+        target.removeEventListener("test", handler2);
+        target.addEventListener("test", handler3);
+      }
+      function handler2() {
+        handlerLog.push(2);
+      }
+      function handler3() {
+        handlerLog.push(3);
+      }
+
+      target.addEventListener("test", handler0);
+      target.addEventListener("test", handler1);
+      target.addEventListener("test", handler2);
+
+      handlerLog = [];
+      target.dispatchEvent({type: "test"});
+      expect(handlerLog).to.deep.equal([0, 1]);
+
+      handlerLog = [];
+      target.dispatchEvent({type: "test"});
+      expect(handlerLog).to.deep.equal([1, 3]);
+
+      handlerLog = [];
+      target.dispatchEvent({type: "test"});
+      expect(handlerLog).to.deep.equal([1, 3]);
+    });
+  });
 })();
