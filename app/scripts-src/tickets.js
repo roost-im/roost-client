@@ -144,20 +144,22 @@ TicketManager.prototype.handleNewSessions_ = function(sessions) {
   this.waitForSession_ = Q.defer();
 };
 
-TicketManager.prototype.getTicket = function(which, interactive, data) {
+TicketManager.prototype.getTicket = function(which, opts) {
+  opts = opts || {};
   // If we have one saved, use it.
   if (this.sessions_ &&
       this.sessions_[which].timeRemaining() > MINIMUM_LIFETIME) {
     return Q(this.sessions_[which]);
   }
 
-  if (interactive) {
+  if (opts.cacheOnly) {
+    return Q(null);
+  }
+
+  if (opts.interactive) {
     this.refreshInteractive_();
   } else {
-    this.dispatchEvent({
-      type: "ticket-needed",
-      data: data
-    });
+    this.dispatchEvent({type: "ticket-needed"});
   }
 
   return this.waitForSession_.promise.then(function(sessions) {

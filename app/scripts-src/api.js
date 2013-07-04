@@ -102,7 +102,7 @@ API.prototype = Object.create(RoostEventTarget.prototype);
 
 API.prototype.refreshAuthToken_ = function(interactive) {
   return this.ticketManager_.getTicket(
-    "server", interactive
+    "server", {interactive: interactive}
   ).then(function(ticket) {
     // TODO(davidben): Do we need to negotiate anything interesting?
     // Mutual auth could be useful but only with channel-binding and
@@ -151,7 +151,7 @@ API.prototype.request = function(method, path, params, data, opts, isRetry) {
   opts = opts || { };
   var tokenPromise = this.getAuthToken_(opts.interactive);
   var credsPromise = opts.withZephyr ?
-    this.ticketManager_.getTicket("zephyr", opts.interactive) : Q();
+    this.ticketManager_.getTicket("zephyr", {interactive: true}) : Q();
   return Q.all([tokenPromise, credsPromise]).then(function(ret) {
     var token = ret[0], credentials = ret[1];
     var url =
@@ -168,8 +168,8 @@ API.prototype.request = function(method, path, params, data, opts, isRetry) {
       // 401 means we had a bad token (it may have expired). Refresh it.
       if (err instanceof HttpError && err.status == 401) {
         this.badToken_(token);
-        // TODO(davidben): Retry the request after we get a new
-        // one. Only retry it once though.
+        // Retry the request after we get a new one. Only retry it
+        // once though.
         if (!isRetry)
           return this.request(method, path, params, data, false, true);
       }
