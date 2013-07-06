@@ -27,64 +27,30 @@ function webathenaRequest(webathenaRoot, params) {
 
 var MINIMUM_LIFETIME = 10 * 60 * 1000;
 
-function TicketManager(webathenaRoot) {
+function TicketManager(webathenaRoot, storageManager) {
   RoostEventTarget.call(this);
 
   this.webathenaRoot_ = webathenaRoot;
+  this.storageManager_ = storageManager;
+
   this.sessions_ = null;
   this.waitForSession_ = Q.defer();
   this.pendingRequest_ = null;
 
-  this.expectedPrincipal_ = null;
-
-  window.addEventListener("storage", this.loadFromStorage_.bind(this));
+  this.storageManager_.addEventListener(
+    "change", this.loadFromStorage_.bind(this));
   this.loadFromStorage_();
 }
 TicketManager.prototype = Object.create(RoostEventTarget.prototype);
 
-TicketManager.prototype.checkUser_ = function(sessions) {
-  var principal = sessions.server.client.toString();
-  if (this.expectedPrincipal_ == null) {
-    this.expectedPrincipal_ = principal;
-  } else if (this.expectedPrincipal_ !== principal) {
-    this.dispatchEvent({
-      type: "user-mismatch",
-      actual: principal,
-      expected: this.expectedPrincipal_
-    });
-    return false;
-  }
-
-  principal = sessions.zephyr.client.toString();
-  if (this.expectedPrincipal_ !== principal) {
-    this.dispatchEvent({
-      type: "user-mismatch",
-      actual: principal,
-      expected: this.expectedPrincipal_
-    });
-    return false;
-  }
-  return true;
-};
-
-TicketManager.prototype.isLoggedIn = function() {
-  return this.expectedPrincipal_ != null;
-};
-
 TicketManager.prototype.loadFromStorage_ = function() {
-  var data = localStorage.getItem("sessions");
-  if (!data) {
-    // TODO(davidben): We just discovered we were logged out in
-    // another window. Do something useful.
+  var data = this.storageManager_.data();
+  if (!data)
     return;
-  }
-  var sessionsDict = JSON.parse(data);
   var sessions = {
-    server: krb.Session.fromDict(sessionsDict.server),
-    zephyr: krb.Session.fromDict(sessionsDict.zephyr)
+    server: krb.Session.fromDict(data.sessions.server),
+    zephyr: krb.Session.fromDict(data.sessions.zephyr)
   };
-  if (!this.checkUser_(sessions))
-    return;
   if (sessions.server.timeRemaining() <= MINIMUM_LIFETIME ||
       sessions.zephyr.timeRemaining() <= MINIMUM_LIFETIME) {
     return;
@@ -120,13 +86,9 @@ TicketManager.prototype.refreshInteractive_ = function() {
       server: ret[0],
       zephyr: ret[1]
     };
-    if (!this.checkUser_(sessions))
-      return;
-    localStorage.setItem("sessions", JSON.stringify({
-      server: sessions.server.toDict(),
-      zephyr: sessions.zephyr.toDict()
-    }));
-    this.handleNewSessions_(sessions);
+    if (this.storageManager_.saveTickets(sessions)) {
+      this.handleNewSessions_(sessions);
+    }
   }.bind(this), function(err) {
     this.pendingRequest_ = null;
     this.dispatchEvent({

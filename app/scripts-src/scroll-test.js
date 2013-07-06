@@ -1,15 +1,15 @@
 "use strict";
 
-var api, model, messageView, selectionTracker, ticketManager;  // For debugging.
+var api, model, messageView, selectionTracker, ticketManager, storageManager;  // For debugging.
 document.addEventListener("DOMContentLoaded", function() {
-  ticketManager = new TicketManager(CONFIG.webathena);
-
+  storageManager = new StorageManager();
+  ticketManager = new TicketManager(CONFIG.webathena, storageManager);
   var dialog = null;
   ticketManager.addEventListener("ticket-needed", function() {
     if (dialog)
       return;
     var dialogTemplate = document.getElementById(
-      ticketManager.isLoggedIn() ? "renew-template" : "login-template");
+      storageManager.isLoggedIn() ? "renew-template" : "login-template");
     dialog = dialogTemplate.cloneNode(true);
     dialog.id = null;
     dialog.removeAttribute("hidden");
@@ -28,11 +28,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.body.appendChild(dialog);
   });
-  ticketManager.addEventListener("user-mismatch", function() {
-    console.log("User mismatch do something useful");
-  });
   ticketManager.addEventListener("webathena-error", function() {
     console.log("Webathena error do something useful");
+  });
+  storageManager.addEventListener("usermismatch", function() {
+    console.log("User mismatch do something useful");
   });
 
 
