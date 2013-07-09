@@ -25,7 +25,7 @@ function webathenaRequest(webathenaRoot, params) {
 // the state of tickets and emit an event when they're expiring. Also
 // the iframe ticket renewal remember state thing Webathena-side. Yeah, I dunno.
 
-var MINIMUM_LIFETIME = 10 * 60 * 1000;
+var MINIMUM_LIFETIME = timespan.minutes(10);
 
 function TicketManager(webathenaRoot, storageManager) {
   RoostEventTarget.call(this);
@@ -45,7 +45,7 @@ TicketManager.prototype = Object.create(RoostEventTarget.prototype);
 
 TicketManager.prototype.loadFromStorage_ = function() {
   var data = this.storageManager_.data();
-  if (!data)
+  if (!data || !data.sessions)
     return;
   var sessions = {
     server: krb.Session.fromDict(data.sessions.server),
@@ -106,34 +106,44 @@ TicketManager.prototype.handleNewSessions_ = function(sessions) {
   this.waitForSession_ = Q.defer();
 };
 
-TicketManager.prototype.getTicket = function(which, opts) {
-  opts = opts || {};
-  // If we have one saved, use it.
+TicketManager.prototype.getCachedTicket = function(which) {
   if (this.sessions_ &&
       this.sessions_[which].timeRemaining() > MINIMUM_LIFETIME) {
-    return Q(this.sessions_[which]);
+    return this.sessions_[which];
   }
+  return null;
+};
 
-  if (opts.cacheOnly) {
-    return Q(null);
+TicketManager.prototype.refreshTickets = function(opts, data) {
+  opts = opts || {}; data = data || {};
+  // If we have one saved, do nothing.
+  if (this.getCachedTicket("server") != null &&
+      this.getCachedTicket("zephyr") != null) {
+    return;
   }
 
   if (opts.interactive) {
     this.refreshInteractive_();
   } else {
-    this.dispatchEvent({type: "ticket-needed"});
+    // TODO(davidben): Later this may first query an iframe for
+    // asynchronous non-interactive ticket and then dispatch
+    // ticket-needed if it failed.
+    setTimeout(function() {
+      this.dispatchEvent({
+        type: "ticket-needed",
+        data: data
+      });
+    }.bind(this));
   }
+};
+
+
+TicketManager.prototype.getTicket = function(which) {
+  var ticket = this.getCachedTicket(which);
+  if (ticket != null)
+    return Q(ticket);
 
   return this.waitForSession_.promise.then(function(sessions) {
     return sessions[which];
   });
-};
-
-TicketManager.prototype.ticketPromptIfNeeded = function(which) {
-  if (this.sessions_ &&
-      this.sessions_[which].timeRemaining() > MINIMUM_LIFETIME) {
-    return;
-  }
-
-  this.refreshInteractive_();
 };

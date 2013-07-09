@@ -5,7 +5,9 @@ document.addEventListener("DOMContentLoaded", function() {
   storageManager = new StorageManager();
   ticketManager = new TicketManager(CONFIG.webathena, storageManager);
   var dialog = null;
-  ticketManager.addEventListener("ticket-needed", function() {
+  ticketManager.addEventListener("ticket-needed", function(ev) {
+    // TODO(davidben): check ev.data.nonModal for whether we should
+    // pop open a modal dialog or not.
     if (dialog)
       return;
     var dialogTemplate = document.getElementById(
@@ -15,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
     dialog.removeAttribute("hidden");
 
     dialog.querySelector(".login-button").addEventListener("click", function(ev) {
-      ticketManager.ticketPromptIfNeeded();
+      ticketManager.refreshTickets({interactive: true});
     });
 
     // Close the dialog when we get our tickets.
@@ -36,7 +38,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
 
-  api = new API(CONFIG.server, CONFIG.serverPrincipal, ticketManager);
+  api = new API(CONFIG.server, CONFIG.serverPrincipal,
+                storageManager, ticketManager);
   model = new MessageModel(api);
   messageView = new MessageView(model, document.getElementById("messagelist"));
   selectionTracker = new SelectionTracker(messageView);

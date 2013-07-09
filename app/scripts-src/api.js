@@ -74,18 +74,25 @@ RoostSocket.prototype.send = function(msg) {
   this.sockJS_.send(JSON.stringify(msg));
 };
 
-var RECONNECT_DELAY = 500;
+var RECONNECT_DELAY = timespan.milliseconds(500);
 var RECONNECT_TRIES = 10;
 
-function API(urlBase, servicePrincipal, ticketManager) {
+var TOKEN_REFRESH_TIMER = timespan.minutes(30);
+var TOKEN_RENEW_SOFT = timespan.days(1);
+var TOKEN_RENEW_HARD = timespan.minutes(5);
+
+function API(urlBase, servicePrincipal, storageManager, ticketManager) {
   RoostEventTarget.call(this);
 
   this.urlBase_ = urlBase;
+  this.storageManager_ = storageManager;
   this.ticketManager_ = ticketManager;
   this.peer_ = gss.Name.importName(servicePrincipal,
                                    gss.KRB5_NT_PRINCIPAL_NAME);
 
-  this.tokenPromise_ = null;
+  this.token_ = null;
+  this.tokenDeferred_ = Q.defer();
+  this.tokenPending_ = false;
 
   this.socket_ = null;
   this.socketPending_ = false;
@@ -95,15 +102,57 @@ function API(urlBase, servicePrincipal, ticketManager) {
 
   setTimeout(this.tryConnectSocket_.bind(this), 0);
 
+  this.loadTokenFromStorage_();
+  this.storageManager_.addEventListener(
+    "change", this.loadTokenFromStorage_.bind(this));
+
+  window.setInterval(this.checkExpiredToken_.bind(this),
+                     TOKEN_REFRESH_TIMER);
+
   // If we go online, try to reconnect then and there.
   window.addEventListener("online", this.tryConnectSocket_.bind(this));
 }
 API.prototype = Object.create(RoostEventTarget.prototype);
 
-API.prototype.refreshAuthToken_ = function(interactive) {
-  return this.ticketManager_.getTicket(
-    "server", {interactive: interactive}
-  ).then(function(ticket) {
+API.prototype.handleNewToken_ = function(token, expires) {
+  // Save locally.
+  this.token_ = { value: token, expires: expires };
+  // Notify blockers.
+  this.tokenDeferred_.resolve(token);
+  this.tokenDeferred_ = Q.defer();
+};
+
+API.prototype.loadTokenFromStorage_ = function() {
+  var data = this.storageManager_.data();
+  if (data && data.token &&
+      data.token.expires - new Date().getTime() > TOKEN_RENEW_HARD) {
+    this.handleNewToken_(data.token.value, data.token.expires);
+  }
+};
+
+API.prototype.checkExpiredToken_ = function() {
+  if (this.token_ == null)
+    return;
+  // TODO(davidben): Is any of this complexity reeaaaally necessary?
+  // With the tokens lasting that long, it seems this is more helpful
+  // for just refreshing zephyr credentials slightly more frequently.
+  var remaining = this.token_.expires - new Date().getTime();
+  if (remaining < TOKEN_RENEW_SOFT) {
+    this.refreshAuthToken_({interactive: false}, {
+      nonModal: remaining > TOKEN_RENEW_HARD
+    });
+  }
+};
+
+API.prototype.refreshAuthToken_ = function(opts, data) {
+  // Refresh ticket regardless of whether we have a pending request or
+  // not. Previous one might not have been interactive, etc.
+  this.ticketManager_.refreshTickets(opts, data);
+
+  if (this.tokenPending_)
+    return;
+  this.tokenPending_ = true;
+  this.ticketManager_.getTicket("server").then(function(ticket) {
     // TODO(davidben): Do we need to negotiate anything interesting?
     // Mutual auth could be useful but only with channel-binding and
     // only in a non-browser environment.
@@ -115,43 +164,56 @@ API.prototype.refreshAuthToken_ = function(interactive) {
     // TODO(davidben): On auth error, reject the ticket and wait for a
     // new one? And on other errors, some sort of exponential back-off
     // I guess.
+    var principal = ticket.client.toString();
     return corsRequest("POST", this.urlBase_ + "/v1/auth", {
-      principal: ticket.client.toString(),
+      // Only used by fake auth mode.
+      principal: principal,
+      // Actual auth token.
       token: arrayutils.toBase64(gssToken),
       // TODO(davidben): Only do this for the initial one?
       createUser: true
-    });
-  }.bind(this)).then(function(json) {
-    var resp = JSON.parse(json);
-    return resp.authToken;
+    }).then(function(json) {
+      this.tokenPending_ = false;
+      var resp = JSON.parse(json);
+      if (this.storageManager_.saveToken(principal,
+                                         resp.authToken, resp.expires)) {
+        this.handleNewToken_(resp.authToken, resp.expires);
+      }
+    }.bind(this));
+  }.bind(this)).then(null, function(err) {
+    this.tokenPending_ = false;
+    // TODO(davidben): Error-handling!
+    throw err;
   }.bind(this));
 };
 
 API.prototype.badToken_ = function(token) {
   console.log("Bad token!");
-  if (this.tokenPromise_ &&
-      Q.isFulfilled(this.tokenPromise_) &&
-      this.tokenPromise_.valueOf() == token) {
-    this.tokenPromise_ = null;
+  if (this.token_ && this.token_.value == token) {
+    this.token_ = null;
   }
 };
 
 API.prototype.getAuthToken_ = function(interactive) {
-  if (this.tokenPromise_ == null) {
-    this.tokenPromise_ = this.refreshAuthToken_(interactive);
-  } else if (interactive && Q.isPending(this.tokenPromise_)) {
-    // Silly hack: in case the existing tokenPromise_ was not created
-    // interactively, at least we can use that now.
-    this.ticketManager_.ticketPromptIfNeeded("server");
+  if (this.token_ &&
+      this.token_.expires - new Date().getTime() > TOKEN_RENEW_HARD) {
+    return Q(this.token_.value);
+  } else {
+    this.refreshAuthToken_({interactive: interactive});
+    return this.tokenDeferred_.promise;
   }
-  return this.tokenPromise_;
 };
 
 API.prototype.request = function(method, path, params, data, opts, isRetry) {
   opts = opts || { };
   var tokenPromise = this.getAuthToken_(opts.interactive);
-  var credsPromise = opts.withZephyr ?
-    this.ticketManager_.getTicket("zephyr", {interactive: true}) : Q();
+  var credsPromise;
+  if (opts.withZephyr) {
+    this.ticketManager_.refreshTickets({interactive:true});
+    credsPromise = this.ticketManager_.getTicket("zephyr");
+  } else {
+    credsPromise = Q();
+  }
   return Q.all([tokenPromise, credsPromise]).then(function(ret) {
     var token = ret[0], credentials = ret[1];
     var url =

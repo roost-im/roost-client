@@ -88,7 +88,7 @@ StorageManager.prototype.saveTickets = function(sessions) {
   return goodUser;
 };
 
-StorageManager.prototype.saveToken = function(principal, token) {
+StorageManager.prototype.saveToken = function(principal, token, expires) {
   if (this.disabled_)
     return;
 
@@ -101,7 +101,7 @@ StorageManager.prototype.saveToken = function(principal, token) {
     this.data_ = { };
   }
   this.data_.principal = principal;
-  this.data_.token = token;
+  this.data_.token = { value: token, expires: expires };
   localStorage.setItem("roostData", JSON.stringify(this.data_));
 
   this.dispatchEvent({type: "change"});

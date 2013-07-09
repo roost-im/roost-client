@@ -1,6 +1,7 @@
 var storageManager = new StorageManager();
 var ticketManager = new TicketManager(CONFIG.webathena, storageManager);
-var api = new API(CONFIG.server, CONFIG.serverPrincipal, ticketManager);
+var api = new API(CONFIG.server, CONFIG.serverPrincipal,
+                  storageManager, ticketManager);
 
 var dialog = null;
 ticketManager.addEventListener("ticket-needed", function() {
@@ -13,7 +14,7 @@ ticketManager.addEventListener("ticket-needed", function() {
   dialog.removeAttribute("hidden");
 
   dialog.querySelector(".login-button").addEventListener("click", function(ev) {
-    ticketManager.ticketPromptIfNeeded();
+    ticketManager.refreshTickets({interactive: true});
   });
 
   // Close the dialog when we get our tickets.
