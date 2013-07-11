@@ -4,6 +4,7 @@
   "dependencies": {
     "q": "~0.9.4",
     "winchan": "https://github.com/lloyd/winchan.git",
-    "webathena": "https://github.com/davidben/webathena.git"
+    "webathena": "https://github.com/davidben/webathena.git",
+    "angular": "~1.0.7"
   }
 }
