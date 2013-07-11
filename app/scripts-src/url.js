@@ -21,7 +21,7 @@
 //   http://daringfireball.net/2010/07/improved_regex_for_matching_urls
 //   http://url.spec.whatwg.org/
 var URL_REGEX = new RegExp(
-  "(?:https|http):\\/\\/" +
+  "\\b(?:https|http):\\/\\/" +
   "(?:" +
     "\\[" +
     "(?:[0-9a-f]{1,4}(?::[0-9a-f]{1,4})*)?" +

@@ -202,5 +202,11 @@ if (!Function.prototype.bind) {
       test.expectText(")");
       test.run("(This URL is https://en.wikipedia.org/wiki/Owl_(disambiguation))")
     });
+
+    it('should start at word boundaries', function() {
+      var test = new UrlTest();
+      test.expectText("mooohttp://example.com");
+      test.run("mooohttp://example.com");
+    });
   });
 })();
