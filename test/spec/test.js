@@ -208,5 +208,11 @@ if (!Function.prototype.bind) {
       test.expectText("mooohttp://example.com");
       test.run("mooohttp://example.com");
     });
+
+    it('should allow unicode hostnames', function() {
+      var test = new UrlTest();
+      test.expectUrl("http://☃.net");
+      test.run("http://☃.net");
+    });
   });
 })();
