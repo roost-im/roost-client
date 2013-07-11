@@ -8,6 +8,31 @@ phantomjs runner so let's just stick with it unless
 expect(it).gets.to.be.way.too.irritating.
 */
 
+// Apparently PhantomJS is terrible.
+if (!Function.prototype.bind) {
+  Function.prototype.bind = function (oThis) {
+    if (typeof this !== "function") {
+      // closest thing possible to the ECMAScript 5 internal IsCallable function
+      throw new TypeError("Function.prototype.bind - what is trying to be bound is not callable");
+    }
+
+    var aArgs = Array.prototype.slice.call(arguments, 1),
+    fToBind = this,
+    fNOP = function () {},
+    fBound = function () {
+      return fToBind.apply(this instanceof fNOP && oThis
+                           ? this
+                           : oThis,
+                           aArgs.concat(Array.prototype.slice.call(arguments)));
+    };
+
+    fNOP.prototype = this.prototype;
+    fBound.prototype = new fNOP();
+
+    return fBound;
+  };
+}
+
 (function () {
   describe('ztext parser', function() {
     function ztextTreeEquals(a, b) {
@@ -126,6 +151,56 @@ expect(it).gets.to.be.way.too.irritating.
       handlerLog = [];
       target.dispatchEvent({type: "test"});
       expect(handlerLog).to.deep.equal([1, 3]);
+    });
+  });
+
+  describe('url finder', function() {
+    function UrlTest() {
+      this.log_ = [];
+      this.expected_ = [];
+    };
+    UrlTest.prototype.expectUrl = function(url) {
+      this.expected_.push(['url', url]);
+    };
+    UrlTest.prototype.expectText = function(text) {
+      this.expected_.push(['text', text]);
+    };
+    UrlTest.prototype.gotUrl_ = function(url) {
+      this.log_.push(['url', url]);
+    };
+    UrlTest.prototype.gotText_ = function(text) {
+      this.log_.push(['text', text]);
+    };
+    UrlTest.prototype.run = function(str) {
+      findUrls(str,
+               this.gotUrl_.bind(this),
+               this.gotText_.bind(this));
+      expect(this.log_).to.deep.equal(this.expected_);
+    };
+
+    it('should parse multiple URLs', function() {
+      var test = new UrlTest();
+      test.expectText("Roost lives at ");
+      test.expectUrl("https://roost.mit.edu");
+      test.expectText(", not at ");
+      test.expectUrl("http://roost.mit.edu");
+      test.expectText(".");
+      test.run(
+        "Roost lives at https://roost.mit.edu, not at http://roost.mit.edu.");
+    });
+
+    it('should never give empty strings', function() {
+      var test = new UrlTest();
+      test.expectUrl("https://roost.mit.edu");
+      test.run("https://roost.mit.edu");
+    });
+
+    it('should handle parenthesis', function() {
+      var test = new UrlTest();
+      test.expectText("(This URL is ");
+      test.expectUrl("https://en.wikipedia.org/wiki/Owl_(disambiguation)");
+      test.expectText(")");
+      test.run("(This URL is https://en.wikipedia.org/wiki/Owl_(disambiguation))")
     });
   });
 })();
