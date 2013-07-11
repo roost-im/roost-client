@@ -95,11 +95,20 @@ function ztextToDOM(ztext, parent) {
   for (var i = 0; i < ztext.length; i++) {
     var chunk = ztext[i];
     if (typeof chunk === "string") {
-      // TODO(davidben): Parse out URLs. Newlines, etc. one we're no
-      // longer in a <pre>. Or should I just keep it in a <pre>? I
-      // guess the question is whether I want to maybe not display
-      // things in a fixed-with font sometimes.
-      curParent.appendChild(document.createTextNode(chunk));
+      // TODO(davidben): Newlines, etc. once we're no longer in a
+      // <pre>. Or should I just keep it in a <pre>? I guess the
+      // question is whether I want to maybe not display things in a
+      // fixed-with font sometimes.
+      findUrls(chunk, function(url) {
+        var a = document.createElement("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "nofollow";  // Eh.
+        a.appendChild(document.createTextNode(url));
+        curParent.appendChild(a);
+      }, function(text) {
+        curParent.appendChild(document.createTextNode(text));
+      });
     } else {
       // TODO(davidben): Implement zwgc's tags like @small, @medium,
       // @large, @left, @center, @right. Maybe even @font. Not @beep
