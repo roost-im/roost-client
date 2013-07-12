@@ -61,11 +61,11 @@ document.getElementById("subscribe").addEventListener("submit", function(ev) {
 
   var withZephyr = (msgRecipient && msgRecipient[0] !== '@') ? true : false;
   var data = {
-    subscription: {
+    subscriptions: [{
       class: msgClass,
       instance: msgInstance,
       recipient: msgRecipient
-    },
+    }],
   };
   return api.post("/v1/subscribe", data, {
     withZephyr: withZephyr,
