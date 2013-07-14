@@ -152,6 +152,30 @@ function log(msg) {
 (function() {
   api.get("/v1/subscriptions").then(function(subs) {
     log("Currently subscribed to:");
+
+    function compare(a, b) {
+      if (a < b) return -1;
+      if (a > b) return 1;
+      return 0;
+    }
+    function splitClassInst(a) {
+      var uns = /^(?:un)*/.exec(a)[0];
+      var ds = /(?:\.d)*$/.exec(a)[0];
+      return [uns, a.substring(uns.length, a.length - ds.length), ds];
+    }
+    function compareClassInst(a, b) {
+      var sa = splitClassInst(a);
+      var sb = splitClassInst(b);
+      return compare(sa[1], sb[1]) ||
+        compare(sa[0].length, sb[0].length) ||
+        compare(sb[2].length, sb[2].length);
+    }
+    subs.sort(function(a, b) {
+      return compare(a.recipient, b.recipient) ||
+        compareClassInst(a.classKey, b.classKey) ||
+        compareClassInst(a.instanceKey, b.instanceKey);
+    });
+
     subs.forEach(function(sub) {
       log(" <" + sub.class + "," + sub.instance + "," + sub.recipient + ">");
     });
