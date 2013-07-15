@@ -1,4 +1,4 @@
-/* SockJS client, version 0.3.4, http://sockjs.org, MIT License
+/* SockJS client, version 0.3.4.16.g6593, http://sockjs.org, MIT License
 
 Copyright (c) 2011-2012 VMware, Inc.
 
@@ -45,6 +45,15 @@ SockJS = (function(){
 /* Simplified implementation of DOM2 EventTarget.
  *   http://www.w3.org/TR/DOM-Level-2-Events/events.html#Events-EventTarget
  */
+
+var indexOfListener = function(list, listener) {
+    for (var i = 0; i < list.length; i++) {
+        if (list[i].listener === listener)
+            return i;
+    }
+    return -1;
+};
+
 var REventTarget = function() {};
 REventTarget.prototype.addEventListener = function (eventType, listener) {
     if(!this._listeners) {
@@ -54,8 +63,8 @@ REventTarget.prototype.addEventListener = function (eventType, listener) {
         this._listeners[eventType] = [];
     }
     var arr = this._listeners[eventType];
-    if(utils.arrIndexOf(arr, listener) === -1) {
-        arr.push(listener);
+    if(indexOfListener(arr, listener) === -1) {
+        arr.push({listener: listener, doomed: false});
     }
     return;
 };
@@ -65,10 +74,13 @@ REventTarget.prototype.removeEventListener = function (eventType, listener) {
         return;
     }
     var arr = this._listeners[eventType];
-    var idx = utils.arrIndexOf(arr, listener);
+    var idx = indexOfListener(arr, listener);
     if (idx !== -1) {
+        // Removing an event listener that has not yet run
+        // mid-dispatch causes the listener to not run.
+        arr[idx].doomed = true;
         if(arr.length > 1) {
-            this._listeners[eventType] = arr.slice(0, idx).concat( arr.slice(idx+1) );
+            arr.splice(idx, 1);
         } else {
             delete this._listeners[eventType];
         }
@@ -80,12 +92,20 @@ REventTarget.prototype.removeEventListener = function (eventType, listener) {
 REventTarget.prototype.dispatchEvent = function (event) {
     var t = event.type;
     var args = Array.prototype.slice.call(arguments, 0);
+    // TODO: This doesn't match the real behavior; per spec, onfoo get
+    // their place in line from the /first/ time they're set from
+    // non-null. Although WebKit bumps it to the end every time it's
+    // set.
     if (this['on'+t]) {
         this['on'+t].apply(this, args);
     }
     if (this._listeners && t in this._listeners) {
-        for(var i=0; i < this._listeners[t].length; i++) {
-            this._listeners[t][i].apply(this, args);
+        // Make a copy of the listeners list; listeners added
+        // mid-dispatch should NOT run.
+        var listeners = this._listeners[t].slice(0);
+        for(var i=0; i < listeners.length; i++) {
+            if (!listeners[i].doomed)
+                listeners[i].listener.apply(this, args);
         }
     }
 };
@@ -194,12 +214,23 @@ EventEmitter.prototype.nuke = function() {
  * ***** END LICENSE BLOCK *****
  */
 
-var random_string_chars = 'abcdefghijklmnopqrstuvwxyz0123456789_';
-utils.random_string = function(length, max) {
-    max = max || random_string_chars.length;
-    var i, ret = [];
-    for(i=0; i < length; i++) {
-        ret.push( random_string_chars.substr(Math.floor(Math.random() * max),1) );
+// This string has length 32, a power of 2, so the modulus doesn't introduce a
+// bias.
+var random_string_chars = 'abcdefghijklmnopqrstuvwxyz012345';
+utils.random_string = function(length) {
+    var max = random_string_chars.length;
+    var i, bytes, ret = [];
+    // Use real randomness when available.
+    if (_window.crypto && _window.crypto.getRandomValues) {
+        bytes = new Uint8Array(length);
+        _window.crypto.getRandomValues(bytes);
+        for(i=0; i < length; i++) {
+            ret.push( random_string_chars[bytes[i] % max] );
+        }
+    } else {
+        for(i=0; i < length; i++) {
+            ret.push( random_string_chars[Math.floor(Math.random() * max)] );
+        }
     }
     return ret.join('');
 };
@@ -310,12 +341,22 @@ utils.amendUrl = function(url) {
     if (url.indexOf('//') === 0) {
         url = dl.protocol + url;
     }
-    // '/abc' --> 'http://localhost:80/abc'
+    // '/abc' --> 'http://localhost:1234/abc'
     if (url.indexOf('/') === 0) {
         url = dl.protocol + '//' + dl.host + url;
     }
     // strip trailing slashes
     url = url.replace(/[/]+$/,'');
+
+    // We have a full url here, with proto and host. For some browsers
+    // http://localhost:80/ is not in the same origin as http://localhost/
+	// Remove explicit :80 or :443 in such cases. See #74
+    var parts = url.split("/");
+    if ((parts[0] === "http:" && /:80$/.test(parts[2])) ||
+	    (parts[0] === "https:" && /:443$/.test(parts[2]))) {
+		parts[2] = parts[2].replace(/:(80|443)$/, "");
+	}
+    url = parts.join("/");
     return url;
 };
 
@@ -934,7 +975,7 @@ utils.isXHRCorsCapable = function() {
  */
 
 var SockJS = function(url, dep_protocols_whitelist, options) {
-    if (this === _window) {
+    if (!(this instanceof SockJS)) {
         // makes `new` optional
         return new SockJS(url, dep_protocols_whitelist, options);
     }
@@ -990,7 +1031,7 @@ var SockJS = function(url, dep_protocols_whitelist, options) {
 // Inheritance
 SockJS.prototype = new REventTarget();
 
-SockJS.version = "0.3.4";
+SockJS.version = "0.3.4.16.g6593";
 
 SockJS.CONNECTING = 0;
 SockJS.OPEN = 1;
@@ -2259,7 +2300,7 @@ var HtmlfileReceiver = function(url) {
     var that = this;
     utils.polluteGlobalNamespace();
 
-    that.id = 'a' + utils.random_string(6, 26);
+    that.id = 'a' + utils.random_string(6);
     url += ((url.indexOf('?') === -1) ? '?' : '&') +
         'c=' + escape(WPrefix + '.' + that.id);
 
