@@ -64,6 +64,15 @@ MessageTail.prototype.onDisconnect_ = function() {
     this.socket_.removeEventListener("messages", this.messagesCb_);
     this.socket_.sockJS().removeEventListener("close", this.disconnectCb_);
     this.socket_ = null;
+
+    // We disconnected. Mark as not the end anymore.
+    //
+    // TODO(davidben): This makes scrollToEnd reset everything. Maybe
+    // add a third "disconnected" state? Would also be good as far as
+    // displaying a different message. Could also use API's
+    // disconnected event and just leave this one be?
+    if (this.cb_)
+      this.cb_([], false);
   }
 };
 MessageTail.prototype.expandTo = function(count) {
