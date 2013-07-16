@@ -120,7 +120,7 @@ MessageTail.prototype.onMessages_ = function(msg) {
     this.inclusive_ = false;
     this.messagesSentTotal_ += msg.messages.length;
     this.messagesSentRecent_ += msg.messages.length;
-    this.messagesWanted -= msg.messages.length;
+    this.messagesWanted_ -= msg.messages.length;
   }
   if (this.cb_)
     this.cb_(msg.messages, msg.isDone);
