@@ -95,9 +95,9 @@ MessageTail.prototype.close = function() {
       id: this.tailId_
     });
   }
-  this.onDisconnect_();
-  this.model_.api_.removeEventListener("connect", this.connectedCb_);
   this.cb_ = null;
+  this.model_.api_.removeEventListener("connect", this.connectedCb_);
+  this.onDisconnect_();
 };
 MessageTail.prototype.createTail_ = function() {
   if (this.socket_) {
