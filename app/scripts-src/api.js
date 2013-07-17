@@ -57,21 +57,122 @@ function corsRequest(method, url, data) {
   return deferred.promise;
 }
 
+var SOCKET_PING_TIMER_VISIBLE = timespan.seconds(5);
+var SOCKET_PING_TIMER_HIDDEN = timespan.minutes(1);
+var SOCKET_PONG_TIMEOUT = timespan.seconds(2);
+
+var hiddenProp = "hidden", visibilityChange = "visibilitychange";
+if (typeof document.hidden !== "undefined") {
+  ;
+} else if (typeof document.mozHidden !== "undefined") {
+  hiddenProp = "mozHidden";
+  visibilityChange = "mozvisibilitychange";
+} else if (typeof document.msHidden !== "undefined") {
+  hiddenProp = "msHidden";
+  visibilityChange = "msvisibilitychange";
+} else if (typeof document.webkitHidden !== "undefined") {
+  hiddenProp = "webkitHidden";
+  visibilityChange = "webkitvisibilitychange";
+} else {
+  if (window.console && console.log)
+    console.log("Page visibility API not supported.");
+}
+
 function RoostSocket(sockJS) {
   RoostEventTarget.call(this);
   this.sockJS_ = sockJS;
   this.sockJS_.addEventListener("message", this.onMessage_.bind(this));
+  this.sockJS_.addEventListener("close", this.onClose_.bind(this));
+
+  this.ready_ = false;
+  this.pingVisible_ = null;
+  this.pingHidden_ = null;
+
+  this.pongTimer_ = null;
+  this.onVisibilityChangeCb_ = this.onVisibilityChange_.bind(this);
+  document.addEventListener(visibilityChange, this.onVisibilityChangeCb_);
 };
 RoostSocket.prototype = Object.create(RoostEventTarget.prototype);
 RoostSocket.prototype.sockJS = function() {
   return this.sockJS_;
 };
 RoostSocket.prototype.onMessage_ = function(ev) {
+  // Heard from the server. Stop the pong timer.
+  if (this.pongTimer_ != null) {
+    clearTimeout(this.pongTimer_);
+    this.pongTimer_ = null;
+  }
   var msg = JSON.parse(ev.data);
+  if (msg.type === 'ready') {
+    this.ready_ = true;
+    this.onVisibilityChangeCb_();
+  }
   this.dispatchEvent(msg);
 };
 RoostSocket.prototype.send = function(msg) {
   this.sockJS_.send(JSON.stringify(msg));
+};
+RoostSocket.prototype.onVisibilityChange_ = function(ev) {
+  if (!this.ready_)
+    return;
+  console.log('hidden =', document[hiddenProp]);
+  // Send a new ping if it's time to.
+  if ((document[hiddenProp] && (this.pingHidden_ == null)) ||
+      (!document[hiddenProp] && (this.pingVisible_ == null))) {
+    console.log('Sending ping');
+    this.sendPing_();
+  }
+};
+RoostSocket.prototype.sendPing_ = function() {
+  this.send({type: "ping"});
+
+  // Refresh the pong timer, assuming there isn't already one. (If
+  // there is, let it keep running.)
+  if (this.pongTimer_ == null) {
+    this.pongTimer_ = setTimeout(function() {
+      // Didn't hear from the server for too long.
+      if (window.console && console.log)
+        console.log("No response from server");
+      this.sockJS_.close();
+    }.bind(this), SOCKET_PONG_TIMEOUT);
+  }
+
+  // Flag for whether the timeout for visible has passed. We do it
+  // this way instead of creating and tearing down timers on
+  // visibilitychange so that things don't act funny if visibility
+  // state switches like crazy or something.
+  if (this.pingVisible_ != null)
+    clearTimeout(this.pingVisible_);
+  this.pingVisible_ = setTimeout(function() {
+    this.pingVisible_ = null;
+    this.onVisibilityChange_();
+  }.bind(this), SOCKET_PING_TIMER_VISIBLE);
+
+  // Flag for whether the timeout for hidden has passed.
+  if (this.pingHidden_ != null)
+    clearTimeout(this.pingHidden_);
+  this.pingHidden_ = setTimeout(function() {
+    this.pingHidden_ = null;
+    this.onVisibilityChange_();
+  }.bind(this), SOCKET_PING_TIMER_HIDDEN);
+};
+RoostSocket.prototype.onClose_ = function(ev) {
+  // Shut off all timers.
+  if (this.pongTimer_ != null) {
+    clearTimeout(this.pongTimer_);
+    this.pongTimer_ = null;
+  }
+  if (this.pingVisible_ != null) {
+    clearTimeout(this.pingVisible_);
+    this.pingVisible_ = null;
+  }
+  if (this.pingHidden_ != null) {
+    clearTimeout(this.pingHidden_);
+    this.pingHidden_ = null;
+  }
+  // Stop listening for visibility changes.
+  document.removeEventListener(visibilityChange, this.onVisibilityChangeCb_);
+  this.ready_ = false;
 };
 
 var RECONNECT_DELAY = timespan.milliseconds(500);
@@ -188,7 +289,8 @@ API.prototype.refreshAuthToken_ = function(opts, data) {
 };
 
 API.prototype.badToken_ = function(token) {
-  console.log("Bad token!");
+  if (window.console && console.log)
+    console.log("Bad token!");
   if (this.token_ && this.token_.value == token) {
     this.token_ = null;
   }
@@ -283,7 +385,8 @@ API.prototype.tryConnectSocket_ = function() {
 
     var onClose = function(ev) {
       socket.sockJS().removeEventListener("close", onClose);
-      console.log("Disconnected", ev);
+      if (window.console && console.log)
+        console.log("Disconnected", ev);
       if (connected) {
         this.dispatchEvent({type: "disconnect"});
         this.socket_ = null;
