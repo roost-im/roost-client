@@ -115,11 +115,9 @@ RoostSocket.prototype.send = function(msg) {
 RoostSocket.prototype.onVisibilityChange_ = function(ev) {
   if (!this.ready_)
     return;
-  console.log('hidden =', document[hiddenProp]);
   // Send a new ping if it's time to.
   if ((document[hiddenProp] && (this.pingHidden_ == null)) ||
       (!document[hiddenProp] && (this.pingVisible_ == null))) {
-    console.log('Sending ping');
     this.sendPing_();
   }
 };
