@@ -84,6 +84,9 @@ function MessageView(model, container) {
 
   this.filter_ = new Filter({});
 
+  // True if we have a pending checkBuffers_ call.
+  this.checkBuffersPending_ = false;
+
   this.reset_();
 
   this.container_.addEventListener("scroll", this.checkBuffers_.bind(this));
@@ -601,6 +604,14 @@ MessageView.prototype.ensureTailBelow_ = function() {
 };
 
 MessageView.prototype.checkBuffers_ = function() {
+  if (!this.checkBuffersPending_) {
+    setTimeout(this.checkBuffersReal_.bind(this), 0);
+    this.checkBuffersPending_ = true;
+  }
+};
+
+MessageView.prototype.checkBuffersReal_ = function() {
+  this.checkBuffersPending_ = false;
   var bounds = this.container_.getBoundingClientRect();
 
   // Check if we need to expand/contract above or below. If a tail
