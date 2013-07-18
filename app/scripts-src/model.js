@@ -112,9 +112,9 @@ MessageTail.prototype.createTail_ = function() {
       start: this.lastSent_,
       inclusive: this.inclusive_
     }
-    for (var key in this.filter_) {
-      if (this.filter_.hasOwnProperty(key) && this.filter_[key] != null)
-        msg[key] = this.filter_[key];
+    for (var i = 0; i < Filter.FIELDS.length; i++) {
+      if (this.filter_[Filter.FIELDS[i]] != null)
+        msg[Filter.FIELDS[i]] = this.filter_[Filter.FIELDS[i]];
     }
     this.socket_.send(msg);
   }
@@ -167,9 +167,9 @@ MessageReverseTail.prototype.fireRequest_ = function() {
   }
   if (this.start_ != null)
     params.offset = this.start_;
-  for (var key in this.filter_) {
-    if (this.filter_.hasOwnProperty(key) && this.filter_[key] != null)
-      params[key] = this.filter_[key];
+  for (var i = 0; i < Filter.FIELDS.length; i++) {
+    if (this.filter_[Filter.FIELDS[i]] != null)
+      params[Filter.FIELDS[i]] = this.filter_[Filter.FIELDS[i]];
   }
   // TODO(davidben): Report errors back up somewhere?
   this.pending_ = true;
