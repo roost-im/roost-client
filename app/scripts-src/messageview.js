@@ -545,6 +545,10 @@ MessageView.prototype.checkAbove_ = function(bounds) {
 MessageView.prototype.ensureTailAbove_ = function() {
   if (this.tailAbove_)
     return;
+  // Optimization: if atTop_ is set, we don't need to ask the server
+  // to confirm that there are no more messages. We know there aren't.
+  if (this.atTop_)
+    return;
 
   if (this.messages_.length) {
     this.tailAbove_ = this.model_.newReverseTail(
@@ -555,12 +559,8 @@ MessageView.prototype.ensureTailAbove_ = function() {
   } else {
     // Bootstrap with the pending center.
     if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
-      // Don't do anything. We're at the top. There's nothing useful here.
-      //
-      // TODO(davidben): As soon as we get information about the
-      // bottom, we'll query the server. As an optimization, plug
-      // this.tailAbove_ with a dead tail. Alternatively, we can
-      // probably just do a this.atTop_ check up top.
+      // Don't do anything. We're at the top. There's nothing useful
+      // here.
     } else if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_BOTTOM) {
       this.tailAbove_ = this.model_.newReverseTail(
         null,
