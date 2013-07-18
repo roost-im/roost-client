@@ -123,6 +123,60 @@ MessageView.prototype.getMessage = function(id) {
   return this.messages_[idx];
 };
 
+MessageView.prototype.findTopMessage = function() {
+  var bounds = this.container().getBoundingClientRect();
+  var nodes = this.cachedNodes();
+  if (nodes.length == 0)
+    return null;
+  var lo = 0;
+  var hi = nodes.length - 1;
+  while (lo < hi) {
+    var mid = ((lo + hi) / 2) | 0;
+    var b = nodes[mid].getBoundingClientRect();
+    // Find the first message which starts at or after the bounds.
+    if (b.top < bounds.top) {
+      lo = mid + 1;
+    } else {
+      hi = mid;
+    }
+  }
+  // It's possible the message we found starts very late, if the
+  // previous is long. In that case, prefer the previous one.
+  if (lo > 0 &&
+      nodes[lo].getBoundingClientRect().top >=
+      (bounds.top + bounds.height/2)) {
+    lo--;
+  }
+  return lo;
+};
+
+MessageView.prototype.findBottomMessage = function() {
+  var bounds = this.container().getBoundingClientRect();
+  var nodes = this.cachedNodes();
+  if (nodes.length == 0)
+    return null;
+  var lo = 0;
+  var hi = nodes.length - 1;
+  while (lo < hi) {
+    var mid = ((lo + hi + 1) / 2) | 0;
+    var b = nodes[mid].getBoundingClientRect();
+    // Find the first message which ends at or before the bounds.
+    if (b.bottom < bounds.bottom) {
+      lo = mid;
+    } else {
+      hi = mid - 1;
+    }
+  }
+  // It's possible the message we found ends very early, if the
+  // next is long. In that case, prefer the next one.
+  if (lo < nodes.length - 2 &&
+      nodes[lo].getBoundingClientRect().bottom <=
+      (bounds.top + bounds.height/2)) {
+    lo++;
+  }
+  return lo;
+};
+
 MessageView.prototype.reset_ = function() {
   // It's not visible. Blow everything away and start from
   // there. (This is mildly annoying. Can we refactor some of this
@@ -592,60 +646,6 @@ SelectionTracker.prototype.selectMessage = function(id) {
   this.onCacheChanged_();
 };
 
-SelectionTracker.prototype.findTopMessage_ = function() {
-  var bounds = this.messageView_.container().getBoundingClientRect();
-  var nodes = this.messageView_.cachedNodes();
-  if (nodes.length == 0)
-    return null;
-  var lo = 0;
-  var hi = nodes.length - 1;
-  while (lo < hi) {
-    var mid = ((lo + hi) / 2) | 0;
-    var b = nodes[mid].getBoundingClientRect();
-    // Find the first message which starts at or after the bounds.
-    if (b.top < bounds.top) {
-      lo = mid + 1;
-    } else {
-      hi = mid;
-    }
-  }
-  // It's possible the message we found starts very late, if the
-  // previous is long. In that case, prefer the previous one.
-  if (lo > 0 &&
-      nodes[lo].getBoundingClientRect().top >=
-      (bounds.top + bounds.height/2)) {
-    lo--;
-  }
-  return lo;
-};
-
-SelectionTracker.prototype.findBottomMessage_ = function() {
-  var bounds = this.messageView_.container().getBoundingClientRect();
-  var nodes = this.messageView_.cachedNodes();
-  if (nodes.length == 0)
-    return null;
-  var lo = 0;
-  var hi = nodes.length - 1;
-  while (lo < hi) {
-    var mid = ((lo + hi + 1) / 2) | 0;
-    var b = nodes[mid].getBoundingClientRect();
-    // Find the first message which ends at or before the bounds.
-    if (b.bottom < bounds.bottom) {
-      lo = mid;
-    } else {
-      hi = mid - 1;
-    }
-  }
-  // It's possible the message we found ends very early, if the
-  // next is long. In that case, prefer the next one.
-  if (lo < nodes.length - 2 &&
-      nodes[lo].getBoundingClientRect().bottom <=
-      (bounds.top + bounds.height/2)) {
-    lo++;
-  }
-  return lo;
-};
-
 SelectionTracker.prototype.clampSelection_ = function(top) {
   // If there is an on-screen selection, don't do anything.
   if (this.selected_ != null) {
@@ -659,7 +659,8 @@ SelectionTracker.prototype.clampSelection_ = function(top) {
   }
 
   // Otherwise, clamp to top or bottom.
-  var newIdx = top ? this.findTopMessage_() : this.findBottomMessage_();
+  var newIdx = top ? this.messageView_.findTopMessage()
+    : this.messageView_.findBottomMessage();
   if (newIdx == null)
     return false;
   this.selectMessage(this.messageView_.cachedMessages()[newIdx].id);
