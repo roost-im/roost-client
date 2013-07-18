@@ -900,7 +900,6 @@ SelectionTracker.prototype.onKeydown_ = function(ev) {
       }
     }
 
-    console.log(opts, msg);
     return new Filter(opts);
   }
 
