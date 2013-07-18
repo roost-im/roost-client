@@ -35,6 +35,9 @@ function matchKey(ev, keyCode, mods) {
   return true;
 }
 
+var MESSAGE_VIEW_SCROLL_TOP = 0;
+var MESSAGE_VIEW_SCROLL_BOTTOM = 1;
+
 function MessageView(model, container) {
   RoostEventTarget.call(this);
 
@@ -141,6 +144,11 @@ MessageView.prototype.reset_ = function() {
 
   this.messagesDiv_.textContent = "";
 
+  // Default to something. Only in the case if this.messages_ is
+  // empty, this is the bootstrap cutoff between the two tails. It is
+  // either a message id (string) or a one of two magic values for top and bottom.
+  this.pendingCenter_ = MESSAGE_VIEW_SCROLL_TOP;
+
   // FIXME: This shows two loading bars. But we can't actually lie
   // about one side because atTop_ and atBottom_ are needed to
   // implement home/end behavior.
@@ -178,16 +186,8 @@ MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
   // Otherwise, we reset the universe and use |id| as our new point of
   // reference.
   this.reset_();
-
-  this.tailAbove_ = this.model_.newReverseTail(
-    id, this.filter_, this.prependMessages_.bind(this));
-  this.tailAboveOffset_ = 0;
-  this.tailAbove_.expandTo(TARGET_BUFFER);
-
-  this.tailBelow_ = this.model_.newTailInclusive(
-    id, this.filter_, this.appendMessages_.bind(this));
-  this.tailBelowOffset_ = 0;
-  this.tailBelow_.expandTo(TARGET_BUFFER);
+  this.pendingCenter_ = id;
+  this.checkBuffers_();
 };
 
 MessageView.prototype.scrollToTop = function(id) {
@@ -200,23 +200,12 @@ MessageView.prototype.scrollToTop = function(id) {
   // Otherwise, we reset the universe and use |id| as our new point of
   // reference.
   this.reset_();
+  this.pendingCenter_ = MESSAGE_VIEW_SCROLL_TOP;
   // Blegh. Cut out the "Loading..." text now.
   this.setAtTop_(true);
   this.setAtBottom_(false);
   this.container_.scrollTop = 0;
-
-  // TODO(davidben): Optimization: we know that tailAbove_ is bogus
-  // here and don't need to wait for a tailBelow_ reference point to
-  // find out. (In fact, our empty list behavior only works because we
-  // know only one side can grow.) But the system doesn't know that
-  // and will create a tailAbove_ once it gets a reference point. Put
-  // in a stub tailAbove_ of some sort to deal with this. Or maybe use
-  // atTop_.
-
-  this.tailBelow_ = this.model_.newTail(null, this.filter_,
-                                        this.appendMessages_.bind(this));
-  this.tailBelow_.expandTo(TARGET_BUFFER);
-  this.tailBelowOffset_ = 0;
+  this.checkBuffers_();
 };
 
 MessageView.prototype.scrollToBottom = function(id) {
@@ -229,20 +218,11 @@ MessageView.prototype.scrollToBottom = function(id) {
   // Otherwise, we reset the universe and use |id| as our new point of
   // reference.
   this.reset_();
+  this.pendingCenter_ = MESSAGE_VIEW_SCROLL_BOTTOM;
   // Blegh. Cut out the "Loading..." text now.
   this.setAtTop_(false);
   this.setAtBottom_(true);
-
-  // We create one tail and lazily create the other one when we have a
-  // reference point.
-  //
-  // FIXME! This... works. But it's sort of odd. Also, it breaks
-  // horribly when you have zero messages. Also, note all the random
-  // comments you had to add to support this.
-  this.tailAbove_ = this.model_.newReverseTail(
-    null, this.filter_, this.prependMessages_.bind(this));
-  this.tailAboveOffset_ = 0;
-  this.tailAbove_.expandTo(TARGET_BUFFER);
+  this.checkBuffers_();
 };
 
 MessageView.prototype.setAtTop_ = function(atTop) {
@@ -300,25 +280,6 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
   this.messages_.unshift.apply(this.messages_, msgs);
   this.nodes_.unshift.apply(this.nodes_, nodes);
   this.listOffset_ -= msgs.length;
-
-  // Awkward special-case: if we...
-  //
-  // 1. Reach the end of the tail above.
-  // 2. Have no messages.
-  // 3. Have no downward tail.
-  //
-  // ...then we must have scrolled to the bottom on an empty message
-  // list. But that doesn't mean we shouldn't have a bottom tail. We
-  // may later receive messages and have no way to bootstrap
-  // everything. In that case, pretend we scrolled to the top.
-  if (isDone &&
-      this.messages_.length == 0 &&
-      this.tailBelow_ == null) {
-    this.tailBelow_ =
-      this.model_.newTail(null, this.filter_, this.appendMessages_.bind(this));
-    this.tailBelow_.expandTo(TARGET_BUFFER);
-    this.tailBelowOffset_ = 0;
-  }
 
   // If we were waiting to select a message that hadn't arrived yet,
   // refresh that.
@@ -403,6 +364,95 @@ MessageView.prototype.checkAbove_ = function(bounds) {
   return 0;
 };
 
+MessageView.prototype.ensureTailAbove_ = function() {
+  if (this.tailAbove_)
+    return;
+
+  if (this.messages_.length) {
+    this.tailAbove_ = this.model_.newReverseTail(
+      this.messages_[0].id,
+      this.filter_,
+      this.prependMessages_.bind(this));
+    this.tailAboveOffset_ = this.listOffset_;
+  } else {
+    // Bootstrap with the pending center.
+    if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
+      // Don't do anything. We're at the top. There's nothing useful here.
+      //
+      // TODO(davidben): As soon as we get information about the
+      // bottom, we'll query the server. As an optimization, plug
+      // this.tailAbove_ with a dead tail. Alternatively, we can
+      // probably just do a this.atTop_ check up top.
+    } else if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_BOTTOM) {
+      this.tailAbove_ = this.model_.newReverseTail(
+        null,
+        this.filter_,
+        this.prependMessages_.bind(this));
+      this.tailAboveOffset_ = this.listOffset_;
+    } else {
+      this.tailAbove_ = this.model_.newReverseTail(
+        this.pendingCenter_,
+        this.filter_,
+        this.prependMessages_.bind(this));
+      this.tailAboveOffset_ = this.listOffset_;
+    }
+    // We're just starting, so go ahead and request the full buffer.
+    if (this.tailAbove_)
+      this.tailAbove_.expandTo(TARGET_BUFFER);
+  }
+};
+
+MessageView.prototype.ensureTailBelow_ = function() {
+  if (this.tailBelow_)
+    return;
+
+  if (this.messages_.length) {
+    this.tailBelow_ = this.model_.newTail(
+      this.messages_[this.messages_.length - 1].id,
+      this.filter_,
+      this.appendMessages_.bind(this));
+    this.tailBelowOffset_ = this.listOffset_ + this.messages_.length - 1;
+  } else {
+    // Bootstrap with the pending center.
+    if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
+      // Top. null for forward tails means top.
+      this.tailBelow_ = this.model_.newTail(
+        null,
+        this.filter_,
+        this.appendMessages_.bind(this));
+      this.tailBelowOffset_ = this.listOffset_;
+    } else if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_BOTTOM) {
+      // Awkward special-case: if we...
+      //
+      // 1. Reach the end of the tail above.
+      // 2. Have no messages.
+      // 3. Have no downward tail.
+      //
+      // ...then we must have scrolled to the bottom on an empty
+      // message list. But that doesn't mean we shouldn't have a
+      // bottom tail. We may later receive messages and have no way to
+      // bootstrap everything. In that case, pretend we scrolled to
+      // the top.
+      if (this.atTop_) {
+        this.tailBelow_ = this.model_.newTail(
+          null, this.filter_, this.appendMessages_.bind(this));
+        this.tailBelowOffset_ = this.listOffset_;
+      }
+      // Otherwise, we can't create the bottom tail until we get info
+      // from the top. It'll come soon.
+    } else {
+      this.tailBelow_ = this.model_.newTailInclusive(
+        this.pendingCenter_,
+        this.filter_,
+        this.appendMessages_.bind(this));
+      this.tailBelowOffset_ = this.listOffset_;
+    }
+    // We're just starting, so go ahead and request the full buffer.
+    if (this.tailBelow_)
+      this.tailBelow_.expandTo(TARGET_BUFFER);
+  }
+};
+
 MessageView.prototype.checkBuffers_ = function() {
   var bounds = this.container_.getBoundingClientRect();
 
@@ -419,17 +469,13 @@ MessageView.prototype.checkBuffers_ = function() {
   //
   // TODO(davidben): Trigger removal by receiving messages?
   var below = this.checkBelow_(bounds);
-  if (below > 0 && (this.tailBelow_ || this.messages_.length)) {
-    if (!this.tailBelow_ && this.messages_.length) {
-      this.tailBelow_ = this.model_.newTail(
-        this.messages_[this.messages_.length - 1].id,
-        this.filter_,
-        this.appendMessages_.bind(this));
-      this.tailBelowOffset_ = this.listOffset_ + this.messages_.length - 1;
+  if (below > 0) {
+    this.ensureTailBelow_();
+    if (this.tailBelow_) {
+      this.tailBelow_.expandTo(
+        this.listOffset_ + this.nodes_.length - 1 + (TARGET_BUFFER - MIN_BUFFER)
+          - this.tailBelowOffset_);
     }
-    this.tailBelow_.expandTo(
-      this.listOffset_ + this.nodes_.length - 1 + (TARGET_BUFFER - MIN_BUFFER)
-        - this.tailBelowOffset_);
   } else if (below < 0) {
     // Close the current tail.
     if (this.tailBelow_) {
@@ -450,17 +496,13 @@ MessageView.prototype.checkBuffers_ = function() {
   }
 
   var above = this.checkAbove_(bounds);
-  if (above > 0 && (this.tailAbove_ || this.messages_.length)) {
-    if (!this.tailAbove_) {
-      this.tailAbove_ = this.model_.newReverseTail(
-        this.messages_[0].id,
-        this.filter_,
-        this.prependMessages_.bind(this));
-      this.tailAboveOffset_ = this.listOffset_;
+  if (above > 0) {
+    this.ensureTailAbove_();
+    if (this.tailAbove_) {
+      this.tailAbove_.expandTo(
+        this.tailAboveOffset_ -
+          (this.listOffset_ - (TARGET_BUFFER - MIN_BUFFER)));
     }
-    this.tailAbove_.expandTo(
-      this.tailAboveOffset_ -
-        (this.listOffset_ - (TARGET_BUFFER - MIN_BUFFER)));
   } else if (above < 0) {
     // Close the current tail.
     if (this.tailAbove_) {
