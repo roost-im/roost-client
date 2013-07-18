@@ -879,6 +879,32 @@ SelectionTracker.prototype.ensureSelectionVisible_ = function() {
 };
 
 SelectionTracker.prototype.onKeydown_ = function(ev) {
+  function smartNarrow(msg, withInstance, related) {
+    var opts = { };
+    opts.recipient = msg.recipient;
+    if (msg.recipient == "" || msg.recipient[0] == "@") {
+      if (related) {
+        opts.class_key_base = msg.classKeyBase;
+      } else {
+        opts.class_key = msg.classKey;
+      }
+    } else {
+      opts.conversation = msg.conversation;
+    }
+
+    if (withInstance) {
+      if (related) {
+        opts.instance_key_base = msg.instanceKeyBase;
+      } else {
+        opts.instance_key = msg.instanceKey;
+      }
+    }
+
+    console.log(opts, msg);
+    return new Filter(opts);
+  }
+
+
   if (matchKey(ev, 40 /* DOWN */) || matchKey(ev, 74 /* j */)) {
     if (this.adjustSelection_(1, ev.keyCode == 40))
       ev.preventDefault();
@@ -892,41 +918,45 @@ SelectionTracker.prototype.onKeydown_ = function(ev) {
     if (this.selectedMessage_) {
       ev.preventDefault();
       this.ensureSelectionVisible_();
-      this.messageView_.changeFilter(new Filter({
-        recipient: this.selectedMessage_.recipient,
-        class_key_base: this.selectedMessage_.classKeyBase
-      }), this.selectedMessage_.id);
+      this.messageView_.changeFilter(
+        smartNarrow(this.selectedMessage_, false, true),
+        this.selectedMessage_.id);
     }
   } else if (matchKey(ev, 78 /* n */, {altKey:true, shiftKey:true})) {
     if (this.selectedMessage_) {
       ev.preventDefault();
       this.ensureSelectionVisible_();
-      this.messageView_.changeFilter(new Filter({
-        recipient: this.selectedMessage_.recipient,
-        class_key_base: this.selectedMessage_.classKeyBase,
-        instance_key_base: this.selectedMessage_.instanceKeyBase
-      }), this.selectedMessage_.id);
+      this.messageView_.changeFilter(
+        smartNarrow(this.selectedMessage_, true, true),
+        this.selectedMessage_.id);
     }
   } else if (matchKey(ev, 77 /* m */, {altKey:true})) {
     if (this.selectedMessage_) {
       ev.preventDefault();
       this.ensureSelectionVisible_();
-      this.messageView_.changeFilter(new Filter({
-        recipient: this.selectedMessage_.recipient,
-        class_key: this.selectedMessage_.classKey
-      }), this.selectedMessage_.id);
+      this.messageView_.changeFilter(
+        smartNarrow(this.selectedMessage_, false, false),
+        this.selectedMessage_.id);
     }
   } else if (matchKey(ev, 77 /* m */, {altKey:true, shiftKey:true})) {
     if (this.selectedMessage_) {
       ev.preventDefault();
       this.ensureSelectionVisible_();
-      this.messageView_.changeFilter(new Filter({
-        recipient: this.selectedMessage_.recipient,
-        class_key: this.selectedMessage_.classKey,
-        instance_key: this.selectedMessage_.instanceKey
-      }), this.selectedMessage_.id);
+      this.messageView_.changeFilter(
+        smartNarrow(this.selectedMessage_, true, false),
+        this.selectedMessage_.id);
+    }
+  } else if (matchKey(ev, 80 /* p */, {altKey:true})) {
+    var me = this.messageView_.model_.api_.storageManager_.expectedPrincipal_;
+    if (me) {
+      ev.preventDefault();
+      this.messageView_.changeFilter(
+        // TODO(davidben): HACK! Move all this logic into another class.
+        new Filter({recipient: me}),
+        this.isSelectionVisible() ? this.selectedMessage_.id : null);
     }
   } else if (matchKey(ev, 86 /* v */, {shiftKey:true})) {
+    ev.preventDefault();
     this.messageView_.changeFilter(
       new Filter({}),
       this.isSelectionVisible() ? this.selectedMessage_.id : null);
