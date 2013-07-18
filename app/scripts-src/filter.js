@@ -11,10 +11,10 @@ Filter.FIELDS = ['class_key',
                  'sender'];
 
 function Filter(fields) {
-  this.class_key = stringOrNull(fields.class);
-  this.class_key_base = stringOrNull(fields.class_base);
-  this.instance_key = stringOrNull(fields.instance);
-  this.instance_key_base = stringOrNull(fields.instance_base);
+  this.class_key = stringOrNull(fields.class_key);
+  this.class_key_base = stringOrNull(fields.class_key_base);
+  this.instance_key = stringOrNull(fields.instance_key);
+  this.instance_key_base = stringOrNull(fields.instance_key_base);
   this.conversation = stringOrNull(fields.conversation);
   this.recipient = stringOrNull(fields.recipient);
   this.sender = stringOrNull(fields.sender);
