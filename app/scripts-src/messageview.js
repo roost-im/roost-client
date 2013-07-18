@@ -306,14 +306,13 @@ MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
         node.scrollIntoView(true);
       }
     }
-    return;
+  } else {
+    // Otherwise, we reset the universe and use |id| as our new point of
+    // reference.
+    this.reset_();
+    this.pendingCenter_ = id;
+    this.checkBuffers_();
   }
-
-  // Otherwise, we reset the universe and use |id| as our new point of
-  // reference.
-  this.reset_();
-  this.pendingCenter_ = id;
-  this.checkBuffers_();
 };
 
 MessageView.prototype.scrollToTop = function(id) {
