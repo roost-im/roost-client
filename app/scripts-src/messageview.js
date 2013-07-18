@@ -211,6 +211,74 @@ MessageView.prototype.reset_ = function() {
   this.loadingBelow_.scrollIntoView();
 };
 
+MessageView.prototype.changeFilter = function(filter, anchor) {
+  // First: if there is no anchor, set the anchor to be the top
+  // message, arbitrarily.
+  if (anchor == null) {
+    // TODO(davidben): Look for a message on-screen that matches. If
+    // there is one, use it instead.
+    var topIdx = this.findTopMessage();
+    anchor = topIdx == null ? null : this.messages_[topIdx].id;
+  }
+
+  // Next: Save all information about the anchor.
+  var containerTop = this.container_.getBoundingClientRect().top;
+  var anchorTop, anchorMsg;
+  if (anchor == null) {
+    // If the anchor is still null, we have no cached messages and need
+    // to use pendingCenter_. Scroll position is the space in-between.
+    anchorTop = this.loadingBelow_.getBoundingClientRect().top;
+    anchorMsg = null;
+    // Anchor at pendingCenter.
+    anchor = this.pendingCenter_;
+  } else {
+    var anchorNode = this.getNode(anchor);
+    if (anchorNode == null) {
+      // User was crazy and supplied an anchor that wasn't even
+      // on-screen. Screw it, we're putting it on top.
+      anchorTop = containerTop;
+    } else {
+      anchorTop = anchorNode.getBoundingClientRect().top;
+    }
+    anchorMsg = this.getMessage(anchor);
+  }
+
+  // If the anchor doesn't even match the filter, don't use it.
+  if (anchorMsg && !filter.matchesMessage(anchorMsg))
+    anchorMsg = null;
+
+  // TODO(davidben): If the new filter is narrower than the old
+  // filter, then go through all of this.messages_ and bootstrap with
+  // the whole pile.
+
+  // Now we are ready to blow everything away.
+  this.reset_();
+  this.pendingCenter_ = anchor;
+  // Scroll so that loadingBelow_ is where we want anchor to appear.
+  this.container_.scrollTop =
+    (this.loadingBelow_.getBoundingClientRect().top -
+     this.topMarker_.getBoundingClientRect().top) -
+    (anchorTop - containerTop);
+  this.filter_ = filter;
+
+  // TODO(davidben): Silliness with top/bottom. Make this state also
+  // more rederivable or something.
+  if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
+    this.setAtTop_(true);
+    this.setAtBottom_(false);
+  } else if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_BOTTOM) {
+    this.setAtTop_(false);
+    this.setAtBottom_(true);
+  }
+
+  // Apply the bootstrap. That will trigger tails and everything else.
+  if (anchorMsg) {
+    this.appendMessages_([anchorMsg], false);
+  } else {
+    this.checkBuffers_();
+  }
+};
+
 MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
   // TODO(davidben): This function is pretty wonky. Really it should
   // just be two functions.
