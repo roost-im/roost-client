@@ -3,14 +3,14 @@
 function MessageModel(api) {
   this.api_ = api;
 }
-MessageModel.prototype.newTailInclusive = function(start, cb) {
-  return new MessageTail(this, start, true, cb);
+MessageModel.prototype.newTailInclusive = function(start, filter, cb) {
+  return new MessageTail(this, start, true, filter, cb);
 };
-MessageModel.prototype.newTail = function(start, cb) {
-  return new MessageTail(this, start, false, cb);
+MessageModel.prototype.newTail = function(start, filter, cb) {
+  return new MessageTail(this, start, false, filter, cb);
 };
-MessageModel.prototype.newReverseTail = function(start, cb) {
-  return new MessageReverseTail(this, start, cb);
+MessageModel.prototype.newReverseTail = function(start, filter, cb) {
+  return new MessageReverseTail(this, start, filter, cb);
 };
 // This function is NOT meant to be that authoritative. It's just
 // because some places in the message view would find it handle to be
@@ -20,7 +20,7 @@ MessageModel.prototype.compareMessages = function(a, b) {
   return a.receiveTime - b.receiveTime;
 };
 
-function MessageTail(model, start, inclusive, cb) {
+function MessageTail(model, start, inclusive, filter, cb) {
   this.model_ = model;
   // The last thing we sent.
   this.lastSent_ = start;
@@ -32,6 +32,8 @@ function MessageTail(model, start, inclusive, cb) {
   this.messagesSentRecent_ = 0;
   // The number of messages we want ahead of lastSent_.
   this.messagesWanted_ = 0;
+  // The filter to use.
+  this.filter_ = filter;
   // Callback. null on close.
   this.cb_ = cb;
   // The ID of the tail.
@@ -104,12 +106,17 @@ MessageTail.prototype.createTail_ = function() {
     this.tailId_ = this.model_.api_.allocateTailId();
     this.messagesSentRecent_ = 0;  // New tail, so we reset offset.
     this.lastExtend_ = 0;  // Also reset what we've requested.
-    this.socket_.send({
+    var msg = {
       type: "new-tail",
       id: this.tailId_,
       start: this.lastSent_,
       inclusive: this.inclusive_
-    });
+    }
+    for (var key in this.filter_) {
+      if (this.filter_.hasOwnProperty(key) && this.filter_[key] != null)
+        msg[key] = this.filter_[key];
+    }
+    this.socket_.send(msg);
   }
 };
 MessageTail.prototype.onMessages_ = function(msg) {
@@ -126,11 +133,12 @@ MessageTail.prototype.onMessages_ = function(msg) {
     this.cb_(msg.messages, msg.isDone);
 };
 
-function MessageReverseTail(model, start, cb) {
+function MessageReverseTail(model, start, filter, cb) {
   this.model_ = model;
   this.start_ = start;
   this.messagesSent_ = 0;
   this.messagesWanted_ = 0;
+  this.filter_ = filter;
   this.cb_ = cb;
   this.pending_ = false;
   // Exponential back-off thing on error.
@@ -159,6 +167,10 @@ MessageReverseTail.prototype.fireRequest_ = function() {
   }
   if (this.start_ != null)
     params.offset = this.start_;
+  for (var key in this.filter_) {
+    if (this.filter_.hasOwnProperty(key) && this.filter_[key] != null)
+      params[key] = this.filter_[key];
+  }
   // TODO(davidben): Report errors back up somewhere?
   this.pending_ = true;
   this.model_.api_.get("/v1/messages", params).then(function(resp) {

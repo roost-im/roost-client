@@ -78,6 +78,8 @@ function MessageView(model, container) {
   this.tailAbove_ = null;
   this.tailAboveOffset_ = 0;  // The global index of the tail reference.
 
+  this.filter_ = new Filter({});
+
   this.reset_();
 
   this.container_.addEventListener("scroll", this.checkBuffers_.bind(this));
@@ -178,12 +180,12 @@ MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
   this.reset_();
 
   this.tailAbove_ = this.model_.newReverseTail(
-    id, this.prependMessages_.bind(this));
+    id, this.filter_, this.prependMessages_.bind(this));
   this.tailAboveOffset_ = 0;
   this.tailAbove_.expandTo(TARGET_BUFFER);
 
   this.tailBelow_ = this.model_.newTailInclusive(
-    id, this.appendMessages_.bind(this));
+    id, this.filter_, this.appendMessages_.bind(this));
   this.tailBelowOffset_ = 0;
   this.tailBelow_.expandTo(TARGET_BUFFER);
 };
@@ -211,7 +213,8 @@ MessageView.prototype.scrollToTop = function(id) {
   // in a stub tailAbove_ of some sort to deal with this. Or maybe use
   // atTop_.
 
-  this.tailBelow_ = this.model_.newTail(null, this.appendMessages_.bind(this));
+  this.tailBelow_ = this.model_.newTail(null, this.filter_,
+                                        this.appendMessages_.bind(this));
   this.tailBelow_.expandTo(TARGET_BUFFER);
   this.tailBelowOffset_ = 0;
 };
@@ -237,7 +240,7 @@ MessageView.prototype.scrollToBottom = function(id) {
   // horribly when you have zero messages. Also, note all the random
   // comments you had to add to support this.
   this.tailAbove_ = this.model_.newReverseTail(
-    null, this.prependMessages_.bind(this));
+    null, this.filter_, this.prependMessages_.bind(this));
   this.tailAboveOffset_ = 0;
   this.tailAbove_.expandTo(TARGET_BUFFER);
 };
@@ -312,7 +315,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
       this.messages_.length == 0 &&
       this.tailBelow_ == null) {
     this.tailBelow_ =
-      this.model_.newTail(null, this.appendMessages_.bind(this));
+      this.model_.newTail(null, this.filter_, this.appendMessages_.bind(this));
     this.tailBelow_.expandTo(TARGET_BUFFER);
     this.tailBelowOffset_ = 0;
   }
@@ -420,6 +423,7 @@ MessageView.prototype.checkBuffers_ = function() {
     if (!this.tailBelow_ && this.messages_.length) {
       this.tailBelow_ = this.model_.newTail(
         this.messages_[this.messages_.length - 1].id,
+        this.filter_,
         this.appendMessages_.bind(this));
       this.tailBelowOffset_ = this.listOffset_ + this.messages_.length - 1;
     }
@@ -450,6 +454,7 @@ MessageView.prototype.checkBuffers_ = function() {
     if (!this.tailAbove_) {
       this.tailAbove_ = this.model_.newReverseTail(
         this.messages_[0].id,
+        this.filter_,
         this.prependMessages_.bind(this));
       this.tailAboveOffset_ = this.listOffset_;
     }
