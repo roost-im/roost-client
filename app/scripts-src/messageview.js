@@ -258,12 +258,6 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
   // Now we are ready to blow everything away.
   this.reset_();
   this.pendingCenter_ = anchor;
-  // Scroll so that loadingBelow_ is where we want anchor to appear.
-  this.container_.scrollTop =
-    (this.loadingBelow_.getBoundingClientRect().top -
-     this.topMarker_.getBoundingClientRect().top) -
-    (anchorTop - containerTop);
-  this.filter_ = filter;
 
   // TODO(davidben): Silliness with top/bottom. Make this state also
   // more rederivable or something.
@@ -274,6 +268,13 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
     this.setAtTop_(false);
     this.setAtBottom_(true);
   }
+
+  // Scroll so that loadingBelow_ is where we want anchor to appear.
+  this.container_.scrollTop =
+    (this.loadingBelow_.getBoundingClientRect().top -
+     this.topMarker_.getBoundingClientRect().top) -
+    (anchorTop - containerTop);
+  this.filter_ = filter;
 
   // Apply the bootstrap. That will trigger tails and everything else.
   if (anchorMsg) {
