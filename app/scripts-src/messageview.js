@@ -892,7 +892,6 @@ SelectionTracker.prototype.onKeydown_ = function(ev) {
     if (this.selectedMessage_) {
       ev.preventDefault();
       this.ensureSelectionVisible_();
-      console.log(this.selectedMessage_);
       this.messageView_.changeFilter(new Filter({
         recipient: this.selectedMessage_.recipient,
         class_key_base: this.selectedMessage_.classKeyBase
