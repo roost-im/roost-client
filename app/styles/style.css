@@ -95,3 +95,9 @@ pre { padding: 0; margin: 0 }
   background-color: white;
   color:black;
 }
+
+#reset-view {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}

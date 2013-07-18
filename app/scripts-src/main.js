@@ -45,6 +45,13 @@ document.addEventListener("DOMContentLoaded", function() {
   selectionTracker = new SelectionTracker(messageView);
   document.getElementById("messagelist").focus();
 
+  document.getElementById("reset-view").addEventListener("click", function(ev) {
+    ev.preventDefault();
+    // TODO(davidben): Figure out the right anchor! Probably the last
+    // guy you clicked on if it's still in view? I dunno.
+    messageView.changeFilter(new Filter({}));
+  });
+
   if (/#msg-/.test(location.hash)) {
     var msgId = location.hash.substring(5);
     messageView.scrollToMessage(msgId);

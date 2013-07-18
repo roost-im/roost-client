@@ -38,6 +38,7 @@ function matchKey(ev, keyCode, mods) {
 var MESSAGE_VIEW_SCROLL_TOP = 0;
 var MESSAGE_VIEW_SCROLL_BOTTOM = 1;
 
+
 function MessageView(model, container) {
   RoostEventTarget.call(this);
 
@@ -432,10 +433,34 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
     }
   }
 
+  // Save for closure.
+  var id = msg.id, classKey = msg.classKey, instanceKey = msg.instanceKey;
+
   pre.appendChild(a);
+  pre.appendChild(document.createTextNode(" "));
+
+  a = document.createElement("a");
+  a.textContent = msg.class;
+  a.addEventListener("click", function(ev) {
+    ev.preventDefault();
+    this.changeFilter(new Filter({class_key_base: classKey}), id);
+  }.bind(this));
+  pre.appendChild(a);
+
+  pre.appendChild(document.createTextNode(" / "));
+  a = document.createElement("a");
+  a.textContent = msg.instance;
+  a.addEventListener("click", function(ev) {
+    ev.preventDefault();
+    this.changeFilter(new Filter({
+      class_key_base: classKey,
+      instance_key_base: instanceKey
+    }), id);
+  }.bind(this));
+  pre.appendChild(a);
+
   pre.appendChild(document.createTextNode(
-    " " +
-      msg.class + " / " + msg.instance + " / " + msg.sender + "  " +
+    " / " + msg.sender + "  " +
       new Date(msg.time).toString() + "\n"));
 
   pre.appendChild(ztextToDOM(parseZtext(indented)));
@@ -798,6 +823,27 @@ SelectionTracker.prototype.adjustSelection_ = function(direction,
   return true;
 };
 
+SelectionTracker.prototype.isSelectionVisible = function() {
+  var bounds = this.messageView_.container().getBoundingClientRect();
+
+  // We never saw the selection.
+  if (this.selectedMessage_ == null)
+    return false;
+
+  var node = this.getSelectedNode_();
+  if (node == null)
+    return false;
+
+  // Scroll the message into view if not there.
+  var b = node.getBoundingClientRect();
+  if (b.top < bounds.top) {
+    return false;
+  } else if (b.bottom > bounds.bottom) {
+    return false;
+  }
+  return true;
+};
+
 SelectionTracker.prototype.ensureSelectionVisible_ = function() {
   var bounds = this.messageView_.container().getBoundingClientRect();
 
@@ -842,6 +888,49 @@ SelectionTracker.prototype.onKeydown_ = function(ev) {
   } else if (matchKey(ev, 82 /* r */)) {
     ev.preventDefault();
     this.ensureSelectionVisible_();
+  } else if (matchKey(ev, 78 /* n */, {altKey:true})) {
+    if (this.selectedMessage_) {
+      ev.preventDefault();
+      this.ensureSelectionVisible_();
+      console.log(this.selectedMessage_);
+      this.messageView_.changeFilter(new Filter({
+        recipient: this.selectedMessage_.recipient,
+        class_key_base: this.selectedMessage_.classKeyBase
+      }), this.selectedMessage_.id);
+    }
+  } else if (matchKey(ev, 78 /* n */, {altKey:true, shiftKey:true})) {
+    if (this.selectedMessage_) {
+      ev.preventDefault();
+      this.ensureSelectionVisible_();
+      this.messageView_.changeFilter(new Filter({
+        recipient: this.selectedMessage_.recipient,
+        class_key_base: this.selectedMessage_.classKeyBase,
+        instance_key_base: this.selectedMessage_.instanceKeyBase
+      }), this.selectedMessage_.id);
+    }
+  } else if (matchKey(ev, 77 /* m */, {altKey:true})) {
+    if (this.selectedMessage_) {
+      ev.preventDefault();
+      this.ensureSelectionVisible_();
+      this.messageView_.changeFilter(new Filter({
+        recipient: this.selectedMessage_.recipient,
+        class_key: this.selectedMessage_.classKey
+      }), this.selectedMessage_.id);
+    }
+  } else if (matchKey(ev, 77 /* m */, {altKey:true, shiftKey:true})) {
+    if (this.selectedMessage_) {
+      ev.preventDefault();
+      this.ensureSelectionVisible_();
+      this.messageView_.changeFilter(new Filter({
+        recipient: this.selectedMessage_.recipient,
+        class_key: this.selectedMessage_.classKey,
+        instance_key: this.selectedMessage_.instanceKey
+      }), this.selectedMessage_.id);
+    }
+  } else if (matchKey(ev, 86 /* v */, {shiftKey:true})) {
+    this.messageView_.changeFilter(
+      new Filter({}),
+      this.isSelectionVisible() ? this.selectedMessage_.id : null);
   }
 };
 
