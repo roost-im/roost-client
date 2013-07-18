@@ -227,12 +227,12 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
 
   // Next: Save all information about the anchor.
   var containerTop = this.container_.getBoundingClientRect().top;
-  var anchorTop, anchorMsg;
+  var anchorTop, anchorIdx;
   if (anchor == null) {
     // If the anchor is still null, we have no cached messages and need
     // to use pendingCenter_. Scroll position is the space in-between.
     anchorTop = this.loadingBelow_.getBoundingClientRect().top;
-    anchorMsg = null;
+    anchorIdx = null;
     // Anchor at pendingCenter.
     anchor = this.pendingCenter_;
   } else {
@@ -244,16 +244,28 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
     } else {
       anchorTop = anchorNode.getBoundingClientRect().top;
     }
-    anchorMsg = this.getMessage(anchor);
+    anchorIdx = this.getCacheIndex(anchor);
   }
 
-  // If the anchor doesn't even match the filter, don't use it.
-  if (anchorMsg && !filter.matchesMessage(anchorMsg))
-    anchorMsg = null;
-
-  // TODO(davidben): If the new filter is narrower than the old
-  // filter, then go through all of this.messages_ and bootstrap with
-  // the whole pile.
+  var bootstrapBefore = [], bootstrapAfter = [];
+  if (anchorIdx != null) {
+    if (filter.isStricterThan(this.filter_)) {
+      // If we are stricter than the current filter, we can keep the
+      // whole cache.
+      for (var i = 0; i < anchorIdx; i++) {
+        if (filter.matchesMessage(this.messages_[i]))
+          bootstrapBefore.push(this.messages_[i]);
+      }
+      for (var i = anchorIdx; i < this.messages_.length; i++) {
+        if (filter.matchesMessage(this.messages_[i]))
+          bootstrapAfter.push(this.messages_[i]);
+      }
+    } else {
+      // Otherwise, we only keep the anchor message.
+      if (filter.matchesMessage(this.messages_[anchorIdx]))
+        bootstrapAfter.push(this.messages_[anchorIdx]);
+    }
+  }
 
   // Now we are ready to blow everything away.
   this.reset_();
@@ -277,11 +289,11 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
   this.filter_ = filter;
 
   // Apply the bootstrap. That will trigger tails and everything else.
-  if (anchorMsg) {
-    this.appendMessages_([anchorMsg], false);
-  } else {
-    this.checkBuffers_();
-  }
+  if (bootstrapBefore.length)
+    this.prependMessages_(bootstrapBefore, false);
+  if (bootstrapAfter.length)
+    this.appendMessages_(bootstrapAfter, false);
+  this.checkBuffers_();
 };
 
 MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
