@@ -402,7 +402,10 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
   // TODO(davidben): This triggers layout a bunch. Optimize this if needbe.
   var nodes = [];
   var insertReference = this.messagesDiv_.firstChild;
+  // TODO(davidben): Replace all the scrollHeight-based logic with
+  // this.messagesDiv_.getBoundingClientRect().bottom. Less fragile.
   var oldHeight = this.container_.scrollHeight;
+  var oldScrollTop = this.container_.scrollTop;
   for (var i = 0; i < msgs.length; i++) {
     var idx = this.listOffset_ - msgs.length + i;
     this.messageToIndex_[msgs[i].id] = idx;
@@ -413,7 +416,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
     this.messagesDiv_.insertBefore(node, insertReference);
   }
   this.setAtTop_(isDone);
-  this.container_.scrollTop += (this.container_.scrollHeight - oldHeight);
+  this.container_.scrollTop = oldScrollTop + (this.container_.scrollHeight - oldHeight);
 
   this.messages_.unshift.apply(this.messages_, msgs);
   this.nodes_.unshift.apply(this.nodes_, nodes);
@@ -680,28 +683,15 @@ MessageView.prototype.checkBuffersReal_ = function() {
       this.tailAbove_ = null;
     }
 
-    var maxRemoved = MAX_BUFFER - TARGET_BUFFER;
+    var num = MAX_BUFFER - TARGET_BUFFER;
     var oldHeight = this.container_.scrollHeight;
-
-    // Limit the nodes removed; if we remove enough that scrollTop has
-    // to change, the scroll gets off. Do this in two passes so as not
-    // to keep re-triggering layout with
-    // getBoundingClientRect. Unfortunately, this isn't the cause of
-    // us getting stuck.
-    var maxHeight = oldHeight - this.container_.scrollTop - bounds.height;
-    var top = this.nodes_[0].getBoundingClientRect().top;
-    for (var num = 0; num < maxRemoved; num++) {
-      var b = this.nodes_[num + 1].getBoundingClientRect();
-      if (b.top - top >= maxHeight)
-        break;
-    }
-
+    var oldScrollTop = this.container_.scrollTop;
     for (var i = 0; i < num; i++) {
       this.messagesDiv_.removeChild(this.nodes_[i]);
       delete this.messageToIndex_[this.messages_[i].id];
     }
     this.setAtTop_(false);
-    this.container_.scrollTop += (this.container_.scrollHeight - oldHeight);
+    this.container_.scrollTop = oldScrollTop + (this.container_.scrollHeight - oldHeight);
     this.nodes_.splice(0, num);
     this.messages_.splice(0, num);
     this.listOffset_ += num;
