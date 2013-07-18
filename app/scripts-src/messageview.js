@@ -464,7 +464,8 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
   }
 
   // Save for closure.
-  var id = msg.id, classKey = msg.classKey, instanceKey = msg.instanceKey;
+  var id = msg.id;
+  var classKeyBase = msg.classKeyBase, instanceKeyBase = msg.instanceKeyBase;
 
   pre.appendChild(a);
   pre.appendChild(document.createTextNode(" "));
@@ -473,7 +474,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
   a.textContent = msg.class;
   a.addEventListener("click", function(ev) {
     ev.preventDefault();
-    this.changeFilter(new Filter({class_key_base: classKey}), id);
+    this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
   }.bind(this));
   pre.appendChild(a);
 
@@ -483,8 +484,8 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
   a.addEventListener("click", function(ev) {
     ev.preventDefault();
     this.changeFilter(new Filter({
-      class_key_base: classKey,
-      instance_key_base: instanceKey
+      class_key_base: classKeyBase,
+      instance_key_base: instanceKeyBase
     }), id);
   }.bind(this));
   pre.appendChild(a);
