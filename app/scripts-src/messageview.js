@@ -380,6 +380,21 @@ MessageView.prototype.setAtBottom_ = function(atBottom) {
     this.loadingBelow_.classList.remove("msgview-loading-below-at-end");
 };
 
+MessageView.prototype.saveBottomEdgeScroll_ = function() {
+  var oldScrollTop = this.container_.scrollTop;
+  var oldBottomOffset = (this.messagesDiv_.getBoundingClientRect().bottom -
+                         this.topMarker_.getBoundingClientRect().top);
+  return oldScrollTop - oldBottomOffset;
+};
+
+MessageView.prototype.restoreBottomEdgeScroll_ = function(save) {
+  // Assumes that the bottom edge of messagesDiv_ hasn't changed since
+  // the call to saveBottomEdgeScroll_.
+  var newBottomOffset = (this.messagesDiv_.getBoundingClientRect().bottom -
+                         this.topMarker_.getBoundingClientRect().top);
+  this.container_.scrollTop = newBottomOffset + save;
+};
+
 MessageView.prototype.appendMessages_ = function(msgs, isDone) {
   for (var i = 0; i < msgs.length; i++) {
     var idx = this.messages_.length + this.listOffset_;
@@ -402,10 +417,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
   // TODO(davidben): This triggers layout a bunch. Optimize this if needbe.
   var nodes = [];
   var insertReference = this.messagesDiv_.firstChild;
-  // TODO(davidben): Replace all the scrollHeight-based logic with
-  // this.messagesDiv_.getBoundingClientRect().bottom. Less fragile.
-  var oldHeight = this.container_.scrollHeight;
-  var oldScrollTop = this.container_.scrollTop;
+  var save = this.saveBottomEdgeScroll_();
   for (var i = 0; i < msgs.length; i++) {
     var idx = this.listOffset_ - msgs.length + i;
     this.messageToIndex_[msgs[i].id] = idx;
@@ -416,7 +428,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
     this.messagesDiv_.insertBefore(node, insertReference);
   }
   this.setAtTop_(isDone);
-  this.container_.scrollTop = oldScrollTop + (this.container_.scrollHeight - oldHeight);
+  this.restoreBottomEdgeScroll_(save);
 
   this.messages_.unshift.apply(this.messages_, msgs);
   this.nodes_.unshift.apply(this.nodes_, nodes);
@@ -684,14 +696,13 @@ MessageView.prototype.checkBuffersReal_ = function() {
     }
 
     var num = MAX_BUFFER - TARGET_BUFFER;
-    var oldHeight = this.container_.scrollHeight;
-    var oldScrollTop = this.container_.scrollTop;
+    var save = this.saveBottomEdgeScroll_();
     for (var i = 0; i < num; i++) {
       this.messagesDiv_.removeChild(this.nodes_[i]);
       delete this.messageToIndex_[this.messages_[i].id];
     }
     this.setAtTop_(false);
-    this.container_.scrollTop = oldScrollTop + (this.container_.scrollHeight - oldHeight);
+    this.restoreBottomEdgeScroll_(save);
     this.nodes_.splice(0, num);
     this.messages_.splice(0, num);
     this.listOffset_ += num;
