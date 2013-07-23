@@ -70,11 +70,11 @@ TicketManager.prototype.refreshInteractive_ = function() {
     services: [
       {
         principal: ["HTTP", "roost-api.mit.edu"],
-        realm: "ATHENA.MIT.EDU"
+        realm: CONFIG.realm
       },
       {
         principal: ["zephyr", "zephyr"],
-        realm: "ATHENA.MIT.EDU"
+        realm: CONFIG.realm
       }
     ]
   });

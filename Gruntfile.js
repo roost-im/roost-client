@@ -32,10 +32,13 @@ module.exports = function (grunt) {
     };
 
     var appConfig = {
+        realm: 'ATHENA.MIT.EDU',
         server: 'https://roost-api.mit.edu',
         serverPrincipal: 'HTTP/roost-api.mit.edu',
         webathena: 'https://webathena.mit.edu'
     };
+    if (grunt.option('realm'))
+        appConfig.server = grunt.option('realm');
     if (grunt.option('server'))
         appConfig.server = grunt.option('server');
     if (grunt.option('server-principal'))
