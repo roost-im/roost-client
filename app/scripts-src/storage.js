@@ -59,6 +59,10 @@ StorageManager.prototype.isLoggedIn = function() {
   return this.expectedPrincipal_ != null;
 };
 
+StorageManager.prototype.principal = function() {
+  return this.expectedPrincipal_;
+};
+
 StorageManager.prototype.saveTickets = function(sessions) {
   var principal = sessions.server.client.toString();
   if (sessions.zephyr.client.toString() !== principal) {

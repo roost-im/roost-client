@@ -56,8 +56,11 @@ document.getElementById("subscribe").addEventListener("submit", function(ev) {
   var msgClass = this.class.value;
   var msgInstance = this.instance.value;
   var msgRecipient = this.recipient.value;
+  // TODO(davidben): Technically this value might not be available
+  // yet. The login prompt should be modal, but ideally we'd only fill
+  // this in when we get a ticket... allow passing a function as data?
   if (msgRecipient == "%me%")
-    msgRecipient = "davidben@ATHENA.MIT.EDU";
+    msgRecipient = storageManager.principal();
 
   var withZephyr = (msgRecipient && msgRecipient[0] !== '@') ? true : false;
   var data = {
@@ -84,8 +87,11 @@ document.getElementById("unsubscribe").addEventListener("submit", function(ev) {
   var msgClass = this.class.value;
   var msgInstance = this.instance.value;
   var msgRecipient = this.recipient.value;
+  // TODO(davidben): Technically this value might not be available
+  // yet. The login prompt should be modal, but ideally we'd only fill
+  // this in when we get a ticket... allow passing a function as data?
   if (msgRecipient == "%me%")
-    msgRecipient = "davidben@ATHENA.MIT.EDU";
+    msgRecipient = storageManager.principal();
 
   var data = {
     subscription: {
