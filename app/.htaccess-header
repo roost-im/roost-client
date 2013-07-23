@@ -89,6 +89,8 @@ AddDefaultCharset utf-8
 
   # JavaScript
     ExpiresByType application/javascript                "access plus 1 year"
+  # scripts.mit.edu insists on sending the wrong mime type.
+    ExpiresByType application/x-javascript              "access plus 1 year"
 
   # Manifest files
     ExpiresByType application/x-web-app-manifest+json   "access plus 0 seconds"
