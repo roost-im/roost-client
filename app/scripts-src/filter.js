@@ -1,6 +1,15 @@
 function stringOrNull(v) {
   return (v == null) ? null : String(v);
 }
+function boolOrNull(v) {
+  if (v == null)
+    return null;
+  // Filters passed through query params are going to be strings. As
+  // strings, use '0' and '1'.
+  if (typeof v == 'string')
+    v = Number(v);
+  return Boolean(v);
+}
 
 var baseString = function(classInst) {
   return classInst.replace(/^(?:un)*/, '').replace(/(?:\.d)*$/, '');
@@ -12,7 +21,8 @@ Filter.FIELDS = ['class_key',
                  'instance_key_base',
                  'conversation',
                  'recipient',
-                 'sender'];
+                 'sender',
+                 'is_personal'];
 
 function Filter(fields) {
   this.class_key = stringOrNull(fields.class_key);
@@ -22,6 +32,7 @@ function Filter(fields) {
   this.conversation = stringOrNull(fields.conversation);
   this.recipient = stringOrNull(fields.recipient);
   this.sender = stringOrNull(fields.sender);
+  this.is_personal = boolOrNull(fields.is_personal);
 }
 
 Filter.prototype.matchesMessage = function(msg) {
@@ -39,6 +50,8 @@ Filter.prototype.matchesMessage = function(msg) {
     return false;
   if (this.sender != null && this.sender !== msg.sender)
     return false;
+  if (this.is_personal != null && this.is_personal !== msg.isPersonal)
+    return false;
   return true;
 };
 
@@ -49,6 +62,8 @@ Filter.prototype.isStricterThan = function(other) {
   if (other.recipient != null && this.recipient !== other.recipient)
     return false;
   if (other.sender != null && this.sender !== other.sender)
+    return false;
+  if (other.is_personal != null && this.is_personal !== other.is_personal)
     return false;
 
   // Strict class/inst fields.

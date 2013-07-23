@@ -168,8 +168,11 @@ MessageReverseTail.prototype.fireRequest_ = function() {
   if (this.start_ != null)
     params.offset = this.start_;
   for (var i = 0; i < Filter.FIELDS.length; i++) {
-    if (this.filter_[Filter.FIELDS[i]] != null)
+    if (this.filter_[Filter.FIELDS[i]] != null) {
       params[Filter.FIELDS[i]] = this.filter_[Filter.FIELDS[i]];
+      if (typeof params[Filter.FIELDS[i]] == 'boolean')
+        params[Filter.FIELDS[i]] = params[Filter.FIELDS[i]] ? '1' : '0';
+    }
   }
   // TODO(davidben): Report errors back up somewhere?
   this.pending_ = true;

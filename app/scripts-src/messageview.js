@@ -971,14 +971,10 @@ SelectionTracker.prototype.onKeydown_ = function(ev) {
         this.selectedMessage_.id);
     }
   } else if (matchKey(ev, 80 /* p */, {altKey:true})) {
-    var me = this.messageView_.model_.api_.storageManager_.expectedPrincipal_;
-    if (me) {
-      ev.preventDefault();
-      this.messageView_.changeFilter(
-        // TODO(davidben): HACK! Move all this logic into another class.
-        new Filter({recipient: me}),
-        this.isSelectionVisible() ? this.selectedMessage_.id : null);
-    }
+    ev.preventDefault();
+    this.messageView_.changeFilter(
+      new Filter({is_personal: true}),
+      this.isSelectionVisible() ? this.selectedMessage_.id : null);
   } else if (matchKey(ev, 86 /* v */, {shiftKey:true})) {
     ev.preventDefault();
     this.messageView_.changeFilter(
