@@ -1,3 +1,5 @@
+"use strict";
+
 // This regex is very much a heuristic, but there are a few edge cases
 // that would be good to catch:
 //

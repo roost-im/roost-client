@@ -230,6 +230,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('config', function() {
         grunt.file.write(yeomanConfig.app + '/scripts-src/config.js',
+                         '"use strict"\n' +
                          'var CONFIG = ' + JSON.stringify(appConfig) + ';');
 
         var htaccess = grunt.file.read(yeomanConfig.app + '/.htaccess-header');

@@ -1,3 +1,5 @@
+"use strict";
+
 function stringOrNull(v) {
   return (v == null) ? null : String(v);
 }
