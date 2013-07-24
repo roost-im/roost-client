@@ -470,29 +470,81 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
   pre.appendChild(a);
   pre.appendChild(document.createTextNode(" "));
 
-  a = document.createElement("a");
-  a.textContent = msg.class;
-  a.addEventListener("click", function(ev) {
-    ev.preventDefault();
-    this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
-  }.bind(this));
-  pre.appendChild(a);
+  if (msg.isPersonal && msg.classKey == "message") {
+    if (msg.isOutgoing) {
+      pre.appendChild(document.createTextNode("Zephyr sent to "));
+      a = document.createElement("a");
+      a.textContent = msg.recipient;
+      a.addEventListener("click", function(ev) {
+        ev.preventDefault();
+        this.changeFilter(new Filter({conversation: msg.recipient}), id);
+      }.bind(this));
+      pre.appendChild(a);
 
-  pre.appendChild(document.createTextNode(" / "));
-  a = document.createElement("a");
-  a.textContent = msg.instance;
-  a.addEventListener("click", function(ev) {
-    ev.preventDefault();
-    this.changeFilter(new Filter({
-      class_key_base: classKeyBase,
-      instance_key_base: instanceKeyBase
-    }), id);
-  }.bind(this));
-  pre.appendChild(a);
+      pre.appendChild(document.createTextNode(" / "));
+      a = document.createElement("a");
+      a.textContent = msg.instance;
+      a.addEventListener("click", function(ev) {
+        ev.preventDefault();
+        this.changeFilter(new Filter({
+          conversation: msg.recipient,
+          instance_key_base: instanceKeyBase
+        }), id);
+      }.bind(this));
+      pre.appendChild(a);
 
-  pre.appendChild(document.createTextNode(
-    " / " + msg.sender + "  " +
-      new Date(msg.time).toString() + "\n"));
+      pre.appendChild(document.createTextNode(
+        "  " + new Date(msg.time).toString() + "\n"));
+    } else {
+      pre.appendChild(document.createTextNode("Zephyr sent from "));
+      a = document.createElement("a");
+      a.textContent = msg.sender;
+      a.addEventListener("click", function(ev) {
+        ev.preventDefault();
+        this.changeFilter(new Filter({conversation: msg.sender}), id);
+      }.bind(this));
+      pre.appendChild(a);
+
+      pre.appendChild(document.createTextNode(" / "));
+      a = document.createElement("a");
+      a.textContent = msg.instance;
+      a.addEventListener("click", function(ev) {
+        ev.preventDefault();
+        this.changeFilter(new Filter({
+          conversation: msg.sender,
+          instance_key_base: instanceKeyBase
+        }), id);
+      }.bind(this));
+      pre.appendChild(a);
+
+      pre.appendChild(document.createTextNode(
+        "  " + new Date(msg.time).toString() + "\n"));
+    }
+  } else {
+    a = document.createElement("a");
+    a.textContent = msg.class;
+    a.addEventListener("click", function(ev) {
+      ev.preventDefault();
+      this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
+    }.bind(this));
+    pre.appendChild(a);
+
+    pre.appendChild(document.createTextNode(" / "));
+    a = document.createElement("a");
+    a.textContent = msg.instance;
+    a.addEventListener("click", function(ev) {
+      ev.preventDefault();
+      this.changeFilter(new Filter({
+        class_key_base: classKeyBase,
+        instance_key_base: instanceKeyBase
+      }), id);
+    }.bind(this));
+    pre.appendChild(a);
+
+    pre.appendChild(document.createTextNode(
+      " / " + msg.sender + "  " +
+        new Date(msg.time).toString() + "\n"));
+  }
 
   pre.appendChild(ztextToDOM(parseZtext(indented)));
 
