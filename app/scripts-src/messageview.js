@@ -472,7 +472,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
 
   if (msg.isPersonal && msg.classKey == "message") {
     if (msg.isOutgoing) {
-      pre.appendChild(document.createTextNode("Zephyr sent to "));
+      pre.appendChild(document.createTextNode("Zephyr to "));
       a = document.createElement("a");
       a.textContent = msg.recipient;
       a.addEventListener("click", function(ev) {
@@ -496,7 +496,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
       pre.appendChild(document.createTextNode(
         "  " + new Date(msg.time).toString() + "\n"));
     } else {
-      pre.appendChild(document.createTextNode("Zephyr sent from "));
+      pre.appendChild(document.createTextNode("Zephyr from "));
       a = document.createElement("a");
       a.textContent = msg.sender;
       a.addEventListener("click", function(ev) {
