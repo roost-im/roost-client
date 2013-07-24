@@ -118,3 +118,6 @@ pre { padding: 0; margin: 0 }
 #reply-box > .close-button {
     float: right;
 }
+#reply-box textarea {
+    font-family: monospace;
+}
