@@ -906,8 +906,8 @@ SelectionTracker.prototype.ensureSelectionVisible_ = function() {
 SelectionTracker.prototype.onKeydown_ = function(ev) {
   function smartNarrow(msg, withInstance, related) {
     var opts = { };
-    opts.recipient = msg.recipient;
     if (msg.recipient == "" || msg.recipient[0] == "@") {
+      opts.recipient = msg.recipient;
       if (related) {
         opts.class_key_base = msg.classKeyBase;
       } else {
