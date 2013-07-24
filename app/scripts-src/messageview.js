@@ -987,9 +987,6 @@ SelectionTracker.prototype.onKeydown_ = function(ev) {
   } else if (matchKey(ev, 38 /* UP */) || matchKey(ev, 75 /* k */)) {
     if (this.adjustSelection_(-1, ev.keyCode == 38))
       ev.preventDefault();
-  } else if (matchKey(ev, 82 /* r */)) {
-    ev.preventDefault();
-    this.ensureSelectionVisible_();
   } else if (matchKey(ev, 78 /* n */, {altKey:true})) {
     if (this.selectedMessage_) {
       ev.preventDefault();

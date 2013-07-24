@@ -101,3 +101,20 @@ pre { padding: 0; margin: 0 }
     top: 5px;
     right: 5px;
 }
+
+#reply-box {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #eee;
+    border-top: 1px solid black;
+}
+#reply-box > form {
+    display: block;
+    margin: 5px auto;
+    max-width: 600px;
+}
+#reply-box > .close-button {
+    float: right;
+}

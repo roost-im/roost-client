@@ -53,6 +53,17 @@
     <div id="messagelist">
     </div>
 
+    <div id="reply-box" hidden>
+      <button class="close-button">X</button>
+      <form class="zwrite-form">
+        Class: <input name="class" placeholder="message"><br>
+        Instance: <input name="instance" placeholder="personal"><br>
+        Recipient: <input name="recipient"><br>
+        <textarea name="message" rows=10 cols=80></textarea><br>
+        <input type="submit" value="Send">
+      </form>
+    </div>
+
     <div id="renew-template" hidden>
       <div class="dialog-overlay"></div>
       <div class="dialog-dummy-parent">
