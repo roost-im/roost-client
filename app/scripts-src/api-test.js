@@ -151,6 +151,38 @@ document.getElementById("refreshcreds").addEventListener("click", function(ev) {
   }).done();
 });
 
+document.getElementById("zwrite").addEventListener("submit", function(ev) {
+  ev.preventDefault();
+
+  var msgClass = this.class.value || 'message';
+  var msgInstance = this.instance.value || 'personal';
+  var msgRecipient = this.recipient.value;
+  if (msgRecipient.indexOf("@") < 0)
+    msgRecipient = msgRecipient + "@" + CONFIG.realm;
+
+  var data = {
+    message: {
+      class: msgClass,
+      instance: msgInstance,
+      recipient: msgRecipient,
+      opcode: '',
+      signature: 'Sent from Roost',
+      message: this.message.value
+    }
+  };
+  return api.post("/v1/zwrite", data, {
+    withZephyr: true,
+    interactive: true
+  }).then(function(ret) {
+    log("Sent message to <" + msgClass + "," + msgInstance + "," + msgRecipient +
+        ">: " + ret.ack);
+  }, function(err) {
+    log("Failed to send message to <" + msgClass + "," + msgInstance + "," +
+        msgRecipient + ">: " + err);
+    throw err;
+  }).done();
+});
+
 function log(msg) {
   document.getElementById("log").textContent += msg + "\n";
 }
