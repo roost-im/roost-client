@@ -314,8 +314,9 @@ API.prototype.request = function(method, path, params, data, opts, isRetry) {
   } else {
     credsPromise = Q();
   }
-  return Q.all([tokenPromise, credsPromise]).then(function(ret) {
-    var token = ret[0], credentials = ret[1];
+  params = Q(params); data = Q(data);
+  return Q.all([tokenPromise, credsPromise, params, data]).then(function(ret) {
+    var token = ret[0], credentials = ret[1], params = ret[2], data = ret[3];
     var url =
       this.urlBase_ + path + "?access_token=" + encodeURIComponent(token);
     for (var key in params) {
