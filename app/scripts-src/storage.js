@@ -14,6 +14,7 @@ function StorageManager() {
 
   // Once we see a user mismatch, disable storage so we don't write to
   // it anymore.
+  this.deferredPrincipal_ = Q.defer();
   this.expectedPrincipal_ = null;
   this.disabled_ = false;
 
@@ -25,6 +26,7 @@ StorageManager.prototype = Object.create(RoostEventTarget.prototype);
 StorageManager.prototype.principalCheck_ = function(principal) {
   if (this.expectedPrincipal_ == null) {
     this.expectedPrincipal_ = principal;
+    this.deferredPrincipal_.resolve(principal);
   } else if (this.expectedPrincipal_ != principal) {
     this.disabled_ = true;
     this.dispatchEvent({
@@ -60,7 +62,7 @@ StorageManager.prototype.isLoggedIn = function() {
 };
 
 StorageManager.prototype.principal = function() {
-  return this.expectedPrincipal_;
+  return this.deferredPrincipal_.promise;
 };
 
 StorageManager.prototype.saveTickets = function(sessions) {

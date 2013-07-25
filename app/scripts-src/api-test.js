@@ -58,20 +58,21 @@ document.getElementById("subscribe").addEventListener("submit", function(ev) {
   var msgClass = this.class.value;
   var msgInstance = this.instance.value;
   var msgRecipient = this.recipient.value;
-  // TODO(davidben): Technically this value might not be available
-  // yet. The login prompt should be modal, but ideally we'd only fill
-  // this in when we get a ticket... allow passing a function as data?
-  if (msgRecipient == "%me%")
-    msgRecipient = storageManager.principal();
 
   var withZephyr = (msgRecipient && msgRecipient[0] !== '@') ? true : false;
-  var data = {
-    subscriptions: [{
-      class: msgClass,
-      instance: msgInstance,
-      recipient: msgRecipient
-    }],
-  };
+
+  // Resolve %me%.
+  var recipPromise =
+    (msgRecipient == "%me%") ? storageManager.principal() : Q(msgRecipient);
+  var data = recipPromise.then(function(msgRecipient) {
+    return {
+      subscriptions: [{
+        class: msgClass,
+        instance: msgInstance,
+        recipient: msgRecipient
+      }],
+    };
+  });
   return api.post("/v1/subscribe", data, {
     withZephyr: withZephyr,
     interactive: true
@@ -89,19 +90,18 @@ document.getElementById("unsubscribe").addEventListener("submit", function(ev) {
   var msgClass = this.class.value;
   var msgInstance = this.instance.value;
   var msgRecipient = this.recipient.value;
-  // TODO(davidben): Technically this value might not be available
-  // yet. The login prompt should be modal, but ideally we'd only fill
-  // this in when we get a ticket... allow passing a function as data?
-  if (msgRecipient == "%me%")
-    msgRecipient = storageManager.principal();
-
-  var data = {
-    subscription: {
-      class: msgClass,
-      instance: msgInstance,
-      recipient: msgRecipient
-    }
-  };
+  // Resolve %me%.
+  var recipPromise =
+    (msgRecipient == "%me%") ? storageManager.principal() : Q(msgRecipient);
+  var data = recipPromise.then(function(msgRecipient) {
+    return {
+      subscription: {
+        class: msgClass,
+        instance: msgInstance,
+        recipient: msgRecipient
+      },
+    };
+  });
   api.post("/v1/unsubscribe", data, {interactive:true}).then(function() {
     log("Unsubscribed from " + msgClass);
   }, function(err) {
