@@ -205,6 +205,8 @@ function API(urlBase, servicePrincipal, storageManager, ticketManager) {
   this.storageManager_.addEventListener(
     "change", this.loadTokenFromStorage_.bind(this));
 
+  this.userInfo_ = new UserInfo(this);
+
   window.setInterval(this.checkExpiredToken_.bind(this),
                      TOKEN_REFRESH_TIMER);
 
@@ -212,6 +214,10 @@ function API(urlBase, servicePrincipal, storageManager, ticketManager) {
   window.addEventListener("online", this.tryConnectSocket_.bind(this));
 }
 API.prototype = Object.create(RoostEventTarget.prototype);
+
+API.prototype.userInfo = function() {
+  return this.userInfo_;
+};
 
 API.prototype.handleNewToken_ = function(token, expires) {
   // Save locally.
