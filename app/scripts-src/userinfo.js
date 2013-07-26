@@ -1,7 +1,5 @@
 "use strict";
 
-// Wait one second to let changes accumulate.
-var USER_INFO_UPDATE_DELAY = timespan.seconds(1);
 // Minimum amount of time between updates.
 var USER_INFO_UPDATE_THROTTLE = timespan.seconds(10);
 
@@ -18,10 +16,14 @@ function UserInfo(api) {
 
   this.local_ = null;
   this.pending_ = null;
-  this.throttled_ = null;
+
+  this.throttler_ =
+    new Throttler(this.doUpdate_.bind(this), USER_INFO_UPDATE_THROTTLE);
 
   this.ready_ = Q.defer();
 
+  // TODO(davidben): If the initial load fails, we never get the
+  // ready. Retry? Maybe just query on login and save the state.
   this.loadInfo_().done();
 }
 UserInfo.prototype = Object.create(RoostEventTarget.prototype);
@@ -70,15 +72,16 @@ UserInfo.prototype.set = function(key, value) {
     this.local_ = {};
   this.local_[key] = value;
   this.dispatchEvent({type: "change"});
-  this.scheduleUpdate_();
+  this.throttler_.request();
 };
 
-UserInfo.prototype.scheduleUpdate_ = function() {
-  if (this.pending_ || !this.local_ || this.throttled_)
-    return;
-
-  this.pending_ = {};  // Silly marker.
-  setTimeout(this.doUpdate_.bind(this), USER_INFO_UPDATE_DELAY);
+UserInfo.prototype.mergeLocalAndPending_ = function() {
+  for (var key in this.local_) {
+    if (this.local_.hasOwnProperty(key))
+      this.pending_[key] = this.local_[key];
+  }
+  this.local_ = this.pending_;
+  this.pending_ = null;
 };
 
 UserInfo.prototype.doUpdate_ = function() {
@@ -99,36 +102,27 @@ UserInfo.prototype.doUpdate_ = function() {
   // Fire off a test-and-set.
   var newVersion = this.baseVersion_ + 1;
   var newInfoStr = JSON.stringify(newInfo);
-  this.api_.post("/v1/info", {
+  return this.api_.post("/v1/info", {
     expectedVersion: this.baseVersion_,
     info: newInfoStr
   }).then(function(ret) {
     if (ret.updated) {
+      // Success!
       this.handleNewInfo_(newInfoStr, newVersion);
       this.pending_ = null;
-      this.throttled_ = setTimeout(function() {
-        this.throttled_ = null;
-        this.scheduleUpdate_();
-      }.bind(this), USER_INFO_UPDATE_THROTTLE);
     } else {
+      // Failure. Retry.
       this.handleNewInfo_(ret.info, ret.version);
-      throw new UserInfoConflict();
+      this.mergeLocalAndPending_();
+      // Just loop like this. It should be fine.
+      return this.doUpdate_();
     }
-  }.bind(this)).then(null, function(err) {
-    // The pending update failed. Merge them into one diff.
-    for (var key in this.local_) {
-      if (this.local_.hasOwnProperty(key))
-        this.pending_[key] = this.local_[key];
-    }
-    this.local_ = this.pending_;
-    this.pending_ = null;
-
-    // Schedule a new update.
-    if (err instanceof UserInfoConflict) {
-      this.doUpdate_();
-    } else {
-      throw err;
-    }
-  }.bind(this)).done();;
+  }.bind(this), function(err) {
+    // HTTP error.
+    this.mergeLocalAndPending_();
+    // TODO(davidben): The throttler is bad at reporting errors! Make
+    // sure this goes somewhere.
+    throw err;
+  }.bind(this));
     
 };
