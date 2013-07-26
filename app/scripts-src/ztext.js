@@ -133,7 +133,7 @@ function ztextToDOM(ztext, parent) {
         // Sanitize colors, in case future CSS allows for more
         // interesting expressions or something? I doubt it, but I
         // suppose we may as well sanitize...
-        if (/^(?:[a-z]+|#[0-9a-f]{3}|#[0-9a-f]{6})$/.test(color)) {
+        if (/^(?:[a-zA-Z]+|#[0-9a-fA-F]{3}|#[0-9a-fA-F]{6})$/.test(color)) {
           elem.style.color = color;
         }
         // This one is weird and affects the current color.
