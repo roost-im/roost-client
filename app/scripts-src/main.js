@@ -50,17 +50,22 @@ document.addEventListener("DOMContentLoaded", function() {
     var msgRecipient = this.recipient.value;
     if (msgRecipient.indexOf("@") < 0)
       msgRecipient = msgRecipient + "@" + CONFIG.realm;
+    var msgBody = this.message.value;
 
-    var data = {
-      message: {
-        class: msgClass,
-        instance: msgInstance,
-        recipient: msgRecipient,
-        opcode: '',
-        signature: 'Sent from Roost',
-        message: this.message.value
-      }
-    };
+    var data = api.userInfo().ready().then(function() {
+      var zsig = api.userInfo().get('zsig');
+      zsig = (zsig == undefined) ? 'Sent from Roost' : zsig;
+      return {
+        message: {
+          class: msgClass,
+          instance: msgInstance,
+          recipient: msgRecipient,
+          opcode: '',
+          signature: zsig,
+          message: msgBody
+        }
+      };
+    });
     return api.post("/v1/zwrite", data, {
       withZephyr: true,
       interactive: true
