@@ -108,6 +108,7 @@ UserInfo.prototype.doUpdate_ = function() {
       this.pending_ = null;
       this.throttled_ = setTimeout(function() {
         this.throttled_ = null;
+        this.scheduleUpdate_();
       }.bind(this), USER_INFO_UPDATE_THROTTLE);
     } else {
       this.handleNewInfo_(ret.info, ret.version);
