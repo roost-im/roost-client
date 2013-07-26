@@ -59,7 +59,7 @@ function corsRequest(method, url, data) {
 
 var SOCKET_PING_TIMER_VISIBLE = timespan.seconds(5);
 var SOCKET_PING_TIMER_HIDDEN = timespan.minutes(1);
-var SOCKET_PONG_TIMEOUT = timespan.seconds(2);
+var SOCKET_PONG_TIMEOUT = timespan.seconds(5);
 
 var hiddenProp = "hidden", visibilityChange = "visibilitychange";
 if (typeof document.hidden !== "undefined") {
