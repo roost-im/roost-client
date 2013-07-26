@@ -61,19 +61,7 @@ var SOCKET_PING_TIMER_VISIBLE = timespan.seconds(5);
 var SOCKET_PING_TIMER_HIDDEN = timespan.minutes(1);
 var SOCKET_PONG_TIMEOUT = timespan.seconds(5);
 
-var hiddenProp = "hidden", visibilityChange = "visibilitychange";
-if (typeof document.hidden !== "undefined") {
-  ;
-} else if (typeof document.mozHidden !== "undefined") {
-  hiddenProp = "mozHidden";
-  visibilityChange = "mozvisibilitychange";
-} else if (typeof document.msHidden !== "undefined") {
-  hiddenProp = "msHidden";
-  visibilityChange = "msvisibilitychange";
-} else if (typeof document.webkitHidden !== "undefined") {
-  hiddenProp = "webkitHidden";
-  visibilityChange = "webkitvisibilitychange";
-} else {
+if (typeof document.hidden === "undefined") {
   if (window.console && console.log)
     console.log("Page visibility API not supported.");
 }
@@ -90,7 +78,7 @@ function RoostSocket(sockJS) {
 
   this.pongTimer_ = null;
   this.onVisibilityChangeCb_ = this.onVisibilityChange_.bind(this);
-  document.addEventListener(visibilityChange, this.onVisibilityChangeCb_);
+  document.addEventListener("visibilitychange", this.onVisibilityChangeCb_);
 };
 RoostSocket.prototype = Object.create(RoostEventTarget.prototype);
 RoostSocket.prototype.sockJS = function() {
@@ -116,8 +104,8 @@ RoostSocket.prototype.onVisibilityChange_ = function(ev) {
   if (!this.ready_)
     return;
   // Send a new ping if it's time to.
-  if ((document[hiddenProp] && (this.pingHidden_ == null)) ||
-      (!document[hiddenProp] && (this.pingVisible_ == null))) {
+  if ((document.hidden && (this.pingHidden_ == null)) ||
+      (!document.hidden && (this.pingVisible_ == null))) {
     this.sendPing_();
   }
 };
@@ -169,7 +157,7 @@ RoostSocket.prototype.onClose_ = function(ev) {
     this.pingHidden_ = null;
   }
   // Stop listening for visibility changes.
-  document.removeEventListener(visibilityChange, this.onVisibilityChangeCb_);
+  document.removeEventListener("visibilitychange", this.onVisibilityChangeCb_);
   this.ready_ = false;
 };
 

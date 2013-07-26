@@ -174,3 +174,48 @@ if (objCtr.defineProperty) {
 }(self));
 
 }
+
+
+/************************************************************/
+
+// Some code to normalize the Page Visibility API.
+(function() {
+  var hiddenProp, visibilityStateProp, visibilityChange;
+  if (typeof document.hidden !== "undefined") {
+    ;
+  } else if (typeof document.mozHidden !== "undefined") {
+    // Mozilla unprefixed a while back. Can probably punt this?
+    hiddenProp = "mozHidden";
+    visibilityStateProp = "mozVisibilityState";
+    visibilityChange = "mozvisibilitychange";
+  } else if (typeof document.webkitHidden !== "undefined") {
+    hiddenProp = "webkitHidden";
+    visibilityStateProp = "webkitVisibilityState";
+    visibilityChange = "webkitvisibilitychange";
+  }
+  // There's also the MS prefix, but it seems IE10 shipped without and
+  // IE9 never had it?
+
+  if (hiddenProp) {
+    Object.defineProperty(document, "hidden", {
+      configurable: true,
+      enumerable: true,
+      get: function() {
+        return this[hiddenProp];
+      }
+    });
+    Object.defineProperty(document, "visibilityState", {
+      configurable: true,
+      enumerable: true,
+      get: function() {
+        return this[visibilityStateProp];
+      }
+    });
+    document.addEventListener(visibilityChange, function(ev) {
+      // Can we use Event constructors yet?
+      var ev = document.createEvent("Event");
+      ev.initEvent("visibilitychange", true/*bubbles*/, false/*cancelable*/);
+      document.dispatchEvent(ev);
+    });
+  }
+}());
