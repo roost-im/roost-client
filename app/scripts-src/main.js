@@ -98,23 +98,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
   messageList.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
-      ev.preventDefault();
-      selectionTracker.ensureSelectionVisible_();
-
-      var form = replyBox.getElementsByClassName("zwrite-form")[0];
       var msg = selectionTracker.selectedMessage_;
+      if (msg) {
+        ev.preventDefault();
+        selectionTracker.ensureSelectionVisible_();
 
-      form.class.value = (msg.class === "message") ? "" : msg.class;
-      form.instance.value = (msg.instance === "personal") ? "" : msg.instance;
-      form.message.value = "";
-      if (msg.isPersonal && !msg.isOutgoing) {
-        form.recipient.value = msg.sender;
-      } else {
-        form.recipient.value = msg.recipient;
+        var form = replyBox.getElementsByClassName("zwrite-form")[0];
+
+        form.class.value = (msg.class === "message") ? "" : msg.class;
+        form.instance.value = (msg.instance === "personal") ? "" : msg.instance;
+        form.message.value = "";
+        if (msg.isPersonal && !msg.isOutgoing) {
+          form.recipient.value = msg.sender;
+        } else {
+          form.recipient.value = msg.recipient;
+        }
+
+        replyBox.removeAttribute("hidden");
+        form.message.focus();
       }
-
-      replyBox.removeAttribute("hidden");
-      form.message.focus();
     } else if (matchKey(ev, 90 /* z */)) {
       ev.preventDefault();
 
