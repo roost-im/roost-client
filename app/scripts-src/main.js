@@ -45,22 +45,22 @@ document.addEventListener("DOMContentLoaded", function() {
   )[0].addEventListener("submit", function(ev) {
     ev.preventDefault();
 
-    var msgClass = this.class.value || 'message';
-    var msgInstance = this.instance.value || 'personal';
+    var msgClass = this.class.value || "message";
+    var msgInstance = this.instance.value || "personal";
     var msgRecipient = this.recipient.value;
     if (msgRecipient.indexOf("@") < 0)
       msgRecipient = msgRecipient + "@" + CONFIG.realm;
     var msgBody = this.message.value;
 
     var data = api.userInfo().ready().then(function() {
-      var zsig = api.userInfo().get('zsig');
-      zsig = (zsig == undefined) ? 'Sent from Roost' : zsig;
+      var zsig = api.userInfo().get("zsig");
+      zsig = (zsig == undefined) ? "Sent from Roost" : zsig;
       return {
         message: {
           class: msgClass,
           instance: msgInstance,
           recipient: msgRecipient,
-          opcode: '',
+          opcode: "",
           signature: zsig,
           message: msgBody
         }
