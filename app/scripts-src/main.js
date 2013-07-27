@@ -105,8 +105,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         var form = replyBox.getElementsByClassName("zwrite-form")[0];
 
-        form.class.value = (msg.class === "message") ? "" : msg.class;
-        form.instance.value = (msg.instance === "personal") ? "" : msg.instance;
+        form.class.value = (msg.classKey === "message") ? "" : msg.class;
+        form.instance.value = (msg.instanceKey === "personal") ? "" : msg.instance;
         form.message.value = "";
         if (msg.isPersonal && !msg.isOutgoing) {
           form.recipient.value = msg.sender;
