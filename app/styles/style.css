@@ -11,6 +11,10 @@ body {
   padding-top: 1px;
   margin-top: -1px;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 #messagelist {
   width: 100%;
   height: 100%;
@@ -27,14 +31,19 @@ body {
 }
 
 pre { padding: 0; margin: 0 }
-.message {
-  padding: 10px;
+.message::before {
+  content: "  ";
 }
-.message:hover {
-  background-color: #eee;
+.message a.unauth::before {
+  content: "UNAUTH: ";
 }
-.message-selected, .message-selected:hover {
-  background-color: yellow;
+.message:hover a {
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.message-selected::before, .message-selected:hover::before {
+  content: "->";
 }
 
 .msgview-top-marker {

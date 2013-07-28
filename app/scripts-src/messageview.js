@@ -462,12 +462,10 @@ var COLORS = ["white", "yellow", "red",
               "orange", "fuchsia", "lightgreen", "skyblue"];
 MessageView.prototype.formatMessage_ = function(idx, msg) {
   var pre = document.createElement("pre");
-  var indented = "   " +
-    msg.message.replace(/\s+$/, '').split("\n").join("\n   ");
+  var indented = "       " +
+    msg.message.replace(/\s+$/, '').split("\n").join("\n       ");
 
-  var a = document.createElement("a");
-  a.href = "#msg-" + msg.id;
-  a.textContent = "[LINK]";
+  var a;
 
   var number = msg.number;
   if (number == undefined) {
@@ -485,59 +483,45 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
   var id = msg.id;
   var classKeyBase = msg.classKeyBase, instanceKeyBase = msg.instanceKeyBase;
 
-  pre.appendChild(a);
   pre.appendChild(document.createTextNode(" "));
 
   if (msg.isPersonal && msg.classKey == "message") {
-    if (msg.isOutgoing) {
-      pre.appendChild(document.createTextNode("Zephyr to "));
-      a = document.createElement("a");
-      a.textContent = msg.recipient;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({conversation: msg.recipient}), id);
-      }.bind(this));
-      pre.appendChild(a);
+    var params = msg.isOutgoing ? {
+      direction: "to ",
+      other: msg.recipient,
+    } : {
+      direction: "from ",
+      other: msg.sender,
+    };
 
-      pre.appendChild(document.createTextNode(" / "));
-      a = document.createElement("a");
-      a.textContent = msg.instance;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({
-          conversation: msg.recipient,
-          instance_key_base: instanceKeyBase
-        }), id);
-      }.bind(this));
-      pre.appendChild(a);
+    pre.appendChild(document.createTextNode("Zephyr [-i "));
 
-      pre.appendChild(document.createTextNode(
-        "  " + new Date(msg.time).toString() + "\n"));
-    } else {
-      pre.appendChild(document.createTextNode("Zephyr from "));
-      a = document.createElement("a");
-      a.textContent = msg.sender;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({conversation: msg.sender}), id);
-      }.bind(this));
-      pre.appendChild(a);
+    a = document.createElement("a");
+    a.textContent = msg.instance;
+    a.addEventListener("click", function(ev) {
+      ev.preventDefault();
+      this.changeFilter(new Filter({
+        conversation: params.other,
+        instance_key_base: instanceKeyBase
+      }), id);
+    }.bind(this));
+    a.title = "filter to conversation with " + params.other
+      + " on instance " + instanceKeyBase;
+    pre.appendChild(a);
 
-      pre.appendChild(document.createTextNode(" / "));
-      a = document.createElement("a");
-      a.textContent = msg.instance;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({
-          conversation: msg.sender,
-          instance_key_base: instanceKeyBase
-        }), id);
-      }.bind(this));
-      pre.appendChild(a);
+    pre.appendChild(document.createTextNode("] " + params.direction));
 
-      pre.appendChild(document.createTextNode(
-        "  " + new Date(msg.time).toString() + "\n"));
+    a = document.createElement("a");
+    a.textContent = params.other;
+    a.addEventListener("click", function(ev) {
+      ev.preventDefault();
+      this.changeFilter(new Filter({conversation: params.other}), id);
+    }.bind(this));
+    a.title = "filter to conversation with " + params.other;
+    if (!msg.auth) {
+      a.className = "unauth";
     }
+    pre.appendChild(a);
   } else {
     a = document.createElement("a");
     a.textContent = msg.class;
@@ -545,6 +529,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
       ev.preventDefault();
       this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
     }.bind(this));
+    a.title = "filter to conversation on class " + classKeyBase;
     pre.appendChild(a);
 
     pre.appendChild(document.createTextNode(" / "));
@@ -557,12 +542,38 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
         instance_key_base: instanceKeyBase
       }), id);
     }.bind(this));
+    a.title = "filter to conversation on class " + classKeyBase
+      + " and instance " + instanceKeyBase;
     pre.appendChild(a);
 
-    pre.appendChild(document.createTextNode(
-      " / " + msg.sender + "  " +
-        new Date(msg.time).toString() + "\n"));
+    pre.appendChild(document.createTextNode(" / "));
+    a = document.createElement("span");
+    a.textContent = msg.sender;
+    if (!msg.auth) {
+      a.className = "unauth";
+    }
+    pre.appendChild(a);
   }
+
+  if (msg.opcode) {
+    pre.appendChild(document.createTextNode(" [" + msg.opcode + "]"));
+  }
+
+  pre.appendChild(document.createTextNode("  "));
+  a = document.createElement("a");
+  a.href = "#msg-" + msg.id;
+  a.textContent = new Date(msg.time).toLocaleString();
+  a.title = new Date(msg.time).toString();
+  pre.appendChild(a);
+
+  if (msg.signature) {
+    // Okay. So technically, basically anything can have a newline in it --
+    // sender, instance, whatever -- and that makes things look ugly. However,
+    // it only commonly occurs in signatures, so we should cover that case.
+    pre.appendChild(document.createTextNode("  (" +
+      msg.signature.replace(/\n/g, " ") + ")"));
+  }
+  pre.appendChild(document.createTextNode("\n"));
 
   pre.appendChild(ztextToDOM(parseZtext(indented)));
 
