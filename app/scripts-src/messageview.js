@@ -785,10 +785,12 @@ MessageView.prototype.onKeydown_ = function(ev) {
   // the currently buffered view (totally meaningless), they go to the
   // top/bottom of the full message list.
   if (matchKey(ev, 36 /* HOME */) ||
+      matchKey(ev, 188 /* < */, {shiftKey:1}) ||
       matchKey(ev, 32 /* UP */, {metaKey:1})) {
     ev.preventDefault();
     this.scrollToTop();
   } else if (matchKey(ev, 35 /* END */) ||
+             matchKey(ev, 190 /* > */, {shiftKey:1}) ||
              matchKey(ev, 40 /* DOWN */, {metaKey:1})) {
     ev.preventDefault();
     this.scrollToBottom();
