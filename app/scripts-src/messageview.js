@@ -91,8 +91,16 @@ function MessageView(model, container) {
 
   this.container_.addEventListener("scroll", this.checkBuffers_.bind(this));
   this.container_.addEventListener("keydown", this.onKeydown_.bind(this));
+  this.container_.addEventListener("scroll", this.snapView_.bind(this));
 }
 MessageView.prototype = Object.create(RoostEventTarget.prototype);
+
+MessageView.prototype.snapView_ = function() {
+  var top = document.elementFromPoint(0, 0);
+  if (top.tagName.toLowerCase() == 'pre') {
+    this.container_.scrollTop = top.offsetTop;
+  }
+};
 
 MessageView.prototype.container = function() {
   return this.container_;

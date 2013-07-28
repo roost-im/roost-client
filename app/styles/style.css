@@ -7,14 +7,12 @@ html, body {
   margin: 0;
 }
 body {
-  padding-left: 10px;
-  padding-right: 10px;
   /* asdfsklj margin collapsing */
   padding-top: 1px;
   margin-top: -1px;
 }
 #messagelist {
-  max-width: 650px;
+  width: 100%;
   height: 100%;
   margin: 0 auto 0 auto;
 
@@ -24,12 +22,8 @@ body {
 #messagelist:focus {
   outline: none;
 }
-
-@supports (height: calc(100% - 20px)) {
-  #messagelist {
-    height: calc(100% - 20px);
-    margin: 10px auto 10px auto;
-  }
+#messagelist::-webkit-scrollbar {
+  display: none;
 }
 
 pre { padding: 0; margin: 0 }
