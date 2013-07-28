@@ -129,6 +129,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
       replyBox.removeAttribute("hidden");
       form.class.focus();
+    } else if (matchKey(ev, 73 /* i */)) {
+      var msg = selectionTracker.selectedMessage_;
+      if (msg) {
+        console.log(msg);
+      }
     }
   });
 
