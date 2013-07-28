@@ -448,8 +448,8 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
   this.checkBuffers_();
 };
 
-var COLORS = ["black", "maroon", "red",
-              "purple", "fuchsia", "green", "blue"];
+var COLORS = ["white", "yellow", "red",
+              "orange", "fuchsia", "lightgreen", "skyblue"];
 MessageView.prototype.formatMessage_ = function(idx, msg) {
   var pre = document.createElement("pre");
   var indented = "   " +

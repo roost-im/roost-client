@@ -16,7 +16,7 @@ body {
   height: 100%;
   margin: 0 auto 0 auto;
 
-  background: #ddd;
+  background: black;
   overflow: scroll;
 }
 #messagelist:focus {
