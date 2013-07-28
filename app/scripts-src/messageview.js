@@ -296,9 +296,11 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
   this.checkBuffers_();
 };
 
-MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
+MessageView.prototype.scrollToMessage = function(id, opts) {
   // TODO(davidben): This function is pretty wonky. Really it should
   // just be two functions.
+  opts = opts || {};
+  var bootstrap = opts.bootstrap, alignWithTop = opts.alignWithTop;
   if (bootstrap == undefined || alignWithTop == undefined)
     alignWithTop = true;
 
@@ -939,19 +941,25 @@ SelectionTracker.prototype.ensureSelectionVisible_ = function() {
         this.messageView_.model_.compareMessages(this.selectedMessage_,
                                                  firstMessage) < 0;
     }
-    this.messageView_.scrollToMessage(
-      this.selectedMessage_.id, this.selectedMessage_, alignWithTop);
+    this.messageView_.scrollToMessage(this.selectedMessage_.id, {
+      bootstrap: this.selectedMessage_,
+      alignWithTop: alignWithTop
+    });
     return;
   }
 
   // Scroll the message into view if not there.
   var b = node.getBoundingClientRect();
   if (b.top < bounds.top) {
-    this.messageView_.scrollToMessage(
-      this.selectedMessage_.id, this.selectedMessage_, true);
+    this.messageView_.scrollToMessage(this.selectedMessage_.id, {
+      bootstrap: this.selectedMessage_,
+      alignWithTop: true
+    });
   } else if (b.bottom > bounds.bottom) {
-    this.messageView_.scrollToMessage(
-      this.selectedMessage_.id, this.selectedMessage_, false);
+    this.messageView_.scrollToMessage(this.selectedMessage_.id, {
+      bootstrap: this.selectedMessage_,
+      alignWithTop: false
+    });
   }
 };
 
