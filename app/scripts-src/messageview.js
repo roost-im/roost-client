@@ -213,6 +213,8 @@ MessageView.prototype.reset_ = function() {
   this.setAtTop_(false);
   this.setAtBottom_(false);
   this.loadingBelow_.scrollIntoView();
+
+  this.dispatchEvent({type: "cachechanged"});
 };
 
 MessageView.prototype.changeFilter = function(filter, anchor) {
