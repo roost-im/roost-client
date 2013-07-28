@@ -312,6 +312,9 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
   if (bootstrapAfter.length)
     this.appendMessages_(bootstrapAfter, false);
   this.checkBuffers_();
+
+  var desc = filter.toString();
+  document.title = desc ? desc + " - roost" : "roost";
 };
 
 MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
