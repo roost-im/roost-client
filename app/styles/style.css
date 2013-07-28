@@ -1,10 +1,12 @@
 [hidden] { display: none !important }
+* { font: 10pt/15px monospace; }
 
 /* Random styling just to position some random box*/
 html, body {
   height: 100%;
   padding: 0;
   margin: 0;
+  overflow: hidden;
 }
 body {
   /* asdfsklj margin collapsing */
@@ -37,10 +39,12 @@ pre { padding: 0; margin: 0 }
 .message a.unauth::before {
   content: "UNAUTH: ";
 }
-.message:hover a {
-  font-weight: bold;
+.message:hover a, #reply-bar:hover a, .zwrite-form:hover a {
   text-decoration: underline;
   cursor: pointer;
+}
+.message:hover a:hover, #reply-bar:hover a:hover, .zwrite-form:hover a:hover {
+  font-weight: bold;
 }
 .message-selected::before, .message-selected:hover::before {
   content: "->";
@@ -111,17 +115,63 @@ pre { padding: 0; margin: 0 }
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #eee;
-    border-top: 1px solid black;
+    padding-bottom: 15px;
+    font-family: monospace;
+    background-color: black;
 }
 #reply-box > form {
+    color: white;
     display: block;
-    margin: 5px auto;
-    max-width: 650px;
+    max-width: 655px;
 }
-#reply-box > .close-button {
+#reply-box > form a {
     float: right;
+}
+#reply-box span[id|="zwrite"] {
+    display: inline-block;
+    background: white;
+    color: black;
+    padding: 0 1em;
+}
+#reply-box .collapsed:not(:hover) {
+    color: #888;
+}
+#reply-box .collapsed label::after {
+    content: "...";
+}
+#reply-box .collapsed span {
+    display: none;
 }
 #reply-box textarea {
     font-family: monospace;
+    padding: 0;
+    margin: 3px 0;
+    border: none;
+    display: block;
+}
+
+#reply-bar {
+    background-color: white;
+    padding: 0 16px;
+}
+#reply-bar > a, #reply-bar > span {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    position: relative;
+    background: white;
+    padding: 0 8px;
+}
+#reply-bar > hr {
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    height: 8px;
+    border-style: solid;
+    border-width: 1px;
+}
+#reply-bar > .close-button {
+    float: right;
 }
