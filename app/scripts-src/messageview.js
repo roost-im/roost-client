@@ -107,8 +107,12 @@ MessageView.prototype = Object.create(RoostEventTarget.prototype);
 
 MessageView.prototype.snapView_ = function() {
   var top = document.elementFromPoint(0, 0);
-  if (top.tagName.toLowerCase() == 'pre') {
-    this.container_.scrollTop = top.offsetTop;
+  while (top.tagName) {
+    if (top.tagName.toLowerCase() == "pre") {
+      this.container_.scrollTop = top.offsetTop;
+      break;
+    }
+    top = top.parentNode;
   }
 };
 
