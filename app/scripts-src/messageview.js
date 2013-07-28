@@ -508,19 +508,19 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
         instance_key_base: instanceKeyBase
       }), id);
     }.bind(this));
-    a.title = "filter to conversation with " + params.other
+    a.title = "filter to conversation with " + stripRealm(params.other)
       + " on instance " + instanceKeyBase;
     pre.appendChild(a);
 
     pre.appendChild(document.createTextNode("] " + params.direction));
 
     a = document.createElement("a");
-    a.textContent = params.other;
+    a.textContent = stripRealm(params.other);
     a.addEventListener("click", function(ev) {
       ev.preventDefault();
       this.changeFilter(new Filter({conversation: params.other}), id);
     }.bind(this));
-    a.title = "filter to conversation with " + params.other;
+    a.title = "filter to conversation with " + stripRealm(params.other);
     if (!msg.auth) {
       a.className = "unauth";
     }
@@ -551,7 +551,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
 
     pre.appendChild(document.createTextNode(" / "));
     a = document.createElement("span");
-    a.textContent = msg.sender;
+    a.textContent = stripRealm(msg.sender);
     if (!msg.auth) {
       a.className = "unauth";
     }
