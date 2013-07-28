@@ -45,7 +45,7 @@ pre { padding: 0; margin: 0 }
 }
 .msgview-loading-above, .msgview-loading-below {
   text-align: center;
-  color: #444;
+  color: white;
   height: 100%;
   position: relative;
 }
@@ -94,6 +94,7 @@ pre { padding: 0; margin: 0 }
     position: absolute;
     top: 5px;
     right: 5px;
+    display: none;
 }
 
 #reply-box {

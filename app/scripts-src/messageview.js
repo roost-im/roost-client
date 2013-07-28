@@ -54,17 +54,27 @@ function MessageView(model, container) {
 
   this.loadingAbove_ = document.createElement("div");
   this.loadingAbove_.classList.add("msgview-loading-above");
-  var seriously = document.createElement("div");
-  seriously.classList.add("msgview-loading-above-text");
-  seriously.textContent = "Loading...";
-  this.loadingAbove_.appendChild(seriously);
+  var orly = document.createElement("pre");
+  orly.classList.add("msgview-loading-above-text");
+  orly.textContent = "^ ^\n      \u02d8v\u02d8 . z Z\n(^^^)\n-m-m-";
+  this.loadingAbove_.appendChild(orly);
 
   this.loadingBelow_ = document.createElement("div");
   this.loadingBelow_.classList.add("msgview-loading-below");
-  seriously = document.createElement("div");
-  seriously.classList.add("msgview-loading-below-text");
-  seriously.textContent = "Loading...";
-  this.loadingBelow_.appendChild(seriously);
+  var yarly = document.createElement("pre");
+  yarly.classList.add("msgview-loading-below-text");
+  yarly.textContent = "^ ^\n      \u02d8v\u02d8 . z Z\n(^^^)\n-m-m-";
+  this.loadingBelow_.appendChild(yarly);
+
+  setInterval(function() {
+    var text = orly.textContent;
+    text = text.replace(". z Z", " wat ");
+    text = text.replace(". z  ", ". z Z");
+    text = text.replace(".    ", ". z  ");
+    text = text.replace(" wat ", ".    ");
+    orly.textContent = text;
+    yarly.textContent = text;
+  }, 1000);
 
   this.messagesDiv_ = document.createElement("div");
 
