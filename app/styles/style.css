@@ -47,6 +47,8 @@ pre { padding: 0; margin: 0 }
   font-weight: bold;
 }
 .message-selected::before, .message-selected:hover::before {
+  font-weight: bold;
+  color: white;
   content: "->";
 }
 
