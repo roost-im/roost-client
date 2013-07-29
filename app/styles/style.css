@@ -39,11 +39,11 @@ pre { padding: 0; margin: 0 }
 .message a.unauth::before {
   content: "UNAUTH: ";
 }
-.message:hover a, #barney:hover a, .zwrite-form:hover a {
+.message:hover a, #barney:hover a, form:hover a {
   text-decoration: underline;
   cursor: pointer;
 }
-.message:hover a:hover, #barney:hover a:hover, .zwrite-form:hover a:hover {
+.message:hover a:hover, #barney:hover a:hover, form:hover a:hover {
   font-weight: bold;
 }
 .message-selected::before, .message-selected:hover::before {
@@ -127,7 +127,7 @@ pre { padding: 0; margin: 0 }
 #reply-box > form a {
     float: right;
 }
-#reply-box span[id|="zwrite"] {
+#reply-box span[contenteditable=true] {
     display: inline-block;
     background: white;
     color: black;

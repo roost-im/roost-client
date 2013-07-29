@@ -40,7 +40,8 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   var replyBox = document.getElementById("reply-box");
-  var form = replyBox.getElementsByClassName("zwrite-form")[0];
+  var zwriteForm = replyBox.getElementsByClassName("zwrite-form")[0];
+  var filterForm = replyBox.getElementsByClassName("filter-form")[0];
 
   replyBox.getElementsByClassName(
     "zwrite-send"
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     if (message.recipient.indexOf("@") < 0)
       message.recipient += "@" + CONFIG.realm;
-    message.message = form.message.value;
+    message.message = zwriteForm.message.value;
 
     return api.post("/v1/zwrite", { message: message }, {
       withZephyr: true,
@@ -69,22 +70,51 @@ document.addEventListener("DOMContentLoaded", function() {
     }).then(function(ret) {
       console.log("Sent:", ret.ack);
     }).finally(function() {
-      hideForm(true);
+      showForm(null);
       messageList.focus();
     }).done();
   });
+
   replyBox.getElementsByClassName(
-    "close-button"
+    "filter-send"
   )[0].addEventListener("click", function(ev) {
-    hideForm(true);
-    messageList.focus();
+    filterSubmit();
   });
+
   document.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 27 /* ESC */)) {
-      hideForm(true);
+      showForm(null);
       messageList.focus();
     }
   });
+
+  var forms = document.forms;
+  for (var i = 0; i < forms.length; ++i) {
+    forms[i].getElementsByClassName(
+      "close-button"
+    )[0].addEventListener("click", function(ev) {
+      showForm(null);
+      messageList.focus();
+    });
+
+    var spans = forms[i].getElementsByTagName("span");
+    for (var j = 0; j < spans.length; ++j) {
+      if (spans[j].contentEditable !== "true")
+        continue;
+      // If we pressed enter on a fake text input, go to the big textarea if
+      // there is one (zwrite) or just submit otherwise (filter).
+      spans[j].addEventListener("keydown", function(ev) {
+        if (matchKey(ev, 13 /* RET */)) {
+          ev.preventDefault();
+          var textbox = this.getElementsByTagName("textarea")[0];
+          if (textbox)
+            textbox.focus();
+          else
+            this.getElementsByClassName("submit")[0].dispatchEvent(new Event("click"));
+        }
+      }.bind(forms[i]));
+    }
+  }
 
   replyBox.getElementsByClassName(
     "send-button"
@@ -95,7 +125,8 @@ document.addEventListener("DOMContentLoaded", function() {
   replyBox.getElementsByClassName(
     "filter-button"
   )[0].addEventListener("click", function(ev) {
-    alert("you can't filter yet QvQ");
+    ev.preventDefault();
+    filter();
   });
   replyBox.getElementsByClassName(
     "unfilter-button"
@@ -125,8 +156,11 @@ document.addEventListener("DOMContentLoaded", function() {
   window.addEventListener("resize", snapBox);
   snapBox();
 
-  var hideForm = function(hidep) {
-    form.hidden = hidep;
+  var showForm = function(which) {
+    for (var i = 0; i < forms.length; ++i)
+      forms[i].hidden = true;
+    if (which !== null)
+      document.getElementsByClassName(which)[0].hidden = false;
     snapBox();
 
     var yawai = document.getElementById("yawai");
@@ -161,11 +195,21 @@ document.addEventListener("DOMContentLoaded", function() {
   var zwrite = function() {
     document.getElementById('zwrite-class').textContent = "message";
     document.getElementById('zwrite-instance').textContent = "personal";
-    form.message.value = "";
+    zwriteForm.message.value = "";
     document.getElementById('zwrite-recipient').textContent = "";
+    document.getElementById('zwrite-opcode').textContent = "";
 
-    hideForm(false);
+    showForm('zwrite-form');
     document.getElementById('zwrite-class').focus();
+  };
+  var filter = function() {
+    document.getElementById('filter-class').textContent = "";
+    document.getElementById('filter-instance').textContent = "";
+    document.getElementById('filter-sender').textContent = "";
+    document.getElementById('filter-conversation').textContent = "";
+
+    showForm('filter-form');
+    document.getElementById('filter-class').focus();
   };
   messageList.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
@@ -176,16 +220,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
         document.getElementById('zwrite-class').textContent = msg.class;
         document.getElementById('zwrite-instance').textContent = msg.instance;
-        form.message.value = "";
+        zwriteForm.message.value = "";
         document.getElementById('zwrite-recipient').textContent = stripRealm(
           (msg.isPersonal && !msg.isOutgoing) ? msg.sender : msg.recipient);
+        document.getElementById('zwrite-opcode').textContent = "";
 
-        hideForm(false);
-        form.message.focus();
+        showForm('zwrite-form');
+        zwriteForm.message.focus();
       }
     } else if (matchKey(ev, 90 /* z */)) {
       ev.preventDefault();
       zwrite();
+    } else if (matchKey(ev, 86 /* v */)) {
+      ev.preventDefault();
+      filter();
     } else if (matchKey(ev, 73 /* i */)) {
       var msg = selectionTracker.selectedMessage_;
       if (msg) {

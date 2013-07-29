@@ -82,7 +82,18 @@
              <span contenteditable="true" id="zwrite-opcode"></span></span>
         </div>
         <textarea name="message" rows=8 cols=80></textarea>
-        <a class="zwrite-send" tabindex=0>send</a>
+        <a class="zwrite-send submit" tabindex=0>send</a>
+      </form>
+      <form class="filter-form" hidden>
+        <div>[Error] Invalid filter <a class="close-button">[x]</a></div>
+        <div id="filter-command">
+          command: view -d
+          class <span contenteditable="true" id="filter-class"></span> and
+          instance <span contenteditable="true" id="filter-instance"></span> and
+          sender <span contenteditable="true" id="filter-sender"></span> and
+          conversation <span contenteditable="true" id="filter-conversation"></span>
+        </div>
+        <a class="filter-send submit" tabindex=0>filter</a>
       </form>
     </div>
 
