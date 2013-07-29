@@ -545,7 +545,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
       ev.preventDefault();
       this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
     }.bind(this));
-    a.title = "filter to conversation on class " + classKeyBase;
+    a.title = "filter to class " + classKeyBase;
     pre.appendChild(a);
 
     pre.appendChild(document.createTextNode(" / "));
@@ -558,7 +558,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
         instance_key_base: instanceKeyBase
       }), id);
     }.bind(this));
-    a.title = "filter to conversation on class " + classKeyBase
+    a.title = "filter to class " + classKeyBase
       + " and instance " + instanceKeyBase;
     pre.appendChild(a);
 

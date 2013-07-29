@@ -45,8 +45,8 @@ function Filter(fields) {
 Filter.prototype.toString = function() {
   var fields = [];
   if (this.conversation)      { fields.push("@" + stripRealm(this.conversation)); }
-  if (this.recipient)         { fields.push("@" + stripRealm(this.recipient));    }
-  if (this.sender)            { fields.push("@" + stripRealm(this.sender));       }
+  if (this.recipient)         { fields.push(">" + stripRealm(this.recipient));    }
+  if (this.sender)            { fields.push("<" + stripRealm(this.sender));       }
   if (this.is_personal)       { fields.push("personals");                    }
   if (this.class_key)         { fields.push("-c " + this.class_key);         }
   if (this.class_key_base)    { fields.push("-c " + this.class_key_base);    }

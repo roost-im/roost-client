@@ -78,7 +78,23 @@ document.addEventListener("DOMContentLoaded", function() {
   replyBox.getElementsByClassName(
     "filter-send"
   )[0].addEventListener("click", function(ev) {
-    filterSubmit();
+    var options = {
+      "class" : "class_key_base",
+      "instance" : "instance_key_base",
+      "sender" : "sender",
+      "conversation" : "conversation"
+    }, filter = {};
+    for (var key in options) {
+      var value = document.getElementById("filter-" + key).textContent;
+      if (value) {
+        if ((key == "sender" || key == "conversation") && value.indexOf("@") < 0)
+          value += "@" + CONFIG.realm;
+        filter[options[key]] = value;
+      }
+    }
+    messageView.changeFilter(new Filter(filter));
+    showForm(null);
+    messageList.focus();
   });
 
   document.addEventListener("keydown", function(ev) {
@@ -203,10 +219,15 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('zwrite-class').focus();
   };
   var filter = function() {
-    document.getElementById('filter-class').textContent = "";
-    document.getElementById('filter-instance').textContent = "";
-    document.getElementById('filter-sender').textContent = "";
-    document.getElementById('filter-conversation').textContent = "";
+    var f = messageView.filter_;
+    document.getElementById('filter-class').textContent =
+      f.class_key_base || f.class_key || "";
+    document.getElementById('filter-instance').textContent =
+      f.instance_key_base || f.instance_key || "";
+    document.getElementById('filter-sender').textContent =
+      stripRealm(f.sender || "");
+    document.getElementById('filter-conversation').textContent =
+      stripRealm(f.conversation || "");
 
     showForm('filter-form');
     document.getElementById('filter-class').focus();
