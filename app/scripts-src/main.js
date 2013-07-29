@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var form = replyBox.getElementsByClassName("zwrite-form")[0];
 
   replyBox.getElementsByClassName(
-    "send-button"
+    "zwrite-send"
   )[0].addEventListener("click", function(ev) {
     var message = {
       class: null,
@@ -54,6 +54,11 @@ document.addEventListener("DOMContentLoaded", function() {
     };
     for (var key in message)
       message[key] = document.getElementById("zwrite-" + key).textContent;
+    if ([ message.class, message.instance, message.recipient ].join("|") ==
+        "message|personal|") {
+      console.log("noooo");
+      return;
+    }
     if (message.recipient.indexOf("@") < 0)
       message.recipient += "@" + CONFIG.realm;
     message.message = form.message.value;
