@@ -1,46 +1,55 @@
 [hidden] { display: none !important }
+* { font: 10pt/15px monospace; }
 
 /* Random styling just to position some random box*/
 html, body {
   height: 100%;
   padding: 0;
   margin: 0;
+  overflow: hidden;
 }
 body {
-  padding-left: 10px;
-  padding-right: 10px;
   /* asdfsklj margin collapsing */
   padding-top: 1px;
   margin-top: -1px;
 }
+a {
+  text-decoration: none;
+  color: inherit;
+}
 #messagelist {
-  max-width: 650px;
+  width: 100%;
   height: 100%;
   margin: 0 auto 0 auto;
 
-  background: #ddd;
+  background: black;
   overflow: scroll;
 }
 #messagelist:focus {
   outline: none;
 }
-
-@supports (height: calc(100% - 20px)) {
-  #messagelist {
-    height: calc(100% - 20px);
-    margin: 10px auto 10px auto;
-  }
+#messagelist::-webkit-scrollbar {
+  display: none;
 }
 
 pre { padding: 0; margin: 0 }
-.message {
-  padding: 10px;
+.message::before {
+  content: "  ";
 }
-.message:hover {
-  background-color: #eee;
+.message a.unauth::before {
+  content: "UNAUTH: ";
 }
-.message-selected, .message-selected:hover {
-  background-color: yellow;
+.message:hover a, #barney:hover a, form:hover a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.message:hover a:hover, #barney:hover a:hover, form:hover a:hover {
+  font-weight: bold;
+}
+.message-selected::before, .message-selected:hover::before {
+  font-weight: bold;
+  color: white;
+  content: "->";
 }
 
 .msgview-top-marker {
@@ -51,7 +60,7 @@ pre { padding: 0; margin: 0 }
 }
 .msgview-loading-above, .msgview-loading-below {
   text-align: center;
-  color: #444;
+  color: white;
   height: 100%;
   position: relative;
 }
@@ -100,6 +109,7 @@ pre { padding: 0; margin: 0 }
     position: absolute;
     top: 5px;
     right: 5px;
+    display: none;
 }
 
 #reply-box {
@@ -107,17 +117,74 @@ pre { padding: 0; margin: 0 }
     bottom: 0;
     left: 0;
     right: 0;
-    background-color: #eee;
-    border-top: 1px solid black;
+    padding-bottom: 15px;
+    font-family: monospace;
+    background-color: black;
 }
 #reply-box > form {
+    color: white;
     display: block;
-    margin: 5px auto;
-    max-width: 650px;
+    max-width: 655px;
 }
-#reply-box > .close-button {
+#reply-box > form a {
     float: right;
+}
+#reply-box span[contenteditable=true] {
+    display: inline-block;
+    background: white;
+    color: black;
+    padding: 0 1em;
+}
+#reply-box .collapsed:not(:hover) {
+    color: #888;
+}
+#reply-box .collapsed label::after {
+    content: "...";
+}
+#reply-box .collapsed span {
+    display: none;
 }
 #reply-box textarea {
     font-family: monospace;
+    padding: 0;
+    margin: 3px 0;
+    border: none;
+    display: block;
+}
+
+#reply-bar {
+    background-color: white;
+    padding: 0 16px;
+    position: relative;
+}
+#reply-bar > a, #reply-bar > span {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    position: relative;
+    background: white;
+    padding: 0 8px;
+}
+#reply-bar > hr {
+    position: absolute;
+    left: -1px;
+    right: -1px;
+    height: 8px;
+    border-style: solid;
+    border-width: 1px;
+}
+#reply-bar > .close-button {
+    float: right;
+}
+
+#barney {
+    position: absolute;
+    right: 16px;
+    bottom: 0;
+    color: white;
+}
+#barney em {
+    color: black;
 }

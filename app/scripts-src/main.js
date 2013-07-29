@@ -40,53 +40,121 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   var replyBox = document.getElementById("reply-box");
+  var zwriteForm = replyBox.getElementsByClassName("zwrite-form")[0];
+  var filterForm = replyBox.getElementsByClassName("filter-form")[0];
+
   replyBox.getElementsByClassName(
-    "zwrite-form"
-  )[0].addEventListener("submit", function(ev) {
-    ev.preventDefault();
+    "zwrite-send"
+  )[0].addEventListener("click", function(ev) {
+    var message = {
+      class: null,
+      instance: null,
+      recipient: null,
+      opcode: null,
+      signature: null
+    };
+    for (var key in message)
+      message[key] = document.getElementById("zwrite-" + key).textContent;
+    if ([ message.class, message.instance, message.recipient ].join("|") ==
+        "message|personal|") {
+      console.log("noooo");
+      return;
+    }
+    if (message.recipient.indexOf("@") < 0)
+      message.recipient += "@" + CONFIG.realm;
+    message.message = zwriteForm.message.value;
 
-    var msgClass = this.class.value || "message";
-    var msgInstance = this.instance.value || "personal";
-    var msgRecipient = this.recipient.value;
-    if (msgRecipient.indexOf("@") < 0)
-      msgRecipient = msgRecipient + "@" + CONFIG.realm;
-    var msgBody = this.message.value;
-
-    var data = api.userInfo().ready().then(function() {
-      var zsig = api.userInfo().get("zsig");
-      zsig = (zsig == undefined) ? "Sent from Roost" : zsig;
-      return {
-        message: {
-          class: msgClass,
-          instance: msgInstance,
-          recipient: msgRecipient,
-          opcode: "",
-          signature: zsig,
-          message: msgBody
-        }
-      };
-    });
-    return api.post("/v1/zwrite", data, {
+    return api.post("/v1/zwrite", { message: message }, {
       withZephyr: true,
       interactive: true
     }).then(function(ret) {
       console.log("Sent:", ret.ack);
     }).finally(function() {
-      replyBox.setAttribute("hidden", "");
+      showForm(null);
       messageList.focus();
     }).done();
   });
+
   replyBox.getElementsByClassName(
-    "close-button"
+    "filter-send"
   )[0].addEventListener("click", function(ev) {
-    replyBox.setAttribute("hidden", "");
+    var options = {
+      "class" : "class_key_base",
+      "instance" : "instance_key_base",
+      "sender" : "sender",
+      "conversation" : "conversation"
+    }, filter = {};
+    for (var key in options) {
+      var value = document.getElementById("filter-" + key).textContent;
+      if (value) {
+        if ((key == "sender" || key == "conversation") && value.indexOf("@") < 0)
+          value += "@" + CONFIG.realm;
+        filter[options[key]] = value;
+      }
+    }
+    messageView.changeFilter(new Filter(filter));
+    showForm(null);
     messageList.focus();
   });
-  replyBox.addEventListener("keydown", function(ev) {
+
+  document.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 27 /* ESC */)) {
-      replyBox.setAttribute("hidden", "");
+      showForm(null);
       messageList.focus();
     }
+  });
+
+  var forms = document.forms;
+  for (var i = 0; i < forms.length; ++i) {
+    forms[i].getElementsByClassName(
+      "close-button"
+    )[0].addEventListener("click", function(ev) {
+      showForm(null);
+      messageList.focus();
+    });
+
+    var spans = forms[i].getElementsByTagName("span");
+    for (var j = 0; j < spans.length; ++j) {
+      if (spans[j].contentEditable !== "true")
+        continue;
+      // If we pressed enter on a fake text input, go to the big textarea if
+      // there is one (zwrite) or just submit otherwise (filter).
+      spans[j].addEventListener("keydown", function(ev) {
+        if (matchKey(ev, 13 /* RET */)) {
+          ev.preventDefault();
+          var textbox = this.getElementsByTagName("textarea")[0];
+          if (textbox)
+            textbox.focus();
+          else
+            this.getElementsByClassName("submit")[0].dispatchEvent(new Event("click"));
+        }
+      }.bind(forms[i]));
+    }
+  }
+
+  replyBox.getElementsByClassName(
+    "send-button"
+  )[0].addEventListener("click", function(ev) {
+    ev.preventDefault();
+    zwrite();
+  });
+  replyBox.getElementsByClassName(
+    "filter-button"
+  )[0].addEventListener("click", function(ev) {
+    ev.preventDefault();
+    filter();
+  });
+  replyBox.getElementsByClassName(
+    "unfilter-button"
+  )[0].addEventListener("click", function(ev) {
+    // TODO(davidben): Figure out the right anchor! Probably the last
+    // guy you clicked on if it's still in view? I dunno.
+    messageView.changeFilter(new Filter({}));
+  });
+  replyBox.getElementsByClassName(
+    "logout-button"
+  )[0].addEventListener("click", function(ev) {
+    alert("you can't log out yet QvQ");
   });
 
   api = new API(CONFIG.server, CONFIG.serverPrincipal,
@@ -96,6 +164,74 @@ document.addEventListener("DOMContentLoaded", function() {
   messageView = new MessageView(model, messageList);
   selectionTracker = new SelectionTracker(messageView);
 
+  var snapBox = function() {
+    var top = window.innerHeight - replyBox.offsetHeight;
+    replyBox.style.bottom = top % 15 - 15 + "px";
+    messageList.style.height = top + 15 + "px";
+  };
+  window.addEventListener("resize", snapBox);
+  snapBox();
+
+  var showForm = function(which) {
+    for (var i = 0; i < forms.length; ++i)
+      forms[i].hidden = true;
+    if (which !== null)
+      document.getElementsByClassName(which)[0].hidden = false;
+    snapBox();
+
+    var yawai = document.getElementById("yawai");
+    for (var i = 100; i < 1000; i *= 2) {
+      setTimeout(function() {
+        yawai.textContent = yawai.textContent == " (^^^) " ?
+          "//^^^\\\\" : " (^^^) ";
+      }, i);
+    }
+  };
+
+  ticketManager.getTicket("zephyr").then(function(ticket) {
+    document.getElementById("user-display").textContent = ticket.client;
+  });
+  api.userInfo().ready().then(function() {
+    var zsig = api.userInfo().get("zsig");
+    zsig = (zsig == undefined) ? "Sent from Roost" : zsig;
+    document.getElementById("zwrite-signature").textContent = zsig;
+  });
+  for (var field in { signature: null, opcode: null }) {
+    var element = document.getElementById("collapse-" + field);
+    var label = element.getElementsByTagName("label")[0];
+    label.addEventListener("click", function(ev) {
+      if (this.className) {
+        this.className = "";
+      } else {
+        this.className = "collapsed";
+      }
+    }.bind(element));
+  }
+
+  var zwrite = function() {
+    document.getElementById('zwrite-class').textContent = "message";
+    document.getElementById('zwrite-instance').textContent = "personal";
+    zwriteForm.message.value = "";
+    document.getElementById('zwrite-recipient').textContent = "";
+    document.getElementById('zwrite-opcode').textContent = "";
+
+    showForm('zwrite-form');
+    document.getElementById('zwrite-class').focus();
+  };
+  var filter = function() {
+    var f = messageView.filter_;
+    document.getElementById('filter-class').textContent =
+      f.class_key_base || f.class_key || "";
+    document.getElementById('filter-instance').textContent =
+      f.instance_key_base || f.instance_key || "";
+    document.getElementById('filter-sender').textContent =
+      stripRealm(f.sender || "");
+    document.getElementById('filter-conversation').textContent =
+      stripRealm(f.conversation || "");
+
+    showForm('filter-form');
+    document.getElementById('filter-class').focus();
+  };
   messageList.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
       var msg = selectionTracker.selectedMessage_;
@@ -103,43 +239,31 @@ document.addEventListener("DOMContentLoaded", function() {
         ev.preventDefault();
         selectionTracker.ensureSelectionVisible_();
 
-        var form = replyBox.getElementsByClassName("zwrite-form")[0];
+        document.getElementById('zwrite-class').textContent = msg.class;
+        document.getElementById('zwrite-instance').textContent = msg.instance;
+        zwriteForm.message.value = "";
+        document.getElementById('zwrite-recipient').textContent = stripRealm(
+          (msg.isPersonal && !msg.isOutgoing) ? msg.sender : msg.recipient);
+        document.getElementById('zwrite-opcode').textContent = "";
 
-        form.class.value = (msg.classKey === "message") ? "" : msg.class;
-        form.instance.value = (msg.instanceKey === "personal") ? "" : msg.instance;
-        form.message.value = "";
-        if (msg.isPersonal && !msg.isOutgoing) {
-          form.recipient.value = msg.sender;
-        } else {
-          form.recipient.value = msg.recipient;
-        }
-
-        replyBox.removeAttribute("hidden");
-        form.message.focus();
+        showForm('zwrite-form');
+        zwriteForm.message.focus();
       }
     } else if (matchKey(ev, 90 /* z */)) {
       ev.preventDefault();
-
-      var form = replyBox.getElementsByClassName("zwrite-form")[0];
-
-      form.class.value = "";
-      form.instance.value = "";
-      form.recipient.value = "";
-      form.message.value = "";
-
-      replyBox.removeAttribute("hidden");
-      form.class.focus();
+      zwrite();
+    } else if (matchKey(ev, 86 /* v */)) {
+      ev.preventDefault();
+      filter();
+    } else if (matchKey(ev, 73 /* i */)) {
+      var msg = selectionTracker.selectedMessage_;
+      if (msg) {
+        console.log(msg);
+      }
     }
   });
 
   messageList.focus();
-
-  document.getElementById("reset-view").addEventListener("click", function(ev) {
-    ev.preventDefault();
-    // TODO(davidben): Figure out the right anchor! Probably the last
-    // guy you clicked on if it's still in view? I dunno.
-    messageView.changeFilter(new Filter({}));
-  });
 
   if (/#msg-/.test(location.hash)) {
     var msgId = location.hash.substring(5);

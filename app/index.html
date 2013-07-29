@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Roost</title>
+    <title>roost</title>
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="SHORTCUT ICON" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/roost-logo_57x57.png">
@@ -50,19 +50,50 @@
     <!-- endbuild -->
   </head>
   <body>
-    <button id="reset-view">Reset view</button>
-
     <div id="messagelist">
     </div>
 
-    <div id="reply-box" hidden>
-      <button class="close-button">X</button>
-      <form class="zwrite-form">
-        Class: <input name="class" placeholder="message"><br>
-        Instance: <input name="instance" placeholder="personal"><br>
-        Recipient: <input name="recipient"><br>
-        <textarea name="message" rows=10 cols=80></textarea><br>
-        <input type="submit" value="Send">
+    <div id="reply-box" name="increasingly inaccurate">
+      <div id="reply-bar">
+        <hr>
+        <span id="user-display"></span>
+        <pre id="barney">
+   ________
+  /  <a class="send-button">send</a>  \
+ /  <a class="filter-button">filter</a>  \
+(  <a class="unfilter-button">unfilter</a>  )
+ \   <a href="/api-test.html" target="_blank">subs</a>   /
+  \_<a class="logout-button">logout</a>_/
+       \| ^ ^
+          <span id="nowai">OvO</span>
+        <span id="yawai"> (^^^) </span>
+          <em>m m</em></pre>
+      </div>
+      <form class="zwrite-form" hidden>
+        <div>Waiting for ack... <a class="close-button">[x]</a></div>
+        <div id="zwrite-command">
+          command: zwrite
+          -c <span contenteditable="true" id="zwrite-class"></span>
+          -i <span contenteditable="true" id="zwrite-instance"></span>
+          <span contenteditable="true" id="zwrite-recipient"></span>
+          <span id="collapse-signature" class="collapsed"><label>-s</label>
+             <span contenteditable="true" id="zwrite-signature"></span></span>
+          <span id="collapse-opcode" class="collapsed"><label>-O</label>
+             <span contenteditable="true" id="zwrite-opcode"></span></span>
+        </div>
+        <textarea name="message" rows=8 cols=80></textarea>
+        <a class="zwrite-send submit" tabindex=0>send</a>
+      </form>
+      <form class="filter-form" hidden>
+        <div>[Error] Invalid filter <a class="close-button">[x]</a></div>
+        <div id="filter-command">
+          command: view -d
+          class <span contenteditable="true" id="filter-class"></span> and
+          instance <span contenteditable="true" id="filter-instance"></span> and
+          sender <span contenteditable="true" id="filter-sender"></span> and
+          conversation <span contenteditable="true" id="filter-conversation"></span>
+        </div>
+        <a class="filter-send submit" tabindex=0>filter</a>
       </form>
     </div>
 

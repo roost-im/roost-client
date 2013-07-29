@@ -17,6 +17,11 @@ var baseString = function(classInst) {
   return classInst.replace(/^(?:un)*/, '').replace(/(?:\.d)*$/, '');
 };
 
+var REALM_REGEX = new RegExp("@" + CONFIG.realm.replace(/\./g, "\\.") + "$");
+function stripRealm(name) {
+  return name.replace(REALM_REGEX, "");
+}
+
 Filter.FIELDS = ['class_key',
                  'class_key_base',
                  'instance_key',
@@ -36,6 +41,19 @@ function Filter(fields) {
   this.sender = stringOrNull(fields.sender);
   this.is_personal = boolOrNull(fields.is_personal);
 }
+
+Filter.prototype.toString = function() {
+  var fields = [];
+  if (this.conversation)      { fields.push("@" + stripRealm(this.conversation)); }
+  if (this.recipient)         { fields.push(">" + stripRealm(this.recipient));    }
+  if (this.sender)            { fields.push("<" + stripRealm(this.sender));       }
+  if (this.is_personal)       { fields.push("personals");                    }
+  if (this.class_key)         { fields.push("-c " + this.class_key);         }
+  if (this.class_key_base)    { fields.push("-c " + this.class_key_base);    }
+  if (this.instance_key)      { fields.push("-i " + this.instance_key);      }
+  if (this.instance_key_base) { fields.push("-i " + this.instance_key_base); }
+  return fields.join(" ");
+};
 
 Filter.prototype.matchesMessage = function(msg) {
   if (this.class_key != null && this.class_key !== msg.classKey)

@@ -54,17 +54,36 @@ function MessageView(model, container) {
 
   this.loadingAbove_ = document.createElement("div");
   this.loadingAbove_.classList.add("msgview-loading-above");
-  var seriously = document.createElement("div");
-  seriously.classList.add("msgview-loading-above-text");
-  seriously.textContent = "Loading...";
-  this.loadingAbove_.appendChild(seriously);
+  var orly = document.createElement("pre");
+  orly.classList.add("msgview-loading-above-text");
+  orly.textContent = "^ ^\n      \u02d8v\u02d8 . z Z\n(^^^)\n-m-m-";
+  this.loadingAbove_.appendChild(orly);
 
   this.loadingBelow_ = document.createElement("div");
   this.loadingBelow_.classList.add("msgview-loading-below");
-  seriously = document.createElement("div");
-  seriously.classList.add("msgview-loading-below-text");
-  seriously.textContent = "Loading...";
-  this.loadingBelow_.appendChild(seriously);
+  var yarly = document.createElement("pre");
+  yarly.classList.add("msgview-loading-below-text");
+  yarly.textContent = "^ ^\n      \u02d8v\u02d8 . z Z\n(^^^)\n-m-m-";
+  this.loadingBelow_.appendChild(yarly);
+
+  setInterval(function() {
+    var text = orly.textContent;
+    text = text.replace(". z Z", " wat ");
+    text = text.replace(". z  ", ". z Z");
+    text = text.replace(".    ", ". z  ");
+    text = text.replace(" wat ", ".    ");
+    orly.textContent = text;
+    yarly.textContent = text;
+
+    if (Math.random() * 10 < 1) {
+      var nowai = document.getElementById("nowai");
+      text = nowai.textContent;
+      nowai.textContent = text.replace("OvO", "-v-");
+      setTimeout(function() {
+        nowai.textContent = text;
+      }, 200);
+    }
+  }, 1000);
 
   this.messagesDiv_ = document.createElement("div");
 
@@ -91,8 +110,20 @@ function MessageView(model, container) {
 
   this.container_.addEventListener("scroll", this.checkBuffers_.bind(this));
   this.container_.addEventListener("keydown", this.onKeydown_.bind(this));
+  this.container_.addEventListener("scroll", this.snapView_.bind(this));
 }
 MessageView.prototype = Object.create(RoostEventTarget.prototype);
+
+MessageView.prototype.snapView_ = function() {
+  var top = document.elementFromPoint(0, 0);
+  while (top.tagName) {
+    if (top.tagName.toLowerCase() == "pre") {
+      this.container_.scrollTop = top.offsetTop;
+      break;
+    }
+    top = top.parentNode;
+  }
+};
 
 MessageView.prototype.container = function() {
   return this.container_;
@@ -294,6 +325,9 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
   if (bootstrapAfter.length)
     this.appendMessages_(bootstrapAfter, false);
   this.checkBuffers_();
+
+  var desc = filter.toString();
+  document.title = desc ? desc + " - roost" : "roost";
 };
 
 MessageView.prototype.scrollToMessage = function(id, bootstrap, alignWithTop) {
@@ -440,16 +474,14 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
   this.checkBuffers_();
 };
 
-var COLORS = ["black", "maroon", "red",
-              "purple", "fuchsia", "green", "blue"];
+var COLORS = ["white", "yellow", "red",
+              "orange", "fuchsia", "lightgreen", "skyblue"];
 MessageView.prototype.formatMessage_ = function(idx, msg) {
   var pre = document.createElement("pre");
-  var indented = "   " +
-    msg.message.replace(/\s+$/, '').split("\n").join("\n   ");
+  var indented = "       " +
+    msg.message.replace(/\s+$/, '').split("\n").join("\n       ");
 
-  var a = document.createElement("a");
-  a.href = "#msg-" + msg.id;
-  a.textContent = "[LINK]";
+  var a;
 
   var number = msg.number;
   if (number == undefined) {
@@ -467,59 +499,45 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
   var id = msg.id;
   var classKeyBase = msg.classKeyBase, instanceKeyBase = msg.instanceKeyBase;
 
-  pre.appendChild(a);
   pre.appendChild(document.createTextNode(" "));
 
   if (msg.isPersonal && msg.classKey == "message") {
-    if (msg.isOutgoing) {
-      pre.appendChild(document.createTextNode("Zephyr to "));
-      a = document.createElement("a");
-      a.textContent = msg.recipient;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({conversation: msg.recipient}), id);
-      }.bind(this));
-      pre.appendChild(a);
+    var params = msg.isOutgoing ? {
+      direction: "to ",
+      other: msg.recipient,
+    } : {
+      direction: "from ",
+      other: msg.sender,
+    };
 
-      pre.appendChild(document.createTextNode(" / "));
-      a = document.createElement("a");
-      a.textContent = msg.instance;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({
-          conversation: msg.recipient,
-          instance_key_base: instanceKeyBase
-        }), id);
-      }.bind(this));
-      pre.appendChild(a);
+    pre.appendChild(document.createTextNode("Zephyr [-i "));
 
-      pre.appendChild(document.createTextNode(
-        "  " + new Date(msg.time).toString() + "\n"));
-    } else {
-      pre.appendChild(document.createTextNode("Zephyr from "));
-      a = document.createElement("a");
-      a.textContent = msg.sender;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({conversation: msg.sender}), id);
-      }.bind(this));
-      pre.appendChild(a);
+    a = document.createElement("a");
+    a.textContent = msg.instance;
+    a.addEventListener("click", function(ev) {
+      ev.preventDefault();
+      this.changeFilter(new Filter({
+        conversation: params.other,
+        instance_key_base: instanceKeyBase
+      }), id);
+    }.bind(this));
+    a.title = "filter to conversation with " + stripRealm(params.other)
+      + " on instance " + instanceKeyBase;
+    pre.appendChild(a);
 
-      pre.appendChild(document.createTextNode(" / "));
-      a = document.createElement("a");
-      a.textContent = msg.instance;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({
-          conversation: msg.sender,
-          instance_key_base: instanceKeyBase
-        }), id);
-      }.bind(this));
-      pre.appendChild(a);
+    pre.appendChild(document.createTextNode("] " + params.direction));
 
-      pre.appendChild(document.createTextNode(
-        "  " + new Date(msg.time).toString() + "\n"));
+    a = document.createElement("a");
+    a.textContent = stripRealm(params.other);
+    a.addEventListener("click", function(ev) {
+      ev.preventDefault();
+      this.changeFilter(new Filter({conversation: params.other}), id);
+    }.bind(this));
+    a.title = "filter to conversation with " + stripRealm(params.other);
+    if (!msg.auth) {
+      a.className = "unauth";
     }
+    pre.appendChild(a);
   } else {
     a = document.createElement("a");
     a.textContent = msg.class;
@@ -527,6 +545,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
       ev.preventDefault();
       this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
     }.bind(this));
+    a.title = "filter to class " + classKeyBase;
     pre.appendChild(a);
 
     pre.appendChild(document.createTextNode(" / "));
@@ -539,12 +558,38 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
         instance_key_base: instanceKeyBase
       }), id);
     }.bind(this));
+    a.title = "filter to class " + classKeyBase
+      + " and instance " + instanceKeyBase;
     pre.appendChild(a);
 
-    pre.appendChild(document.createTextNode(
-      " / " + msg.sender + "  " +
-        new Date(msg.time).toString() + "\n"));
+    pre.appendChild(document.createTextNode(" / "));
+    a = document.createElement("span");
+    a.textContent = stripRealm(msg.sender);
+    if (!msg.auth) {
+      a.className = "unauth";
+    }
+    pre.appendChild(a);
   }
+
+  if (msg.opcode) {
+    pre.appendChild(document.createTextNode(" [" + msg.opcode + "]"));
+  }
+
+  pre.appendChild(document.createTextNode("  "));
+  a = document.createElement("a");
+  a.href = "#msg-" + msg.id;
+  a.textContent = new Date(msg.time).toLocaleString();
+  a.title = new Date(msg.time).toString();
+  pre.appendChild(a);
+
+  if (msg.signature) {
+    // Okay. So technically, basically anything can have a newline in it --
+    // sender, instance, whatever -- and that makes things look ugly. However,
+    // it only commonly occurs in signatures, so we should cover that case.
+    pre.appendChild(document.createTextNode("  (" +
+      msg.signature.replace(/\n/g, " ") + ")"));
+  }
+  pre.appendChild(document.createTextNode("\n"));
 
   pre.appendChild(ztextToDOM(parseZtext(indented)));
 
@@ -767,10 +812,12 @@ MessageView.prototype.onKeydown_ = function(ev) {
   // the currently buffered view (totally meaningless), they go to the
   // top/bottom of the full message list.
   if (matchKey(ev, 36 /* HOME */) ||
+      matchKey(ev, 188 /* < */, {shiftKey:1}) ||
       matchKey(ev, 32 /* UP */, {metaKey:1})) {
     ev.preventDefault();
     this.scrollToTop();
   } else if (matchKey(ev, 35 /* END */) ||
+             matchKey(ev, 190 /* > */, {shiftKey:1}) ||
              matchKey(ev, 40 /* DOWN */, {metaKey:1})) {
     ev.preventDefault();
     this.scrollToBottom();
