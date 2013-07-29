@@ -50,15 +50,24 @@
     <!-- endbuild -->
   </head>
   <body>
-    <button id="reset-view">Reset view</button>
-
     <div id="messagelist">
     </div>
 
-    <div id="reply-box">
+    <div id="reply-box" name="increasingly inaccurate">
       <div id="reply-bar">
         <hr>
-        <span id="user-display"></span><a class="logout-button">(logout)</a>
+        <span id="user-display"></span>
+        <pre id="barney">
+   ________
+  /  <a class="send-button">send</a>  \
+ /  <a class="filter-button">filter</a>  \
+(  <a class="unfilter-button">unfilter</a>  )
+ \   <a href="/api-test.html" target="_blank">subs</a>   /
+  \_<a class="logout-button">logout</a>_/
+       \| ^ ^
+          <span id="nowai">OvO</span>
+        <span id="yawai"> (^^^) </span>
+          <em>m m</em></pre>
       </div>
       <form class="zwrite-form" hidden>
         <div>Waiting for ack... <a class="close-button">[x]</a></div>

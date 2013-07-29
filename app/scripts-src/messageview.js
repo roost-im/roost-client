@@ -74,6 +74,15 @@ function MessageView(model, container) {
     text = text.replace(" wat ", ".    ");
     orly.textContent = text;
     yarly.textContent = text;
+
+    if (Math.random() * 10 < 1) {
+      var nowai = document.getElementById("nowai");
+      text = nowai.textContent;
+      nowai.textContent = text.replace("OvO", "-v-");
+      setTimeout(function() {
+        nowai.textContent = text;
+      }, 200);
+    }
   }, 1000);
 
   this.messagesDiv_ = document.createElement("div");

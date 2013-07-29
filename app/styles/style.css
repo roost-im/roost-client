@@ -39,11 +39,11 @@ pre { padding: 0; margin: 0 }
 .message a.unauth::before {
   content: "UNAUTH: ";
 }
-.message:hover a, #reply-bar:hover a, .zwrite-form:hover a {
+.message:hover a, #barney:hover a, .zwrite-form:hover a {
   text-decoration: underline;
   cursor: pointer;
 }
-.message:hover a:hover, #reply-bar:hover a:hover, .zwrite-form:hover a:hover {
+.message:hover a:hover, #barney:hover a:hover, .zwrite-form:hover a:hover {
   font-weight: bold;
 }
 .message-selected::before, .message-selected:hover::before {
@@ -153,6 +153,7 @@ pre { padding: 0; margin: 0 }
 #reply-bar {
     background-color: white;
     padding: 0 16px;
+    position: relative;
 }
 #reply-bar > a, #reply-bar > span {
     background: none;
@@ -174,4 +175,14 @@ pre { padding: 0; margin: 0 }
 }
 #reply-bar > .close-button {
     float: right;
+}
+
+#barney {
+    position: absolute;
+    right: 16px;
+    bottom: 0;
+    color: white;
+}
+#barney em {
+    color: black;
 }

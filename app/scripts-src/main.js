@@ -79,16 +79,35 @@ document.addEventListener("DOMContentLoaded", function() {
     hideForm(true);
     messageList.focus();
   });
-  replyBox.getElementsByClassName(
-    "logout-button"
-  )[0].addEventListener("click", function(ev) {
-    alert("you can't log out yet QvQ");
-  });
   document.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 27 /* ESC */)) {
       hideForm(true);
       messageList.focus();
     }
+  });
+
+  replyBox.getElementsByClassName(
+    "send-button"
+  )[0].addEventListener("click", function(ev) {
+    ev.preventDefault();
+    zwrite();
+  });
+  replyBox.getElementsByClassName(
+    "filter-button"
+  )[0].addEventListener("click", function(ev) {
+    alert("you can't filter yet QvQ");
+  });
+  replyBox.getElementsByClassName(
+    "unfilter-button"
+  )[0].addEventListener("click", function(ev) {
+    // TODO(davidben): Figure out the right anchor! Probably the last
+    // guy you clicked on if it's still in view? I dunno.
+    messageView.changeFilter(new Filter({}));
+  });
+  replyBox.getElementsByClassName(
+    "logout-button"
+  )[0].addEventListener("click", function(ev) {
+    alert("you can't log out yet QvQ");
   });
 
   api = new API(CONFIG.server, CONFIG.serverPrincipal,
@@ -109,6 +128,14 @@ document.addEventListener("DOMContentLoaded", function() {
   var hideForm = function(hidep) {
     form.hidden = hidep;
     snapBox();
+
+    var yawai = document.getElementById("yawai");
+    for (var i = 100; i < 1000; i *= 2) {
+      setTimeout(function() {
+        yawai.textContent = yawai.textContent == " (^^^) " ?
+          "//^^^\\\\" : " (^^^) ";
+      }, i);
+    }
   };
 
   ticketManager.getTicket("zephyr").then(function(ticket) {
@@ -131,6 +158,15 @@ document.addEventListener("DOMContentLoaded", function() {
     }.bind(element));
   }
 
+  var zwrite = function() {
+    document.getElementById('zwrite-class').textContent = "message";
+    document.getElementById('zwrite-instance').textContent = "personal";
+    form.message.value = "";
+    document.getElementById('zwrite-recipient').textContent = "";
+
+    hideForm(false);
+    document.getElementById('zwrite-class').focus();
+  };
   messageList.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
       var msg = selectionTracker.selectedMessage_;
@@ -149,14 +185,7 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     } else if (matchKey(ev, 90 /* z */)) {
       ev.preventDefault();
-
-      document.getElementById('zwrite-class').textContent = "message";
-      document.getElementById('zwrite-instance').textContent = "personal";
-      form.message.value = "";
-      document.getElementById('zwrite-recipient').textContent = "";
-
-      hideForm(false);
-      document.getElementById('zwrite-class').focus();
+      zwrite();
     } else if (matchKey(ev, 73 /* i */)) {
       var msg = selectionTracker.selectedMessage_;
       if (msg) {
@@ -166,13 +195,6 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   messageList.focus();
-
-  document.getElementById("reset-view").addEventListener("click", function(ev) {
-    ev.preventDefault();
-    // TODO(davidben): Figure out the right anchor! Probably the last
-    // guy you clicked on if it's still in view? I dunno.
-    messageView.changeFilter(new Filter({}));
-  });
 
   if (/#msg-/.test(location.hash)) {
     var msgId = location.hash.substring(5);
