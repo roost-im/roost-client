@@ -165,7 +165,6 @@ document.addEventListener("DOMContentLoaded", function() {
           return null;
         scrollTotal = dist + (oldState.scrollTotal || 0);
       }
-      console.log(scrollTotal, oldState ? oldState.id : null);
       // Fork if far enough away.
       if (Math.abs(scrollTotal) > FORK_CUTOFF) {
         id = generateId();
@@ -199,7 +198,6 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
       }
       var state = getScrollState();
-      console.log(state);
       if (state == null) {
         needSave = true;
         return;
