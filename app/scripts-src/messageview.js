@@ -313,7 +313,7 @@ MessageView.prototype.scrollState = function() {
     offset: offset,
     id: msg.id,
     receiveTime: msg.receiveTime,
-    filter: this.filter_
+    filter: this.filter_.toDict()
   };
 };
 
