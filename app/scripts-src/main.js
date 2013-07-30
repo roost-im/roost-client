@@ -134,6 +134,107 @@ document.addEventListener("DOMContentLoaded", function() {
 
   messageList.focus();
 
+  /* State-saving code: */
+  var CHARCODE_a = 'a'.charCodeAt(0);
+  function generateId() {
+    var chars = [];
+    for (var i = 0; i < 10; i++) {
+      chars.push(String.fromCharCode(
+        CHARCODE_a + Math.floor(Math.random() * 26)))
+    }
+    return chars.join("");
+  }
+  function getScrollState() {
+    var scrollState = messageView.scrollState();
+    if (scrollState == null)
+      return null;
+    var id = generateId();
+    return {
+      id: id,
+      scroll: scrollState
+    };
+  }
+
+  var loadState = true;
+  api.userInfo().ready().then(function() {
+    // TODO(davidben): Can we just move everything in here? It'd be
+    // nice to not care about this state.
+    var oldState = null;
+
+    // True if the last save attempt had an empty cache. In that case,
+    // don't throttle. As soon as cachechanged happens, just trigger
+    // it.
+    var needSave = false;
+    var saveThrottler = new Throttler(function() {
+      var state = getScrollState();
+      if (state == null) {
+        needSave = true;
+        return;
+      }
+      needSave = false;
+      api.userInfo().replaceScrollState(oldState, state);
+      oldState = state;
+    }, timespan.seconds(1));
+    messageView.container().addEventListener("scroll", function(ev) {
+      saveThrottler.request({ noThrottle: needSave });
+    });
+    messageView.addEventListener("cachechanged", function(ev) {
+      if (needSave)
+        saveThrottler.request({ noThrottle: true });
+    });
+
+
+    // TODO(davidben): Replace all this with more sensible AngularJS
+    // code or something.
+    var recentStates = document.getElementById("recent-states");
+    recentStates.addEventListener("change", function() {
+      var option = recentStates.options[recentStates.selectedIndex];
+      if (!option.roostState)
+        return;
+      oldState = option.roostState;
+      messageView.changeFilter(new Filter(oldState.scroll.filter));
+      messageView.scrollToMessage(oldState.scroll.id, {
+        offset: oldState.scroll.offset
+      });
+    });
+    function loadPositions() {
+      var scrollStates = api.userInfo().scrollStates();
+      recentStates.textContent = "";
+
+      var option = document.createElement("option");
+      option.textContent = "Recent positions";
+      recentStates.appendChild(option);
+
+      console.log(scrollStates);
+      for (var i = scrollStates.length - 1; i >= 0; i--) {
+        console.log(i);
+        option = document.createElement("option");
+        option.textContent =
+          new Date(scrollStates[i].scroll.receiveTime).toString();
+        // Bah.
+        option.roostState = scrollStates[i];
+        recentStates.appendChild(option);
+      }
+    }
+    api.userInfo().addEventListener("change", loadPositions);
+    loadPositions();
+
+    // Bootstrap everything, if needed.
+    if (loadState) {
+      var states = api.userInfo().scrollStates();
+      if (states.length) {
+        oldState = states[states.length - 1];
+        messageView.changeFilter(new Filter(oldState.scroll.filter));
+        messageView.scrollToMessage(oldState.scroll.id, {
+          offset: oldState.scroll.offset
+        });
+      } else {
+        messageView.scrollToBottom();
+        saveThrottler.request();
+      }
+    }
+  }).done();
+
   document.getElementById("reset-view").addEventListener("click", function(ev) {
     ev.preventDefault();
     // TODO(davidben): Figure out the right anchor! Probably the last
@@ -142,12 +243,13 @@ document.addEventListener("DOMContentLoaded", function() {
   });
 
   if (/#msg-/.test(location.hash)) {
+    loadState = false;
     var msgId = location.hash.substring(5);
     messageView.scrollToMessage(msgId);
     selectionTracker.selectMessage(msgId);
-  } else {
-    messageView.scrollToBottom();
   }
+  // Otherwise, we'll wait for api.ready() to tell us where to scroll
+  // to.
 
   window.addEventListener("hashchange", function(ev) {
     if (/#msg-/.test(location.hash)) {

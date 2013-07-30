@@ -102,6 +102,12 @@ pre { padding: 0; margin: 0 }
     right: 5px;
 }
 
+#recent-states {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+}
+
 #reply-box {
     position: absolute;
     bottom: 0;

@@ -202,10 +202,12 @@ MessageView.prototype.reset_ = function() {
 
   this.messagesDiv_.textContent = "";
 
-  // Default to something. Only in the case if this.messages_ is
-  // empty, this is the bootstrap cutoff between the two tails. It is
-  // either a message id (string) or a one of two magic values for top and bottom.
-  this.pendingCenter_ = MESSAGE_VIEW_SCROLL_TOP;
+  // Only in the case if this.messages_ is empty, this is the
+  // bootstrap cutoff between the two tails. It is either a message id
+  // (string) or a one of two magic values for top and bottom.
+  //
+  // Or it's null if we haven't done anything yet.
+  this.pendingCenter_ = null;
 
   // FIXME: This shows two loading bars. But we can't actually lie
   // about one side because atTop_ and atBottom_ are needed to
@@ -298,11 +300,30 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
   this.checkBuffers_();
 };
 
+MessageView.prototype.scrollState = function() {
+  var anchorIdx = this.findTopMessage();
+  // Don't save any state when the cache is empty.
+  if (anchorIdx == null)
+    return null;
+  var msg = this.messages_[anchorIdx];
+  var node = this.nodes_[anchorIdx];
+  var offset = node.getBoundingClientRect().top -
+    this.container_.getBoundingClientRect().top;
+  return {
+    offset: offset,
+    id: msg.id,
+    receiveTime: msg.receiveTime,
+    filter: this.filter_
+  };
+};
+
 MessageView.prototype.scrollToMessage = function(id, opts) {
   // TODO(davidben): This function is pretty wonky. Really it should
   // just be two functions.
   opts = opts || {};
-  var bootstrap = opts.bootstrap, alignWithTop = opts.alignWithTop;
+  var bootstrap = opts.bootstrap;
+  var alignWithTop = opts.alignWithTop;
+  var offset = opts.offset;
   if (bootstrap == undefined || alignWithTop == undefined)
     alignWithTop = true;
 
@@ -316,11 +337,18 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
     // Easy case: if the message is in our current view, we just jump
     // to it.
     var node = this.nodes_[this.messageToIndex_[id] - this.listOffset_];
-    node.scrollIntoView(alignWithTop);
-    if (!alignWithTop) {
-      if (node.getBoundingClientRect().top <
-          this.container_.getBoundingClientRect().top) {
-        node.scrollIntoView(true);
+    if (offset != undefined) {
+      this.container_.scrollTop =
+        node.getBoundingClientRect().top -
+        this.topMarker_.getBoundingClientRect().top -
+        offset;
+    } else {
+      node.scrollIntoView(alignWithTop);
+      if (!alignWithTop) {
+        if (node.getBoundingClientRect().top <
+            this.container_.getBoundingClientRect().top) {
+          node.scrollIntoView(true);
+        }
       }
     }
   } else {
@@ -328,6 +356,13 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
     // reference.
     this.reset_();
     this.pendingCenter_ = id;
+    // Adjust the scroll so the message appears in the right place.
+    if (offset != undefined) {
+      this.container_.scrollTop =
+        this.messagesDiv_.getBoundingClientRect().top -
+        this.topMarker_.getBoundingClientRect().top -
+        offset;
+    }
     this.checkBuffers_();
   }
 };
@@ -614,7 +649,9 @@ MessageView.prototype.ensureTailAbove_ = function() {
     this.tailAboveOffset_ = this.listOffset_;
   } else {
     // Bootstrap with the pending center.
-    if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
+    if (this.pendingCenter_ === null) {
+      // Nothing
+    } else if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
       // Don't do anything. We're at the top. There's nothing useful
       // here.
     } else if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_BOTTOM) {
@@ -648,7 +685,9 @@ MessageView.prototype.ensureTailBelow_ = function() {
     this.tailBelowOffset_ = this.listOffset_ + this.messages_.length - 1;
   } else {
     // Bootstrap with the pending center.
-    if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
+    if (this.pendingCenter_ === null) {
+      // Nothing
+    } else if (this.pendingCenter_ === MESSAGE_VIEW_SCROLL_TOP) {
       // Top. null for forward tails means top.
       this.tailBelow_ = this.model_.newTail(
         null,

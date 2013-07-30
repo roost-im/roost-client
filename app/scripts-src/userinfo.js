@@ -1,7 +1,10 @@
 "use strict";
 
 // Minimum amount of time between updates.
-var USER_INFO_UPDATE_THROTTLE = timespan.seconds(10);
+var USER_INFO_UPDATE_THROTTLE = timespan.seconds(3);
+
+// Number of historical scroll states we save.
+var USER_INFO_MAX_SCROLL_STATES = 5;
 
 function UserInfoConflict() {
 }
@@ -34,8 +37,12 @@ UserInfo.prototype.handleNewInfo_ = function(info, version) {
   } catch (err) {
     if (window.console && console.log)
       console.log("Error parsing user info", err);
-    this.base_ = null;
+    this.base_ = {};
   }
+
+  if (typeof this.base_ !== "object" || !this.base_)
+    this.base_ = {};
+
   this.baseVersion_ = version;
   if (Q.isPending(this.ready_.promise))
     this.ready_.resolve();
@@ -56,30 +63,109 @@ UserInfo.prototype.get = function(key) {
   if (this.baseVersion_ < 0)
     throw "User info not loaded!";
 
-  if (this.local_ && key in this.local_)
-    return this.local_[key];
-  if (this.pending_ && key in this.pending_)
-    return this.pending_[key];
-  return (typeof this.base_ === "object" && this.base_) ?
-    this.base_[key] : undefined;
+  if (key === 'scrollStates') {
+    return this.scrollStates();
+  } else {
+    if (this.local_ && key in this.local_)
+      return this.local_[key];
+    if (this.pending_ && key in this.pending_)
+      return this.pending_[key];
+    return this.base_[key];
+  }
 };
+
+UserInfo.prototype.scrollStates = function() {
+  console.log('Z', this.base_.scrollStates,
+              this.pending_ ? this.pending_.scrollStates : null,
+              this.local_ ? this.local_.scrollStates : null);
+  var base = {
+    remove: {},
+    add: this.base_.scrollStates || []
+  };
+  if (this.pending_)
+    base = mergeScrollStateDiff(base, this.pending_.scrollStates);
+  if (this.local_)
+    base = mergeScrollStateDiff(base, this.local_.scrollStates);
+  return base.add;
+}
+
+UserInfo.prototype.ensureLocal_ = function() {
+  if (this.local_)
+    return;
+  this.local_ = {
+    scrollStates: {
+      remove: {},
+      add: []
+    }
+  };
+}
 
 UserInfo.prototype.set = function(key, value) {
   if (this.baseVersion_ < 0)
     throw "User info not loaded!";
 
-  if (!this.local_)
-    this.local_ = {};
+  this.ensureLocal_();
   this.local_[key] = value;
   this.dispatchEvent({type: "change"});
   this.throttler_.request();
 };
 
-UserInfo.prototype.mergeLocalAndPending_ = function() {
-  for (var key in this.local_) {
-    if (this.local_.hasOwnProperty(key))
-      this.pending_[key] = this.local_[key];
+function mergeScrollStateDiff(diff, newDiff) {
+  // Clone diff.
+  var merged = {
+    remove: {},
+    add: diff.add.slice(0)
+  };
+  for (var id in diff.remove) {
+    merged.remove[id] = 1;
   }
+
+  // Apply removes.
+  for (var id in newDiff.remove) {
+    merged.remove[id] = 1;
+  }
+  merged.add = merged.add.filter(function(state) {
+    return !newDiff.remove[state.id];
+  });
+  // Apply adds.
+  merged.add = merged.add.concat(newDiff.add);
+  // Clamp size.
+  if (merged.add.length > USER_INFO_MAX_SCROLL_STATES) {
+    merged.add =
+      merged.add.slice(merged.add.length - USER_INFO_MAX_SCROLL_STATES);
+  }
+  return merged;
+};
+
+UserInfo.prototype.replaceScrollState = function(oldState, newState) {
+  if (this.baseVersion_ < 0)
+    throw "User info not loaded!";
+
+  this.ensureLocal_();
+
+  var diff = {
+    remove: {},
+    add: newState ? [newState] : []
+  };
+  if (oldState)
+    diff.remove[oldState.id] = 1;
+
+  this.local_.scrollStates = mergeScrollStateDiff(
+    this.local_.scrollStates, diff);
+  this.dispatchEvent({type: "change"});
+  this.throttler_.request();
+};
+
+UserInfo.prototype.mergeLocalAndPending_ = function() {
+  if (this.local_) {
+    for (var key in this.local_) {
+      if (this.local_.hasOwnProperty(key) && key != 'scrollStates')
+        this.pending_[key] = this.local_[key];
+    }
+    this.pending_.scrollStates = mergeScrollStateDiff(
+      this.pending_.scrollStates, this.local_.scrollStates);
+  }
+
   this.local_ = this.pending_;
   this.pending_ = null;
 };
@@ -90,14 +176,23 @@ UserInfo.prototype.doUpdate_ = function() {
 
   // Merge this into the current base.
   var newInfo = {};
+  // Make a copy.
   for (var key in this.base_) {
     if (this.base_.hasOwnProperty(key))
       newInfo[key] = this.base_[key];
   }
+  if (!newInfo.scrollStates)
+    newInfo.scrollStates = [];
+
+  // Apply this.pending_.
   for (var key in this.pending_) {
-    if (this.pending_.hasOwnProperty(key))
+    if (this.pending_.hasOwnProperty(key) && key != 'scrollStates')
       newInfo[key] = this.pending_[key];
   }
+  newInfo.scrollStates = mergeScrollStateDiff({
+    remove: {},
+    add: newInfo.scrollStates
+  }, this.pending_.scrollStates).add;
 
   // Fire off a test-and-set.
   var newVersion = this.baseVersion_ + 1;
@@ -108,12 +203,12 @@ UserInfo.prototype.doUpdate_ = function() {
   }).then(function(ret) {
     if (ret.updated) {
       // Success!
-      this.handleNewInfo_(newInfoStr, newVersion);
       this.pending_ = null;
+      this.handleNewInfo_(newInfoStr, newVersion);
     } else {
       // Failure. Retry.
-      this.handleNewInfo_(ret.info, ret.version);
       this.mergeLocalAndPending_();
+      this.handleNewInfo_(ret.info, ret.version);
       // Just loop like this. It should be fine.
       return this.doUpdate_();
     }
