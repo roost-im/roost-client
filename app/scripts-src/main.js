@@ -144,29 +144,62 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     return chars.join("");
   }
-  function getScrollState() {
-    var scrollState = messageView.scrollState();
-    if (scrollState == null)
-      return null;
-    var id = generateId();
-    return {
-      id: id,
-      scroll: scrollState
-    };
-  }
 
   var loadState = true;
   api.userInfo().ready().then(function() {
     // TODO(davidben): Can we just move everything in here? It'd be
     // nice to not care about this state.
+
+    // How many pixels you have to scroll before we fork scroll state
+    // ids.
+    var FORK_CUTOFF = 125;
+
     var oldState = null;
+
+    function getScrollState() {
+      // How far are we from the old scroll state.
+      var id, scrollTotal = Infinity;
+      if (oldState) {
+        var dist = messageView.distanceToScrollState(oldState.scroll);
+        if (dist == null)
+          return null;
+        scrollTotal = dist + (oldState.scrollTotal || 0);
+      }
+      console.log(scrollTotal, oldState ? oldState.id : null);
+      // Fork if far enough away.
+      if (Math.abs(scrollTotal) > FORK_CUTOFF) {
+        id = generateId();
+        scrollTotal = 0;
+      } else {
+        id = oldState.id;
+      }
+
+      var scrollState = messageView.scrollState();
+      if (scrollState == null)
+        return null;
+      return {
+        id: id,
+        scroll: scrollState,
+        scrollTotal: scrollTotal
+      };
+    }
 
     // True if the last save attempt had an empty cache. In that case,
     // don't throttle. As soon as cachechanged happens, just trigger
     // it.
-    var needSave = false;
+    var needSave = false, lockSave = false;
+    function unlockSave() {
+      lockSave = false;
+      if (needSave)
+        saveThrottler.request({ noThrottle: true });
+    }
     var saveThrottler = new Throttler(function() {
+      if (lockSave) {
+        needSave = true;
+        return;
+      }
       var state = getScrollState();
+      console.log(state);
       if (state == null) {
         needSave = true;
         return;
@@ -175,6 +208,8 @@ document.addEventListener("DOMContentLoaded", function() {
       api.userInfo().replaceScrollState(oldState, state);
       oldState = state;
     }, timespan.seconds(1));
+    // TODO(davidben): Changing filters happens to trigger scroll
+    // events, but we should be listening for that more explicitly.
     messageView.container().addEventListener("scroll", function(ev) {
       saveThrottler.request({ noThrottle: needSave });
     });
@@ -191,11 +226,16 @@ document.addEventListener("DOMContentLoaded", function() {
       var option = recentStates.options[recentStates.selectedIndex];
       if (!option.roostState)
         return;
-      oldState = option.roostState;
-      messageView.changeFilter(new Filter(oldState.scroll.filter));
-      messageView.scrollToMessage(oldState.scroll.id, {
-        offset: oldState.scroll.offset
-      });
+      lockSave = true;
+      try {
+        oldState = option.roostState;
+        messageView.changeFilter(new Filter(oldState.scroll.filter));
+        messageView.scrollToMessage(oldState.scroll.id, {
+          offset: oldState.scroll.offset
+        });
+      } finally {
+        unlockSave();
+      }
     });
     function loadPositions() {
       var scrollStates = api.userInfo().scrollStates();
