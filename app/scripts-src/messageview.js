@@ -317,6 +317,43 @@ MessageView.prototype.scrollState = function() {
   };
 };
 
+MessageView.prototype.distanceToScrollState = function(state) {
+  // Returns how far we are from a given scroll state. Either returns
+  // a value (positive or negative) in pixels. Infinity if it's
+  // uncomparable or "really far away". Or null if we don't know the
+  // answer know but will in a tick or two.
+
+  // Filter change => uncomparable.
+  var filter = this.filter_.toDict();
+  for (var i = 0; i < Filter.FIELDS.length; i++) {
+    if (filter[Filter.FIELDS[i]] !== state.filter[Filter.FIELDS[i]])
+      return Infinity;
+  }
+
+  // Find the message in state.
+  var node = this.getNode(state.id);
+  if (node != null) {
+    // Great, easy case. Just give the actual distance. Calculation is
+    // where the top of the node currently is vs. where it used to be.
+    return node.getBoundingClientRect().top -
+      (this.container_.getBoundingClientRect().top + state.offset);
+  }
+
+  // It wasn't there. So the question is whether it's unknown right
+  // now due to pending cache or because it's so far away, we're
+  // off-screen. We'll use a fairly simple heuristic for this: Find
+  // the top message. Require either 10 messages above/below or that
+  // we're atTop/atBottom.
+  var topIdx = this.findTopMessage();
+  if (topIdx == null)
+    return null;  // Oops. We're empty.
+  if (topIdx < 10 && !this.atTop_)
+    return null;  // Inconclusive: not enough above.
+  if (this.messages_.length - topIdx < 10 && !this.atBottom_)
+    return null;  // Inconclusive: not enough below.
+  return Infinity;
+};
+
 MessageView.prototype.scrollToMessage = function(id, opts) {
   // TODO(davidben): This function is pretty wonky. Really it should
   // just be two functions.
