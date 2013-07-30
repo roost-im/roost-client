@@ -75,9 +75,6 @@ UserInfo.prototype.get = function(key) {
 };
 
 UserInfo.prototype.scrollStates = function() {
-  console.log('Z', this.base_.scrollStates,
-              this.pending_ ? this.pending_.scrollStates : null,
-              this.local_ ? this.local_.scrollStates : null);
   var base = {
     remove: {},
     add: this.base_.scrollStates || []

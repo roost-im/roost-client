@@ -205,9 +205,7 @@ document.addEventListener("DOMContentLoaded", function() {
       option.textContent = "Recent positions";
       recentStates.appendChild(option);
 
-      console.log(scrollStates);
       for (var i = scrollStates.length - 1; i >= 0; i--) {
-        console.log(i);
         option = document.createElement("option");
         option.textContent =
           new Date(scrollStates[i].scroll.receiveTime).toString();
