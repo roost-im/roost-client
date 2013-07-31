@@ -91,7 +91,7 @@ RoostSocket.prototype.onMessage_ = function(ev) {
     this.pongTimer_ = null;
   }
   var msg = JSON.parse(ev.data);
-  if (msg.type === 'ready') {
+  if (msg.type === "ready") {
     this.ready_ = true;
     this.onVisibilityChangeCb_();
   }
@@ -168,8 +168,21 @@ var TOKEN_REFRESH_TIMER = timespan.minutes(30);
 var TOKEN_RENEW_SOFT = timespan.days(1);
 var TOKEN_RENEW_HARD = timespan.minutes(5);
 
+/* State-saving code: */
+var CHARCODE_a = 'a'.charCodeAt(0);
+function generateId() {
+  var chars = [];
+  for (var i = 0; i < 10; i++) {
+    chars.push(String.fromCharCode(
+      CHARCODE_a + Math.floor(Math.random() * 26)))
+  }
+  return chars.join("");
+}
+
 function API(urlBase, servicePrincipal, storageManager, ticketManager) {
   RoostEventTarget.call(this);
+
+  this.clientId_ = generateId();
 
   this.urlBase_ = urlBase;
   this.storageManager_ = storageManager;
@@ -313,6 +326,8 @@ API.prototype.request = function(method, path, params, data, opts, isRetry) {
     var token = ret[0], credentials = ret[1], params = ret[2], data = ret[3];
     var url =
       this.urlBase_ + path + "?access_token=" + encodeURIComponent(token);
+    if (method != "GET")
+      url += "&clientId=" + encodeURIComponent(this.clientId_);
     for (var key in params) {
       url += "&" + key + "=" + encodeURIComponent(params[key]);
     }
@@ -359,8 +374,12 @@ API.prototype.tryConnectSocket_ = function() {
   this.getAuthToken_(false).then(function(token) {
     var socket = new RoostSocket(new SockJS(this.urlBase_ + "/v1/socket"));
     socket.sockJS().addEventListener("open", function() {
-      socket.send({type: "auth", token: token});
-    });
+      socket.send({
+        type: "auth",
+        clientId: this.clientId_,
+        token: token,
+      });
+    }.bind(this));
 
     var connected = false;
     var onReady = function() {

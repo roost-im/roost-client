@@ -28,10 +28,25 @@ function UserInfo(api) {
   // TODO(davidben): If the initial load fails, we never get the
   // ready. Retry? Maybe just query on login and save the state.
   this.loadInfo_().done();
+  this.api_.addEventListener("connect", this.onConnect_.bind(this));
+  this.onConnect_();
 }
 UserInfo.prototype = Object.create(RoostEventTarget.prototype);
 
+UserInfo.prototype.onConnect_ = function() {
+  var socket = this.api_.socket();
+  if (!socket)
+    return;
+  socket.addEventListener("info-changed", function(ev) {
+    this.handleNewInfo_(ev.info, ev.version);
+  }.bind(this));
+}
+
 UserInfo.prototype.handleNewInfo_ = function(info, version) {
+  // Things might have gotten reordered.
+  if (this.baseVersion_ >= version)
+    return;
+
   try {
     this.base_ = JSON.parse(info);
   } catch (err) {
