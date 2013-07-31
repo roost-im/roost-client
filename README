@@ -13,7 +13,7 @@ This client is intended to support recent versions of modern browsers. Most
 notably, it does not intend to support IE8 and earlier.
 
 Getting started:
-  npm install -g bower grunt
+  npm install -g bower grunt-cli
   npm install
   bower install
 
