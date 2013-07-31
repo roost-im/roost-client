@@ -134,17 +134,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   messageList.focus();
 
-  /* State-saving code: */
-  var CHARCODE_a = 'a'.charCodeAt(0);
-  function generateId() {
-    var chars = [];
-    for (var i = 0; i < 10; i++) {
-      chars.push(String.fromCharCode(
-        CHARCODE_a + Math.floor(Math.random() * 26)))
-    }
-    return chars.join("");
-  }
-
   var loadState = true;
   api.userInfo().ready().then(function() {
     // TODO(davidben): Can we just move everything in here? It'd be
