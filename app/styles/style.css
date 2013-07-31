@@ -17,8 +17,6 @@ body {
   max-width: 700px;
   height: 100%;
   margin: 0 auto 0 auto;
-
-  background: #ddd;
   overflow: scroll;
 }
 #messagelist:focus {
