@@ -206,9 +206,17 @@ UserInfo.prototype.doUpdate_ = function() {
     add: newInfo.scrollStates
   }, this.pending_.scrollStates).add;
 
-  // Fire off a test-and-set.
   var newVersion = this.baseVersion_ + 1;
   var newInfoStr = JSON.stringify(newInfo);
+
+  var oldInfoStr = JSON.stringify(this.base_);
+  if (oldInfoStr === newInfoStr) {
+    // Nothing changed. Don't bother.
+    this.pending_ = null;
+    return;
+  }
+
+  // Fire off a test-and-set.
   return this.api_.post("/v1/info", {
     expectedVersion: this.baseVersion_,
     info: newInfoStr
