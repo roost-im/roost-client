@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html ng-app ng-csp>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roost</title>
+    <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/style.css">
     <link rel="SHORTCUT ICON" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/roost-logo_57x57.png">
@@ -19,6 +20,10 @@
     <!-- build:js /scripts/winchan.min.js -->
     <script src="/bower_components/winchan/winchan.js"></script>
     <!-- endbuild -->
+
+    <script src="/scripts/jquery.min.js"></script>
+    <script src="/scripts/bootstrap.min.js"></script>
+    <script src="/scripts/angular.min.js"></script>
 
     <script src="/scripts/cryptojs-des.js"></script>
     <script src="/scripts/sjcl.js"></script>
@@ -50,8 +55,8 @@
     <!-- endbuild -->
   </head>
   <body>
-    <button id="reset-view">Reset view</button>
-    <select id="recent-states">
+    <button id="reset-view" class="btn btn-default">Reset view</button>
+    <select id="recent-states" class="form-control input-small">
       <option>Recent positions</option>
     </select>
 
@@ -60,12 +65,36 @@
 
     <div id="reply-box" hidden>
       <button class="close-button">X</button>
-      <form class="zwrite-form">
-        Class: <input name="class" placeholder="message"><br>
-        Instance: <input name="instance" placeholder="personal"><br>
-        Recipient: <input name="recipient"><br>
-        <textarea name="message" rows=10 cols=80></textarea><br>
-        <input type="submit" value="Send">
+      <form class="zwrite-form form-horizontal">
+        <div class="form-group">
+          <label for="reply-form-class" class="col-lg-2 control-label">
+            Class
+          </label>
+          <div class="col-lg-10">
+            <input name="class" id="reply-form-class"
+                   class="form-control input-small" placeholder="message">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reply-form-instance" class="col-lg-2 control-label">
+            Instance
+          </label>
+          <div class="col-lg-10">
+            <input name="instance" id="reply-form-instance"
+                   class="form-control input-small" placeholder="personal">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reply-form-recipient" class="col-lg-2 control-label">
+            Recipient
+          </label>
+          <div class="col-lg-10">
+            <input name="recipient" id="reply-form-recipient"
+                   class="form-control input-small" placeholder="personal">
+          </div>
+        </div>
+        <textarea name="message" class="form-control" rows=10 cols=80></textarea><br>
+        <input type="submit" value="Send" class="btn btn-primary">
       </form>
     </div>
 
@@ -74,7 +103,7 @@
       <div class="dialog-dummy-parent">
         <div class="dialog">
           <p>Your login has expired</p>
-          <button class="login-button">Renew login</button>
+          <button class="login-button btn btn-primary">Login</button>
         </div>
       </div>
     </div>
@@ -87,7 +116,7 @@
           <p>WARNING: This is very experimental right now. No
           guarantees about it doing anything remotely reasonable at
           all. Talk to davidben if you want to know the state.</p>
-          <button class="login-button">Login</button>
+          <button class="login-button btn btn-primary">Login</button>
         </div>
       </div>
     </div>

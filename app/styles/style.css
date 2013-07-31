@@ -14,7 +14,7 @@ body {
   margin-top: -1px;
 }
 #messagelist {
-  max-width: 650px;
+  max-width: 700px;
   height: 100%;
   margin: 0 auto 0 auto;
 
@@ -106,6 +106,7 @@ pre { padding: 0; margin: 0 }
     position: absolute;
     top: 5px;
     left: 5px;
+    width: auto !important;
 }
 
 #reply-box {
@@ -119,7 +120,7 @@ pre { padding: 0; margin: 0 }
 #reply-box > form {
     display: block;
     margin: 5px auto;
-    max-width: 650px;
+    max-width: 700px;
 }
 #reply-box > .close-button {
     float: right;
