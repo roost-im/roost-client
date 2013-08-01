@@ -53,9 +53,9 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
   });
 
   var replyBox = document.getElementById("reply-box");
-  replyBox.getElementsByClassName(
-    "zwrite-form"
-  )[0].addEventListener("submit", function(ev) {
+  replyBox.querySelector(
+    ".zwrite-form"
+  ).addEventListener("submit", function(ev) {
     ev.preventDefault();
 
     var msgClass = this.class.value || "message";
@@ -89,9 +89,9 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
       messageList.focus();
     }).done();
   });
-  replyBox.getElementsByClassName(
-    "close-button"
-  )[0].addEventListener("click", function(ev) {
+  replyBox.querySelector(
+    ".close-button"
+  ).addEventListener("click", function(ev) {
     replyBox.setAttribute("hidden", "");
     messageList.focus();
   });
@@ -120,7 +120,7 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
         ev.preventDefault();
         selectionTracker.ensureSelectionVisible_();
 
-        var form = replyBox.getElementsByClassName("zwrite-form")[0];
+        var form = replyBox.querySelector(".zwrite-form");
 
         form.class.value = (msg.classKey === "message") ? "" : msg.class;
         form.instance.value = (msg.instanceKey === "personal") ? "" : msg.instance;
@@ -137,7 +137,7 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
     } else if (matchKey(ev, 90 /* z */)) {
       ev.preventDefault();
 
-      var form = replyBox.getElementsByClassName("zwrite-form")[0];
+      var form = replyBox.querySelector(".zwrite-form");
 
       form.class.value = "";
       form.instance.value = "";
