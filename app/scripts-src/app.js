@@ -151,121 +151,101 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
 
   messageList.focus();
 
+  $scope.scrollStates = [];
+  api.userInfo().addEventListener("change", function() {
+    $scope.$apply(function() {
+      $scope.scrollStates = api.userInfo().scrollStates();
+    });
+  });
+
   var loadState = true;
-  api.userInfo().ready().then(function() {
-    // TODO(davidben): Can we just move everything in here? It'd be
-    // nice to not care about this state.
 
-    // How many pixels you have to scroll before we fork scroll state
-    // ids.
-    var FORK_CUTOFF = 125;
+  // How many pixels you have to scroll before we fork scroll state
+  // ids.
+  var FORK_CUTOFF = 125;
 
-    var oldState = null;
+  var oldState = null;
 
-    function getScrollState() {
-      // How far are we from the old scroll state.
-      var id, scrollTotal = Infinity;
-      if (oldState) {
-        var dist = messageView.distanceToScrollState(oldState.scroll);
-        if (dist == null)
-          return null;
-        scrollTotal = dist + (oldState.scrollTotal || 0);
-      }
-      // Fork if far enough away.
-      if (Math.abs(scrollTotal) > FORK_CUTOFF) {
-        id = generateId();
-        scrollTotal = 0;
-      } else {
-        id = oldState.id;
-      }
-
-      var scrollState = messageView.scrollState();
-      if (scrollState == null)
+  function getScrollState() {
+    // How far are we from the old scroll state.
+    var id, scrollTotal = Infinity;
+    if (oldState) {
+      var dist = messageView.distanceToScrollState(oldState.scroll);
+      if (dist == null)
         return null;
-      return {
-        id: id,
-        scroll: scrollState,
-        scrollTotal: scrollTotal
-      };
+      scrollTotal = dist + (oldState.scrollTotal || 0);
+    }
+    // Fork if far enough away.
+    if (Math.abs(scrollTotal) > FORK_CUTOFF) {
+      id = generateId();
+      scrollTotal = 0;
+    } else {
+      id = oldState.id;
     }
 
-    // True if the last save attempt had an empty cache. In that case,
-    // don't throttle. As soon as cachechanged happens, just trigger
-    // it.
-    var needSave = false, lockSave = false;
-    function unlockSave() {
-      lockSave = false;
-      if (needSave)
-        saveThrottler.request({ noThrottle: true });
+    var scrollState = messageView.scrollState();
+    if (scrollState == null)
+      return null;
+    return {
+      id: id,
+      scroll: scrollState,
+      scrollTotal: scrollTotal
+    };
+  }
+
+  // True if the last save attempt had an empty cache. In that case,
+  // don't throttle. As soon as cachechanged happens, just trigger
+  // it.
+  var needSave = false, lockSave = true /* to be unlocked on userinfo ready* */;
+  function unlockSave() {
+    lockSave = false;
+    if (needSave)
+      saveThrottler.request({ noThrottle: true });
+  }
+  var saveThrottler = new Throttler(function() {
+    if (lockSave) {
+      needSave = true;
+      return;
     }
-    var saveThrottler = new Throttler(function() {
-      if (lockSave) {
-        needSave = true;
-        return;
-      }
-      var state = getScrollState();
-      if (state == null) {
-        needSave = true;
-        return;
-      }
-      needSave = false;
-      api.userInfo().replaceScrollState(oldState, state);
+    var state = getScrollState();
+    if (state == null) {
+      needSave = true;
+      return;
+    }
+    needSave = false;
+    api.userInfo().replaceScrollState(oldState, state);
+    oldState = state;
+  }, timespan.seconds(1));
+  // TODO(davidben): Changing filters happens to trigger scroll
+  // events, but we should be listening for that more explicitly.
+  messageView.container().addEventListener("scroll", function(ev) {
+    saveThrottler.request({ noThrottle: needSave });
+  });
+  messageView.addEventListener("cachechanged", function(ev) {
+    if (needSave && !lockSave)
+      saveThrottler.request({ noThrottle: true });
+  });
+
+  $scope.setScrollState = function(state) {
+    lockSave = true;
+    try {
       oldState = state;
-    }, timespan.seconds(1));
-    // TODO(davidben): Changing filters happens to trigger scroll
-    // events, but we should be listening for that more explicitly.
-    messageView.container().addEventListener("scroll", function(ev) {
-      saveThrottler.request({ noThrottle: needSave });
-    });
-    messageView.addEventListener("cachechanged", function(ev) {
-      if (needSave)
-        saveThrottler.request({ noThrottle: true });
-    });
-
-
-    // TODO(davidben): Replace all this with more sensible AngularJS
-    // code or something.
-    var recentStates = document.getElementById("recent-states");
-    recentStates.addEventListener("change", function() {
-      var option = recentStates.options[recentStates.selectedIndex];
-      if (!option.roostState)
-        return;
-      lockSave = true;
-      try {
-        oldState = option.roostState;
-        messageView.changeFilter(new Filter(oldState.scroll.filter));
-        messageView.scrollToMessage(oldState.scroll.id, {
-          offset: oldState.scroll.offset
-        });
-      } finally {
-        unlockSave();
-      }
-    });
-    function loadPositions() {
-      var scrollStates = api.userInfo().scrollStates();
-      recentStates.textContent = "";
-
-      var option = document.createElement("option");
-      option.textContent = "Recent positions";
-      recentStates.appendChild(option);
-
-      for (var i = scrollStates.length - 1; i >= 0; i--) {
-        option = document.createElement("option");
-        option.textContent =
-          new Date(scrollStates[i].scroll.receiveTime).toString();
-        // Bah.
-        option.roostState = scrollStates[i];
-        recentStates.appendChild(option);
-      }
+      messageView.changeFilter(new Filter(oldState.scroll.filter));
+      messageView.scrollToMessage(oldState.scroll.id, {
+        offset: oldState.scroll.offset
+      });
+    } finally {
+      unlockSave();
     }
-    api.userInfo().addEventListener("change", loadPositions);
-    loadPositions();
+  };
 
+  // Only save state when the user info is ready.
+  api.userInfo().ready().then(function() {
     // Bootstrap everything, if needed.
     if (loadState) {
       var states = api.userInfo().scrollStates();
       if (states.length) {
-        oldState = states[states.length - 1];
+        oldState = states[0];
         messageView.changeFilter(new Filter(oldState.scroll.filter));
         messageView.scrollToMessage(oldState.scroll.id, {
           offset: oldState.scroll.offset
@@ -275,6 +255,8 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
         saveThrottler.request();
       }
     }
+
+    unlockSave();
   }).done();
 
   document.getElementById("reset-view").addEventListener("click", function(ev) {

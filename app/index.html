@@ -56,9 +56,17 @@
   </head>
   <body>
     <button id="reset-view" class="btn btn-default">Reset view</button>
-    <select id="recent-states" class="form-control input-small">
-      <option>Recent positions</option>
-    </select>
+    <div id="recent-states" class="btn-group">
+      <button class="btn btn-default dropdown-toggle"
+              data-toggle="dropdown">Recent positions <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li ng-repeat="state in scrollStates">
+          <a ng-click="setScrollState(state)">
+            {{state.scroll.receiveTime | date:'yyyy-MM-dd hh:mm:ss a'}}
+          </a>
+        </li>
+      </ul>
+    </div>
 
     <div id="messagelist">
     </div>

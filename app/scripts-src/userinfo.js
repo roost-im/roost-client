@@ -98,7 +98,10 @@ UserInfo.prototype.scrollStates = function() {
     base = mergeScrollStateDiff(base, this.pending_.scrollStates);
   if (this.local_)
     base = mergeScrollStateDiff(base, this.local_.scrollStates);
-  return base.add;
+  // Because we were dumb and put the recent things in the back.
+  var ret = base.add.slice(0);
+  ret.reverse();
+  return ret;
 }
 
 UserInfo.prototype.ensureLocal_ = function() {
