@@ -17,6 +17,36 @@ roostApp.directive("showModal", [function() {
   };
 }]);
 
+roostApp.directive("focusOn", ["$parse", function($parse) {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      var idx = attrs.focusOn.indexOf(";");
+      var wait, condition;
+      if (idx < 0) {
+        wait = attrs.focusOn;
+        condition = null;
+      } else {
+        wait = attrs.focusOn.substring(0, idx);
+        condition = $parse(attrs.focusOn.substring(idx + 1));
+      }
+
+      scope.$watch(wait, function(newValue, oldValue) {
+        newValue = !!newValue; oldValue = !!oldValue;
+        if (newValue && newValue !== oldValue) {
+          if (!condition || scope.$eval(condition)) {
+            // Do it in an $evalAsync so that the DOM has had a chance
+            // to react too.
+            scope.$evalAsync(function() {
+              element.focus();
+            });
+          }
+        }
+      });
+    }
+  }
+}]);
+
 roostApp.controller("RoostController", ["$scope", function($scope) {
   var storageManager = new StorageManager();
   window.storageManager = storageManager;
@@ -61,6 +91,10 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
     console.log("User mismatch do something useful");
   });
 
+  $scope.showReplyBox = false;
+  $scope.focusClass = false;
+  $scope.focusMessage = false;
+
   var replyBox = document.getElementById("reply-box");
   replyBox.querySelector(
     ".zwrite-form"
@@ -94,19 +128,28 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
     }).then(function(ret) {
       console.log("Sent:", ret.ack);
     }).finally(function() {
-      replyBox.setAttribute("hidden", "");
+      $scope.$apply(function() {
+        $scope.showReplyBox = false;
+        $scope.focusClass = $scope.focusMessage = false;
+      });
       messageList.focus();
     }).done();
   });
   replyBox.querySelector(
     ".close-button"
   ).addEventListener("click", function(ev) {
-    replyBox.setAttribute("hidden", "");
+    $scope.$apply(function() {
+      $scope.showReplyBox = false;
+      $scope.focusClass = $scope.focusMessage = false;
+    });
     messageList.focus();
   });
   replyBox.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 27 /* ESC */)) {
-      replyBox.setAttribute("hidden", "");
+      $scope.$apply(function() {
+        $scope.showReplyBox = false;
+        $scope.focusClass = $scope.focusMessage = false;
+      });
       messageList.focus();
     }
   });
@@ -140,8 +183,10 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
           form.recipient.value = msg.recipient;
         }
 
-        replyBox.removeAttribute("hidden");
-        form.message.focus();
+        $scope.$apply(function() {
+          $scope.showReplyBox = true;
+          $scope.focusMessage = true;
+        });
       }
     } else if (matchKey(ev, 90 /* z */)) {
       ev.preventDefault();
@@ -153,8 +198,10 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
       form.recipient.value = "";
       form.message.value = "";
 
-      replyBox.removeAttribute("hidden");
-      form.class.focus();
+      $scope.$apply(function() {
+        $scope.showReplyBox = true;
+        $scope.focusClass = true;
+      });
     }
   });
 
