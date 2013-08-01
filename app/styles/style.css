@@ -1,5 +1,10 @@
 [hidden] { display: none !important }
 
+/* Angular tries to inject this, but CSP. */
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none;
+}
+
 /* Random styling just to position some random box*/
 html, body {
   height: 100%;
