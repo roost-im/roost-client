@@ -6,6 +6,17 @@ var api, model, messageView, selectionTracker, ticketManager, storageManager;  /
 
 var roostApp = angular.module("roostApp", []);
 
+roostApp.directive("showModal", [function() {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      scope.$watch(attrs.showModal, function(value) {
+        element.modal(value ? "show" : "hide");
+      });
+    }
+  };
+}]);
+
 roostApp.controller("RoostController", ["$scope", function($scope) {
   var storageManager = new StorageManager();
   window.storageManager = storageManager;
@@ -13,38 +24,36 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
   window.ticketManager = ticketManager;
 
   $scope.principal = undefined;
+  $scope.isLoggedIn = false;
   storageManager.principal().then(function(principal) {
     $scope.$apply(function() {
       $scope.principal = principal;
+      $scope.isLoggedIn = true;
     });
   }).done();
 
-  var dialog = null;
+  $scope.refreshTicketsInteractive = function() {
+    ticketManager.refreshTickets({interactive: true});
+  };
+
+  $scope.ticketNeeded = false;
   ticketManager.addEventListener("ticket-needed", function(ev) {
-    // TODO(davidben): check ev.data.nonModal for whether we should
-    // pop open a modal dialog or not.
-    if (dialog)
-      return;
-    var dialogTemplate = document.getElementById(
-      storageManager.isLoggedIn() ? "renew-template" : "login-template");
-    dialog = dialogTemplate.cloneNode(true);
-    dialog.id = null;
-    dialog.removeAttribute("hidden");
-
-    dialog.querySelector(".login-button").addEventListener("click", function(ev) {
-      ticketManager.refreshTickets({interactive: true});
+    $scope.$apply(function() {
+      $scope.ticketNeeded = true;
     });
-
-    // Close the dialog when we get our tickets.
+    // Ticket no longer needed when we get our tickets.
     Q.all(
       [ticketManager.getTicket("server"), ticketManager.getTicket("zephyr")]
     ).then(function() {
-      document.body.removeChild(dialog);
-      dialog = null;
+      $scope.$apply(function() {
+        $scope.ticketNeeded = false;
+      });
     }).done();
 
-    document.body.appendChild(dialog);
+    // TODO(davidben): check ev.data.nonModal for whether we should
+    // pop open a modal dialog or not.
   });
+
   ticketManager.addEventListener("webathena-error", function() {
     console.log("Webathena error do something useful");
   });

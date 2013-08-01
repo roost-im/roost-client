@@ -107,25 +107,40 @@
       </form>
     </div>
 
-    <div id="renew-template" hidden>
-      <div class="dialog-overlay"></div>
-      <div class="dialog-dummy-parent">
-        <div class="dialog">
-          <p>Your login has expired</p>
-          <button class="login-button btn btn-primary">Login</button>
-        </div>
-      </div>
-    </div>
+    <div class="modal fade" show-modal="ticketNeeded">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <ng-switch on="isLoggedIn">
+              <h4 class="modal-title" ng-switch-when="true">Your Login has Expired</h4>
+              <h4 class="modal-title" ng-switch-default>Welcome to Roost</h4>
+            </ng-switch>
+          </div>
+          <div class="modal-body">
+            <ng-switch on="isLoggedIn">
+              <div ng-switch-when="true">
+                <p>Please login again.</p>
+              </div>
+              <div ng-switch-default>
+                <p>WARNING: This is very experimental right now. No
+                  guarantees about it doing anything remotely reasonable at
+                  all. Talk to davidben if you want to know the state.</p>
 
-    <div id="login-template" hidden>
-      <div class="dialog-overlay"></div>
-      <div class="dialog-dummy-parent">
-        <div class="dialog">
-          <p>Welcome to roost</p>
-          <p>WARNING: This is very experimental right now. No
-          guarantees about it doing anything remotely reasonable at
-          all. Talk to davidben if you want to know the state.</p>
-          <button class="login-button btn btn-primary">Login</button>
+                <p>In particular, the UI is still basically
+                  non-existant. It's getting there though. Press z to
+                  send a message, r to replay. Narrowing works with the
+                  same keys as barnowl. Run <code>athrun roost
+                    import-subs</code> on Athena to import your zephyr
+                  subs.</p>
+
+                <p>You also won't receive personals until you've done
+                  that or visited <a href="/api-test.html">this other
+                    silly page</a> and hit "Refresh zephyr credentials"</p>
+              </div>
+            </ng-switch>
+            <button class="login-button btn btn-primary"
+                    ng-click="refreshTicketsInteractive()">Login with Webathena</button>
+          </div>
         </div>
       </div>
     </div>
