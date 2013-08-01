@@ -259,12 +259,11 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
     unlockSave();
   }).done();
 
-  document.getElementById("reset-view").addEventListener("click", function(ev) {
-    ev.preventDefault();
+  $scope.resetView = function() {
     // TODO(davidben): Figure out the right anchor! Probably the last
     // guy you clicked on if it's still in view? I dunno.
     messageView.changeFilter(new Filter({}));
-  });
+  };
 
   if (/#msg-/.test(location.hash)) {
     loadState = false;
