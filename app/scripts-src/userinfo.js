@@ -78,15 +78,11 @@ UserInfo.prototype.get = function(key) {
   if (this.baseVersion_ < 0)
     throw "User info not loaded!";
 
-  if (key === 'scrollStates') {
-    return this.scrollStates();
-  } else {
-    if (this.local_ && key in this.local_)
-      return this.local_[key];
-    if (this.pending_ && key in this.pending_)
-      return this.pending_[key];
-    return this.base_[key];
-  }
+  if (this.local_ && key in this.local_)
+    return this.local_[key];
+  if (this.pending_ && key in this.pending_)
+    return this.pending_[key];
+  return this.base_[key];
 };
 
 UserInfo.prototype.scrollStates = function() {
