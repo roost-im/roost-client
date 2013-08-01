@@ -3,9 +3,22 @@
 // TODO(davidben): Make all this code not terrible. Seriously.
 
 var api, model, messageView, selectionTracker, ticketManager, storageManager;  // For debugging.
-document.addEventListener("DOMContentLoaded", function() {
-  storageManager = new StorageManager();
-  ticketManager = new TicketManager(CONFIG.webathena, storageManager);
+
+var roostApp = angular.module("roostApp", []);
+
+roostApp.controller("RoostController", ["$scope", function($scope) {
+  var storageManager = new StorageManager();
+  window.storageManager = storageManager;
+  var ticketManager = new TicketManager(CONFIG.webathena, storageManager);
+  window.ticketManager = ticketManager;
+
+  $scope.principal = undefined;
+  storageManager.principal().then(function(principal) {
+    $scope.$apply(function() {
+      $scope.principal = principal;
+    });
+  }).done();
+
   var dialog = null;
   ticketManager.addEventListener("ticket-needed", function(ev) {
     // TODO(davidben): check ev.data.nonModal for whether we should
@@ -89,12 +102,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
-  api = new API(CONFIG.server, CONFIG.serverPrincipal,
+  var api = new API(CONFIG.server, CONFIG.serverPrincipal,
                 storageManager, ticketManager);
-  model = new MessageModel(api);
+  window.api = api;
+  var model = new MessageModel(api);
+  window.model = model;
   var messageList = document.getElementById("messagelist");
-  messageView = new MessageView(model, messageList);
-  selectionTracker = new SelectionTracker(messageView);
+  var messageView = new MessageView(model, messageList);
+  window.messageView = messageView;
+  var selectionTracker = new SelectionTracker(messageView);
+  window.selectionTracker = selectionTracker;
 
   messageList.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
@@ -283,4 +300,4 @@ document.addEventListener("DOMContentLoaded", function() {
       selectionTracker.selectMessage(msgId);
     }
   });
-});
+}]);
