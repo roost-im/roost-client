@@ -73,8 +73,10 @@
     </div>
 
     <div id="reply-box" ng-cloak ng-show="showReplyBox">
-      <button class="close-button">X</button>
-      <form class="zwrite-form form-horizontal">
+      <button class="close-button" ng-click="hideReplyBox()">X</button>
+      <form class="zwrite-form form-horizontal"
+            ng-submit="sendZwrite()"
+            on-keydown="replyBoxKeydown($event)">
         <div class="form-group">
           <label for="reply-form-class" class="col-lg-2 control-label">
             Class
@@ -82,7 +84,8 @@
           <div class="col-lg-10">
             <input name="class" id="reply-form-class"
                    class="form-control input-small" placeholder="message"
-                   focus-on="showReplyBox; focusClass">
+                   focus-on="showReplyBox; focusClass"
+                   ng-model="replyClass">
           </div>
         </div>
         <div class="form-group">
@@ -91,7 +94,8 @@
           </label>
           <div class="col-lg-10">
             <input name="instance" id="reply-form-instance"
-                   class="form-control input-small" placeholder="personal">
+                   class="form-control input-small" placeholder="personal"
+                   ng-model="replyInstance">
           </div>
         </div>
         <div class="form-group">
@@ -100,11 +104,13 @@
           </label>
           <div class="col-lg-10">
             <input name="recipient" id="reply-form-recipient"
-                   class="form-control input-small">
+                   class="form-control input-small"
+                   ng-model="replyRecipient">
           </div>
         </div>
         <textarea name="message" class="form-control" rows=10 cols=80
-                  focus-on="showReplyBox; focusMessage"></textarea><br>
+                  focus-on="showReplyBox; focusMessage"
+                  ng-model="replyMessage"></textarea><br>
         <input type="submit" value="Send" class="btn btn-primary">
       </form>
     </div>

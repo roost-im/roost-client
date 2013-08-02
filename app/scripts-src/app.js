@@ -47,6 +47,20 @@ roostApp.directive("focusOn", ["$parse", function($parse) {
   }
 }]);
 
+roostApp.directive("onKeydown", ["$parse", function($parse) {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      var fn = $parse(attrs.onKeydown);
+      element.on("keydown", function(event) {
+        scope.$apply(function() {
+          fn(scope, {$event:event});
+        });
+      });
+    }
+  }
+}]);
+
 roostApp.controller("RoostController", ["$scope", function($scope) {
   var storageManager = new StorageManager();
   window.storageManager = storageManager;
@@ -91,22 +105,33 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
     console.log("User mismatch do something useful");
   });
 
+  // TODO(davidben): Move this to a separate controller?
   $scope.showReplyBox = false;
   $scope.focusClass = false;
   $scope.focusMessage = false;
 
-  var replyBox = document.getElementById("reply-box");
-  replyBox.querySelector(
-    ".zwrite-form"
-  ).addEventListener("submit", function(ev) {
-    ev.preventDefault();
+  $scope.hideReplyBox = function() {
+    $scope.showReplyBox = false;
+    $scope.focusClass = $scope.focusMessage = false;
 
-    var msgClass = this.class.value || "message";
-    var msgInstance = this.instance.value || "personal";
-    var msgRecipient = this.recipient.value;
+    $scope.replyClass = "";
+    $scope.replyInstance = "";
+    $scope.replyRecipient = "";
+    $scope.replyMessage = "";
+
+    // FIXME
+    messageList.focus();
+  };
+
+  // TODO(davidben): This should take a message as parameter and
+  // stuff. Do all the defaults and stuff as filters.
+  $scope.sendZwrite = function() {
+    var msgClass = $scope.replyClass || "message";
+    var msgInstance = $scope.replyInstance || "personal";
+    var msgRecipient = $scope.replyRecipient;
     if (msgRecipient.indexOf("@") < 0)
       msgRecipient = msgRecipient + "@" + CONFIG.realm;
-    var msgBody = this.message.value;
+    var msgBody = $scope.replyMessage;
 
     var data = api.userInfo().ready().then(function() {
       var zsig = api.userInfo().get("zsig");
@@ -129,30 +154,20 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
       console.log("Sent:", ret.ack);
     }).finally(function() {
       $scope.$apply(function() {
-        $scope.showReplyBox = false;
-        $scope.focusClass = $scope.focusMessage = false;
+        $scope.hideReplyBox();
       });
-      messageList.focus();
     }).done();
-  });
-  replyBox.querySelector(
-    ".close-button"
-  ).addEventListener("click", function(ev) {
-    $scope.$apply(function() {
-      $scope.showReplyBox = false;
-      $scope.focusClass = $scope.focusMessage = false;
-    });
-    messageList.focus();
-  });
-  replyBox.addEventListener("keydown", function(ev) {
+  };
+
+  // TODO(davidben): This is a silly thing to put in a
+  // controller. Pull in some fancy directive like angular-ui's
+  // keypress.
+  $scope.replyBoxKeydown = function(ev) {
     if (matchKey(ev, 27 /* ESC */)) {
-      $scope.$apply(function() {
-        $scope.showReplyBox = false;
-        $scope.focusClass = $scope.focusMessage = false;
-      });
-      messageList.focus();
+      ev.preventDefault();
+      $scope.hideReplyBox();
     }
-  });
+  };
 
   var api = new API(CONFIG.server, CONFIG.serverPrincipal,
                 storageManager, ticketManager);
@@ -172,31 +187,22 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
         ev.preventDefault();
         selectionTracker.ensureSelectionVisible_();
 
-        var form = replyBox.querySelector(".zwrite-form");
-
-        form.class.value = (msg.classKey === "message") ? "" : msg.class;
-        form.instance.value = (msg.instanceKey === "personal") ? "" : msg.instance;
-        form.message.value = "";
-        if (msg.isPersonal && !msg.isOutgoing) {
-          form.recipient.value = msg.sender;
-        } else {
-          form.recipient.value = msg.recipient;
-        }
-
         $scope.$apply(function() {
           $scope.showReplyBox = true;
           $scope.focusMessage = true;
+
+          $scope.replyClass = (msg.classKey === "message") ? "" : msg.class;
+          $scope.replyInstance =
+            (msg.instanceKey === "personal") ? "" : msg.instance;
+          if (msg.isPersonal && !msg.isOutgoing) {
+            $scope.replyRecipient = msg.sender;
+          } else {
+            $scope.replyRecipient = msg.recipient;
+          }
         });
       }
     } else if (matchKey(ev, 90 /* z */)) {
       ev.preventDefault();
-
-      var form = replyBox.querySelector(".zwrite-form");
-
-      form.class.value = "";
-      form.instance.value = "";
-      form.recipient.value = "";
-      form.message.value = "";
 
       $scope.$apply(function() {
         $scope.showReplyBox = true;
