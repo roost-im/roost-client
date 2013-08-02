@@ -82,6 +82,12 @@ function(config, storageManager, ticketManager) {
                  storageManager, ticketManager);
 }]);
 
+roostApp.filter("shortZuser", [function() {
+  return shortZuser;
+}]);
+roostApp.filter("longZuser", [function() {
+  return longZuser;
+}]);
 
 roostApp.controller("RoostController",
                     ["$scope", "storageManager", "ticketManager", "api",
