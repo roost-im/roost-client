@@ -3,10 +3,13 @@
 function longZuser(user) {
   var idx = user.indexOf("@");
   if (idx < 0) {
-    return user + "@" + CONFIG.realm;
+    // Apparent @REALM, unless "".
+    return user ? (user + "@" + CONFIG.realm) : "";
   } else if (idx == user.length - 1) {
+    // Ends in @.
     return user + CONFIG.realm;
   } else {
+    // Already has a realm.
     return user;
   }
 }

@@ -226,6 +226,10 @@ if (!Function.prototype.bind) {
         "davidben@ZONE.MIT.EDU");
     });
 
+    it('should not expand the empty recipient', function() {
+      expect(longZuser("")).to.be.equal("");
+    });
+
     it('should handle trailing @s', function() {
       expect(longZuser("davidben@")).to.be.equal("davidben@ATHENA.MIT.EDU");
     });
