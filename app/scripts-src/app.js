@@ -61,11 +61,30 @@ roostApp.directive("onKeydown", ["$parse", function($parse) {
   }
 }]);
 
-roostApp.controller("RoostController", ["$scope", function($scope) {
-  var storageManager = new StorageManager();
+roostApp.value("config", CONFIG);
+
+roostApp.service("storageManager", [function() {
+  return new StorageManager();
+}]);
+
+roostApp.service("ticketManager", ["storageManager", "config",
+function(storageManager, config) {
+  return new TicketManager(config.webathena, storageManager);
+}]);
+
+roostApp.service("api", ["config", "storageManager", "ticketManager",
+function(config, storageManager, ticketManager) {
+  return new API(config.server, config.serverPrincipal,
+                 storageManager, ticketManager);
+}]);
+
+
+roostApp.controller("RoostController",
+                    ["$scope", "storageManager", "ticketManager", "api",
+function($scope, storageManager, ticketManager, api) {
   window.storageManager = storageManager;
-  var ticketManager = new TicketManager(CONFIG.webathena, storageManager);
   window.ticketManager = ticketManager;
+  window.api = api;
 
   $scope.principal = undefined;
   $scope.isLoggedIn = false;
@@ -167,9 +186,6 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
     }
   };
 
-  var api = new API(CONFIG.server, CONFIG.serverPrincipal,
-                storageManager, ticketManager);
-  window.api = api;
   var model = new MessageModel(api);
   window.model = model;
   var messageList = document.getElementById("messagelist");
