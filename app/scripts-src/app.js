@@ -156,25 +156,18 @@ function($scope, storageManager, ticketManager, api) {
     messageList.focus();
   };
 
-  // TODO(davidben): This should take a message as parameter and
-  // stuff. Do all the defaults and stuff as filters.
-  $scope.sendZwrite = function() {
-    var msgClass = $scope.replyClass || "message";
-    var msgInstance = $scope.replyInstance || "personal";
-    var msgRecipient = longZuser($scope.replyRecipient);
-    var msgBody = $scope.replyMessage;
-
+  $scope.sendZwrite = function(msg) {
     var data = api.userInfo().ready().then(function() {
       var zsig = api.userInfo().get("zsig");
       zsig = (zsig == undefined) ? "Sent from Roost" : zsig;
       return {
         message: {
-          class: msgClass,
-          instance: msgInstance,
-          recipient: msgRecipient,
+          class: msg.class,
+          instance: msg.instance,
+          recipient: msg.recipient,
           opcode: "",
           signature: zsig,
-          message: msgBody
+          message: msg.message
         }
       };
     });

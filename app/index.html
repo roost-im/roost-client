@@ -76,7 +76,12 @@
     <div id="reply-box" ng-cloak ng-show="showReplyBox">
       <button class="close-button" ng-click="hideReplyBox()">X</button>
       <form class="zwrite-form form-horizontal"
-            ng-submit="sendZwrite()"
+            ng-submit="sendZwrite({
+                         class: (replyClass || 'message'),
+                         instance: (replyInstance || 'personal'),
+                         recipient: (replyRecipient|longZuser),
+                         message: replyMessage
+                       })"
             on-keydown="replyBoxKeydown($event)">
         <div class="form-group">
           <label for="reply-form-class" class="col-lg-2 control-label">
