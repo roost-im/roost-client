@@ -6,8 +6,29 @@
 // be the central place where we check what user all the storage is
 // associated with.
 
-function StorageManager() {
+// Sigh. Just to make the event come from the right place.
+function LocalStorageWrapper() {
   RoostEventTarget.call(this);
+
+  window.addEventListener("storage", function() {
+    this.dispatchEvent({type: "storage"});
+  }.bind(this));
+}
+LocalStorageWrapper.prototype = Object.create(RoostEventTarget.prototype);
+LocalStorageWrapper.prototype.clear = function() {
+  localStorage.clear();
+};
+LocalStorageWrapper.prototype.getItem = function(key) {
+  return localStorage.getItem(key);
+};
+LocalStorageWrapper.prototype.setItem = function(key, value) {
+  localStorage.setItem(key, value);
+};
+
+function StorageManager(localStorage) {
+  RoostEventTarget.call(this);
+
+  this.localStorage_ = localStorage;
 
   // Cached copy of the data.
   this.data_ = null;
@@ -18,7 +39,8 @@ function StorageManager() {
   this.expectedPrincipal_ = null;
   this.disabled_ = false;
 
-  window.addEventListener("storage", this.loadFromStorage_.bind(this));
+  this.localStorage_.addEventListener("storage",
+                                      this.loadFromStorage_.bind(this));
   this.loadFromStorage_();
 };
 StorageManager.prototype = Object.create(RoostEventTarget.prototype);
@@ -40,7 +62,7 @@ StorageManager.prototype.principalCheck_ = function(principal) {
 };
 
 StorageManager.prototype.loadFromStorage_ = function() {
-  var dataJson = localStorage.getItem("roostData");
+  var dataJson = this.localStorage_.getItem("roostData");
   if (!dataJson) {
     // TODO(davidben): Set this.data_ to null? Maybe emit an event to
     // pick up the logout or something.
@@ -88,7 +110,7 @@ StorageManager.prototype.saveTickets = function(sessions) {
     server: sessions.server.toDict(),
     zephyr: sessions.zephyr.toDict()
   };
-  localStorage.setItem("roostData", JSON.stringify(this.data_));
+  this.localStorage_.setItem("roostData", JSON.stringify(this.data_));
 
   this.dispatchEvent({type: "change"});
   return goodUser;
@@ -108,7 +130,7 @@ StorageManager.prototype.saveToken = function(principal, token, expires) {
   }
   this.data_.principal = principal;
   this.data_.token = { value: token, expires: expires };
-  localStorage.setItem("roostData", JSON.stringify(this.data_));
+  this.localStorage_.setItem("roostData", JSON.stringify(this.data_));
 
   this.dispatchEvent({type: "change"});
   return goodUser;

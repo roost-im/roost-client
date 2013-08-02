@@ -63,8 +63,12 @@ roostApp.directive("onKeydown", ["$parse", function($parse) {
 
 roostApp.value("config", CONFIG);
 
-roostApp.service("storageManager", [function() {
-  return new StorageManager();
+roostApp.service("localStorage", [function() {
+  return new LocalStorageWrapper();
+}]);
+
+roostApp.service("storageManager", ["localStorage", function(localStorage) {
+  return new StorageManager(localStorage);
 }]);
 
 roostApp.service("ticketManager", ["storageManager", "config",
