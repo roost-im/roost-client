@@ -128,9 +128,7 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
   $scope.sendZwrite = function() {
     var msgClass = $scope.replyClass || "message";
     var msgInstance = $scope.replyInstance || "personal";
-    var msgRecipient = $scope.replyRecipient;
-    if (msgRecipient.indexOf("@") < 0)
-      msgRecipient = msgRecipient + "@" + CONFIG.realm;
+    var msgRecipient = longZuser($scope.replyRecipient);
     var msgBody = $scope.replyMessage;
 
     var data = api.userInfo().ready().then(function() {
@@ -199,6 +197,7 @@ roostApp.controller("RoostController", ["$scope", function($scope) {
           } else {
             $scope.replyRecipient = msg.recipient;
           }
+          $scope.replyRecipient = shortZuser($scope.replyRecipient);
         });
       }
     } else if (matchKey(ev, 90 /* z */)) {

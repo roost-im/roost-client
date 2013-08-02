@@ -215,4 +215,34 @@ if (!Function.prototype.bind) {
       test.run("http://☃.net");
     });
   });
+
+  describe('long zuser', function() {
+    it('should expand simple strings', function() {
+      expect(longZuser("davidben")).to.be.equal("davidben@ATHENA.MIT.EDU");
+    });
+
+    it('should not expand cross-realm principals', function() {
+      expect(longZuser("davidben@ZONE.MIT.EDU")).to.be.equal(
+        "davidben@ZONE.MIT.EDU");
+    });
+
+    it('should handle trailing @s', function() {
+      expect(longZuser("davidben@")).to.be.equal("davidben@ATHENA.MIT.EDU");
+    });
+  });
+
+  describe('short zuser', function() {
+    it('should strip off the default realm', function() {
+      expect(shortZuser("davidben@ATHENA.MIT.EDU")).to.be.equal("davidben");
+    });
+
+    it('should not shorten cross-realm principals', function() {
+      expect(shortZuser("davidben@ZONE.MIT.EDU")).to.be.equal(
+        "davidben@ZONE.MIT.EDU");
+    });
+
+    it('should handle trailing @s', function() {
+      expect(shortZuser("davidben@")).to.be.equal("davidben");
+    });
+  });
 })();

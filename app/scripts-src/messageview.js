@@ -550,7 +550,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
     if (msg.isOutgoing) {
       pre.appendChild(document.createTextNode("Zephyr to "));
       a = document.createElement("a");
-      a.textContent = msg.recipient;
+      a.textContent = shortZuser(msg.recipient);
       a.addEventListener("click", function(ev) {
         ev.preventDefault();
         this.changeFilter(new Filter({conversation: msg.recipient}), id);
@@ -574,7 +574,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
     } else {
       pre.appendChild(document.createTextNode("Zephyr from "));
       a = document.createElement("a");
-      a.textContent = msg.sender;
+      a.textContent = shortZuser(msg.sender);
       a.addEventListener("click", function(ev) {
         ev.preventDefault();
         this.changeFilter(new Filter({conversation: msg.sender}), id);
@@ -618,7 +618,7 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
     pre.appendChild(a);
 
     pre.appendChild(document.createTextNode(
-      " / " + msg.sender + "  " +
+      " / " + shortZuser(msg.sender) + "  " +
         new Date(msg.time).toString() + "\n"));
   }
 
