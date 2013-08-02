@@ -132,6 +132,10 @@ function($scope, storageManager, ticketManager, api) {
   $scope.showReplyBox = false;
   $scope.focusClass = false;
   $scope.focusMessage = false;
+  $scope.replyClass = "";
+  $scope.replyInstance = "";
+  $scope.replyRecipient = "";
+  $scope.replyMessage = "";
 
   $scope.hideReplyBox = function() {
     $scope.showReplyBox = false;
