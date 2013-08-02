@@ -74,7 +74,8 @@
     </div>
 
     <div id="reply-box" ng-cloak ng-show="showReplyBox">
-      <button class="close-button" ng-click="hideReplyBox()">X</button>
+      <button type="button" class="pull-right close"
+              ng-click="hideReplyBox()">&times;</button>
       <form class="zwrite-form form-horizontal"
             ng-submit="sendZwrite({
                          class: (replyClass || 'message'),
