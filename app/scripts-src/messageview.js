@@ -903,32 +903,29 @@ SelectionTracker.prototype.adjustSelection_ = function(direction,
   // TODO(davidben): This grew organically out of a handful of
   // experiments before settling on something similar to what BarnOwl
   // does anyway. It can probably be simplified.
-  this.selectMessage(this.messageView_.cachedMessages()[newIdx].id);
+  var newMsg = this.messageView_.cachedMessages()[newIdx];
+  this.selectMessage(newMsg.id);
   var newNode = this.messageView_.cachedNodes()[newIdx];
 
-  // Bah.
-  this.messageView_.forgetPosition();
   // What it would take to get the top of the new message at the top
   // of the screen.
-  var topScroll =
-    newNode.getBoundingClientRect().top -
-    this.messageView_.topMarker_.getBoundingClientRect().top;
+  var topScroll = 0;
   // What it would take to get to the goal ratio.
-  var goalScroll = topScroll - ((direction < 0) ?
-                                (bounds.height * GOAL_RATIO_UP) :
-                                (bounds.height * GOAL_RATIO_DOWN));
-  if ((direction < 0 && this.messageView_.container().scrollTop > goalScroll) ||
-      (direction > 0 && this.messageView_.container().scrollTop < goalScroll)) {
+  var goalScroll = ((direction < 0) ?
+                    (bounds.height * GOAL_RATIO_UP) :
+                    (bounds.height * GOAL_RATIO_DOWN));
+  var currentOffset = newNode.getBoundingClientRect().top - bounds.top;
+  if ((direction < 0 && currentOffset < goalScroll) ||
+      (direction > 0 && currentOffset > goalScroll)) {
     // What it would take to keep the top of the selected message fixed.
-    var fixedScroll = this.messageView_.container().scrollTop +
-      direction * node.getBoundingClientRect().height;
+    var fixedScroll = b.top - bounds.top;
 
     // Pick the first, but don't move the top of the selected message
     // much.
     var newScroll = clamp(fixedScroll - MAX_ARROW_SCROLL,
                           goalScroll,
                           fixedScroll + MAX_ARROW_SCROLL);
-    this.messageView_.container().scrollTop = newScroll;
+    this.messageView_.scrollToMessage(newMsg.id, {offset: newScroll});
   }
   // Whatever happens, make sure the message is visible.
   this.ensureSelectionVisible_();
