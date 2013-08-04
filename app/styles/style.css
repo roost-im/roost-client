@@ -17,23 +17,13 @@ body {
   /* asdfsklj margin collapsing */
   padding-top: 1px;
   margin-top: -1px;
+  /* always show the scrollbar */
+  overflow-y: scroll;
 }
 #messagelist {
-  max-width: 700px;
   height: 100%;
+  max-width: 700px;
   margin: 0 auto 0 auto;
-  overflow-y: scroll;
-  overflow-x: auto;
-}
-#messagelist:focus {
-  outline: none;
-}
-
-@supports (height: calc(100% - 20px)) {
-  #messagelist {
-    height: calc(100% - 20px);
-    margin: 10px auto 10px auto;
-  }
 }
 
 pre { padding: 0; margin: 0 }
@@ -47,12 +37,6 @@ pre { padding: 0; margin: 0 }
   background-color: yellow;
 }
 
-.msgview-top-marker {
-  padding: 0;
-  margin: 0;
-  height: 0;
-  width: 0;
-}
 .msgview-loading-above, .msgview-loading-below {
   text-align: center;
   color: #444;
@@ -101,20 +85,20 @@ pre { padding: 0; margin: 0 }
 }
 
 #reset-view {
-    position: absolute;
+    position: fixed;
     top: 5px;
     right: 5px;
 }
 
 #recent-states {
-    position: absolute;
+    position: fixed;
     top: 5px;
     left: 5px;
     width: auto !important;
 }
 
 #reply-box {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;

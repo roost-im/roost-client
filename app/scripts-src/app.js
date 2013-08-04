@@ -201,9 +201,6 @@ function($scope, storageManager, ticketManager, api) {
     $scope.replyInstance = "";
     $scope.replyRecipient = "";
     $scope.replyMessage = "";
-
-    // FIXME
-    messageList.focus();
   };
 
   $scope.sendZwrite = function(msg) {
@@ -365,7 +362,7 @@ function($scope, storageManager, ticketManager, api) {
   var selectionTracker = new SelectionTracker(messageView);
   window.selectionTracker = selectionTracker;
 
-  messageList.addEventListener("keydown", function(ev) {
+  window.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
       var msg = selectionTracker.selectedMessage_;
       if (msg) {
@@ -396,8 +393,6 @@ function($scope, storageManager, ticketManager, api) {
       });
     }
   });
-
-  messageList.focus();
 
   $scope.scrollStates = [];
   api.userInfo().addEventListener("change", function() {
@@ -466,7 +461,7 @@ function($scope, storageManager, ticketManager, api) {
   }, timespan.seconds(1));
   // TODO(davidben): Changing filters happens to trigger scroll
   // events, but we should be listening for that more explicitly.
-  messageList.addEventListener("scroll", function(ev) {
+  window.addEventListener("scroll", function(ev) {
     saveThrottler.request({ noThrottle: needSave });
   });
   messageView.addEventListener("cachechanged", function(ev) {

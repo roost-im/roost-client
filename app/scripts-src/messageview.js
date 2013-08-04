@@ -32,13 +32,6 @@ function MessageView(model, container, formatMessage) {
 
   this.model_ = model;
   this.container_ = container;
-  // Make this element focusable. This is needed so that you can
-  // direct pageup/down and friends to it. Clicking in it mostly works
-  // but we cannot control that programmatically. Moreover, it exposes
-  // a quirk in WebKit and Blink; they track the most recently clicked
-  // DOM node and use it to determine scroll when there is no focus
-  // node. This breaks when we delete that node.
-  this.container_.tabIndex = 0;
 
   this.formatMessage_ = formatMessage;
 
@@ -58,10 +51,6 @@ function MessageView(model, container, formatMessage) {
 
   this.messagesDiv_ = document.createElement("div");
 
-  this.topMarker_ = document.createElement("div");
-  this.topMarker_.classList.add("msgview-top-marker");
-
-  this.container_.appendChild(this.topMarker_);
   this.container_.appendChild(this.loadingAbove_);
   this.container_.appendChild(this.messagesDiv_);
   this.container_.appendChild(this.loadingBelow_);
@@ -87,18 +76,24 @@ function MessageView(model, container, formatMessage) {
     subtree: true
   });
 
-  this.container_.addEventListener("scroll", function() {
+  window.addEventListener("scroll", function() {
     this.schedulePositionSave_();
     this.checkBuffers_();
   }.bind(this));
-  this.container_.addEventListener("keydown", this.onKeydown_.bind(this));
+  window.addEventListener("keydown", this.onKeydown_.bind(this));
   // Might have reflowed.
   window.addEventListener("resize", this.restorePosition_.bind(this));
 }
 MessageView.prototype = Object.create(RoostEventTarget.prototype);
 
 MessageView.prototype.viewportBounds = function() {
-  return this.container_.getBoundingClientRect();
+  // TODO(davidben): Have this include the reply box and everything
+  // else.
+  return {
+    top: 0,
+    bottom: document.documentElement.clientHeight,
+    height: document.documentElement.clientHeight
+  };
 };
 
 MessageView.prototype.cachedMessages = function() {
@@ -390,9 +385,9 @@ MessageView.prototype.jumpToScrollPosition_ = function(position) {
     if (node == null)
       return false;
   }
-  this.container_.scrollTop = (node.getBoundingClientRect().top -
-                               this.topMarker_.getBoundingClientRect().top -
-                               position.offset);
+  $(window).scrollTop(node.getBoundingClientRect().top -
+                      this.container_.getBoundingClientRect().top -
+                      position.offset);
   return true;
 };
 
@@ -507,7 +502,7 @@ MessageView.prototype.scrollToTop = function(id) {
   // Blegh. Cut out the "Loading..." text now.
   this.setAtTop_(true);
   this.setAtBottom_(false);
-  this.container_.scrollTop = 0;
+  $(window).scrollTop(0);
   this.checkBuffers_();
 };
 
@@ -515,7 +510,7 @@ MessageView.prototype.scrollToBottom = function(id) {
   if (this.atBottom_) {
     // Easy case: if the bottom is buffered, go there.
     this.forgetPosition();
-    this.container_.scrollTop = this.container_.scrollHeight;
+    $(window).scrollTop($(document).height());
     return;
   }
 
@@ -824,8 +819,7 @@ function SelectionTracker(messageView) {
   this.messageView_.addEventListener("cachechanged",
                                      this.onCacheChanged_.bind(this));
   // Bah. This'll get done differently later.
-  this.messageView_.container_.addEventListener("keydown",
-                                                this.onKeydown_.bind(this));
+  window.addEventListener("keydown", this.onKeydown_.bind(this));
 };
 
 SelectionTracker.prototype.getSelectedNode_ = function() {
