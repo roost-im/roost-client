@@ -340,14 +340,12 @@ MessageView.prototype.scrollState = function() {
 
 MessageView.prototype.jumpToScrollPosition_ = function(position) {
   var node;
-  if (!this.nodes_.length) {
-    // This... shouldn't happen.
-    if (position.idx != 0)
-      return false;
+  var cacheIdx = position.idx - this.listOffset_;
+  if (cacheIdx == this.nodes_.length) {
     // Placeholder block.
     node = this.loadingBelow_;
   } else {
-    node = this.nodes_[position.idx - this.listOffset_];
+    node = this.nodes_[cacheIdx];
     if (node == null)
       return false;
   }
