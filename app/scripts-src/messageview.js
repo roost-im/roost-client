@@ -79,7 +79,18 @@ function MessageView(model, container, formatMessage) {
 
   this.reset_();
 
-  this.container_.addEventListener("scroll", this.checkBuffers_.bind(this));
+  this.observer_ = new MutationObserver(this.restorePosition_.bind(this));
+  this.observer_.observe(this.container_, {
+    attributes: true,
+    characterData: true,
+    childList: true,
+    subtree: true
+  });
+
+  this.container_.addEventListener("scroll", function() {
+    this.schedulePositionSave_();
+    this.checkBuffers_();
+  }.bind(this));
   this.container_.addEventListener("keydown", this.onKeydown_.bind(this));
 }
 MessageView.prototype = Object.create(RoostEventTarget.prototype);
@@ -203,6 +214,10 @@ MessageView.prototype.reset_ = function() {
   // Or it's null if we haven't done anything yet.
   this.pendingCenter_ = null;
 
+  // The most recent saved scroll position.
+  this.savedPosition_ = null;
+  this.pendingPositionSave_ = false;
+
   // FIXME: This shows two loading bars. But we can't actually lie
   // about one side because atTop_ and atBottom_ are needed to
   // implement home/end behavior.
@@ -323,6 +338,32 @@ MessageView.prototype.scrollPosition_ = function(anchorIdx) {
   };
 };
 
+MessageView.prototype.forgetPosition = function() {
+  this.savedPosition_ = null;
+  // Schedule one on the next event loop iteration.
+  this.schedulePositionSave_();
+}
+MessageView.prototype.saveScrollPosition_ = function() {
+  if (!JsMutationObserver.observersScheduled())
+      this.savedPosition_ = this.scrollPosition_();
+};
+MessageView.prototype.schedulePositionSave_ = function() {
+  if (!this.pendingPositionSave_) {
+    this.pendingPositionSave_ = true;
+    JsMutationObserver.setSafeImmediate(function() {
+      this.pendingPositionSave_ = false;
+      this.savedPosition_ = this.scrollPosition_();
+    }.bind(this));
+  }
+};
+MessageView.prototype.restorePosition_ = function() {
+  console.log("restorePosition_", this.savedPosition_);
+  if (this.savedPosition_) {
+    if (!this.jumpToScrollPosition_(this.savedPosition_))
+      console.error("Failed to restore saved position", this.savedPosition_);
+  }
+};
+
 MessageView.prototype.scrollState = function() {
   var position = this.scrollPosition_();
   var msg = this.messages_[position.idx - this.listOffset_];
@@ -412,6 +453,7 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
 
   if (offset != undefined) {
     if (id in this.messageToIndex_) {
+      this.forgetPosition();
       if (!this.jumpToScrollPosition_({
         idx: this.messageToIndex_[id],
         offset: offset
@@ -439,6 +481,7 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
       this.pendingCenter_ = id;
       this.checkBuffers_();
     } else {
+      this.forgetPosition();
       node.scrollIntoView(alignWithTop);
       if (!alignWithTop) {
         if (node.getBoundingClientRect().top <
@@ -453,6 +496,7 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
 MessageView.prototype.scrollToTop = function(id) {
   if (this.atTop_) {
     // Easy case: if the top is buffered, go there.
+    this.forgetPosition();
     this.container_.scrollTop = 0;
     return;
   }
@@ -471,6 +515,7 @@ MessageView.prototype.scrollToTop = function(id) {
 MessageView.prototype.scrollToBottom = function(id) {
   if (this.atBottom_) {
     // Easy case: if the bottom is buffered, go there.
+    this.forgetPosition();
     this.container_.scrollTop = this.container_.scrollHeight;
     return;
   }
@@ -521,10 +566,10 @@ MessageView.prototype.appendMessages_ = function(msgs, isDone) {
 };
 
 MessageView.prototype.prependMessages_ = function(msgs, isDone) {
+  this.saveScrollPosition_();
   // TODO(davidben): This triggers layout a bunch. Optimize this if needbe.
   var nodes = [];
   var insertReference = this.messagesDiv_.firstChild;
-  var position = this.scrollPosition_();
   for (var i = 0; i < msgs.length; i++) {
     var idx = this.listOffset_ - msgs.length + i;
     this.messageToIndex_[msgs[i].id] = idx;
@@ -535,8 +580,6 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
     this.messagesDiv_.insertBefore(node, insertReference);
   }
   this.setAtTop_(isDone);
-  if (!this.jumpToScrollPosition_(position))
-    console.error("Failed to restore scroll position!", position, this.listOffset_);
 
   this.messages_.unshift.apply(this.messages_, msgs);
   this.nodes_.unshift.apply(this.nodes_, nodes);
@@ -745,14 +788,12 @@ MessageView.prototype.checkBuffersReal_ = function() {
     }
 
     var num = MAX_BUFFER - TARGET_BUFFER;
-    var position = this.scrollPosition_();
+    this.saveScrollPosition_();
     for (var i = 0; i < num; i++) {
       this.messagesDiv_.removeChild(this.nodes_[i]);
       delete this.messageToIndex_[this.messages_[i].id];
     }
     this.setAtTop_(false);
-    if (!this.jumpToScrollPosition_(position))
-      console.error("Failed to restore scroll position!", position);
     this.nodes_.splice(0, num);
     this.messages_.splice(0, num);
     this.listOffset_ += num;
@@ -863,6 +904,8 @@ SelectionTracker.prototype.adjustSelection_ = function(direction,
   this.selectMessage(this.messageView_.cachedMessages()[newIdx].id);
   var newNode = this.messageView_.cachedNodes()[newIdx];
 
+  // Bah.
+  this.messageView_.forgetPosition();
   // What it would take to get the top of the new message at the top
   // of the screen.
   var topScroll =
