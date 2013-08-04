@@ -18,6 +18,27 @@ var api, model, messageView, selectionTracker, ticketManager, storageManager;  /
 
 var roostApp = angular.module("roostApp", []);
 
+roostApp.value("config", CONFIG);
+
+roostApp.service("localStorage", [function() {
+  return new LocalStorageWrapper();
+}]);
+
+roostApp.service("storageManager", ["localStorage", function(localStorage) {
+  return new StorageManager(localStorage);
+}]);
+
+roostApp.service("ticketManager", ["storageManager", "config",
+function(storageManager, config) {
+  return new TicketManager(config.webathena, storageManager);
+}]);
+
+roostApp.service("api", ["config", "storageManager", "ticketManager",
+function(config, storageManager, ticketManager) {
+  return new API(config.server, config.serverPrincipal,
+                 storageManager, ticketManager);
+}]);
+
 roostApp.directive("showModal", [function() {
   return {
     restrict: "A",
@@ -73,25 +94,39 @@ roostApp.directive("onKeydown", ["$parse", function($parse) {
   }
 }]);
 
-roostApp.value("config", CONFIG);
-
-roostApp.service("localStorage", [function() {
-  return new LocalStorageWrapper();
+// TODO(davidben): Dumb thing to get rid of later.
+roostApp.directive("randomColorKey", [function() {
+  var COLORS = ["black", "maroon", "red",
+                "purple", "fuchsia", "green", "blue"];
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      attrs.$observe('randomColorKey', function(value) {
+        var hash = 0;
+        for (var i = 0; i < value.length; i++) {
+          // Dunno, borrowed from some random thing on the Internet
+          // that claims to be Java's.
+          hash = ((hash << 5) - hash + value.charCodeAt(i)) | 0;
+        }
+        hash = hash % COLORS.length;
+        if (hash < 0)
+          hash += COLORS.length;
+        element.style.color = COLORS[hash];
+      });
+    }
+  };
 }]);
 
-roostApp.service("storageManager", ["localStorage", function(localStorage) {
-  return new StorageManager(localStorage);
-}]);
-
-roostApp.service("ticketManager", ["storageManager", "config",
-function(storageManager, config) {
-  return new TicketManager(config.webathena, storageManager);
-}]);
-
-roostApp.service("api", ["config", "storageManager", "ticketManager",
-function(config, storageManager, ticketManager) {
-  return new API(config.server, config.serverPrincipal,
-                 storageManager, ticketManager);
+roostApp.directive("bindZtext", [function() {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      scope.$watch(attrs.bindZtext, function(value) {
+        element.text("");
+        element.append(ztextToDOM(parseZtext(value)));
+      });
+    }
+  };
 }]);
 
 roostApp.filter("shortZuser", [function() {
@@ -99,6 +134,9 @@ roostApp.filter("shortZuser", [function() {
 }]);
 roostApp.filter("longZuser", [function() {
   return longZuser;
+}]);
+roostApp.filter("urlencode", [function() {
+  return encodeURIComponent;
 }]);
 
 roostApp.controller("RoostController",
