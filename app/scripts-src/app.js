@@ -466,7 +466,7 @@ function($scope, storageManager, ticketManager, api) {
   }, timespan.seconds(1));
   // TODO(davidben): Changing filters happens to trigger scroll
   // events, but we should be listening for that more explicitly.
-  messageView.container().addEventListener("scroll", function(ev) {
+  messageList.addEventListener("scroll", function(ev) {
     saveThrottler.request({ noThrottle: needSave });
   });
   messageView.addEventListener("cachechanged", function(ev) {

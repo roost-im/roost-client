@@ -97,8 +97,8 @@ function MessageView(model, container, formatMessage) {
 }
 MessageView.prototype = Object.create(RoostEventTarget.prototype);
 
-MessageView.prototype.container = function() {
-  return this.container_;
+MessageView.prototype.viewportBounds = function() {
+  return this.container_.getBoundingClientRect();
 };
 
 MessageView.prototype.cachedMessages = function() {
@@ -131,7 +131,7 @@ MessageView.prototype.getMessage = function(id) {
 };
 
 MessageView.prototype.findTopMessage = function() {
-  var bounds = this.container().getBoundingClientRect();
+  var bounds = this.viewportBounds();
   var nodes = this.cachedNodes();
   if (nodes.length == 0)
     return null;
@@ -158,7 +158,7 @@ MessageView.prototype.findTopMessage = function() {
 };
 
 MessageView.prototype.findBottomMessage = function() {
-  var bounds = this.container().getBoundingClientRect();
+  var bounds = this.viewportBounds();
   var nodes = this.cachedNodes();
   if (nodes.length == 0)
     return null;
@@ -332,8 +332,7 @@ MessageView.prototype.scrollPosition_ = function(anchorIdx) {
       node = this.nodes_[topCacheIdx];
     }
   }
-  var offset = node.getBoundingClientRect().top -
-    this.container_.getBoundingClientRect().top;
+  var offset = node.getBoundingClientRect().top - this.viewportBounds().top;
   return {
     idx: anchorIdx,
     offset: offset
@@ -417,7 +416,7 @@ MessageView.prototype.distanceToScrollState = function(state) {
     // Great, easy case. Just give the actual distance. Calculation is
     // where the top of the node currently is vs. where it used to be.
     return node.getBoundingClientRect().top -
-      (this.container_.getBoundingClientRect().top + state.offset);
+      (this.viewportBounds().top + state.offset);
   }
 
   // It wasn't there. So the question is whether it's unknown right
@@ -486,8 +485,7 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
       this.forgetPosition();
       node.scrollIntoView(alignWithTop);
       if (!alignWithTop) {
-        if (node.getBoundingClientRect().top <
-            this.container_.getBoundingClientRect().top) {
+        if (node.getBoundingClientRect().top < this.viewportBounds().top) {
           node.scrollIntoView(true);
         }
       }
@@ -733,7 +731,7 @@ MessageView.prototype.checkBuffers_ = function() {
 
 MessageView.prototype.checkBuffersReal_ = function() {
   this.checkBuffersPending_ = false;
-  var bounds = this.container_.getBoundingClientRect();
+  var bounds = this.viewportBounds();
 
   // Check if we need to expand/contract above or below. If a tail
   // doesn't exist in the direction we need, create it. EXCEPTION: if
@@ -826,8 +824,9 @@ function SelectionTracker(messageView) {
 
   this.messageView_.addEventListener("cachechanged",
                                      this.onCacheChanged_.bind(this));
-  this.messageView_.container().addEventListener("keydown",
-                                                 this.onKeydown_.bind(this));
+  // Bah. This'll get done differently later.
+  this.messageView_.container_.addEventListener("keydown",
+                                                this.onKeydown_.bind(this));
 };
 
 SelectionTracker.prototype.getSelectedNode_ = function() {
@@ -854,7 +853,7 @@ SelectionTracker.prototype.clampSelection_ = function(top) {
   if (this.selected_ != null) {
     var node = this.getSelectedNode_();
     if (node) {
-      var bounds = this.messageView_.container().getBoundingClientRect();
+      var bounds = this.messageView_.viewportBounds();
       var b = node.getBoundingClientRect();
       if (b.bottom > bounds.top && b.top < bounds.bottom)
         return false;
@@ -884,7 +883,7 @@ SelectionTracker.prototype.adjustSelection_ = function(direction,
   if (node == null)
     return false;
 
-  var bounds = this.messageView_.container().getBoundingClientRect();
+  var bounds = this.messageView_.viewportBounds();
   var b = node.getBoundingClientRect();
   // Scroll to show the corresponding edge of the message first.
   if (scrollLongMessages) {
@@ -933,7 +932,7 @@ SelectionTracker.prototype.adjustSelection_ = function(direction,
 };
 
 SelectionTracker.prototype.isSelectionVisible = function() {
-  var bounds = this.messageView_.container().getBoundingClientRect();
+  var bounds = this.messageView_.viewportBounds();
 
   // We never saw the selection.
   if (this.selectedMessage_ == null)
@@ -954,7 +953,7 @@ SelectionTracker.prototype.isSelectionVisible = function() {
 };
 
 SelectionTracker.prototype.ensureSelectionVisible_ = function() {
-  var bounds = this.messageView_.container().getBoundingClientRect();
+  var bounds = this.messageView_.viewportBounds();
 
   // We never saw the selection. Don't do anything.
   if (this.selectedMessage_ == null)
