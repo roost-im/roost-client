@@ -184,7 +184,11 @@ MessageView.prototype.reset_ = function() {
     this.tailBelow_ = null;
   }
 
-  this.listOffset_ = 0;  // The global index to the top of the list.
+  // The global index to the top of the list. Indices are relative to
+  // pendingCenter_ at the last reset_ call. That is, the first
+  // message >= pendingCenter_ is always 0. (It's possible it's not
+  // equal to pendingCenter_ if pendingCenter_ wasn't in the view.)
+  this.listOffset_ = 0;
   this.messages_ = [];
   this.nodes_ = [];
 
@@ -219,51 +223,53 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
     anchor = topIdx == null ? null : this.messages_[topIdx].id;
   }
 
-  // Next: Save all information about the anchor.
-  var containerTop = this.container_.getBoundingClientRect().top;
-  var anchorTop, anchorIdx;
+  // Next: Save scroll position relative to the anchor. We need to
+  // convert the anchor into an index.
+  var anchorIdx;
   if (anchor == null) {
-    // If the anchor is still null, we have no cached messages and need
-    // to use pendingCenter_. Scroll position is the space in-between.
-    anchorTop = this.loadingBelow_.getBoundingClientRect().top;
-    anchorIdx = null;
-    // Anchor at pendingCenter.
+    // If anchor is null, we have no cached message. Use the pending center.
+    anchorIdx = 0;
     anchor = this.pendingCenter_;
   } else {
-    var anchorNode = this.getNode(anchor);
-    if (anchorNode == null) {
-      // User was crazy and supplied an anchor that wasn't even
-      // on-screen. Screw it, we're putting it on top.
-      anchorTop = containerTop;
+    if (anchor in this.messageToIndex_) {
+      anchorIdx = this.messageToIndex_[anchor];
+    } else if (anchor === this.pendingCenter_) {
+      anchorIdx = 0;
     } else {
-      anchorTop = anchorNode.getBoundingClientRect().top;
+      // This can only happen if the caller anchored on a bogus id?
+      throw "Bad anchor id";
     }
-    anchorIdx = this.getCacheIndex(anchor);
   }
+  var position = this.scrollPosition_(anchorIdx);
 
+  // Next: Gather any bootstrap nodes.
   var bootstrapBefore = [], bootstrapAfter = [];
-  if (anchorIdx != null) {
-    if (filter.isStricterThan(this.filter_)) {
-      // If we are stricter than the current filter, we can keep the
-      // whole cache.
-      for (var i = 0; i < anchorIdx; i++) {
-        if (filter.matchesMessage(this.messages_[i]))
-          bootstrapBefore.push(this.messages_[i]);
-      }
-      for (var i = anchorIdx; i < this.messages_.length; i++) {
-        if (filter.matchesMessage(this.messages_[i]))
-          bootstrapAfter.push(this.messages_[i]);
-      }
-    } else {
-      // Otherwise, we only keep the anchor message.
-      if (filter.matchesMessage(this.messages_[anchorIdx]))
-        bootstrapAfter.push(this.messages_[anchorIdx]);
+  var anchorCacheIdx = anchorIdx - this.listOffset_;
+  if (filter.isStricterThan(this.filter_)) {
+    // If we are stricter than the current filter, we can keep the
+    // whole cache.
+    for (var i = 0; i < anchorCacheIdx; i++) {
+      if (filter.matchesMessage(this.messages_[i]))
+        bootstrapBefore.push(this.messages_[i]);
+    }
+    for (var i = anchorCacheIdx; i < this.messages_.length; i++) {
+      if (filter.matchesMessage(this.messages_[i]))
+        bootstrapAfter.push(this.messages_[i]);
+    }
+  } else {
+    // Otherwise, we only keep the anchor message.
+    if (anchorCacheIdx >= 0 &&
+        anchorCacheIdx < this.messages_.length &&
+        filter.matchesMessage(this.messages_[anchorCacheIdx])) {
+      bootstrapAfter.push(this.messages_[anchorCacheIdx]);
     }
   }
 
   // Now we are ready to blow everything away.
   this.reset_();
   this.pendingCenter_ = anchor;
+  // Adjust position to be valid post-reset.
+  position.idx = 0;
 
   // TODO(davidben): Silliness with top/bottom. Make this state also
   // more rederivable or something.
@@ -275,12 +281,11 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
     this.setAtBottom_(true);
   }
 
-  // Scroll so that loadingBelow_ is where we want anchor to appear.
-  this.container_.scrollTop =
-    (this.loadingBelow_.getBoundingClientRect().top -
-     this.topMarker_.getBoundingClientRect().top) -
-    (anchorTop - containerTop);
   this.filter_ = filter;
+
+  // Restore scroll.
+  if (!this.jumpToScrollPosition_(position))
+    console.error("Failed to jump post-filter. Should not happen");
 
   // Apply the bootstrap. That will trigger tails and everything else.
   if (bootstrapBefore.length)
@@ -290,21 +295,66 @@ MessageView.prototype.changeFilter = function(filter, anchor) {
   this.checkBuffers_();
 };
 
-MessageView.prototype.scrollState = function() {
-  var anchorIdx = this.findTopMessage();
-  // Don't save any state when the cache is empty.
-  if (anchorIdx == null)
-    return null;
-  var msg = this.messages_[anchorIdx];
-  var node = this.nodes_[anchorIdx];
+// Scroll positions are not valid across reset_ calls. They are a pair
+// of (index, offset) tuples. (Note: index is /not/ a cacheIndex.
+MessageView.prototype.scrollPosition_ = function(anchorIdx) {
+  var node;
+  if (anchorIdx != null) {
+    var anchorCacheIdx = anchorIdx - this.listOffset_;
+    if (anchorCacheIdx > 0 && anchorCacheIdx >= this.nodes_.length)
+      throw "Bad scroll position anchor";
+    node = this.nodes_[anchorCacheIdx] || this.loadingBelow_;
+  } else {
+    var topCacheIdx = this.findTopMessage();
+    if (topCacheIdx == null) {
+      // Message list is empty. Use the pending center.
+      anchorIdx = 0;
+      node = this.loadingBelow_;
+    } else {
+      anchorIdx = topCacheIdx + this.listOffset_;
+      node = this.nodes_[topCacheIdx];
+    }
+  }
   var offset = node.getBoundingClientRect().top -
     this.container_.getBoundingClientRect().top;
   return {
-    offset: offset,
+    idx: anchorIdx,
+    offset: offset
+  };
+};
+
+MessageView.prototype.scrollState = function() {
+  var position = this.scrollPosition_();
+  var msg = this.messages_[position.idx - this.listOffset_];
+  // Cache was empty. Position may still be resolvable, but not as an
+  // external scroll state.
+  if (!msg)
+    return null;
+  return {
+    offset: position.offset,
     id: msg.id,
     receiveTime: msg.receiveTime,
     filter: this.filter_.toDict()
   };
+};
+
+MessageView.prototype.jumpToScrollPosition_ = function(position) {
+  var node;
+  if (!this.nodes_.length) {
+    // This... shouldn't happen.
+    if (position.idx != 0)
+      return false;
+    // Placeholder block.
+    node = this.loadingBelow_;
+  } else {
+    node = this.nodes_[position.idx - this.listOffset_];
+    if (node == null)
+      return false;
+  }
+  this.container_.scrollTop = (node.getBoundingClientRect().top -
+                               this.topMarker_.getBoundingClientRect().top -
+                               position.offset);
+  return true;
 };
 
 MessageView.prototype.distanceToScrollState = function(state) {
@@ -362,15 +412,34 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
     this.appendMessages_([bootstrap], false);
   }
 
-  if (id in this.messageToIndex_) {
-    // Easy case: if the message is in our current view, we just jump
-    // to it.
-    var node = this.nodes_[this.messageToIndex_[id] - this.listOffset_];
-    if (offset != undefined) {
-      this.container_.scrollTop =
-        node.getBoundingClientRect().top -
-        this.topMarker_.getBoundingClientRect().top -
-        offset;
+  if (offset != undefined) {
+    if (id in this.messageToIndex_) {
+      if (!this.jumpToScrollPosition_({
+        idx: this.messageToIndex_[id],
+        offset: offset
+      })) {
+        console.error("Couldn't jump to valid scroll position");
+      }
+    } else {
+      // Wasn't there. Reset to the position instead.
+      this.reset_();
+      this.pendingCenter_ = id;
+      this.checkBuffers_();
+
+      if (!this.jumpToScrollPosition_({
+        idx: 0,
+        offset: offset
+      })) {
+        console.error("Couldn't jump to valid scroll position");
+      }
+    }
+  } else {
+    // Bah. alignWithTop-type stuff.
+    var node = this.getNode(id);
+    if (node == null) {
+      this.reset_();
+      this.pendingCenter_ = id;
+      this.checkBuffers_();
     } else {
       node.scrollIntoView(alignWithTop);
       if (!alignWithTop) {
@@ -380,19 +449,6 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
         }
       }
     }
-  } else {
-    // Otherwise, we reset the universe and use |id| as our new point of
-    // reference.
-    this.reset_();
-    this.pendingCenter_ = id;
-    // Adjust the scroll so the message appears in the right place.
-    if (offset != undefined) {
-      this.container_.scrollTop =
-        this.messagesDiv_.getBoundingClientRect().top -
-        this.topMarker_.getBoundingClientRect().top -
-        offset;
-    }
-    this.checkBuffers_();
   }
 };
 
@@ -448,21 +504,6 @@ MessageView.prototype.setAtBottom_ = function(atBottom) {
     this.loadingBelow_.classList.remove("msgview-loading-below-at-end");
 };
 
-MessageView.prototype.saveBottomEdgeScroll_ = function() {
-  var oldScrollTop = this.container_.scrollTop;
-  var oldBottomOffset = (this.messagesDiv_.getBoundingClientRect().bottom -
-                         this.topMarker_.getBoundingClientRect().top);
-  return oldScrollTop - oldBottomOffset;
-};
-
-MessageView.prototype.restoreBottomEdgeScroll_ = function(save) {
-  // Assumes that the bottom edge of messagesDiv_ hasn't changed since
-  // the call to saveBottomEdgeScroll_.
-  var newBottomOffset = (this.messagesDiv_.getBoundingClientRect().bottom -
-                         this.topMarker_.getBoundingClientRect().top);
-  this.container_.scrollTop = newBottomOffset + save;
-};
-
 MessageView.prototype.appendMessages_ = function(msgs, isDone) {
   for (var i = 0; i < msgs.length; i++) {
     var idx = this.messages_.length + this.listOffset_;
@@ -485,7 +526,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
   // TODO(davidben): This triggers layout a bunch. Optimize this if needbe.
   var nodes = [];
   var insertReference = this.messagesDiv_.firstChild;
-  var save = this.saveBottomEdgeScroll_();
+  var position = this.scrollPosition_();
   for (var i = 0; i < msgs.length; i++) {
     var idx = this.listOffset_ - msgs.length + i;
     this.messageToIndex_[msgs[i].id] = idx;
@@ -496,7 +537,8 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
     this.messagesDiv_.insertBefore(node, insertReference);
   }
   this.setAtTop_(isDone);
-  this.restoreBottomEdgeScroll_(save);
+  if (!this.jumpToScrollPosition_(position))
+    console.error("Failed to restore scroll position!", position, this.listOffset_);
 
   this.messages_.unshift.apply(this.messages_, msgs);
   this.nodes_.unshift.apply(this.nodes_, nodes);
@@ -705,13 +747,14 @@ MessageView.prototype.checkBuffersReal_ = function() {
     }
 
     var num = MAX_BUFFER - TARGET_BUFFER;
-    var save = this.saveBottomEdgeScroll_();
+    var position = this.scrollPosition_();
     for (var i = 0; i < num; i++) {
       this.messagesDiv_.removeChild(this.nodes_[i]);
       delete this.messageToIndex_[this.messages_[i].id];
     }
     this.setAtTop_(false);
-    this.restoreBottomEdgeScroll_(save);
+    if (!this.jumpToScrollPosition_(position))
+      console.error("Failed to restore scroll position!", position);
     this.nodes_.splice(0, num);
     this.messages_.splice(0, num);
     this.listOffset_ += num;
