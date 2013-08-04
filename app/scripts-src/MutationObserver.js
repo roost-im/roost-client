@@ -160,6 +160,9 @@
     };
     setImmediate(tryRun);
   };
+  JsMutationObserver.observersScheduled = function() {
+    return isScheduled;
+  };
 
   JsMutationObserver.prototype = {
     observe: function(target, options) {
