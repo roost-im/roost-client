@@ -101,7 +101,7 @@ roostApp.directive("randomColorKey", [function() {
   return {
     restrict: "A",
     link: function(scope, element, attrs) {
-      attrs.$observe('randomColorKey', function(value) {
+      attrs.$observe("randomColorKey", function(value) {
         var hash = 0;
         for (var i = 0; i < value.length; i++) {
           // Dunno, borrowed from some random thing on the Internet
@@ -111,7 +111,7 @@ roostApp.directive("randomColorKey", [function() {
         hash = hash % COLORS.length;
         if (hash < 0)
           hash += COLORS.length;
-        element.style.color = COLORS[hash];
+        element[0].style.color = COLORS[hash];
       });
     }
   };
@@ -121,7 +121,7 @@ roostApp.directive("bindZtext", [function() {
   return {
     restrict: "A",
     link: function(scope, element, attrs) {
-      scope.$watch(attrs.bindZtext, function(value) {
+      attrs.$observe("bindZtext", function(value) {
         element.text("");
         element.append(ztextToDOM(parseZtext(value)));
       });
