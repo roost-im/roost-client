@@ -243,10 +243,124 @@ function($scope, storageManager, ticketManager, api) {
     }
   };
 
+  // TODO(davidben): This'll be Angular later.
+  var COLORS = ["black", "maroon", "red",
+                "purple", "fuchsia", "green", "blue"];
+  var formatMessage = function(idx, msg) {
+    var pre = document.createElement("pre");
+    var indented = "   " +
+      msg.message.replace(/\s+$/, '').split("\n").join("\n   ");
+
+    var a = document.createElement("a");
+    a.href = "#msg-" + msg.id;
+    a.textContent = "[LINK]";
+
+    var number = msg.number;
+    if (number == undefined) {
+      // Hash the class + instance, I guess...
+      number = 0;
+      var s = msg.classKey + "|" + msg.instanceKey;
+      for (var i = 0; i < s.length; i++) {
+        // Dunno, borrowed from some random thing on the Internet that
+        // claims to be Java's.
+        number = ((number << 5) - number + s.charCodeAt(i)) | 0;
+      }
+    }
+
+    // Save for closure.
+    var id = msg.id;
+    var classKeyBase = msg.classKeyBase, instanceKeyBase = msg.instanceKeyBase;
+
+    pre.appendChild(a);
+    pre.appendChild(document.createTextNode(" "));
+
+    if (msg.isPersonal && msg.classKey == "message") {
+      if (msg.isOutgoing) {
+        pre.appendChild(document.createTextNode("Zephyr to "));
+        a = document.createElement("a");
+        a.textContent = shortZuser(msg.recipient);
+        a.addEventListener("click", function(ev) {
+          ev.preventDefault();
+          this.changeFilter(new Filter({conversation: msg.recipient}), id);
+        }.bind(this));
+        pre.appendChild(a);
+
+        pre.appendChild(document.createTextNode(" / "));
+        a = document.createElement("a");
+        a.textContent = msg.instance;
+        a.addEventListener("click", function(ev) {
+          ev.preventDefault();
+          this.changeFilter(new Filter({
+            conversation: msg.recipient,
+            instance_key_base: instanceKeyBase
+          }), id);
+        }.bind(this));
+        pre.appendChild(a);
+
+        pre.appendChild(document.createTextNode(
+          "  " + new Date(msg.time).toString() + "\n"));
+      } else {
+        pre.appendChild(document.createTextNode("Zephyr from "));
+        a = document.createElement("a");
+        a.textContent = shortZuser(msg.sender);
+        a.addEventListener("click", function(ev) {
+          ev.preventDefault();
+          this.changeFilter(new Filter({conversation: msg.sender}), id);
+        }.bind(this));
+        pre.appendChild(a);
+
+        pre.appendChild(document.createTextNode(" / "));
+        a = document.createElement("a");
+        a.textContent = msg.instance;
+        a.addEventListener("click", function(ev) {
+          ev.preventDefault();
+          this.changeFilter(new Filter({
+            conversation: msg.sender,
+            instance_key_base: instanceKeyBase
+          }), id);
+        }.bind(this));
+        pre.appendChild(a);
+
+        pre.appendChild(document.createTextNode(
+          "  " + new Date(msg.time).toString() + "\n"));
+      }
+    } else {
+      a = document.createElement("a");
+      a.textContent = msg.class;
+      a.addEventListener("click", function(ev) {
+        ev.preventDefault();
+        this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
+      }.bind(this));
+      pre.appendChild(a);
+
+      pre.appendChild(document.createTextNode(" / "));
+      a = document.createElement("a");
+      a.textContent = msg.instance;
+      a.addEventListener("click", function(ev) {
+        ev.preventDefault();
+        this.changeFilter(new Filter({
+          class_key_base: classKeyBase,
+          instance_key_base: instanceKeyBase
+        }), id);
+      }.bind(this));
+      pre.appendChild(a);
+
+      pre.appendChild(document.createTextNode(
+        " / " + shortZuser(msg.sender) + "  " +
+          new Date(msg.time).toString() + "\n"));
+    }
+
+    pre.appendChild(ztextToDOM(parseZtext(indented)));
+
+    pre.className = "message";
+    pre.style.color = COLORS[((number % COLORS.length) + COLORS.length) % COLORS.length];
+    return pre;
+  };
+
   var model = new MessageModel(api);
   window.model = model;
   var messageList = document.getElementById("messagelist");
-  var messageView = new MessageView(model, messageList);
+  var messageView = new MessageView(model, messageList, formatMessage);
   window.messageView = messageView;
   var selectionTracker = new SelectionTracker(messageView);
   window.selectionTracker = selectionTracker;
