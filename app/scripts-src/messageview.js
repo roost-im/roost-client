@@ -92,6 +92,8 @@ function MessageView(model, container, formatMessage) {
     this.checkBuffers_();
   }.bind(this));
   this.container_.addEventListener("keydown", this.onKeydown_.bind(this));
+  // Might have reflowed.
+  window.addEventListener("resize", this.restorePosition_.bind(this));
 }
 MessageView.prototype = Object.create(RoostEventTarget.prototype);
 
