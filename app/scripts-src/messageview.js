@@ -354,7 +354,9 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
   if (bootstrap == undefined || alignWithTop == undefined)
     alignWithTop = true;
 
-  if (bootstrap && !(id in this.messageToIndex_)) {
+  if (bootstrap &&
+      !(id in this.messageToIndex_) &&
+      this.filter_.matchesMessage(bootstrap)) {
     this.reset_();
     // appendMessages_ will trigger all the tails we need.
     this.appendMessages_([bootstrap], false);
