@@ -614,9 +614,6 @@ MessageView.prototype.formatMessage_ = function(idx, msg) {
 
   pre.className = "message";
   pre.style.color = COLORS[((number % COLORS.length) + COLORS.length) % COLORS.length];
-
-  pre.addEventListener("click",
-                       this.onClickMessage_.bind(this, idx));
   return pre;
 };
 
@@ -843,13 +840,6 @@ MessageView.prototype.onKeydown_ = function(ev) {
     ev.preventDefault();
     this.scrollToBottom();
   }
-};
-
-MessageView.prototype.onClickMessage_ = function(idx, ev) {
-  this.dispatchEvent({
-    type: "messageclick",
-    cacheIndex: idx - this.listOffset_
-  });
 };
 
 // Split the selection logic out for sanity.
