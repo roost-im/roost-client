@@ -145,6 +145,22 @@
     this.uid_ = ++uidCounter;
   }
 
+  // Modification by davidben: A real MutationObserver implementation
+  // ensures that no task will run between a task that modified the
+  // DOM and that task's observers. The polyfill can't guarantee
+  // it. So we provide an API to delay jobs.
+  JsMutationObserver.setSafeImmediate = function(cb) {
+    // Keep trying until we stop hitting isScheduled.
+    var tryRun = function() {
+      if (isScheduled) {
+        setImmediate(tryRun);
+      } else {
+        cb();
+      }
+    };
+    setImmediate(tryRun);
+  };
+
   JsMutationObserver.prototype = {
     observe: function(target, options) {
       target = wrapIfNeeded(target);
