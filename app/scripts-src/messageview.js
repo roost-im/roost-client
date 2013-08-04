@@ -358,7 +358,6 @@ MessageView.prototype.schedulePositionSave_ = function() {
   }
 };
 MessageView.prototype.restorePosition_ = function() {
-  console.log("restorePosition_", this.savedPosition_);
   if (this.savedPosition_) {
     if (!this.jumpToScrollPosition_(this.savedPosition_))
       console.error("Failed to restore saved position", this.savedPosition_);
