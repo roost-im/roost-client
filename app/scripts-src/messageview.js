@@ -23,18 +23,6 @@ function clamp(a, b, c) {
   return Math.max(a, Math.min(b, c));
 }
 
-function matchKey(ev, keyCode, mods) {
-  if (ev.keyCode != keyCode)
-    return false;
-  mods = mods || { };
-  var modifiers = ["altKey", "altGraphKey", "ctrlKey", "metaKey", "shiftKey"];
-  for (var i = 0; i < modifiers.length; i++) {
-    if (Boolean(ev[modifiers[i]]) != Boolean(mods[modifiers[i]]))
-      return false;
-  }
-  return true;
-}
-
 var MESSAGE_VIEW_SCROLL_TOP = 0;
 var MESSAGE_VIEW_SCROLL_BOTTOM = 1;
 

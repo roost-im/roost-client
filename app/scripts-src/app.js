@@ -1,5 +1,17 @@
 "use strict";
 
+function matchKey(ev, keyCode, mods) {
+  if (ev.keyCode != keyCode)
+    return false;
+  mods = mods || { };
+  var modifiers = ["altKey", "altGraphKey", "ctrlKey", "metaKey", "shiftKey"];
+  for (var i = 0; i < modifiers.length; i++) {
+    if (Boolean(ev[modifiers[i]]) != Boolean(mods[modifiers[i]]))
+      return false;
+  }
+  return true;
+}
+
 // TODO(davidben): Make all this code not terrible. Seriously.
 
 var api, model, messageView, selectionTracker, ticketManager, storageManager;  // For debugging.
