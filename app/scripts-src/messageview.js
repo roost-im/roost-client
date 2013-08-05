@@ -50,12 +50,12 @@ function MessageView(model, container, formatMessage) {
   this.loadingBelow_.appendChild(seriously);
 
   this.messagesDiv_ = document.createElement("div");
-  this.placeholder_ = document.createElement("div");
-  this.placeholder_.classList.add("message-placeholder");
+  this.placeholderBelow_ = document.createElement("div");
+  this.placeholderBelow_.classList.add("message-placeholder");
 
   this.container_.appendChild(this.loadingAbove_);
   this.container_.appendChild(this.messagesDiv_);
-  this.messagesDiv_.appendChild(this.placeholder_);
+  this.messagesDiv_.appendChild(this.placeholderBelow_);
   this.container_.appendChild(this.loadingBelow_);
 
   this.tailBelow_ = null;
@@ -228,7 +228,7 @@ MessageView.prototype.reset_ = function() {
   // implement home/end behavior.
   this.setAtTop_(false);
   this.setAtBottom_(false);
-  this.placeholder_.scrollIntoView();
+  this.placeholderBelow_.scrollIntoView();
 
   this.dispatchEvent({type: "cachechanged"});
 };
@@ -323,13 +323,13 @@ MessageView.prototype.scrollPosition_ = function(anchorIdx) {
     var anchorCacheIdx = anchorIdx - this.listOffset_;
     if (anchorCacheIdx > 0 && anchorCacheIdx >= this.nodes_.length)
       throw "Bad scroll position anchor";
-    node = this.nodes_[anchorCacheIdx] || this.placeholder_;
+    node = this.nodes_[anchorCacheIdx] || this.placeholderBelow_;
   } else {
     var topCacheIdx = this.findTopMessage();
     if (topCacheIdx == null) {
       // Message list is empty. Use the pending center.
       anchorIdx = 0;
-      node = this.placeholder_;
+      node = this.placeholderBelow_;
     } else {
       anchorIdx = topCacheIdx + this.listOffset_;
       node = this.nodes_[topCacheIdx];
@@ -387,7 +387,7 @@ MessageView.prototype.jumpToScrollPosition_ = function(position) {
   var cacheIdx = position.idx - this.listOffset_;
   if (cacheIdx == this.nodes_.length) {
     // Placeholder block.
-    node = this.placeholder_;
+    node = this.placeholderBelow_;
   } else {
     node = this.nodes_[cacheIdx];
     if (node == null)
@@ -558,7 +558,7 @@ MessageView.prototype.appendMessages_ = function(msgs, isDone) {
     this.nodes_.push(node);
     this.messages_.push(msgs[i]);
 
-    this.placeholder_.parentNode.insertBefore(node, this.placeholder_);
+    this.placeholderBelow_.parentNode.insertBefore(node, this.placeholderBelow_);
   }
   this.setAtBottom_(isDone);
   // If we were waiting to select a message that hadn't arrived yet,
@@ -579,7 +579,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
     var node = this.formatMessage_(idx, msgs[i]);
     nodes.push(node);
 
-    this.placeholder_.parentNode.insertBefore(node, insertReference);
+    this.placeholderBelow_.parentNode.insertBefore(node, insertReference);
   }
   this.setAtTop_(isDone);
 
