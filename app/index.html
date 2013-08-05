@@ -85,7 +85,7 @@
            ng-class="{'message': 1, 'message-selected': selected}"
            random-color-key="{{msg.classKey}}|{{msg.instanceKey}}"
 ><a href="#msg-{{msg.id|urlencode}}">[LINK]</a> {{msg.class}} / {{msg.instance}} / {{msg.sender|shortZuser}}  {{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}
-<span bind-ztext="{{msg.message}}"></span></pre>
+<div bind-ztext="{{msg.message}}" class="message-body"></div></pre>
       <div ng-class="{'msgview-loading-below':1, 'msgview-loading-below-at-end':atBottom}">
         Loading...
       </div>

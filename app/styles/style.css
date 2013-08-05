@@ -44,6 +44,9 @@ pre { padding: 0; margin: 0 }
 .message-selected, .message-selected:hover {
   background-color: yellow;
 }
+.message-body {
+  padding-left: 2em;
+}
 
 .msgview-loading-above, .msgview-loading-below {
   text-align: center;
