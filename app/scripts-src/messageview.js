@@ -239,7 +239,7 @@ roostApp.directive("msgviewRepeatMessage", [function() {
 // endpoints ensures that spurious scrolling will not repeatedly
 // request and retire the same message. Also that we do our requests
 // in large-ish batches.
-var MIN_BUFFER = 15;
+var MIN_BUFFER = 20;
 var TARGET_BUFFER = MIN_BUFFER * 2;
 var MAX_BUFFER = MIN_BUFFER * 3;
 
