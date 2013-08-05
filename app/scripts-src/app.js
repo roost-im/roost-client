@@ -246,7 +246,6 @@ function($scope, storageManager, ticketManager, api) {
   window.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
       var msg = $scope.selection;
-      console.log(msg);
       if (msg) {
         ev.preventDefault();
         $scope.$broadcast("ensureSelectionVisible");
