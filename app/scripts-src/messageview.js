@@ -573,7 +573,7 @@ MessageView.prototype.scrollPosition_ = function(anchorIdx) {
   };
 };
 
-MessageView.prototype.forgetPosition = function() {
+MessageView.prototype.forgetScrollPosition_ = function() {
   this.savedPosition_ = null;
   // Schedule one on the next event loop iteration.
   this.schedulePositionSave_();
@@ -687,7 +687,7 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
 
   if (offset != undefined) {
     if (id in this.messageToIndex_) {
-      this.forgetPosition();
+      this.forgetScrollPosition_();
       if (!this.jumpToScrollPosition_({
         idx: this.messageToIndex_[id],
         offset: offset
@@ -715,7 +715,7 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
       this.pendingCenter_ = id;
       this.checkBuffers_();
     } else {
-      this.forgetPosition();
+      this.forgetScrollPosition_();
       node.scrollIntoView(alignWithTop);
       if (!alignWithTop) {
         if (node.getBoundingClientRect().top < this.viewportBounds().top) {
@@ -729,8 +729,9 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
 MessageView.prototype.scrollToTop = function(id) {
   if (this.atTop_) {
     // Easy case: if the top is buffered, go there.
-    this.forgetPosition();
+    this.forgetScrollPosition_();
     $(window).scrollTop(0);
+    this.saveScrollPosition_();
     return;
   }
 
@@ -742,14 +743,16 @@ MessageView.prototype.scrollToTop = function(id) {
   this.setAtTop_(true);
   this.setAtBottom_(false);
   $(window).scrollTop(0);
+  this.saveScrollPosition_();
   this.checkBuffers_();
 };
 
 MessageView.prototype.scrollToBottom = function(id) {
   if (this.atBottom_) {
     // Easy case: if the bottom is buffered, go there.
-    this.forgetPosition();
+    this.forgetScrollPosition_();
     $(window).scrollTop($(document).height());
+    this.saveScrollPosition_();
     return;
   }
 
@@ -760,6 +763,8 @@ MessageView.prototype.scrollToBottom = function(id) {
   // Blegh. Cut out the "Loading..." text now.
   this.setAtTop_(false);
   this.setAtBottom_(true);
+  $(window).scrollTop($(document).height());
+  this.saveScrollPosition_();
   this.checkBuffers_();
 };
 
