@@ -139,20 +139,27 @@ roostApp.directive("msgviewRepeatMessage", [function() {
             }
           }
           var saveThrottler = new Throttler(function() {
-            if (lockSave) {
-              needSave = true;
-              return;
-            }
-            var state = getScrollState();
-            if (state == null) {
-              needSave = true;
-              return;
-            }
-            $scope.$apply(function() {
-              needSave = false;
-              $scope.$emit("replaceScrollState", oldState, state);
-              oldState = state;
+            var deferred = Q.defer();
+            JsMutationObserver.setSafeImmediate(function() {
+              if (lockSave) {
+                needSave = true;
+                deferred.resolve();
+                return;
+              }
+              var state = getScrollState();
+              if (state == null) {
+                needSave = true;
+                deferred.resolve();
+                return;
+              }
+              $scope.$apply(function() {
+                needSave = false;
+                $scope.$emit("replaceScrollState", oldState, state);
+                oldState = state;
+              });
+              deferred.resolve();
             });
+            return deferred.promise;
           }, timespan.seconds(1));
           // TODO(davidben): Changing filters happens to trigger scroll
           // events, but we should be listening for that more explicitly.
