@@ -195,6 +195,13 @@ MessageView.prototype.reset_ = function() {
     this.tailBelow_ = null;
   }
 
+  // Blow away the messages.
+  if (this.nodes_) {
+    for (var i = 0; i < this.nodes_.length; i++) {
+      this.nodes_[i].parentNode.removeChild(this.nodes_[i]);
+    }
+  }
+
   // The global index to the top of the list. Indices are relative to
   // pendingCenter_ at the last reset_ call. That is, the first
   // message >= pendingCenter_ is always 0. (It's possible it's not
@@ -204,9 +211,6 @@ MessageView.prototype.reset_ = function() {
   this.nodes_ = [];
 
   this.messageToIndex_ = {};  // Map id to global index.
-
-  this.messagesDiv_.textContent = "";
-  this.messagesDiv_.appendChild(this.placeholder_);
 
   // Only in the case if this.messages_ is empty, this is the
   // bootstrap cutoff between the two tails. It is either a message id
@@ -554,7 +558,7 @@ MessageView.prototype.appendMessages_ = function(msgs, isDone) {
     this.nodes_.push(node);
     this.messages_.push(msgs[i]);
 
-    this.messagesDiv_.insertBefore(node, this.placeholder_);
+    this.placeholder_.parentNode.insertBefore(node, this.placeholder_);
   }
   this.setAtBottom_(isDone);
   // If we were waiting to select a message that hadn't arrived yet,
@@ -575,7 +579,7 @@ MessageView.prototype.prependMessages_ = function(msgs, isDone) {
     var node = this.formatMessage_(idx, msgs[i]);
     nodes.push(node);
 
-    this.messagesDiv_.insertBefore(node, insertReference);
+    this.placeholder_.parentNode.insertBefore(node, insertReference);
   }
   this.setAtTop_(isDone);
 
@@ -761,7 +765,7 @@ MessageView.prototype.checkBuffersReal_ = function() {
     var num = MAX_BUFFER - TARGET_BUFFER;
     for (var i = 0; i < num; i++) {
       var idx = this.nodes_.length - i - 1;
-      this.messagesDiv_.removeChild(this.nodes_[idx]);
+      this.nodes_[idx].parentNode.removeChild(this.nodes_[idx]);
       delete this.messageToIndex_[this.messages_[idx].id];
     }
     this.nodes_.splice(this.nodes_.length - num, num);
@@ -788,7 +792,7 @@ MessageView.prototype.checkBuffersReal_ = function() {
     var num = MAX_BUFFER - TARGET_BUFFER;
     this.saveScrollPosition_();
     for (var i = 0; i < num; i++) {
-      this.messagesDiv_.removeChild(this.nodes_[i]);
+      this.nodes_[i].parentNode.removeChild(this.nodes_[i]);
       delete this.messageToIndex_[this.messages_[i].id];
     }
     this.setAtTop_(false);
