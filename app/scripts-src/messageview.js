@@ -18,6 +18,7 @@ roostApp.directive("msgviewRepeatMessage", [function() {
       selection: "=msgviewSelection",
       atTop: "=msgviewAtTop",
       atBottom: "=msgviewAtBottom",
+      emptyCache: "=msgviewEmptyCache"
     },
     transclude: "element",
     priority: 1000,
@@ -34,6 +35,20 @@ roostApp.directive("msgviewRepeatMessage", [function() {
         window.messageView = messageView;  // DEBUG
         var selectionTracker = new SelectionTracker(messageView);
         window.selectionTracker = selectionTracker;  // DEBUG
+
+        $scope.emptyCache = true;
+        messageView.addEventListener("cachechanged", function() {
+          var emptyCache = messageView.cacheCount() == 0;
+          if (emptyCache !== $scope.emptyCache) {
+            $scope.emptyCache = emptyCache;
+            // This is dumb. I don't know if I'm in a $scope.$apply or
+            // not, so just fire one later. This transition does not
+            // happen often.
+            setTimeout(function() {
+              $scope.$digest();
+            });
+          }
+        });
 
         $scope.$on("ensureSelectionVisible", function(ev) {
           selectionTracker.ensureSelectionVisible();

@@ -81,6 +81,7 @@
            msgview-selection="selection"
            msgview-at-top="atTop"
            msgview-at-bottom="atBottom"
+           msgview-empty-cache="emptyCache"
 
            ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal}"
            random-color-key="{{msg.classKey}}|{{msg.instanceKey}}">
@@ -108,7 +109,7 @@
         <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
       </div>
       <div ng-class="{'msgview-loading-below':1, 'msgview-loading-below-at-end':atBottom}">
-        Loading...
+        <span ng-hide="emptyCache && !atTop">Loading...</span>
       </div>
     </message-view>
 
