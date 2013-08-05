@@ -99,20 +99,23 @@ roostApp.directive("msgviewRepeatMessage", [function() {
 
         // Update existing scopes as selections change.
         selectionTracker.addEventListener("changed", function(ev) {
-          $scope.$apply(function() {
-            if (ev.oldSelection && ev.oldSelection in scopes) {
-              scopes[ev.oldSelection].selected = false;
-            }
-            if (ev.selection && ev.selection in scopes) {
-              scopes[ev.selection].selected = true;
-            }
-            $scope.selection = selectionTracker.selectedMessage();
-          });
+          // Optimize away a full digest cycle, again for
+          // performance. Unlike other ones, this is actually changing
+          // the root scope. But it's used in the reply box
+          if (ev.oldSelection && ev.oldSelection in scopes) {
+            scopes[ev.oldSelection].selected = false;
+            scopes[ev.oldSelection].$digest();
+          }
+          if (ev.selection && ev.selection in scopes) {
+            scopes[ev.selection].selected = true;
+            scopes[ev.selection].$digest();
+          }
+          $scope.selection = selectionTracker.selectedMessage();
         });
         selectionTracker.addEventListener("seenselection", function(ev) {
-          $scope.$apply(function() {
+//          $scope.$apply(function() {
             $scope.selection = selectionTracker.selectedMessage();
-          });
+//          });
         });
 
         // Maintain atTop vs. atBottom.
