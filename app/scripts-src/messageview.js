@@ -1104,10 +1104,12 @@ SelectionTracker.prototype.selectMessage = function(id) {
   if (this.selected_ !== id) {
     var oldSelection = this.selected_;
 
-    this.selectedMessage_ = null;
     this.selected_ = id;
-
-    this.onCacheChanged_();
+    if (this.selected_ != null) {
+      this.selectedMessage_ = this.messageView_.getMessage(this.selected_);
+    } else {
+      this.selectedMessage_ = null;
+    }
 
     this.dispatchEvent({
       type: "changed",
