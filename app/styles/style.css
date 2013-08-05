@@ -35,17 +35,46 @@ message-view {
 }
 
 pre { padding: 0; margin: 0 }
+
 .message {
-  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  border: 2px solid #ccc;
+  margin: 10px 0;
 }
-.message:hover {
-  background-color: #eee;
+.message-selected {
+  background-color: #fff;
 }
-.message-selected, .message-selected:hover {
+
+.message-header {
+  font-weight: bold;
+  background-color: #e2e2e2;
+  padding: 3px 5px;
+}
+.message-selected > .message-header {
   background-color: yellow;
 }
+
+.message-personal {
+  border: 2px solid #483;
+}
+.message-personal > .message-header {
+  background-color: green;
+  /* We'll have a more reasonable color story later. For now, get rid of
+     that silly pink. */
+  color: white !important;
+}
+.message-personal.message-selected > .message-header {
+  background-color: #6a4;
+}
+
 .message-body {
-  padding-left: 2em;
+  display: block;
+  padding: 10px 10px 10px 2em;
+  /* Undo a lot of bootstrap stuff. */
+  border: none;
+  border-radius: 0;
+  background: none;
 }
 
 .msgview-loading-above, .msgview-loading-below {

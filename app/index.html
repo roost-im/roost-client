@@ -76,16 +76,25 @@
       <div ng-class="{'msgview-loading-above':1, 'msgview-loading-above-at-end':atTop}">
         <div class="msgview-loading-above-text">Loading...</div>
       </div>
-      <pre msgview-repeat-message="msg"
+      <div msgview-repeat-message="msg"
            msgview-model="model"
            msgview-selection="selection"
            msgview-at-top="atTop"
            msgview-at-bottom="atBottom"
 
-           ng-class="{'message': 1, 'message-selected': selected}"
-           random-color-key="{{msg.classKey}}|{{msg.instanceKey}}"
-><a href="#msg-{{msg.id|urlencode}}">[LINK]</a> {{msg.class}} / {{msg.instance}} / {{msg.sender|shortZuser}}  {{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}
-<div bind-ztext="{{msg.message}}" class="message-body"></div></pre>
+           ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal}"
+           random-color-key="{{msg.classKey}}|{{msg.instanceKey}}">
+        <div class="message-header" ng-hide="msg.isPersonal && msg.classKey == 'message'">
+          <a href="#msg-{{msg.id|urlencode}}">[LINK]</a> {{msg.class}} / {{msg.instance}} / {{msg.sender|shortZuser}}<span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+        </div>
+        <div class="message-header" ng-show="msg.isPersonal && msg.classKey == 'message' && msg.isOutgoing">
+          <a href="#msg-{{msg.id|urlencode}}">[LINK]</a> Zephyr to {{msg.recipient}} / {{msg.instance}}<span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+        </div>
+        <div class="message-header" ng-show="msg.isPersonal && msg.classKey == 'message' && !msg.isOutgoing">
+          <a href="#msg-{{msg.id|urlencode}}">[LINK]</a> Zephyr from {{msg.sender}} / {{msg.instance}}<span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+        </div>
+        <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
+      </div>
       <div ng-class="{'msgview-loading-below':1, 'msgview-loading-below-at-end':atBottom}">
         Loading...
       </div>
