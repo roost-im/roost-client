@@ -244,6 +244,9 @@ function($scope, storageManager, ticketManager, api) {
   window.model = $scope.model;  // DEBUG
 
   window.addEventListener("keydown", function(ev) {
+    if (ev.target !== document.body)
+      return;
+
     if (matchKey(ev, 82 /* r */)) {
       var msg = $scope.selection;
       if (msg) {

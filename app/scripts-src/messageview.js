@@ -1050,6 +1050,9 @@ MessageView.prototype.checkBuffersReal_ = function() {
 };
 
 MessageView.prototype.onKeydown_ = function(ev) {
+  if (ev.target !== document.body)
+    return;
+
   // Handle home/end keys ourselves. Instead of going to the bounds of
   // the currently buffered view (totally meaningless), they go to the
   // top/bottom of the full message list.
@@ -1255,6 +1258,9 @@ SelectionTracker.prototype.ensureSelectionVisible = function() {
 };
 
 SelectionTracker.prototype.onKeydown_ = function(ev) {
+  if (ev.target !== document.body)
+    return;
+
   function smartNarrow(msg, withInstance, related) {
     var opts = { };
     if (!msg.isPersonal || msg.classKey !== "message") {
