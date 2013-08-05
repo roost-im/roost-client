@@ -328,7 +328,10 @@ function($scope, storageManager, ticketManager, api) {
 
   if (/#msg-/.test(location.hash)) {
     loadState = false;
-    $scope.$broadcast("scrollToMessage", location.hash.substring(5));
+    // HACK: The controller isn't there yet.
+    setTimeout(function() {
+      $scope.$broadcast("scrollToMessage", location.hash.substring(5));
+    });
   }
   // Otherwise, we'll wait for api.ready() to tell us where to scroll
   // to.
