@@ -20,7 +20,7 @@ roostApp.directive("msgviewRepeatMessage", [function() {
       atBottom: "=msgviewAtBottom",
       emptyCache: "=msgviewEmptyCache"
     },
-    transclude: "element",
+    transclude: true,
     priority: 1000,
     terminal: true,
     require: "^messageView",
@@ -106,8 +106,15 @@ roostApp.directive("msgviewRepeatMessage", [function() {
           if (doDigest)
             scope.$digest();
 
+          // Is there a better way to do this? I want only the
+          // elements, not the text nodes.
+          var i;
+          for (var i = 0; i < node.length; i++) {
+            if (node[i].nodeType == Node.ELEMENT_NODE)
+              break;
+          }
           return {
-            node: node[0],
+            node: node[i],
             removeCb: scope.$destroy.bind(scope)
           };
         }
@@ -275,7 +282,7 @@ var MESSAGE_VIEW_SCROLL_TOP = 0;
 var MESSAGE_VIEW_SCROLL_BOTTOM = 1;
 
 
-function MessageView(scope, model, observerRoot, placeholderAbove, formatMessage) {
+function MessageView(scope, model, observerRoot, parent, formatMessage) {
   RoostEventTarget.call(this);
 
   this.scope_ = scope;
@@ -283,12 +290,12 @@ function MessageView(scope, model, observerRoot, placeholderAbove, formatMessage
 
   this.formatMessage_ = formatMessage;
 
-  this.placeholderAbove_ = placeholderAbove;
+  this.placeholderAbove_ = document.createElement("div");
+  this.placeholderAbove_.classList.add("message-placeholder");
   this.placeholderBelow_ = document.createElement("div");
   this.placeholderBelow_.classList.add("message-placeholder");
-  this.placeholderAbove_.parentNode.insertBefore(
-    this.placeholderBelow_,
-    this.placeholderAbove_.nextSibling);
+  parent.appendChild(this.placeholderAbove_);
+  parent.appendChild(this.placeholderBelow_);
 
   this.tailBelow_ = null;
   this.tailBelowOffset_ = 0;  // The global index of the tail reference.
