@@ -46,6 +46,13 @@ pre { padding: 0; margin: 0 }
   background-color: #fff;
 }
 
+.message-signature {
+  background-color: #e8e8e8;
+  padding: 3px 5px;
+  font-size: 80%;
+  color: #555;
+  text-align: right;
+}
 .message-header {
   font-weight: bold;
   background-color: #e2e2e2;

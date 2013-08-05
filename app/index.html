@@ -103,6 +103,7 @@
             <span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
           </div>
           <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
+          <div class="message-signature" ng-show="msg.signature">{{ msg.signature }}</div>
         </div>
       </div>
       <div ng-class="{'msgview-loading-below':1, 'msgview-loading-below-at-end':atBottom}">
