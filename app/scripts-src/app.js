@@ -101,6 +101,8 @@ roostApp.directive("randomColorKey", [function() {
   return {
     restrict: "A",
     link: function(scope, element, attrs) {
+      if (element[0].nodeType !== Node.ELEMENT_NODE)
+        return;
       attrs.$observe("randomColorKey", function(value) {
         var hash = 0;
         for (var i = 0; i < value.length; i++) {
