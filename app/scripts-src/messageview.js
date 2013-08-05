@@ -393,8 +393,8 @@ MessageView.prototype.jumpToScrollPosition_ = function(position) {
     if (node == null)
       return false;
   }
-  $(window).scrollTop(node.getBoundingClientRect().top -
-                      this.container_.getBoundingClientRect().top -
+  $(window).scrollTop(node.getBoundingClientRect().top +
+                      $(window).scrollTop() -
                       position.offset);
   return true;
 };
