@@ -58,15 +58,6 @@ pre { padding: 0; margin: 0 }
 .message-personal {
   border: 2px solid #483;
 }
-.message-personal > .message-header {
-  background-color: green;
-  /* We'll have a more reasonable color story later. For now, get rid of
-     that silly pink. */
-  color: white !important;
-}
-.message-personal.message-selected > .message-header {
-  background-color: #6a4;
-}
 
 .message-body {
   display: block;

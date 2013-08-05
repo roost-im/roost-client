@@ -42,6 +42,34 @@ roostApp.directive("msgviewRepeatMessage", [function() {
           messageView.changeFilter(filter);
         });
 
+        $scope.smartNarrow = function(msg, withInstance) {
+          var related = true;
+          // TODO(davidben): Unify is keyboard copy of the code with
+          // this. It's silly.
+          var opts = { };
+          if (!msg.isPersonal || msg.classKey !== "message") {
+            opts.recipient = msg.recipient;
+            if (related) {
+              opts.class_key_base = msg.classKeyBase;
+            } else {
+              opts.class_key = msg.classKey;
+            }
+          } else {
+            opts.conversation = msg.conversation;
+          }
+
+          if (withInstance) {
+            if (related) {
+              opts.instance_key_base = msg.instanceKeyBase;
+            } else {
+              opts.instance_key = msg.instanceKey;
+            }
+          }
+
+          var filter = new Filter(opts);
+          messageView.changeFilter(filter, msg.id);
+        };
+
         function formatMessage(msg) {
           var scope, nodeOut, node;
           scope = $scope.$new();
@@ -1229,7 +1257,7 @@ SelectionTracker.prototype.ensureSelectionVisible = function() {
 SelectionTracker.prototype.onKeydown_ = function(ev) {
   function smartNarrow(msg, withInstance, related) {
     var opts = { };
-    if (msg.recipient == "" || msg.recipient[0] == "@") {
+    if (!msg.isPersonal || msg.classKey !== "message") {
       opts.recipient = msg.recipient;
       if (related) {
         opts.class_key_base = msg.classKeyBase;

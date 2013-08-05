@@ -84,14 +84,26 @@
 
            ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal}"
            random-color-key="{{msg.classKey}}|{{msg.instanceKey}}">
-        <div class="message-header" ng-hide="msg.isPersonal && msg.classKey == 'message'">
-          <a href="#msg-{{msg.id|urlencode}}">[LINK]</a> {{msg.class}} / {{msg.instance}} / {{msg.sender|shortZuser}}<span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
-        </div>
-        <div class="message-header" ng-show="msg.isPersonal && msg.classKey == 'message' && msg.isOutgoing">
-          <a href="#msg-{{msg.id|urlencode}}">[LINK]</a> Zephyr to {{msg.recipient}} / {{msg.instance}}<span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
-        </div>
-        <div class="message-header" ng-show="msg.isPersonal && msg.classKey == 'message' && !msg.isOutgoing">
-          <a href="#msg-{{msg.id|urlencode}}">[LINK]</a> Zephyr from {{msg.sender}} / {{msg.instance}}<span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+        <div class="message-header">
+          <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
+            <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
+            <a ng-click="smartNarrow(msg, false)">{{msg.class}}</a> /
+            <a ng-click="smartNarrow(msg, true)">{{msg.instance}}</a> /
+            {{msg.sender|shortZuser}}
+            <span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+          </span>
+          <span ng-show="msg.isPersonal && msg.classKey == 'message' && msg.isOutgoing">
+            <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
+            Zephyr to <a ng-click="smartNarrow(msg, false)">{{msg.recipient}}</a> /
+            <a ng-click="smartNarrow(msg, true)">{{msg.instance}}</a>
+            <span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+          </span>
+          <span ng-show="msg.isPersonal && msg.classKey == 'message' && !msg.isOutgoing">
+            <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
+            Zephyr from <a ng-click="smartNarrow(msg, false)">{{msg.sender}}</a> /
+            <a ng-click="smartNarrow(msg, true)">{{msg.instance}}</a>
+            <span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+          </span>
         </div>
         <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
       </div>
