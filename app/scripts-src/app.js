@@ -201,6 +201,9 @@ function($scope, storageManager, ticketManager, api) {
     $scope.replyInstance = "";
     $scope.replyRecipient = "";
     $scope.replyMessage = "";
+
+    // TODO(davidben): Ugh, really?
+    document.activeElement.blur();
   };
 
   $scope.sendZwrite = function(msg) {
