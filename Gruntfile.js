@@ -104,6 +104,7 @@ module.exports = function (grunt) {
                             // lrSnippet,
                             addHeaders(headers),
                             mountFolder(connect, '.tmp'),
+                            mountFolder(connect, yeomanConfig.app + '/dev-overlay'),
                             mountFolder(connect, yeomanConfig.app)
                         ];
                     }
