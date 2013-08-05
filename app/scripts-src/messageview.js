@@ -578,6 +578,7 @@ MessageView.prototype.jumpToScrollPosition_ = function(position) {
   $(window).scrollTop(node.getBoundingClientRect().top +
                       $(window).scrollTop() -
                       position.offset);
+  this.savedPosition_ = position;
   return true;
 };
 
@@ -632,8 +633,7 @@ MessageView.prototype.scrollToMessage = function(id, opts) {
       !(id in this.messageToIndex_) &&
       this.filter_.matchesMessage(bootstrap)) {
     this.reset_();
-    // appendMessages_ will trigger all the tails we need.
-    this.appendMessages_([bootstrap], false);
+    this.appendMessagesRaw_([bootstrap], false);
   }
 
   if (offset != undefined) {
