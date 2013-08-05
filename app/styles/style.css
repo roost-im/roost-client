@@ -20,7 +20,8 @@ body {
   /* always show the scrollbar */
   overflow-y: scroll;
 }
-#messagelist {
+message-view {
+  display: block;
   height: 100%;
   max-width: 700px;
   margin: 0 auto 0 auto;

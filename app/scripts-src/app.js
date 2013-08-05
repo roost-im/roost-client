@@ -14,8 +14,6 @@ function matchKey(ev, keyCode, mods) {
 
 // TODO(davidben): Make all this code not terrible. Seriously.
 
-var api, model, messageView, selectionTracker, ticketManager, storageManager;  // For debugging.
-
 var roostApp = angular.module("roostApp", []);
 
 roostApp.value("config", CONFIG);
@@ -144,9 +142,9 @@ roostApp.filter("urlencode", [function() {
 roostApp.controller("RoostController",
                     ["$scope", "storageManager", "ticketManager", "api",
 function($scope, storageManager, ticketManager, api) {
-  window.storageManager = storageManager;
-  window.ticketManager = ticketManager;
-  window.api = api;
+  window.storageManager = storageManager;  // DEBUG
+  window.ticketManager = ticketManager;  // DEBUG
+  window.api = api;  // DEBUG
 
   $scope.principal = undefined;
   $scope.isLoggedIn = false;
@@ -242,134 +240,16 @@ function($scope, storageManager, ticketManager, api) {
     }
   };
 
-  // TODO(davidben): This'll be Angular later.
-  var COLORS = ["black", "maroon", "red",
-                "purple", "fuchsia", "green", "blue"];
-  var formatMessage = function(idx, msg) {
-    var pre = document.createElement("pre");
-    var indented = "   " +
-      msg.message.replace(/\s+$/, '').split("\n").join("\n   ");
-
-    var a = document.createElement("a");
-    a.href = "#msg-" + msg.id;
-    a.textContent = "[LINK]";
-
-    var number = msg.number;
-    if (number == undefined) {
-      // Hash the class + instance, I guess...
-      number = 0;
-      var s = msg.classKey + "|" + msg.instanceKey;
-      for (var i = 0; i < s.length; i++) {
-        // Dunno, borrowed from some random thing on the Internet that
-        // claims to be Java's.
-        number = ((number << 5) - number + s.charCodeAt(i)) | 0;
-      }
-    }
-
-    // Save for closure.
-    var id = msg.id;
-    var classKeyBase = msg.classKeyBase, instanceKeyBase = msg.instanceKeyBase;
-
-    pre.appendChild(a);
-    pre.appendChild(document.createTextNode(" "));
-
-    if (msg.isPersonal && msg.classKey == "message") {
-      if (msg.isOutgoing) {
-        pre.appendChild(document.createTextNode("Zephyr to "));
-        a = document.createElement("a");
-        a.textContent = shortZuser(msg.recipient);
-        a.addEventListener("click", function(ev) {
-          ev.preventDefault();
-          this.changeFilter(new Filter({conversation: msg.recipient}), id);
-        }.bind(this));
-        pre.appendChild(a);
-
-        pre.appendChild(document.createTextNode(" / "));
-        a = document.createElement("a");
-        a.textContent = msg.instance;
-        a.addEventListener("click", function(ev) {
-          ev.preventDefault();
-          this.changeFilter(new Filter({
-            conversation: msg.recipient,
-            instance_key_base: instanceKeyBase
-          }), id);
-        }.bind(this));
-        pre.appendChild(a);
-
-        pre.appendChild(document.createTextNode(
-          "  " + new Date(msg.time).toString() + "\n"));
-      } else {
-        pre.appendChild(document.createTextNode("Zephyr from "));
-        a = document.createElement("a");
-        a.textContent = shortZuser(msg.sender);
-        a.addEventListener("click", function(ev) {
-          ev.preventDefault();
-          this.changeFilter(new Filter({conversation: msg.sender}), id);
-        }.bind(this));
-        pre.appendChild(a);
-
-        pre.appendChild(document.createTextNode(" / "));
-        a = document.createElement("a");
-        a.textContent = msg.instance;
-        a.addEventListener("click", function(ev) {
-          ev.preventDefault();
-          this.changeFilter(new Filter({
-            conversation: msg.sender,
-            instance_key_base: instanceKeyBase
-          }), id);
-        }.bind(this));
-        pre.appendChild(a);
-
-        pre.appendChild(document.createTextNode(
-          "  " + new Date(msg.time).toString() + "\n"));
-      }
-    } else {
-      a = document.createElement("a");
-      a.textContent = msg.class;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({class_key_base: classKeyBase}), id);
-      }.bind(this));
-      pre.appendChild(a);
-
-      pre.appendChild(document.createTextNode(" / "));
-      a = document.createElement("a");
-      a.textContent = msg.instance;
-      a.addEventListener("click", function(ev) {
-        ev.preventDefault();
-        this.changeFilter(new Filter({
-          class_key_base: classKeyBase,
-          instance_key_base: instanceKeyBase
-        }), id);
-      }.bind(this));
-      pre.appendChild(a);
-
-      pre.appendChild(document.createTextNode(
-        " / " + shortZuser(msg.sender) + "  " +
-          new Date(msg.time).toString() + "\n"));
-    }
-
-    pre.appendChild(ztextToDOM(parseZtext(indented)));
-
-    pre.className = "message";
-    pre.style.color = COLORS[((number % COLORS.length) + COLORS.length) % COLORS.length];
-    return pre;
-  };
-
-  var model = new MessageModel(api);
-  window.model = model;
-  var messageList = document.getElementById("messagelist");
-  var messageView = new MessageView(model, messageList, formatMessage);
-  window.messageView = messageView;
-  var selectionTracker = new SelectionTracker(messageView);
-  window.selectionTracker = selectionTracker;
+  $scope.model = new MessageModel(api);
+  window.model = $scope.model;  // DEBUG
 
   window.addEventListener("keydown", function(ev) {
     if (matchKey(ev, 82 /* r */)) {
-      var msg = selectionTracker.selectedMessage_;
+      var msg = $scope.selection;
+      console.log(msg);
       if (msg) {
         ev.preventDefault();
-        selectionTracker.ensureSelectionVisible_();
+        $scope.$broadcast("ensureSelectionVisible");
 
         $scope.$apply(function() {
           $scope.showReplyBox = true;
@@ -405,83 +285,8 @@ function($scope, storageManager, ticketManager, api) {
 
   var loadState = true;
 
-  // How many pixels you have to scroll before we fork scroll state
-  // ids.
-  var FORK_CUTOFF = 125;
-
-  var oldState = null;
-
-  function getScrollState() {
-    // How far are we from the old scroll state.
-    var id, scrollTotal = Infinity;
-    if (oldState) {
-      var dist = messageView.distanceToScrollState(oldState.scroll);
-      if (dist == null)
-        return null;
-      scrollTotal = dist + (oldState.scrollTotal || 0);
-    }
-    // Fork if far enough away.
-    if (Math.abs(scrollTotal) > FORK_CUTOFF) {
-      id = generateId();
-      scrollTotal = 0;
-    } else {
-      id = oldState.id;
-    }
-
-    var scrollState = messageView.scrollState();
-    if (scrollState == null)
-      return null;
-    return {
-      id: id,
-      scroll: scrollState,
-      scrollTotal: scrollTotal
-    };
-  }
-
-  // True if the last save attempt had an empty cache. In that case,
-  // don't throttle. As soon as cachechanged happens, just trigger
-  // it.
-  var needSave = false, lockSave = true /* to be unlocked on userinfo ready* */;
-  function unlockSave() {
-    lockSave = false;
-    if (needSave)
-      saveThrottler.request({ noThrottle: true });
-  }
-  var saveThrottler = new Throttler(function() {
-    if (lockSave) {
-      needSave = true;
-      return;
-    }
-    var state = getScrollState();
-    if (state == null) {
-      needSave = true;
-      return;
-    }
-    needSave = false;
-    api.userInfo().replaceScrollState(oldState, state);
-    oldState = state;
-  }, timespan.seconds(1));
-  // TODO(davidben): Changing filters happens to trigger scroll
-  // events, but we should be listening for that more explicitly.
-  window.addEventListener("scroll", function(ev) {
-    saveThrottler.request({ noThrottle: needSave });
-  });
-  messageView.addEventListener("cachechanged", function(ev) {
-    if (needSave && !lockSave)
-      saveThrottler.request({ noThrottle: true });
-  });
-
   $scope.setScrollState = function(state) {
-    lockSave = true;
-    try {
-      oldState = state;
-      messageView.changeFilter(new Filter(oldState.scroll.filter));
-      messageView.scrollToMessage(oldState.scroll.id, {
-        offset: oldState.scroll.offset
-      });
-    } finally {
-      unlockSave();
-    }
+    $scope.$broadcast("setScrollState", state);
   };
 
   // Only save state when the user info is ready.
@@ -490,40 +295,34 @@ function($scope, storageManager, ticketManager, api) {
     if (loadState) {
       var states = api.userInfo().scrollStates();
       if (states.length) {
-        oldState = states[0];
-        messageView.changeFilter(new Filter(oldState.scroll.filter));
-        messageView.scrollToMessage(oldState.scroll.id, {
-          offset: oldState.scroll.offset
-        });
+        $scope.$broadcast("setScrollState", states[0]);
       } else {
-        messageView.scrollToBottom();
-        saveThrottler.request();
+        $scope.$broadcast("scrollToBottom");
       }
     }
-
-    unlockSave();
+    $scope.$broadcast("apiReady");
   }).done();
+
+  $scope.$on("replaceScrollState", function(ev, oldState, state) {
+    api.userInfo().replaceScrollState(oldState, state);
+  });
 
   $scope.resetView = function() {
     // TODO(davidben): Figure out the right anchor! Probably the last
     // guy you clicked on if it's still in view? I dunno.
-    messageView.changeFilter(new Filter({}));
+    $scope.$broadcast("changeFilter", new Filter({}));
   };
 
   if (/#msg-/.test(location.hash)) {
     loadState = false;
-    var msgId = location.hash.substring(5);
-    messageView.scrollToMessage(msgId);
-    selectionTracker.selectMessage(msgId);
+    $scope.$broadcast("scrollToMessage", location.hash.substring(5));
   }
   // Otherwise, we'll wait for api.ready() to tell us where to scroll
   // to.
 
   window.addEventListener("hashchange", function(ev) {
     if (/#msg-/.test(location.hash)) {
-      var msgId = location.hash.substring(5);
-      messageView.scrollToMessage(msgId);
-      selectionTracker.selectMessage(msgId);
+      $scope.$broadcast("scrollToMessage", location.hash.substring(5));
     }
   });
 }]);

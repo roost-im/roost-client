@@ -63,7 +63,9 @@ UserInfo.prototype.handleNewInfo_ = function(info, version) {
   this.baseVersion_ = version;
   if (Q.isPending(this.ready_.promise))
     this.ready_.resolve();
-  this.dispatchEvent({type: "change"});
+  setTimeout(function() {
+    this.dispatchEvent({type: "change"});
+  }.bind(this));
 };
 
 UserInfo.prototype.loadInfo_ = function() {
@@ -119,7 +121,9 @@ UserInfo.prototype.set = function(key, value) {
 
   this.ensureLocal_();
   this.local_[key] = value;
-  this.dispatchEvent({type: "change"});
+  setTimeout(function() {
+    this.dispatchEvent({type: "change"});
+  }.bind(this));
   this.throttler_.request();
 };
 
@@ -165,7 +169,9 @@ UserInfo.prototype.replaceScrollState = function(oldState, newState) {
 
   this.local_.scrollStates = mergeScrollStateDiff(
     this.local_.scrollStates, diff);
-  this.dispatchEvent({type: "change"});
+  setTimeout(function() {
+    this.dispatchEvent({type: "change"});
+  }.bind(this));
   this.throttler_.request();
 };
 

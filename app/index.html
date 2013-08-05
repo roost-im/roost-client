@@ -72,25 +72,24 @@
       </ul>
     </div>
 
-    <div id="messagelist">
-    </div>
-<!--
-    <message-view
-       model="model" scroll-state="scrollState" selection="selection">
+    <message-view ng-cloak>
       <div ng-class="{'msgview-loading-above':1, 'msgview-loading-above-at-end':atTop}">
         <div class="msgview-loading-above-text">Loading...</div>
       </div>
-      <div>
-        <pre message-view-msg="msg"
-             random-color-key="{{msg.classKey}}|{{msg.instanceKey}}"
-><a href="#msg-{{msg.id|urlencode}}">[LINK]</a>{{msg.class}} / {{msg.instance}} / {{msg.sender|shortZuser}}  {{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}
-<span bind-ztext="msg.message"></span></pre>
-      </div>
+      <pre msgview-repeat-message="msg"
+           msgview-model="model"
+           msgview-selection="selection"
+           msgview-at-top="atTop"
+           msgview-at-bottom="atBottom"
+
+           ng-class="{'message': 1, 'message-selected': selected}"
+           random-color-key="{{msg.classKey}}|{{msg.instanceKey}}"
+><a href="#msg-{{msg.id|urlencode}}">[LINK]</a> {{msg.class}} / {{msg.instance}} / {{msg.sender|shortZuser}}  {{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}
+<span bind-ztext="{{msg.message}}"></span></pre>
       <div ng-class="{'msgview-loading-below':1, 'msgview-loading-below-at-end':atBottom}">
         Loading...
       </div>
     </message-view>
--->
 
     <div id="reply-box" ng-cloak ng-show="showReplyBox">
       <button type="button" class="pull-right close"
