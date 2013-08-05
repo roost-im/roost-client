@@ -44,7 +44,7 @@ UserInfo.prototype.onConnect_ = function() {
   }.bind(this));
 }
 
-UserInfo.prototype.handleNewInfo_ = function(info, version) {
+UserInfo.prototype.handleNewInfo_ = function(info, version, skipEvent) {
   // Things might have gotten reordered.
   if (this.baseVersion_ >= version)
     return;
@@ -63,9 +63,11 @@ UserInfo.prototype.handleNewInfo_ = function(info, version) {
   this.baseVersion_ = version;
   if (Q.isPending(this.ready_.promise))
     this.ready_.resolve();
-  setTimeout(function() {
-    this.dispatchEvent({type: "change"});
-  }.bind(this));
+  if (!skipEvent) {
+    setTimeout(function() {
+      this.dispatchEvent({type: "change"});
+    }.bind(this));
+  }
 };
 
 UserInfo.prototype.loadInfo_ = function() {
@@ -231,7 +233,7 @@ UserInfo.prototype.doUpdate_ = function() {
     if (ret.updated) {
       // Success!
       this.pending_ = null;
-      this.handleNewInfo_(newInfoStr, newVersion);
+      this.handleNewInfo_(newInfoStr, newVersion, true);
     } else {
       // Failure. Retry.
       this.mergeLocalAndPending_();
