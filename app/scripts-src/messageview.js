@@ -70,7 +70,7 @@ roostApp.directive("msgviewRepeatMessage", [function() {
           messageView.changeFilter(filter, msg.id);
         };
 
-        function formatMessage(msg) {
+        function formatMessage(msg, doDigest) {
           var scope, nodeOut, node;
           scope = $scope.$new();
           scope.msg = msg;
@@ -87,6 +87,9 @@ roostApp.directive("msgviewRepeatMessage", [function() {
           scope.$on("$destroy", function(ev) {
             delete scopes[id];
           });
+
+          if (doDigest)
+            scope.$digest();
 
           return {
             node: node[0],
@@ -762,18 +765,17 @@ MessageView.prototype.setAtBottom_ = function(atBottom) {
 };
 
 MessageView.prototype.appendMessages_ = function(msgs, isDone) {
-  this.scope_.$apply(function() {
-    this.saveScrollPosition_();
-    this.appendMessagesRaw_(msgs, isDone);
-  }.bind(this));
+  // Don't do a full $apply. Only $digest the new scopes.
+  this.saveScrollPosition_();
+  this.appendMessagesRaw_(msgs, isDone, true);
 };
 
-MessageView.prototype.appendMessagesRaw_ = function(msgs, isDone) {
+MessageView.prototype.appendMessagesRaw_ = function(msgs, isDone, doDigest) {
   for (var i = 0; i < msgs.length; i++) {
     var idx = this.cache_.length + this.listOffset_;
     this.messageToIndex_[msgs[i].id] = idx;
 
-    var ret = this.formatMessage_(msgs[i]);
+    var ret = this.formatMessage_(msgs[i], doDigest);
     this.cache_.push({
       msg: msgs[i],
       node: ret.node,
@@ -791,13 +793,12 @@ MessageView.prototype.appendMessagesRaw_ = function(msgs, isDone) {
 };
 
 MessageView.prototype.prependMessages_ = function(msgs, isDone) {
-  this.scope_.$apply(function() {
-    this.saveScrollPosition_();
-    this.prependMessagesRaw_(msgs, isDone);
-  }.bind(this));
+  // Don't do a full $apply. Only $digest the new scopes.
+  this.saveScrollPosition_();
+  this.prependMessagesRaw_(msgs, isDone, true);
 };
 
-MessageView.prototype.prependMessagesRaw_ = function(msgs, isDone) {
+MessageView.prototype.prependMessagesRaw_ = function(msgs, isDone, doDigest) {
   // TODO(davidben): This triggers layout a bunch. Optimize this if needbe.
   var cacheAdd = [];
   var insertReference = this.placeholderAbove_.nextSibling;
@@ -805,7 +806,7 @@ MessageView.prototype.prependMessagesRaw_ = function(msgs, isDone) {
     var idx = this.listOffset_ - msgs.length + i;
     this.messageToIndex_[msgs[i].id] = idx;
 
-    var ret = this.formatMessage_(msgs[i]);
+    var ret = this.formatMessage_(msgs[i], doDigest);
     cacheAdd.push({
       msg: msgs[i],
       node: ret.node,
@@ -1006,7 +1007,10 @@ MessageView.prototype.checkBuffersReal_ = function() {
   // These do.
   if (below >= 0 && above >= 0)
     return;
-  this.scope_.$apply(function() {
+  // TODO(davidben): Do any scopes need to be digested here? We're
+  // just destroying things.
+
+//  this.scope_.$apply(function() {
     if (below < 0) {
       // Close the current tail.
       if (this.tailBelow_) {
@@ -1046,7 +1050,7 @@ MessageView.prototype.checkBuffersReal_ = function() {
     }
 
     this.checkBuffers_();
-  }.bind(this));
+//  }.bind(this));
 };
 
 MessageView.prototype.onKeydown_ = function(ev) {
