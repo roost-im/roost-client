@@ -585,15 +585,15 @@ MessageView.prototype.restorePosition_ = function() {
 
 MessageView.prototype.scrollState = function() {
   var position = this.scrollPosition_();
-  var msg = this.cache_[position.idx - this.listOffset_].msg;
+  var msg = this.cache_[position.idx - this.listOffset_];
   // Cache was empty. Position may still be resolvable, but not as an
   // external scroll state.
   if (!msg)
     return null;
   return {
     offset: position.offset,
-    id: msg.id,
-    receiveTime: msg.receiveTime,
+    id: msg.msg.id,
+    receiveTime: msg.msg.receiveTime,
     filter: this.filter_.toDict()
   };
 };
