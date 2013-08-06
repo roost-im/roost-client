@@ -77,6 +77,9 @@ pre { padding: 0; margin: 0 }
   background-color: #555;
   color: #eee;
 }
+.message-dark > .message-body {
+  color: #eee;
+}
 .message-dark > .message-signature {
   background-color: #666;
   color: #aaa;
