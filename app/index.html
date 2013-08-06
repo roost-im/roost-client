@@ -83,7 +83,7 @@
            msgview-at-bottom="atBottom"
            msgview-empty-cache="emptyCache">
         <div
-           ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal}"
+           ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}"
            random-color-key="{{msg.classKey}}|{{msg.instanceKey}}">
           <div class="message-header">
             <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>

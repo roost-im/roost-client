@@ -66,6 +66,22 @@ pre { padding: 0; margin: 0 }
   border: 2px solid #483;
 }
 
+.message-dark {
+  border: 2px solid #888;
+  background-color: #333;
+}
+.message-dark.message-selected {
+  background-color: #444;
+}
+.message-dark > .message-header {
+  background-color: #555;
+  color: #eee;
+}
+.message-dark > .message-signature {
+  background-color: #666;
+  color: #aaa;
+}
+
 .message-body {
   display: block;
   padding: 10px 10px 10px 2em;
