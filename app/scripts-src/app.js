@@ -291,9 +291,9 @@ function($scope, storageManager, ticketManager, api) {
 
   $scope.scrollStates = [];
   api.userInfo().addEventListener("change", function() {
-//    $scope.$apply(function() {
+    $scope.$apply(function() {
       $scope.scrollStates = api.userInfo().scrollStates();
-//    });
+    });
   });
 
   var loadState = true;
