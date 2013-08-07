@@ -290,10 +290,15 @@ function($scope, storageManager, ticketManager, api) {
   });
 
   $scope.scrollStates = [];
-  api.userInfo().addEventListener("change", function() {
+
+  // Because Angular is too slow.
+  var scrollStateThrottle = new Throttler(function() {
     $scope.$apply(function() {
       $scope.scrollStates = api.userInfo().scrollStates();
     });
+  }, timespan.seconds(2));
+  api.userInfo().addEventListener("change", function() {
+    scrollStateThrottle.request();
   });
 
   var loadState = true;
