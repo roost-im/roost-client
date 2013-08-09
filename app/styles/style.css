@@ -44,6 +44,7 @@ pre { padding: 0; margin: 0 }
 }
 .message-selected {
   background-color: #fff;
+  border: 2px solid #999;
 }
 
 .message-signature {
@@ -58,8 +59,8 @@ pre { padding: 0; margin: 0 }
   background-color: #e2e2e2;
   padding: 3px 5px;
 }
-.message-selected > .message-header {
-  background-color: yellow;
+.message-header a {
+  color: inherit !important;
 }
 
 .message-personal {

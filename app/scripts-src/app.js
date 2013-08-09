@@ -94,8 +94,37 @@ roostApp.directive("onKeydown", ["$parse", function($parse) {
 
 // TODO(davidben): Dumb thing to get rid of later.
 roostApp.directive("randomColorKey", [function() {
-  var COLORS = ["black", "maroon", "red",
-                "purple", "fuchsia", "green", "blue"];
+  // Color palette from
+  // http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines which is
+  // public domain and seems pretty enough.
+  var COLORS = [["#fce94f", 0],
+                ["#fcaf3e", 0],
+                ["#e9b96e", 0],
+                ["#8ae234", 0],
+                ["#729fcf", 0],
+                ["#ad7fa8", 1],
+                ["#ef2929", 1],
+                ["#edd400", 0],
+                ["#f57900", 1],
+                ["#c17d11", 1],
+                ["#73d216", 0],
+                ["#3465a4", 1],
+                ["#75507b", 1],
+                ["#cc0000", 1],
+                ["#c4a000", 1],
+                ["#ce5c00", 1],
+                ["#8f5902", 1],
+                ["#4e9a06", 1],
+                ["#204a87", 1],
+                ["#5c3566", 1],
+                ["#a40000", 1],
+                ["#eeeeec", 0],
+                ["#d3d7cf", 0],
+                ["#babdb6", 0],
+                ["#888a85", 1],
+                ["#555753", 1],
+                ["#2e3436", 1]
+               ];
   return {
     restrict: "A",
     link: function(scope, element, attrs) {
@@ -111,7 +140,8 @@ roostApp.directive("randomColorKey", [function() {
         hash = hash % COLORS.length;
         if (hash < 0)
           hash += COLORS.length;
-        element[0].style.color = COLORS[hash];
+        element[0].style.backgroundColor = COLORS[hash][0];
+        element[0].style.color = COLORS[hash][1] ? "white" : "black";
       });
     }
   };

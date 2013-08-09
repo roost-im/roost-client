@@ -83,9 +83,9 @@
            msgview-at-bottom="atBottom"
            msgview-empty-cache="emptyCache">
         <div
-           ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}"
-           random-color-key="{{msg.classKey}}|{{msg.instanceKey}}">
-          <div class="message-header">
+           ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}">
+          <div class="message-header"
+               random-color-key="{{msg.classKeyBase}}">
             <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
             <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
               <a ng-click="smartNarrow(msg, false)">{{msg.class}}</a> /
