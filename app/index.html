@@ -84,7 +84,7 @@
            msgview-empty-cache="emptyCache">
         <div
            ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}">
-          <div class="message-header"
+          <div class="message-header clearfix"
                random-color-key="{{msg.classKeyBase}}">
             <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
             <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
