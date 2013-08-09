@@ -111,8 +111,6 @@
     </message-view>
 
     <div id="reply-box" ng-cloak ng-show="showReplyBox">
-      <button type="button" class="pull-right close"
-              ng-click="hideReplyBox()">&times;</button>
       <form class="zwrite-form form-horizontal"
             ng-submit="sendZwrite({
                          class: (replyClass || 'message'),
@@ -122,10 +120,10 @@
                        })"
             on-keydown="replyBoxKeydown($event)">
         <div class="form-group">
-          <label for="reply-form-class" class="col-lg-2 control-label">
+          <label for="reply-form-class" class="col-2 control-label">
             Class
           </label>
-          <div class="col-lg-10">
+          <div class="col-10">
             <input name="class" id="reply-form-class"
                    class="form-control input-small" placeholder="message"
                    focus-on="showReplyBox; focusClass"
@@ -133,29 +131,33 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="reply-form-instance" class="col-lg-2 control-label">
+          <label for="reply-form-instance" class="col-2 control-label">
             Instance
           </label>
-          <div class="col-lg-10">
+          <div class="col-10">
             <input name="instance" id="reply-form-instance"
                    class="form-control input-small" placeholder="personal"
                    ng-model="replyInstance">
           </div>
         </div>
         <div class="form-group">
-          <label for="reply-form-recipient" class="col-lg-2 control-label">
+          <label for="reply-form-recipient" class="col-2 control-label">
             Recipient
           </label>
-          <div class="col-lg-10">
+          <div class="col-10">
             <input name="recipient" id="reply-form-recipient"
                    class="form-control input-small"
                    ng-model="replyRecipient">
           </div>
         </div>
-        <textarea name="message" class="form-control" rows=10 cols=80
+        <textarea name="message" class="form-control" rows=5
                   focus-on="showReplyBox; focusMessage"
                   ng-model="replyMessage"></textarea><br>
-        <input type="submit" value="Send" class="btn btn-primary">
+        <div class="clearfix">
+          <input type="submit" value="Send" class="btn btn-primary">
+          <button type="button" class="btn btn-default pull-right"
+                ng-click="hideReplyBox()">Cancel</button>
+        </div>
       </form>
     </div>
 

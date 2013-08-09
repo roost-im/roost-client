@@ -20,6 +20,12 @@ body {
   /* always show the scrollbar */
   overflow-y: scroll;
 }
+
+/* More compact or something. */
+.form-group {
+  margin-bottom: 5px;
+}
+
 message-view {
   display: block;
   height: 100%;
