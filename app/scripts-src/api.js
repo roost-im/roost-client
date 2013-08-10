@@ -17,6 +17,7 @@ HttpError.prototype.toString = function() {
 
 function corsRequest(method, url, data) {
   var xhr = new XMLHttpRequest();
+  var isXdr = false;
   if ("withCredentials" in xhr) {
     // XHR with CORS
     xhr.open(method, url, true);
@@ -24,6 +25,7 @@ function corsRequest(method, url, data) {
     // XDomainRequest for IE9.
     xhr = new XDomainRequest();
     xhr.open(method, url);
+    isXdr = true;
   } else {
     return Q.reject("CORS not supported.");
   }
@@ -42,17 +44,35 @@ function corsRequest(method, url, data) {
   xhr.onerror = function() {
     deferred.reject("Request failed");
   };
+  if (isXdr) {
+    // Apparently IE gets grumpy about missing callbacks... wat?q
+    xhr.onprogress = function() { };
+    xhr.ontimeout = function() { };
+  }
 
-  if (data !== undefined) {
-    // The server accepts text/plain as application/json. For CORS as
-    // an optimization to avoid the preflight. For IE9
-    // (XDomainRequest) as a necessity. (It accepts application/json
-    // just fine too, of course.)
-    if (xhr.setRequestHeader)
-      xhr.setRequestHeader("Content-Type", "text/plain");
-    xhr.send(JSON.stringify(data));
+  if (isXdr) {
+    // Mumble cached requests mumble? I don't... think I care? Either
+    // way, avoid silliness.
+    setTimeout(function() {
+      if (data !== undefined) {
+        xhr.send(JSON.stringify(data));
+      } else {
+        xhr.send();
+      }
+      data = undefined;  // Meh. It's in all the closures in V8 now. Release it.
+    }, 0);
   } else {
-    xhr.send();
+    if (data !== undefined) {
+      // The server accepts text/plain as application/json. For CORS as
+      // an optimization to avoid the preflight. For IE9
+      // (XDomainRequest) as a necessity. (It accepts application/json
+      // just fine too, of course.)
+      xhr.setRequestHeader("Content-Type", "text/plain");
+      xhr.send(JSON.stringify(data));
+    } else {
+      xhr.send();
+    }
+    data = undefined;  // Meh. It's in the closure in V8 now. Release it.
   }
   return deferred.promise;
 }
