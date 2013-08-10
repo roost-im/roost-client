@@ -32,7 +32,7 @@ function corsRequest(method, url, data) {
 
   var deferred = Q.defer();
   xhr.onload = function() {
-    if (this.status == 200) {
+    if (isXdr || this.status == 200) {
       deferred.resolve(this.responseText);
     } else if (this.status) {
       deferred.reject(new HttpError(this.status, this.statusText,
