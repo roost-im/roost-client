@@ -161,7 +161,7 @@
       </form>
     </div>
 
-    <div id="bottom-alerts" ng-cloak>
+    <div id="bottom-alerts" ng-cloak ng-show="ticketNeeded && !ticketNeededModal">
       <div class="alert"
            ng-show="ticketNeeded && !ticketNeededModal && !ticketNeededDemon">
         <p>
