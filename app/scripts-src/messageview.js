@@ -863,7 +863,7 @@ MessageView.prototype.compareMessageToViewport = function(msg) {
     // Node is not cached. Instead we compare using receiveTime.
     var firstMessage = this.cachedMessage(0);
     if (firstMessage) {
-      this.model_.compareMessages(msg, firstMessage);
+      return this.model_.compareMessages(msg, firstMessage);
     } else {
       // No clue. Arbitrarily decide it's before the current view.
       return -1;
