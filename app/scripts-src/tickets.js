@@ -147,3 +147,12 @@ TicketManager.prototype.getTicket = function(which) {
     return sessions[which];
   });
 };
+
+TicketManager.prototype.expireTickets = function() {
+  // For debug purposes.
+  this.sessions_.zephyr.endtime = new Date();
+  this.sessions_.server.endtime = new Date();
+  if (this.storageManager_.saveTickets(this.sessions_)) {
+    this.handleNewSessions_(this.sessions_);
+  }
+};

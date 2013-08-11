@@ -161,7 +161,28 @@
       </form>
     </div>
 
-    <div class="modal fade" show-modal="ticketNeeded"
+    <div id="bottom-alerts" ng-cloak>
+      <div class="alert"
+           ng-show="ticketNeeded && !ticketNeededModal && !ticketNeededDemon">
+        <p>
+          <strong>Your login is expiring soon.</strong> Use Webathena to
+          <a class="alert-link"
+             ng-click="refreshTicketsInteractive()">renew your login</a>.
+        </p>
+      </div>
+      <div class="alert alert-danger"
+           ng-show="ticketNeeded && !ticketNeededModal && ticketNeededDemon">
+        <p>
+          <strong>Zephyr credentials needed.</strong> Your zephyr
+          credentials on the server have expired. Please
+          <a class="alert-link"
+             ng-click="refreshTicketsInteractive()">renew your login</a> to
+          continue receiving personal messages.
+        </p>
+      </div>
+    </div>
+
+    <div class="modal fade" show-modal="ticketNeededModal"
          data-backdrop="static" data-keyboard="false">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -188,12 +209,12 @@
                     import-subs</code> on Athena to import your zephyr
                   subs.</p>
 
-                <p>You also won't receive personals until you've done
-                  that or visited <a href="/api-test.html">this other
-                    silly page</a> and hit "Refresh zephyr credentials"</p>
+                <p>Also, there isn't UI for subscribing yet, so you
+                    need <a href="/api-test.html">this other silly
+                    page</a></p>
               </div>
             </ng-switch>
-            <button class="login-button btn btn-primary"
+            <button class="btn btn-primary"
                     ng-click="refreshTicketsInteractive()">Login with Webathena</button>
           </div>
         </div>

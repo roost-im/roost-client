@@ -1,5 +1,18 @@
 "use strict";
 
+var RECONNECT_DELAY = timespan.milliseconds(500);
+var RECONNECT_TRIES = 10;
+
+var TOKEN_REFRESH_TIMER = timespan.minutes(30);
+var TOKEN_RENEW_SOFT = timespan.days(1);
+var TOKEN_RENEW_HARD = timespan.minutes(5);
+
+var INNER_DEMON_CHECK_TIMER = timespan.minutes(15);
+
+var SOCKET_PING_TIMER_VISIBLE = timespan.seconds(5);
+var SOCKET_PING_TIMER_HIDDEN = timespan.minutes(1);
+var SOCKET_PONG_TIMEOUT = timespan.seconds(5);
+
 function NetworkError(msg) {
   this.msg = msg;
 }
@@ -76,10 +89,6 @@ function corsRequest(method, url, data) {
   }
   return deferred.promise;
 }
-
-var SOCKET_PING_TIMER_VISIBLE = timespan.seconds(5);
-var SOCKET_PING_TIMER_HIDDEN = timespan.minutes(1);
-var SOCKET_PONG_TIMEOUT = timespan.seconds(5);
 
 if (typeof document.hidden === "undefined") {
   if (window.console && console.log)
@@ -181,13 +190,6 @@ RoostSocket.prototype.onClose_ = function(ev) {
   this.ready_ = false;
 };
 
-var RECONNECT_DELAY = timespan.milliseconds(500);
-var RECONNECT_TRIES = 10;
-
-var TOKEN_REFRESH_TIMER = timespan.minutes(30);
-var TOKEN_RENEW_SOFT = timespan.days(1);
-var TOKEN_RENEW_HARD = timespan.minutes(5);
-
 /* State-saving code: */
 var CHARCODE_a = 'a'.charCodeAt(0);
 function generateId() {
@@ -221,6 +223,7 @@ function API(urlBase, servicePrincipal, storageManager, ticketManager) {
   this.nextTailId_ = 1;
 
   setTimeout(this.tryConnectSocket_.bind(this), 0);
+  setTimeout(this.checkInnerDemon_.bind(this), 0);
 
   this.loadTokenFromStorage_();
   this.storageManager_.addEventListener(
@@ -268,6 +271,18 @@ API.prototype.checkExpiredToken_ = function() {
       nonModal: remaining > TOKEN_RENEW_HARD
     });
   }
+};
+
+// For debug purposes.
+API.prototype.expireTokenSoft = function() {
+  if (this.token_ == null)
+    throw "No token";
+  this.token_.expires = new Date().getTime() + TOKEN_RENEW_SOFT / 2;
+};
+API.prototype.expireTokenHard = function() {
+  if (this.token_ == null)
+    throw "No token";
+  this.token_.expires = new Date().getTime();
 };
 
 API.prototype.refreshAuthToken_ = function(opts, data) {
@@ -321,22 +336,23 @@ API.prototype.badToken_ = function(token) {
   }
 };
 
-API.prototype.getAuthToken_ = function(interactive) {
+API.prototype.getAuthToken_ = function(interactive, refreshData) {
   if (this.token_ &&
       this.token_.expires - new Date().getTime() > TOKEN_RENEW_HARD) {
     return Q(this.token_.value);
   } else {
-    this.refreshAuthToken_({interactive: interactive});
+    this.refreshAuthToken_({interactive: interactive}, refreshData);
     return this.tokenDeferred_.promise;
   }
 };
 
 API.prototype.request = function(method, path, params, data, opts, isRetry) {
   opts = opts || { };
-  var tokenPromise = this.getAuthToken_(opts.interactive);
+  var tokenPromise = this.getAuthToken_(opts.interactive, opts.refreshData);
   var credsPromise;
   if (opts.withZephyr) {
-    this.ticketManager_.refreshTickets({interactive:true});
+    this.ticketManager_.refreshTickets({interactive: opts.interactive},
+                                       opts.refreshData);
     credsPromise = this.ticketManager_.getTicket("zephyr");
   } else {
     credsPromise = Q();
@@ -377,6 +393,28 @@ API.prototype.get = function(path, params, opts) {
 API.prototype.post = function(path, data, opts) {
   return this.request("POST", path, {}, data, opts);
 };
+
+API.prototype.checkInnerDemon_ = function() {
+  this.get("/v1/zephyrcreds").then(function(result) {
+    if (!result.needsRefresh)
+      return;
+
+    return this.post("/v1/zephyrcreds", {}, {
+      withZephyr: true,
+      refreshData: {
+        nonModal: true,
+        innerDemon: true
+      }
+    });
+  }.bind(this)).then(null, function(err) {
+    // TODO(davidben): Emit an error event or something. Also in other places.
+    if (window.console && console.error)
+      console.error("Error checking zephyr creds", err);
+  }.bind(this)).then(function() {
+    window.setTimeout(this.checkInnerDemon_.bind(this),
+                      INNER_DEMON_CHECK_TIMER);
+  }.bind(this)).done();
+}
 
 API.prototype.socket = function() {
   return this.socket_;

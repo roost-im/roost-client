@@ -190,18 +190,29 @@ function($scope, storageManager, ticketManager, api) {
   };
 
   $scope.ticketNeeded = false;
+  $scope.ticketNeededModal = false;
+  $scope.ticketNeededDemon = false;
   ticketManager.addEventListener("ticket-needed", function(ev) {
+    if (!$scope.ticketNeeded) {
+      // Ticket no longer needed when we get our tickets.
+      Q.all(
+        [ticketManager.getTicket("server"), ticketManager.getTicket("zephyr")]
+      ).then(function() {
+        $scope.$apply(function() {
+          $scope.ticketNeeded = false;
+          $scope.ticketNeededModal = false;
+          $scope.ticketNeededDemon = false;
+        });
+      }).done();
+    }
+
     $scope.$apply(function() {
       $scope.ticketNeeded = true;
+      if (!ev.data.nonModal)
+        $scope.ticketNeededModal = true;
+      if (ev.data.innerDemon)
+        $scope.ticketNeededDemon = true;
     });
-    // Ticket no longer needed when we get our tickets.
-    Q.all(
-      [ticketManager.getTicket("server"), ticketManager.getTicket("zephyr")]
-    ).then(function() {
-      $scope.$apply(function() {
-        $scope.ticketNeeded = false;
-      });
-    }).done();
 
     // TODO(davidben): check ev.data.nonModal for whether we should
     // pop open a modal dialog or not.
