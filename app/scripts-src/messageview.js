@@ -53,12 +53,33 @@ roostApp.directive("msgviewRepeatMessage", [function() {
         $scope.$on("ensureSelectionVisible", function(ev) {
           selectionTracker.ensureSelectionVisible();
         });
+
+        var lastViewAnchor = null;
+
         $scope.$on("changeFilter", function(ev, filter, anchorSelection) {
           ev.preventDefault();
-          var anchor = null;
-          if (anchorSelection && selectionTracker.isSelectionVisible())
-            anchor = selectionTracker.selectedMessage().id;
-          messageView.changeFilter(filter, anchor);
+          if (anchorSelection && selectionTracker.isSelectionVisible()) {
+            lastViewAnchor = selectionTracker.selectedMessage();
+          }
+          var anchor = lastViewAnchor;
+          // Clamp the anchor to the screen.
+          if (anchor) {
+            var cmp = messageView.compareMessageToViewport(anchor);
+            if (cmp != 0) {
+              var idx;
+              if (cmp < 0) {
+                idx = messageView.findTopMessage();
+              } else if (cmp > 0) {
+                idx = messageView.findBottomMessage();
+              }
+              if (idx != null) {
+                anchor = messageView.cachedMessage(idx);
+              } else {
+                anchor = null;
+              }
+            }
+          }
+          messageView.changeFilter(filter, anchor ? anchor.id : null);
         });
 
         $scope.smartNarrow = function(msg, withInstance, related) {
@@ -86,6 +107,7 @@ roostApp.directive("msgviewRepeatMessage", [function() {
 
           var filter = new Filter(opts);
           messageView.changeFilter(filter, msg.id);
+          lastViewAnchor = msg;
         };
         $scope.$on("narrowSelection", function(ev, withInstance, related) {
           if (selectionTracker.selectedMessage()) {
@@ -833,6 +855,31 @@ MessageView.prototype.appendMessagesRaw_ = function(msgs, isDone, doDigest) {
   this.checkBuffers_();
 };
 
+MessageView.prototype.compareMessageToViewport = function(msg) {
+  var bounds = this.viewportBounds();
+
+  var node = this.getNode(msg.id);
+  if (node == null) {
+    // Node is not cached. Instead we compare using receiveTime.
+    var firstMessage = this.cachedMessage(0);
+    if (firstMessage) {
+      this.model_.compareMessages(msg, firstMessage);
+    } else {
+      // No clue. Arbitrarily decide it's before the current view.
+      return -1;
+    }
+  }
+
+  var b = node.getBoundingClientRect();
+  if (b.bottom < bounds.top) {
+    return -1;
+  } else if (b.top > bounds.bottom) {
+    return 1;
+  }
+  return 0;
+};
+
+
 MessageView.prototype.prependMessages_ = function(msgs, isDone) {
   // Don't do a full $apply. Only $digest the new scopes.
   this.saveScrollPosition_();
@@ -1244,24 +1291,11 @@ SelectionTracker.prototype.adjustSelection_ = function(direction,
 };
 
 SelectionTracker.prototype.isSelectionVisible = function() {
-  var bounds = this.messageView_.viewportBounds();
-
   // We never saw the selection.
   if (this.selectedMessage_ == null)
     return false;
 
-  var node = this.getSelectedNode_();
-  if (node == null)
-    return false;
-
-  // Scroll the message into view if not there.
-  var b = node.getBoundingClientRect();
-  if (b.top < bounds.top) {
-    return false;
-  } else if (b.bottom > bounds.bottom) {
-    return false;
-  }
-  return true;
+  return this.messageView_.compareMessageToViewport(this.selectedMessage_) == 0;
 };
 
 SelectionTracker.prototype.ensureSelectionVisible = function() {
