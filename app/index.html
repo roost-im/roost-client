@@ -88,16 +88,16 @@
                random-color-key="{{msg.classKeyBase}}">
             <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
             <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
-              <a ng-click="smartNarrow(msg, false)">{{msg.class}}</a> /
-              <a ng-click="smartNarrow(msg, true)">{{msg.instance}}</a> /
+              <a ng-click="smartNarrow(msg, false, true)">{{msg.class}}</a> /
+              <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a> /
               {{msg.sender|shortZuser}}
             </span>
             <span ng-show="msg.isPersonal && msg.classKey == 'message'">
               Zephyr
-              <span ng-hide="msg.isOutgoing">from <a ng-click="smartNarrow(msg, false)">{{msg.sender|shortZuser}}</a></span>
-              <span ng-show="msg.isOutgoing">to <a ng-click="smartNarrow(msg, false)">{{msg.recipient|shortZuser}}</a></span>
+              <span ng-hide="msg.isOutgoing">from <a ng-click="smartNarrow(msg, false, true)">{{msg.sender|shortZuser}}</a></span>
+              <span ng-show="msg.isOutgoing">to <a ng-click="smartNarrow(msg, false, true)">{{msg.recipient|shortZuser}}</a></span>
               /
-              <a ng-click="smartNarrow(msg, true)">{{msg.instance}}</a>
+              <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
             </span>
             <span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
           </div>

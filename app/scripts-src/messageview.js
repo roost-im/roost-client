@@ -57,8 +57,7 @@ roostApp.directive("msgviewRepeatMessage", [function() {
           messageView.changeFilter(filter);
         });
 
-        $scope.smartNarrow = function(msg, withInstance) {
-          var related = true;
+        $scope.smartNarrow = function(msg, withInstance, related) {
           // TODO(davidben): Unify is keyboard copy of the code with
           // this. It's silly.
           var opts = { };
