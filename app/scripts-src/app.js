@@ -316,6 +316,41 @@ function($scope, storageManager, ticketManager, api) {
         $scope.showReplyBox = true;
         $scope.focusClass = true;
       });
+    } else if (matchKey(ev, 78 /* n */, {altKey:true})) {
+      $scope.$apply(function() {
+        if ($scope.$broadcast("narrowSelection", false, true).defaultPrevented)
+          ev.preventDefault();
+      });
+    } else if (matchKey(ev, 78 /* n */, {altKey:true, shiftKey:true})) {
+      $scope.$apply(function() {
+        if ($scope.$broadcast("narrowSelection", true, true).defaultPrevented)
+          ev.preventDefault();
+      });
+    } else if (matchKey(ev, 77 /* m */, {altKey:true})) {
+      $scope.$apply(function() {
+        if ($scope.$broadcast("narrowSelection", false, false).defaultPrevented)
+          ev.preventDefault();
+      });
+    } else if (matchKey(ev, 77 /* m */, {altKey:true, shiftKey:true})) {
+      $scope.$apply(function() {
+        if ($scope.$broadcast("narrowSelection", true, false).defaultPrevented)
+          ev.preventDefault();
+      });
+    } else if (matchKey(ev, 80 /* p */, {altKey:true})) {
+      $scope.$apply(function() {
+        if ($scope.$broadcast("changeFilter",
+                              new Filter({is_personal:true}),
+                              true).defaultPrevented) {
+          ev.preventDefault();
+        }
+      });
+    } else if (matchKey(ev, 86 /* v */, {shiftKey:true})) {
+      $scope.$apply(function() {
+        if ($scope.$broadcast("changeFilter",
+                              new Filter({}), true).defaultPrevented) {
+          ev.preventDefault();
+        }
+      });
     }
   });
 

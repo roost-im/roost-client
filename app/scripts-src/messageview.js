@@ -53,8 +53,12 @@ roostApp.directive("msgviewRepeatMessage", [function() {
         $scope.$on("ensureSelectionVisible", function(ev) {
           selectionTracker.ensureSelectionVisible();
         });
-        $scope.$on("changeFilter", function(ev, filter) {
-          messageView.changeFilter(filter);
+        $scope.$on("changeFilter", function(ev, filter, anchorSelection) {
+          ev.preventDefault();
+          var anchor = null;
+          if (anchorSelection && selectionTracker.isSelectionVisible())
+            anchor = selectionTracker.selectedMessage().id;
+          messageView.changeFilter(filter, anchor);
         });
 
         $scope.smartNarrow = function(msg, withInstance, related) {
@@ -83,6 +87,14 @@ roostApp.directive("msgviewRepeatMessage", [function() {
           var filter = new Filter(opts);
           messageView.changeFilter(filter, msg.id);
         };
+        $scope.$on("narrowSelection", function(ev, withInstance, related) {
+          if (selectionTracker.selectedMessage()) {
+            ev.preventDefault();
+            selectionTracker.ensureSelectionVisible();
+            $scope.smartNarrow(
+              selectionTracker.selectedMessage(), withInstance, related);
+          }
+        });
 
         function formatMessage(msg, doDigest) {
           var scope, nodeOut, node;
@@ -1296,84 +1308,12 @@ SelectionTracker.prototype.onKeydown_ = function(ev) {
   if (ev.target !== document.body)
     return;
 
-  function smartNarrow(msg, withInstance, related) {
-    var opts = { };
-    if (!msg.isPersonal || msg.classKey !== "message") {
-      opts.recipient = msg.recipient;
-      if (related) {
-        opts.class_key_base = msg.classKeyBase;
-      } else {
-        opts.class_key = msg.classKey;
-      }
-    } else {
-      opts.conversation = msg.conversation;
-    }
-
-    if (withInstance) {
-      if (related) {
-        opts.instance_key_base = msg.instanceKeyBase;
-      } else {
-        opts.instance_key = msg.instanceKey;
-      }
-    }
-
-    return new Filter(opts);
-  }
-
   if (matchKey(ev, 40 /* DOWN */) || matchKey(ev, 74 /* j */)) {
     if (this.adjustSelection_(1, ev.keyCode == 40))
       ev.preventDefault();
   } else if (matchKey(ev, 38 /* UP */) || matchKey(ev, 75 /* k */)) {
     if (this.adjustSelection_(-1, ev.keyCode == 38))
       ev.preventDefault();
-  } else if (matchKey(ev, 78 /* n */, {altKey:true})) {
-    if (this.selectedMessage_) {
-      ev.preventDefault();
-      this.ensureSelectionVisible();
-      this.messageView_.changeFilter(
-        smartNarrow(this.selectedMessage_, false, true),
-        this.selectedMessage_.id);
-      this.messageView_.scope_.$apply();  // Bah.
-    }
-  } else if (matchKey(ev, 78 /* n */, {altKey:true, shiftKey:true})) {
-    if (this.selectedMessage_) {
-      ev.preventDefault();
-      this.ensureSelectionVisible();
-      this.messageView_.changeFilter(
-        smartNarrow(this.selectedMessage_, true, true),
-        this.selectedMessage_.id);
-      this.messageView_.scope_.$apply();  // Bah.
-    }
-  } else if (matchKey(ev, 77 /* m */, {altKey:true})) {
-    if (this.selectedMessage_) {
-      ev.preventDefault();
-      this.ensureSelectionVisible();
-      this.messageView_.changeFilter(
-        smartNarrow(this.selectedMessage_, false, false),
-        this.selectedMessage_.id);
-      this.messageView_.scope_.$apply();  // Bah.
-    }
-  } else if (matchKey(ev, 77 /* m */, {altKey:true, shiftKey:true})) {
-    if (this.selectedMessage_) {
-      ev.preventDefault();
-      this.ensureSelectionVisible();
-      this.messageView_.changeFilter(
-        smartNarrow(this.selectedMessage_, true, false),
-        this.selectedMessage_.id);
-      this.messageView_.scope_.$apply();  // Bah.
-    }
-  } else if (matchKey(ev, 80 /* p */, {altKey:true})) {
-    ev.preventDefault();
-    this.messageView_.changeFilter(
-      new Filter({is_personal: true}),
-      this.isSelectionVisible() ? this.selectedMessage_.id : null);
-    this.messageView_.scope_.$apply();  // Bah.
-  } else if (matchKey(ev, 86 /* v */, {shiftKey:true})) {
-    ev.preventDefault();
-    this.messageView_.changeFilter(
-      new Filter({}),
-      this.isSelectionVisible() ? this.selectedMessage_.id : null);
-    this.messageView_.scope_.$apply();  // Bah.
   }
 };
 
