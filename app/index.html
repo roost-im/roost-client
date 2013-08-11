@@ -73,7 +73,7 @@
     </div>
 
     <message-view ng-cloak>
-      <div ng-class="{'msgview-loading-above':1, 'msgview-loading-above-at-end':atTop}">
+      <div class="msgview-loading-above" ng-class="{'msgview-loading-above-at-end':atTop}">
         <div class="msgview-loading-above-text">Loading...</div>
       </div>
       <div msgview-repeat-message="msg"
@@ -82,8 +82,8 @@
            msgview-at-top="atTop"
            msgview-at-bottom="atBottom"
            msgview-empty-cache="emptyCache">
-        <div
-           ng-class="{'message': 1, 'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}">
+        <div class="message"
+           ng-class="{'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}">
           <div class="message-header clearfix"
                random-color-key="{{msg.classKeyBase}}">
             <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
@@ -105,7 +105,7 @@
           <div class="message-signature" ng-show="msg.signature" bind-ztext="{{msg.signature}}"></div>
         </div>
       </div>
-      <div ng-class="{'msgview-loading-below':1, 'msgview-loading-below-at-end':atBottom}">
+      <div class="msgview-loading-below" ng-class="{'msgview-loading-below-at-end':atBottom}">
         <span ng-hide="emptyCache && !atTop">Loading...</span>
       </div>
     </message-view>
