@@ -86,7 +86,6 @@
            ng-class="{'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}">
           <div class="message-header clearfix"
                random-color-key="{{msg.classKeyBase}}">
-            <a href="#msg-{{msg.id|urlencode}}">[LINK]</a>
             <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
               <a ng-click="smartNarrow(msg, false, true)">{{msg.class}}</a> /
               <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a> /
@@ -99,7 +98,9 @@
               /
               <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
             </span>
-            <span class="pull-right">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</span>
+            <span class="pull-right">
+              <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</a>
+            </span>
           </div>
           <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
           <div class="message-signature" ng-show="msg.signature" bind-ztext="{{msg.signature}}"></div>
