@@ -116,7 +116,7 @@
                          class: (replyClass || 'message'),
                          instance: (replyInstance || 'personal'),
                          recipient: (replyRecipient|longZuser),
-                         message: replyMessage
+                         message: (replyMessage|wrapText)
                        })"
             on-keydown="replyBoxKeydown($event)">
         <div class="form-group">

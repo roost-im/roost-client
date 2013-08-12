@@ -168,6 +168,9 @@ roostApp.filter("longZuser", [function() {
 roostApp.filter("urlencode", [function() {
   return encodeURIComponent;
 }]);
+roostApp.filter("wrapText", [function() {
+  return wrapText;
+}]);
 
 roostApp.controller("RoostController",
                     ["$scope", "storageManager", "ticketManager", "api",
