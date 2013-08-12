@@ -275,6 +275,9 @@ roostApp.directive("msgviewRepeatMessage", [function() {
               unlockSave();
             }
           });
+          $scope.$on("scrollToTop", function(ev) {
+            messageView.scrollToTop();
+          });
           $scope.$on("scrollToBottom", function(ev) {
             messageView.scrollToBottom();
           });

@@ -362,6 +362,16 @@ function($scope, storageManager, ticketManager, api) {
           ev.preventDefault();
         }
       });
+    } else if (matchKey(ev, 188 /* < */, {shiftKey:true})) {
+      $scope.$apply(function() {
+        $scope.$broadcast("scrollToTop");
+        ev.preventDefault();
+      });
+    } else if (matchKey(ev, 190 /* > */, {shiftKey:true})) {
+      $scope.$apply(function() {
+        $scope.$broadcast("scrollToBottom");
+        ev.preventDefault();
+      });
     }
   });
 
