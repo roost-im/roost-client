@@ -116,7 +116,8 @@
                          class: (replyClass || 'message'),
                          instance: (replyInstance || 'personal'),
                          recipient: (replyRecipient|longZuser),
-                         message: (replyMessage|wrapText)
+                         message: replyMessage,
+                         wrapText: replyWrapText
                        })"
             on-keydown="replyBoxKeydown($event)">
         <div class="form-group">
@@ -149,6 +150,12 @@
                    class="form-control input-small"
                    ng-model="replyRecipient">
           </div>
+        </div>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" ng-model="replyWrapText">
+            Wrap text to 70 columns.
+          </label>
         </div>
         <textarea name="message" class="form-control" rows=5
                   focus-on="showReplyBox; focusMessage"

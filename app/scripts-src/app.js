@@ -236,6 +236,7 @@ function($scope, storageManager, ticketManager, api) {
   $scope.replyInstance = "";
   $scope.replyRecipient = "";
   $scope.replyMessage = "";
+  $scope.replyWrapText = true;
 
   $scope.hideReplyBox = function() {
     $scope.showReplyBox = false;
@@ -245,6 +246,7 @@ function($scope, storageManager, ticketManager, api) {
     $scope.replyInstance = "";
     $scope.replyRecipient = "";
     $scope.replyMessage = "";
+    $scope.replyWrapText = true;
 
     // TODO(davidben): Ugh, really?
     document.activeElement.blur();
@@ -254,6 +256,10 @@ function($scope, storageManager, ticketManager, api) {
     var data = api.userInfo().ready().then(function() {
       var zsig = api.userInfo().get("zsig");
       zsig = (zsig == undefined) ? "Sent from Roost" : zsig;
+      var message = msg.message;
+      // Bah.
+      if (msg.wrapText)
+        message = wrapText(message);
       return {
         message: {
           class: msg.class,
@@ -261,7 +267,7 @@ function($scope, storageManager, ticketManager, api) {
           recipient: msg.recipient,
           opcode: "",
           signature: zsig,
-          message: msg.message
+          message: message
         }
       };
     });
