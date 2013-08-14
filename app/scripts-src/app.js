@@ -237,6 +237,7 @@ function($scope, storageManager, ticketManager, api) {
   $scope.replyRecipient = "";
   $scope.replyMessage = "";
   $scope.replyWrapText = true;
+  $scope.replySending = false;
 
   $scope.hideReplyBox = function() {
     $scope.showReplyBox = false;
@@ -247,6 +248,7 @@ function($scope, storageManager, ticketManager, api) {
     $scope.replyRecipient = "";
     $scope.replyMessage = "";
     $scope.replyWrapText = true;
+    $scope.replySending = false;
 
     // TODO(davidben): Ugh, really?
     document.activeElement.blur();
@@ -271,7 +273,8 @@ function($scope, storageManager, ticketManager, api) {
         }
       };
     });
-    return api.post("/v1/zwrite", data, {
+    $scope.replySending = true;
+    api.post("/v1/zwrite", data, {
       withZephyr: true,
       interactive: true
     }).then(function(ret) {

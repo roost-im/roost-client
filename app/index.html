@@ -162,7 +162,10 @@
                   focus-on="showReplyBox; focusMessage"
                   ng-model="replyMessage"></textarea><br>
         <div class="clearfix">
-          <input type="submit" value="Send" class="btn btn-primary">
+          <button type="submit" class="btn btn-primary"
+                  ng-disabled="replySending">
+            <span ng-hide="replySending">Send</span><span ng-show="replySending">Sending</span>
+          </button>
           <button type="button" class="btn btn-default pull-right"
                 ng-click="hideReplyBox()">Cancel</button>
         </div>
