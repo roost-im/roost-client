@@ -121,7 +121,7 @@ pre { padding: 0; margin: 0 }
 }
 
 .message-dark {
-  border: 2px solid #888;
+  border: 1px solid #888;
   background-color: #333;
 }
 .message-dark.message-selected {
