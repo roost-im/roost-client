@@ -21,11 +21,6 @@ body {
   overflow-y: scroll;
 }
 
-.modal {
-  /* Okay, what is this double-scrollbar nonsense? */
-  overflow-y: auto;
-}
-
 /* More compact or something. */
 .form-group {
   margin-bottom: 5px;
