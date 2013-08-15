@@ -114,7 +114,7 @@
               <div class="message-sender">{{msg.sender|shortZuser}}</div>
               <div class="message-unauth" ng-hide="msg.auth == 1"
                    title="Roost could not verify the sender of this message."
-                   >UNVERIFIED</div>
+                   >NOT VERIFIED</div>
             </div>
             <pre bind-ztext="{{msg.message}}" class="message-body col-xs-10"
                  ng-class="{'col-xs-pull-2': selfSent}"></pre>
