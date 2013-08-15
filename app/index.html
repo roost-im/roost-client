@@ -91,17 +91,13 @@
 }">
           <div class="message-header clearfix"
                random-color-key="{{msg.classKeyBase}}">
-            <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
-              <a ng-click="smartNarrow(msg, false, true)">{{msg.class}}</a> /
-              <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
-            </span>
-            <span ng-show="msg.isPersonal && msg.classKey == 'message'">
-              Zephyr
-              <span ng-hide="msg.isOutgoing">from <a ng-click="smartNarrow(msg, false, true)">{{msg.sender|shortZuser}}</a></span>
-              <span ng-show="msg.isOutgoing">to <a ng-click="smartNarrow(msg, false, true)">{{msg.recipient|shortZuser}}</a></span>
-              /
-              <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
-            </span>
+            <a ng-click="smartNarrow(msg, false, true)"
+               ng-hide="msg.isPersonal && msg.classKey == 'message'"
+               >{{msg.class}}</a>
+            <a ng-click="smartNarrow(msg, false, true)"
+               ng-show="msg.isPersonal && msg.classKey == 'message'"
+               >Chats with {{msg.conversation|shortZuser}}</a>
+            / <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
             <span class="pull-right">
               <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</a>
             </span>
