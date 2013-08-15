@@ -110,7 +110,7 @@
             <div class="message-sender-box col-xs-2"
                  ng-class="{'col-xs-push-10': selfSent}">
               <img ng-src="{{msg.sender|gravatar:40}}" class="img-rounded"
-                   height="40" width="40">
+                   height="40" width="40" ng-show="msg.auth == 1">
               <div class="message-sender">{{msg.sender|shortZuser}}</div>
               <div class="message-unauth" ng-hide="msg.auth == 1"
                    title="Roost could not verify the sender of this message."
