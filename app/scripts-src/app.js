@@ -171,6 +171,32 @@ roostApp.filter("urlencode", [function() {
 roostApp.filter("wrapText", [function() {
   return wrapText;
 }]);
+roostApp.filter("gravatar", [function() {
+  return function(principal, size) {
+    size = Number(size);
+    try {
+      var obj = krb.Principal.fromString(principal);
+      if (obj.realm == "ATHENA.MIT.EDU") {
+        principal = obj.nameToString() + "@mit.edu";
+      }
+    } catch (e) {
+      if (window.console && console.error)
+        console.error("Failed to parse principal", e);
+    }
+    // 1. Trim leading and trailing whitespace from an email address.
+    principal = principal.replace(/^\s+/, '');
+    principal = principal.replace(/\s+$/, '');
+    // 2. Force all characters to lower-case.
+    principal = principal.toLowerCase();
+    // 3. md5 hash the final string.
+    var hash = CryptoJS.enc.Hex.stringify(
+      CryptoJS.MD5(CryptoJS.enc.Utf8.parse(principal)));
+    var ret = "https://secure.gravatar.com/avatar/" + hash + "?d=identicon";
+    if (size)
+      ret += "&s=" + size;
+    return ret;
+  };
+}]);
 
 roostApp.controller("RoostController",
                     ["$scope", "storageManager", "ticketManager", "api",

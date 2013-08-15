@@ -57,7 +57,7 @@ pre { padding: 0; margin: 0 }
 .message {
   background-color: #f5f5f5;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid #bbb;
   margin: 10px 0;
 }
 .message-selected {
@@ -81,6 +81,8 @@ pre { padding: 0; margin: 0 }
 }
 
 .message-signature {
+  clear: both;
+  border-top: 1px solid #ccc;
   background-color: #e8e8e8;
   padding: 3px 5px;
   font-size: 80%;
@@ -96,6 +98,7 @@ pre { padding: 0; margin: 0 }
   font-weight: bold;
   background-color: #e2e2e2;
   padding: 3px 5px;
+  border-bottom: 1px solid #ccc;
 
   /* Calculation is border-radius - border, but add a little bit to deal
      with antialiasing. */
@@ -115,9 +118,11 @@ pre { padding: 0; margin: 0 }
 .message-personal > .message-header {
   background-color: inherit !important;
   color: inherit !important;
+  border: none;
 }
 .message-personal > .message-signature {
   background-color: #c4f0af;
+  border: none;
 }
 
 .message-dark {
@@ -129,23 +134,62 @@ pre { padding: 0; margin: 0 }
 }
 .message-dark > .message-header {
   background-color: #555;
+  border-color: #777;
   color: #eee;
 }
-.message-dark > .message-body {
+.message-dark .message-sender-box {
+  background-color: #555;
+  color: #eee;
+  border-color: #777;
+}
+.message-dark .message-body {
   color: #eee;
 }
 .message-dark > .message-signature {
   background-color: #666;
+  border-color: #777;
   color: #aaa;
 }
 
+.message-row {
+  display: table;
+}
+
 .message-body {
-  display: block;
-  padding: 10px 10px 10px 2em;
+  display: table-cell;
+  vertical-align: top;
+
+  padding: 10px;
   /* Undo a lot of bootstrap stuff. */
   border: none;
   border-radius: 0;
   background: none;
+  font-size: 12px;
+}
+.message-sender-box {
+  display: table-cell;
+  vertical-align: top;
+
+  width: 80px;
+  padding: 10px;
+  background-color: #eee;
+  border-right: 1px solid #ccc;
+}
+.message-sender-box-right {
+  border-right: none;
+  border-left: 1px solid #ccc;
+}
+.message-personal .message-sender-box {
+  background: none;
+  border: none;
+}
+.message-sender-box > img {
+  display: block;
+  margin: 0 auto;
+}
+.message-sender {
+  margin-top: 5px;
+  text-align: center;
 }
 
 .msgview-loading-above, .msgview-loading-below {

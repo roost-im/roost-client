@@ -88,8 +88,7 @@
                random-color-key="{{msg.classKeyBase}}">
             <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
               <a ng-click="smartNarrow(msg, false, true)">{{msg.class}}</a> /
-              <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a> /
-              {{msg.sender|shortZuser}}
+              <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
             </span>
             <span ng-show="msg.isPersonal && msg.classKey == 'message'">
               Zephyr
@@ -102,7 +101,13 @@
               <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</a>
             </span>
           </div>
-          <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
+          <div class="message-row">
+            <div class="message-sender-box">
+              <img src="{{msg.sender|gravatar:32}}" class="img-rounded" height="32" width="32">
+              <div class="message-sender">{{msg.sender|shortZuser}}</div>
+            </div>
+            <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
+          </div>
           <div class="message-signature" ng-show="msg.signature" bind-ztext="{{msg.signature}}"></div>
         </div>
       </div>
