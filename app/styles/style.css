@@ -171,7 +171,9 @@ pre { padding: 0; margin: 0 }
 }
 
 .message-row {
-  overflow-y: hidden;
+  /* Ugh. This is apparently needed to avoid a horizontal scrollbar on
+     self-sent */
+  overflow: hidden;
 }
 .message-body {
   padding: 10px;
