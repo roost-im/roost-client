@@ -48,6 +48,15 @@ roostApp.directive("showModal", [function() {
   };
 }]);
 
+roostApp.directive("bootstrapTooltip", [function() {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      element.tooltip();
+    }
+  };
+}]);
+
 roostApp.directive("focusOn", ["$parse", function($parse) {
   return {
     restrict: "A",
