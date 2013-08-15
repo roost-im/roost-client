@@ -103,7 +103,7 @@
           </div>
           <div class="message-row">
             <div class="message-sender-box">
-              <img src="{{msg.sender|gravatar:32}}" class="img-rounded" height="32" width="32">
+              <img ng-src="{{msg.sender|gravatar:32}}" class="img-rounded" height="32" width="32">
               <div class="message-sender">{{msg.sender|shortZuser}}</div>
             </div>
             <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
