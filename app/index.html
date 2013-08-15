@@ -103,8 +103,8 @@
             </span>
           </div>
           <div class="message-row row">
-            <div class="message-sender-box col-xs-1"
-                 ng-class="{'col-xs-push-11': selfSent}">
+            <div class="message-sender-box col-xs-2"
+                 ng-class="{'col-xs-push-10': selfSent}">
               <img ng-src="{{msg.sender|gravatar:64}}" class="img-rounded"
                    height="32" width="32" ng-show="msg.auth == 1">
               <div class="message-sender">{{msg.sender|shortZuser}}</div>
@@ -112,8 +112,8 @@
                    title="Roost could not verify the sender of this message."
                    >NOT VERIFIED</div>
             </div>
-            <pre bind-ztext="{{msg.message}}" class="message-body col-xs-11"
-                 ng-class="{'col-xs-pull-1': selfSent}"></pre>
+            <pre bind-ztext="{{msg.message}}" class="message-body col-xs-10"
+                 ng-class="{'col-xs-pull-2': selfSent}"></pre>
           </div>
           <div class="message-signature" ng-show="msg.signature" bind-ztext="{{msg.signature}}"></div>
         </div>
