@@ -10,7 +10,7 @@ roostApp.directive("messageView", [function() {
   };
 }]);
 
-roostApp.directive("msgviewRepeatMessage", [function() {
+roostApp.directive("msgviewRepeatMessage", ["storageManager", function(storageManager) {
   return {
     restrict: "A",
     scope: {
@@ -123,6 +123,11 @@ roostApp.directive("msgviewRepeatMessage", [function() {
           scope = $scope.$new();
           scope.msg = msg;
           scope.selected = (msg.id == selectionTracker.selectedId());
+          var me = Q.nearer(storageManager.principal());  // Baaah.
+          scope.selfSent = (msg.auth === 1 &&
+                            // Baaaah.
+                            msg.sender === me &&
+                            !msg.isPersonal || msg.isOutgoing);
 
           linker(scope, function(clone) {
             nodeOut = clone;

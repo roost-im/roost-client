@@ -83,7 +83,12 @@
            msgview-at-bottom="atBottom"
            msgview-empty-cache="emptyCache">
         <div class="message"
-           ng-class="{'message-selected': selected, 'message-personal': msg.isPersonal, 'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art'}">
+           ng-class="{
+'message-selected': selected,
+'message-personal': msg.isPersonal,
+'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art',
+'message-self-sent': selfSent
+}">
           <div class="message-header clearfix"
                random-color-key="{{msg.classKeyBase}}">
             <span ng-hide="msg.isPersonal && msg.classKey == 'message'">
@@ -101,12 +106,14 @@
               <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</a>
             </span>
           </div>
-          <div class="message-row">
-            <div class="message-sender-box">
+          <div class="message-row row">
+            <div class="message-sender-box col-xs-2"
+                 ng-class="{'col-xs-push-10': selfSent}">
               <img ng-src="{{msg.sender|gravatar:32}}" class="img-rounded" height="32" width="32">
               <div class="message-sender">{{msg.sender|shortZuser}}</div>
             </div>
-            <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
+            <pre bind-ztext="{{msg.message}}" class="message-body col-xs-10"
+                 ng-class="{'col-xs-pull-2': selfSent}"></pre>
           </div>
           <div class="message-signature" ng-show="msg.signature" bind-ztext="{{msg.signature}}"></div>
         </div>
