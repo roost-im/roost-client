@@ -129,6 +129,10 @@ pre { padding: 0; margin: 0 }
   color: inherit !important;
   border: none !important;
 }
+.message-personal .message-sender-box {
+  background: none !important;
+  border: none !important;
+}
 .message-personal > .message-signature {
   background-color: #c4f0af;
   border: none;
@@ -186,10 +190,6 @@ pre { padding: 0; margin: 0 }
   border-right: none;
   border-left: 1px solid #ccc;
 }
-.message-personal .message-sender-box {
-  background: none;
-  border: none;
-}
 .message-sender-box > img {
   display: block;
   margin: 0 auto;
@@ -197,6 +197,12 @@ pre { padding: 0; margin: 0 }
 .message-sender {
   margin: 5px 0;
   text-align: center;
+}
+.message-unauth {
+  margin: 5px 0;
+  text-align: center;
+  font-weight: bold;
+  color: red;
 }
 
 .msgview-loading-above, .msgview-loading-below {

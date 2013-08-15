@@ -112,6 +112,9 @@
               <img ng-src="{{msg.sender|gravatar:40}}" class="img-rounded"
                    height="40" width="40">
               <div class="message-sender">{{msg.sender|shortZuser}}</div>
+              <div class="message-unauth" ng-hide="msg.auth == 1"
+                   title="Roost could not verify the sender of this message."
+                   >UNVERIFIED</div>
             </div>
             <pre bind-ztext="{{msg.message}}" class="message-body col-xs-10"
                  ng-class="{'col-xs-pull-2': selfSent}"></pre>
