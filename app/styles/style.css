@@ -187,6 +187,9 @@ pre { padding: 0; margin: 0 }
 .message-self-sent .message-body {
   padding-left: 2em;
 }
+.message-self-sent .message-signature {
+  text-align: left;
+}
 .message-sender-box {
   padding: 10px 0;
   background-color: #eee;
