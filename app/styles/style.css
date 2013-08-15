@@ -185,12 +185,13 @@ pre { padding: 0; margin: 0 }
   padding-left: 2em;
 }
 .message-sender-box {
-  padding: 10px;
+  padding: 10px 0;
   background-color: #eee;
   border-right: 1px solid #ccc;
 
   padding-bottom: 9999px;
   margin-bottom: -9999px;
+  font-size: 10px;
 }
 .message-self-sent .message-sender-box {
   border-right: none;
