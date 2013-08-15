@@ -109,7 +109,8 @@
           <div class="message-row row">
             <div class="message-sender-box col-xs-2"
                  ng-class="{'col-xs-push-10': selfSent}">
-              <img ng-src="{{msg.sender|gravatar:32}}" class="img-rounded" height="32" width="32">
+              <img ng-src="{{msg.sender|gravatar:40}}" class="img-rounded"
+                   height="40" width="40">
               <div class="message-sender">{{msg.sender|shortZuser}}</div>
             </div>
             <pre bind-ztext="{{msg.message}}" class="message-body col-xs-10"
