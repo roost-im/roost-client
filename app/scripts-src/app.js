@@ -190,6 +190,11 @@ roostApp.filter("gravatar", ["$cacheFactory", function($cacheFactory) {
       var email = principal;
       try {
         var obj = krb.Principal.fromString(principal);
+        if (obj.principalName.nameString.length == 2 &&
+            (obj.principalName.nameString[1] == "extra" ||
+             obj.principalName.nameString[1] == "root")) {
+          obj.principalName.nameString = [obj.principalName.nameString[0]];
+        }
         if (obj.realm == "ATHENA.MIT.EDU") {
           email = obj.nameToString() + "@mit.edu";
         }
