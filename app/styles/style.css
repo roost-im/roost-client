@@ -161,7 +161,7 @@ pre { padding: 0; margin: 0 }
 }
 
 .message-row {
-  overflow: hidden;
+  overflow-y: hidden;
 }
 .message-body {
   padding: 10px;
