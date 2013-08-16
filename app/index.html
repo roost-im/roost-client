@@ -66,7 +66,7 @@
       <ul class="dropdown-menu">
         <li ng-repeat="state in scrollStates">
           <a ng-click="setScrollState(state)">
-            {{state.scroll.receiveTime | date:'yyyy-MM-dd hh:mm:ss a'}}
+            {{state.scroll.receiveTime | date:'yyyy-MM-dd HH:mm:ss'}}
           </a>
         </li>
       </ul>
@@ -99,7 +99,7 @@
                >Chats with {{msg.conversation|shortZuser}}</a>
             / <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
             <span class="pull-right">
-              <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd hh:mm:ss a'}}</a>
+              <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd HH:mm:ss'}}</a>
             </span>
           </div>
           <div class="message-row row">
