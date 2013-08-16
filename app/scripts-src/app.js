@@ -1,5 +1,8 @@
 "use strict";
 
+// Start SJCL entropy collectors.
+sjcl.random.startCollectors();
+
 function matchKey(ev, keyCode, mods) {
   if (ev.keyCode != keyCode)
     return false;
