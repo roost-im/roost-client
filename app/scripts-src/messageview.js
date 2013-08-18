@@ -10,25 +10,25 @@ roostApp.directive("messageView", [function() {
   };
 }]);
 
-roostApp.directive("msgviewRepeatMessage", ["storageManager", function(storageManager) {
+roostApp.directive("msgviewRepeatMessage", ["storageManager", "$parse", function(storageManager, $parse) {
   return {
     restrict: "A",
-    scope: {
-      model: "=msgviewModel",
-      selection: "=msgviewSelection",
-      atTop: "=msgviewAtTop",
-      atBottom: "=msgviewAtBottom",
-      emptyCache: "=msgviewEmptyCache"
-    },
     transclude: true,
     priority: 1000,
     terminal: true,
     require: "^messageView",
     compile: function(element, attr, linker) {
       return function($scope, $element, $attr, messageViewCtrl) {
+        var model = $scope.$eval(attr.msgviewModel);
+
+        var selectionExpr = $parse(attr.msgviewSelection);
+        var atTopExpr = $parse(attr.msgviewAtTop);
+        var atBottomExpr = $parse(attr.msgviewAtBottom);
+        var emptyCacheExpr = $parse(attr.msgviewEmptyCache);
+
         var scopes = {};
         var messageView = new MessageView($scope,
-                                          $scope.model,
+                                          model,
                                           messageViewCtrl.element,
                                           $element[0],
                                           formatMessage);
@@ -36,11 +36,13 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", function(storageMa
         var selectionTracker = new SelectionTracker(messageView);
         window.selectionTracker = selectionTracker;  // DEBUG
 
-        $scope.emptyCache = true;
+        emptyCacheExpr.assign($scope, true);
+        var oldEmptyCache = true;
         messageView.addEventListener("cachechanged", function() {
           var emptyCache = messageView.cacheCount() == 0;
-          if (emptyCache !== $scope.emptyCache) {
-            $scope.emptyCache = emptyCache;
+          if (emptyCache !== oldEmptyCache) {
+            emptyCacheExpr.assign($scope, emptyCache);
+            oldEmptyCache = emptyCache;
             // This is dumb. I don't know if I'm in a $scope.$apply or
             // not, so just fire one later. This transition does not
             // happen often.
@@ -170,21 +172,21 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", function(storageMa
             scopes[ev.selection].selected = true;
             scopes[ev.selection].$digest();
           }
-          $scope.selection = selectionTracker.selectedMessage();
+          selectionExpr.assign(selectionTracker.selectedMessage());
         });
         selectionTracker.addEventListener("seenselection", function(ev) {
 //          $scope.$apply(function() {
-            $scope.selection = selectionTracker.selectedMessage();
+          selectionExpr.assign(selectionTracker.selectedMessage());
 //          });
         });
 
         // Maintain atTop vs. atBottom.
-        $scope.atTop = messageView.atTop();
-        $scope.atBottom = messageView.atBottom();
+        atTopExpr.assign($scope, messageView.atTop());
+        atBottomExpr.assign($scope, messageView.atBottom());
         messageView.addEventListener("edgechange", function() {
           $scope.$apply(function() {
-            $scope.atTop = messageView.atTop();
-            $scope.atBottom = messageView.atBottom();
+            atTopExpr.assign($scope, messageView.atTop());
+            atBottomExpr.assign($scope, messageView.atBottom());
           });
         });
 
