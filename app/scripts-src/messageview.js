@@ -125,7 +125,9 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", "$parse", function
           scope = $scope.$new();
           scope.msg = msg;
           scope.selected = (msg.id == selectionTracker.selectedId());
-          var me = Q.nearer(storageManager.principal());  // Baaah.
+
+          // TODO(davidben): Probably ought to put this in the template. Meh.
+          var me = $scope.principal;
           scope.selfSent = (msg.auth === 1 &&
                             // Baaaah.
                             msg.sender === me &&
