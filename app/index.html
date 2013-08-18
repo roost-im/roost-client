@@ -172,10 +172,12 @@
         </div>
         <textarea name="message" class="form-control" rows=5
                   focus-on="showReplyBox; focusMessage"
+                  tab-to="submitButton"
                   ng-model="replyMessage"></textarea><br>
         <div class="clearfix">
           <button type="submit" class="btn btn-primary"
-                  ng-disabled="replySending">
+                  ng-disabled="replySending"
+                  name="submitButton">
             <span ng-hide="replySending">Send</span><span ng-show="replySending">Sending</span>
           </button>
           <button type="button" class="btn btn-default pull-right"

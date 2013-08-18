@@ -101,7 +101,23 @@ roostApp.directive("onKeydown", ["$parse", function($parse) {
         });
       });
     }
-  }
+  };
+}]);
+
+// For working around Safari not letting you tab to buttons...
+roostApp.directive("tabTo", [function() {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      var name = attrs.tabTo;
+      element.on("keydown", function(event) {
+        if (matchKey(event, 9 /* TAB */)) {
+          event.preventDefault();
+          element[0].form[name].focus();
+        }
+      });
+    }
+  };
 }]);
 
 // TODO(davidben): Dumb thing to get rid of later.
