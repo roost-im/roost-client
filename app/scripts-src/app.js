@@ -193,6 +193,9 @@ roostApp.filter("shortZuser", [function() {
 roostApp.filter("longZuser", [function() {
   return longZuser;
 }]);
+roostApp.filter("zuserRealm", [function() {
+  return zuserRealm;
+}]);
 roostApp.filter("urlencode", [function() {
   return encodeURIComponent;
 }]);

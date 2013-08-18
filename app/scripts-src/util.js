@@ -27,6 +27,13 @@ function shortZuser(user) {
   }
 }
 
+function zuserRealm(user) {
+  var idx = user.indexOf("@");
+  if (idx < 0 || idx == user.length - 1)
+    return CONFIG.realm;
+  return user.substring(idx + 1);
+}
+
 // Verify simple for now.
 //
 // TODO(davidben): Be more unicode-aware and markup-aware and all

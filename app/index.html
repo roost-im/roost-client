@@ -92,8 +92,9 @@
           <div class="message-header clearfix"
                random-color-key="{{msg.classKeyBase}}">
             <a ng-click="smartNarrow(msg, false, true)"
-               ng-hide="msg.isPersonal && msg.classKey == 'message'"
-               >{{msg.class}}</a>
+               ng-hide="msg.isPersonal && msg.classKey == 'message'">
+              <span ng-show="msg.recipient">{{msg.recipient|zuserRealm}} /</span>
+              {{msg.class}}</a>
             <a ng-click="smartNarrow(msg, false, true)"
                ng-show="msg.isPersonal && msg.classKey == 'message'"
                >Chats with {{msg.conversation|shortZuser}}</a>

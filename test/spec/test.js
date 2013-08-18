@@ -249,4 +249,21 @@ if (!Function.prototype.bind) {
       expect(shortZuser("davidben@")).to.be.equal("davidben");
     });
   });
+
+  describe('zuser realm', function() {
+    it('should handle the default realm', function() {
+      expect(zuserRealm("davidben")).to.be.equal("ATHENA.MIT.EDU");
+      expect(zuserRealm("")).to.be.equal("ATHENA.MIT.EDU");
+    });
+
+    it('should handle cross-realm recipients', function() {
+      expect(zuserRealm("@ZONE.MIT.EDU")).to.be.equal("ZONE.MIT.EDU");
+      expect(zuserRealm("davidben@ZONE.MIT.EDU")).to.be.equal("ZONE.MIT.EDU");
+    });
+
+    it('should handle trailing @s', function() {
+      expect(zuserRealm("davidben@")).to.be.equal("ATHENA.MIT.EDU");
+      expect(zuserRealm("@")).to.be.equal("ATHENA.MIT.EDU");
+    });
+  });
 })();
