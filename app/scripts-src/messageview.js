@@ -19,12 +19,12 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", "$parse", function
     require: "^messageView",
     compile: function(element, attr, linker) {
       return function($scope, $element, $attr, messageViewCtrl) {
-        var model = $scope.$eval(attr.msgviewModel);
+        var model = $scope.$eval($attr.msgviewModel);
 
-        var selectionExpr = $parse(attr.msgviewSelection);
-        var atTopExpr = $parse(attr.msgviewAtTop);
-        var atBottomExpr = $parse(attr.msgviewAtBottom);
-        var emptyCacheExpr = $parse(attr.msgviewEmptyCache);
+        var selectionExpr = $parse($attr.msgviewSelection);
+        var atTopExpr = $parse($attr.msgviewAtTop);
+        var atBottomExpr = $parse($attr.msgviewAtBottom);
+        var emptyCacheExpr = $parse($attr.msgviewEmptyCache);
 
         var scopes = {};
         var messageView = new MessageView($scope,
