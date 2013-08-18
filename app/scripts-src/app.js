@@ -373,14 +373,6 @@ function($scope, storageManager, ticketManager, api) {
       return;
 
     if (matchKey(ev, 82 /* r */)) {
-      // Make sure $scope.selection is up-to-date. Because Angular is
-      // unbearably slow, we're not doing a full digest on many
-      // operations.
-      //
-      // TODO(davidben): This is dumb. Can I rip the message scopes
-      // out of the main scope tree and manage those manually?
-      $scope.$digest();
-
       var msg = $scope.selection;
       if (msg) {
         ev.preventDefault();

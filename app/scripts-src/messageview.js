@@ -174,11 +174,11 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", "$parse", function
             scopes[ev.selection].selected = true;
             scopes[ev.selection].$digest();
           }
-          selectionExpr.assign(selectionTracker.selectedMessage());
+          selectionExpr.assign($scope, selectionTracker.selectedMessage());
         });
         selectionTracker.addEventListener("seenselection", function(ev) {
 //          $scope.$apply(function() {
-          selectionExpr.assign(selectionTracker.selectedMessage());
+          selectionExpr.assign($scope, selectionTracker.selectedMessage());
 //          });
         });
 
