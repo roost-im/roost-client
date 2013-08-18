@@ -13,6 +13,8 @@ var SOCKET_PING_TIMER_VISIBLE = timespan.seconds(5);
 var SOCKET_PING_TIMER_HIDDEN = timespan.minutes(1);
 var SOCKET_PONG_TIMEOUT = timespan.seconds(5);
 
+var APPLE_WEBKIT_RE = /\bAppleWebKit\/([0-9]+)\.([0-9]+)\b/;
+
 function NetworkError(msg) {
   this.msg = msg;
 }
@@ -81,7 +83,39 @@ function corsRequest(method, url, data) {
       // (XDomainRequest) as a necessity. (It accepts application/json
       // just fine too, of course.)
       xhr.setRequestHeader("Content-Type", "text/plain");
-      xhr.send(JSON.stringify(data));
+
+      // Wat. Work around Chrome/Safari NFC normalizing text before in
+      // XMLHttpRequest#send. This seems to date back to something
+      // Apple put in WebKit for Mail.app. The form submission part
+      // was removed in Blink, but not XHR. Also it's still in Safari.
+      //
+      // The cleanest fix would be to use XHR2's ArrayBufferView
+      // version of send. BUT they messed that one up and used
+      // ArrayBuffer first. ArrayBufferView support may go away and
+      // isn't really detectable, so...
+      //
+      // UA-sniff AppleWebKit and use the version to gate whether we
+      // use AB or ABV. This way the risk is limited to the engine
+      // which needs the workaround. In parallel try to get this fixed
+      // in Chrome at least so we only care about Safari.
+      var m;
+      var dataJson = JSON.stringify(data);
+      if (window.FormData /* XHR2 support */ &&
+          (m = APPLE_WEBKIT_RE.exec(navigator.userAgent))) {
+        var webkitVersionMajor = Number(m[1]);
+        var webkitVersionMinor = Number(m[2]);
+        // ABV added in Chrome 22, which is WebKit 537.4. (Is there a
+        // finer-grained cutoff? Judging from Safari version history,
+        // we don't care?)
+        if (webkitVersionMajor > 537 ||
+            (webkitVersionMajor == 537 && webkitVersionMinor >= 4)) {
+          xhr.send(arrayutils.fromString(dataJson));
+        } else {
+          xhr.send(arrayutils.fromString(dataJson).buffer);
+        }
+      } else {
+        xhr.send(dataJson);
+      }
     } else {
       xhr.send();
     }
