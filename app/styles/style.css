@@ -175,6 +175,9 @@ pre { padding: 0; margin: 0 }
   /* Ugh. This is apparently needed to avoid a horizontal scrollbar on
      self-sent */
   overflow: hidden;
+  /* Bootstrap 3 adds some negative margins for some reason. */
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 .message-body {
   padding: 10px;
