@@ -214,6 +214,12 @@ if (!Function.prototype.bind) {
       test.expectUrl("http://☃.net");
       test.run("http://☃.net");
     });
+
+    it('should allow port numbers', function() {
+      var test = new UrlTest();
+      test.expectUrl("https://davidben.net:443/is-crazy.txt");
+      test.run("https://davidben.net:443/is-crazy.txt");
+    });
   });
 
   describe('long zuser', function() {

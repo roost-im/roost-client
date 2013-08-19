@@ -40,6 +40,7 @@ var URL_REGEX = new RegExp(
     // work.
     "[-a-zA-Z0-9_\\u00a0-\\uefffd]+(?:\\.[-a-zA-Z0-9_\\u00a0-\\uefffd]+)*" +
   ")" +
+  "(?::[0-9]+)?" +
   "(?:/" +
     "(?:" +
       "(?:" +                       // Zero or more:
