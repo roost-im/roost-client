@@ -150,15 +150,18 @@
   // DOM and that task's observers. The polyfill can't guarantee
   // it. So we provide an API to delay jobs.
   JsMutationObserver.setSafeImmediate = function(cb) {
-    // Keep trying until we stop hitting isScheduled.
+    // Keep trying until we stop hitting isScheduled. We use
+    // setTimeout instead of our faked setImmediate because we need to
+    // have a fresh event loop iteration, otherwise we instead break
+    // this property on the real MutationObserver.
     var tryRun = function() {
       if (isScheduled) {
-        setImmediate(tryRun);
+        setTimeout(tryRun, 0);
       } else {
         cb();
       }
     };
-    setImmediate(tryRun);
+    setTimeout(tryRun, 0);
   };
   JsMutationObserver.observersScheduled = function() {
     return isScheduled;
