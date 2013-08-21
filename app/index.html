@@ -103,20 +103,31 @@
               <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd HH:mm:ss'}}</a>
             </span>
           </div>
-          <div class="message-row row">
-            <div class="message-sender-box col-xs-2"
-                 ng-class="{'col-xs-push-10': selfSent}">
-              <img ng-src="{{msg.sender|gravatar:64}}" class="img-rounded"
-                   height="32" width="32" ng-show="msg.auth == 1">
-              <div class="message-sender">{{msg.sender|shortZuser}}</div>
-              <div class="message-unauth" ng-hide="msg.auth == 1"
-                   title="Roost could not verify the sender of this message."
-                   >NOT VERIFIED</div>
+          <div class="message-table">
+            <div class="message-row">
+              <div class="message-sender-box" ng-hide="selfSent">
+                <img ng-src="{{msg.sender|gravatar:64}}" class="img-rounded"
+                     height="32" width="32" ng-show="msg.auth == 1">
+                <div class="message-sender">{{msg.sender|shortZuser}}</div>
+                <div class="message-unauth" ng-hide="msg.auth == 1"
+                     title="Roost could not verify the sender of this message."
+                     >NOT VERIFIED</div>
+              </div>
+              <div class="message-area">
+                <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
+                <div class="message-signature" ng-show="msg.signature"
+                     bind-ztext="{{msg.signature}}"></div>
+              </div>
+              <div class="message-sender-box" ng-show="selfSent">
+                <img ng-src="{{msg.sender|gravatar:64}}" class="img-rounded"
+                     height="32" width="32" ng-show="msg.auth == 1">
+                <div class="message-sender">{{msg.sender|shortZuser}}</div>
+                <div class="message-unauth" ng-hide="msg.auth == 1"
+                     title="Roost could not verify the sender of this message."
+                     >NOT VERIFIED</div>
+              </div>
             </div>
-            <pre bind-ztext="{{msg.message}}" class="message-body col-xs-10"
-                 ng-class="{'col-xs-pull-2': selfSent}"></pre>
           </div>
-          <div class="message-signature" ng-show="msg.signature" bind-ztext="{{msg.signature}}"></div>
         </div>
       </div>
       <div class="msgview-loading-below" ng-class="{'msgview-loading-below-at-end':atBottom}">

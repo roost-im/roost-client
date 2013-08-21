@@ -96,17 +96,26 @@ pre { padding: 0; margin: 0 }
 }
 
 .message-signature {
-  clear: both;
   border-top: 1px solid #ccc;
-  background-color: #e8e8e8;
+  background-color: #eee;
   padding: 3px 5px;
   font-size: 80%;
   color: #555;
   text-align: right;
 
+  height: 2em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  position: absolute;
+  width: 83.5%; /* Round up sliiightly so we don't leave a gap. */
+  right: 0;
+  bottom: 0;
+  z-index: 1; /* Goes under the sender box. */
+
   /* Calculation is border-radius - border, but add a little bit to deal
      with antialiasing. */
-  border-bottom-left-radius: 3.1px;
   border-bottom-right-radius: 3.1px;
 }
 .message-header {
@@ -140,8 +149,9 @@ pre { padding: 0; margin: 0 }
   background: none !important;
   border: none !important;
 }
-.message-personal > .message-signature {
-  background-color: #c4f0af;
+.message-personal .message-signature {
+  color: #5b7051;
+  background: none !important;
   border: none;
 }
 
@@ -158,29 +168,38 @@ pre { padding: 0; margin: 0 }
   color: #eee;
 }
 .message-dark .message-sender-box {
-  background-color: #555;
+  background-color: #666;
   color: #eee;
   border-color: #777 !important;
 }
 .message-dark .message-body {
   color: #eee;
 }
-.message-dark > .message-signature {
-  background-color: #666;
+.message-dark .message-signature {
+  background-color: #555;
   border-color: #777 !important;
   color: #aaa;
 }
 
+.message-table {
+  display: table;
+  width: 100%;
+  position: relative;
+}
 .message-row {
-  /* Ugh. This is apparently needed to avoid a horizontal scrollbar on
-     self-sent */
-  overflow: hidden;
-  /* Bootstrap 3 adds some negative margins for some reason. */
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+  display: table-row;
+  width: 100%;
+}
+.message-area {
+  display: table-cell;
+  width: 83.33333333333334%;
+  vertical-align: top;
+
+  padding: 0 !important;
 }
 .message-body {
   padding: 10px;
+  margin-bottom: 2em;
   /* Undo a lot of bootstrap stuff. */
   border: none;
   border-radius: 0;
@@ -192,23 +211,38 @@ pre { padding: 0; margin: 0 }
 }
 .message-self-sent .message-signature {
   text-align: left;
+
+  left: 0;
+
+  border-bottom-left-radius: 3.1px;
+  border-bottom-right-radius: 0;
 }
 .message-sender-box {
-  padding: 10px 0;
-  background-color: #eee;
+  display: table-cell;
+  width: 16.666666666666664%;
+  vertical-align: top;
+
+  padding: 0 5px;
+  background-color: #e8e8e8;
   border-right: 1px solid #ccc;
   font-size: 12px;
 
-  padding-bottom: 9999px;
-  margin-bottom: -9999px;
+  /* Cover up the signature line if it extends a bit. */
+  position: relative;
+  z-index: 2;
+
+  border-bottom-left-radius: 3.1px;
 }
 .message-self-sent .message-sender-box {
   border-right: none;
   border-left: 1px solid #ccc;
+
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 3.1px;
 }
 .message-sender-box > img {
   display: block;
-  margin: 0 auto;
+  margin: 5px auto;
 }
 .message-sender {
   margin: 5px 0;
@@ -253,10 +287,12 @@ pre { padding: 0; margin: 0 }
   opacity: 0.85;
   background-color: #000;
   position: fixed;
+  z-index: 10;
   top: 0; left: 0; bottom: 0; right: 0;
 }
 .dialog-dummy-parent {
   position: fixed;
+  z-index: 10;
   top: 0; left: 0; bottom: 0; right: 0;
   padding: 5px;
 }
@@ -271,13 +307,14 @@ pre { padding: 0; margin: 0 }
 
 #reset-view {
     position: fixed;
+    z-index: 10;
     top: 5px;
     right: 5px;
-    z-index: 10;
 }
 
 #recent-states {
     position: fixed;
+    z-index: 10;
     top: 5px;
     left: 5px;
     z-index: 10;
@@ -286,6 +323,7 @@ pre { padding: 0; margin: 0 }
 
 #reply-box {
     position: fixed;
+    z-index: 10;
     bottom: 0;
     left: 0;
     right: 0;
