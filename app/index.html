@@ -111,6 +111,7 @@
                 <div class="message-sender">{{msg.sender|shortZuser}}</div>
                 <div class="message-unauth" ng-hide="msg.auth == 1"
                      title="Roost could not verify the sender of this message."
+                     bootstrap-tooltip data-placement="bottom" data-container="body"
                      >NOT VERIFIED</div>
               </div>
               <div class="message-area">
@@ -122,9 +123,10 @@
                 <img ng-src="{{msg.sender|gravatar:64}}" class="img-rounded"
                      height="32" width="32" ng-show="msg.auth == 1">
                 <div class="message-sender">{{msg.sender|shortZuser}}</div>
-                <div class="message-unauth" ng-hide="msg.auth == 1"
+<!--                <div class="message-unauth" ng-hide="msg.auth == 1"
                      title="Roost could not verify the sender of this message."
-                     >NOT VERIFIED</div>
+                     bootstrap-tooltip data-placement="bottom" data-container="body"
+                     >NOT VERIFIED</div> -->
               </div>
             </div>
           </div>
