@@ -69,32 +69,96 @@ pre { padding: 0; margin: 0 }
   font-weight: bold !important;
 }
 
+
+/*** MESSAGE STYLING ***/
+
 .message {
   background-color: #f5f5f5;
   border-radius: 4px;
   border: 1px solid #bbb;
   margin: 10px 0;
 }
-.message-selected {
-  background-color: #fff;
-  border: 1px solid #888;
 
-  /* Ironically, the simpler effect I wanted to try is harder. For
-     future reference if anyone wants to make the border thicker, this
-     causes two problems:
+/* Message header */
+.message-header {
+  font-weight: bold;
+  background-color: #e2e2e2;
+  padding: 3px 5px;
+  border-bottom: 1px solid #ccc;
 
-     1. Margin collapsing means that you can't just fix
-        margin-top/margin-bottom. You need an adjancency selector to fix
-        the next/prev message's margin too. But adjancency selectors only
-        go one direction, until we get subject indicators. So you only
-        correct on one side and fix with position: relative. Yeesh.
-
-     2. getBoundingClientRect() includes the new border, so this messes
-        up narrowing.
-        */
-  box-shadow: 0 0 10px #888;
+  /* Calculation is border-radius - border, but add a little bit to deal
+     with antialiasing. */
+  border-top-left-radius: 3.1px;
+  border-top-right-radius: 3.1px;
+}
+.message-header a {
+  color: inherit !important;
+  cursor: pointer;
 }
 
+/* Message contents. */
+.message-table {
+  display: table;
+  width: 100%;
+  position: relative;
+}
+.message-row {
+  display: table-row;
+  width: 100%;
+}
+
+/* Message body column. */
+.message-area {
+  display: table-cell;
+  width: 83.33333333333334%;
+  vertical-align: top;
+
+  padding: 0 !important;
+}
+.message-body {
+  padding: 10px;
+  margin-bottom: 2em;
+  /* Undo a lot of bootstrap stuff. */
+  border: none;
+  border-radius: 0;
+  background: none;
+  font-size: 12px;
+}
+
+/* Message sender column */
+.message-sender-box {
+  display: table-cell;
+  width: 16.666666666666664%;
+  vertical-align: top;
+
+  padding: 0 5px;
+  background-color: #e8e8e8;
+  border-right: 1px solid #ccc;
+  font-size: 12px;
+
+  /* Cover up the signature line if it extends a bit. */
+  position: relative;
+  z-index: 2;
+
+  border-bottom-left-radius: 3.1px;
+}
+.message-sender-box > img {
+  display: block;
+  margin: 5px auto;
+}
+.message-sender {
+  margin: 5px 0;
+  font-weight: bold;
+  text-align: center;
+}
+.message-unauth {
+  margin: 5px 0;
+  text-align: center;
+  font-weight: bold;
+  color: red;
+}
+
+/* Signature positioned under the message. */
 .message-signature {
   border-top: 1px solid #ccc;
   background-color: #eee;
@@ -118,22 +182,49 @@ pre { padding: 0; margin: 0 }
      with antialiasing. */
   border-bottom-right-radius: 3.1px;
 }
-.message-header {
-  font-weight: bold;
-  background-color: #e2e2e2;
-  padding: 3px 5px;
-  border-bottom: 1px solid #ccc;
 
-  /* Calculation is border-radius - border, but add a little bit to deal
-     with antialiasing. */
-  border-top-left-radius: 3.1px;
-  border-top-right-radius: 3.1px;
+/* Layout tweaks for self-sent messages; everything is mirrored. */
+.message-self-sent .message-body {
+  padding-left: 2em;
 }
-.message-header a {
-  color: inherit !important;
-  cursor: pointer;
+.message-self-sent .message-signature {
+  text-align: left;
+
+  left: 0;
+
+  border-bottom-left-radius: 3.1px;
+  border-bottom-right-radius: 0;
+}
+.message-self-sent .message-sender-box {
+  border-right: none;
+  border-left: 1px solid #ccc;
+
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 3.1px;
 }
 
+/* Decoration for selected messages. */
+.message-selected {
+  background-color: #fff;
+  border: 1px solid #888;
+
+  /* Ironically, the simpler effect I wanted to try is harder. For
+     future reference if anyone wants to make the border thicker, this
+     causes two problems:
+
+     1. Margin collapsing means that you can't just fix
+        margin-top/margin-bottom. You need an adjancency selector to fix
+        the next/prev message's margin too. But adjancency selectors only
+        go one direction, until we get subject indicators. So you only
+        correct on one side and fix with position: relative. Yeesh.
+
+     2. getBoundingClientRect() includes the new border, so this messes
+        up narrowing.
+        */
+  box-shadow: 0 0 10px #888;
+}
+
+/* Color variant; personal messages are green. */
 .message-personal {
   background-color: #e2ffd4;
 }
@@ -155,6 +246,7 @@ pre { padding: 0; margin: 0 }
   border: none;
 }
 
+/* Color variant; dark messages. */
 .message-dark {
   border: 1px solid #888;
   background-color: #333;
@@ -181,80 +273,6 @@ pre { padding: 0; margin: 0 }
   color: #aaa;
 }
 
-.message-table {
-  display: table;
-  width: 100%;
-  position: relative;
-}
-.message-row {
-  display: table-row;
-  width: 100%;
-}
-.message-area {
-  display: table-cell;
-  width: 83.33333333333334%;
-  vertical-align: top;
-
-  padding: 0 !important;
-}
-.message-body {
-  padding: 10px;
-  margin-bottom: 2em;
-  /* Undo a lot of bootstrap stuff. */
-  border: none;
-  border-radius: 0;
-  background: none;
-  font-size: 12px;
-}
-.message-self-sent .message-body {
-  padding-left: 2em;
-}
-.message-self-sent .message-signature {
-  text-align: left;
-
-  left: 0;
-
-  border-bottom-left-radius: 3.1px;
-  border-bottom-right-radius: 0;
-}
-.message-sender-box {
-  display: table-cell;
-  width: 16.666666666666664%;
-  vertical-align: top;
-
-  padding: 0 5px;
-  background-color: #e8e8e8;
-  border-right: 1px solid #ccc;
-  font-size: 12px;
-
-  /* Cover up the signature line if it extends a bit. */
-  position: relative;
-  z-index: 2;
-
-  border-bottom-left-radius: 3.1px;
-}
-.message-self-sent .message-sender-box {
-  border-right: none;
-  border-left: 1px solid #ccc;
-
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 3.1px;
-}
-.message-sender-box > img {
-  display: block;
-  margin: 5px auto;
-}
-.message-sender {
-  margin: 5px 0;
-  font-weight: bold;
-  text-align: center;
-}
-.message-unauth {
-  margin: 5px 0;
-  text-align: center;
-  font-weight: bold;
-  color: red;
-}
 
 .msgview-loading-above, .msgview-loading-below {
   text-align: center;
