@@ -223,6 +223,12 @@ pre { padding: 0; margin: 0 }
         */
   box-shadow: 0 0 10px #888;
 }
+.message-selected .message-sender-box {
+  background-color: #f0f0f0;
+}
+.message-selected .message-signature {
+  background-color: #f8f8f8;
+}
 
 /* Color variant; personal messages are green. */
 .message-personal {
