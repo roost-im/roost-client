@@ -40,6 +40,44 @@ function(config, storageManager, ticketManager) {
                  storageManager, ticketManager);
 }]);
 
+var getGravatar = (function() {
+  var cache = { };
+  return function(principal, size) {
+    size = Number(size);
+    var hash = cache[principal];
+    if (hash === undefined) {
+      var email = principal;
+      try {
+        var obj = krb.Principal.fromString(principal);
+        if (obj.principalName.nameString.length == 2 &&
+            (obj.principalName.nameString[1] == "extra" ||
+             obj.principalName.nameString[1] == "root")) {
+          obj.principalName.nameString = [obj.principalName.nameString[0]];
+        }
+        if (obj.realm == "ATHENA.MIT.EDU") {
+          email = obj.nameToString() + "@mit.edu";
+        }
+      } catch (e) {
+        if (window.console && console.error)
+          console.error("Failed to parse principal", e);
+      }
+      // 1. Trim leading and trailing whitespace from an email address.
+      email = email.replace(/^\s+/, '');
+      email = email.replace(/\s+$/, '');
+      // 2. Force all characters to lower-case.
+      email = email.toLowerCase();
+      // 3. md5 hash the final string.
+      hash = CryptoJS.enc.Hex.stringify(
+        CryptoJS.MD5(CryptoJS.enc.Utf8.parse(email)));
+      cache[principal] = hash;
+    }
+    var ret = "https://secure.gravatar.com/avatar/" + hash + "?d=identicon";
+    if (size)
+      ret += "&s=" + size;
+    return ret;
+  };
+})();
+
 roostApp.directive("showModal", [function() {
   return {
     restrict: "A",
@@ -187,6 +225,43 @@ roostApp.directive("bindZtext", [function() {
   };
 }]);
 
+// The watcher for "msg.time|date:'...'" is apparently the slowest
+// watcher I have. Reimplement it to only call the date filter when
+// things change.
+//
+// Sigh. Angular. Why do you not even bother to optimize this?
+roostApp.directive("bindDate", ["$filter", "$parse", function($filter, $parse) {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      var dateGetter = $parse(attrs.bindDate);
+      var date = dateGetter(scope);
+      // TODO(davidben): React on dateFormat changing too?
+      var refresh = function() {
+        element.text($filter("date")(date, attrs.dateFormat));
+      };
+      scope.$watch(dateGetter, function(value) {
+        date = value;
+        refresh();
+      });
+      refresh();
+    }
+  };
+}]);
+
+// Gravatar also slow.
+roostApp.directive("gravatarSrc", [function() {
+  return {
+    restrict: "A",
+    link: function(scope, element, attrs) {
+      var size = Number(attrs.gravatarSize);
+      scope.$watch(attrs.gravatarSrc, function(value) {
+        element.attr("src", getGravatar(value, size));
+      });
+    }
+  };
+}]);
+
 roostApp.filter("shortZuser", [function() {
   return shortZuser;
 }]);
@@ -202,43 +277,8 @@ roostApp.filter("urlencode", [function() {
 roostApp.filter("wrapText", [function() {
   return wrapText;
 }]);
-roostApp.filter("gravatar", ["$cacheFactory", function($cacheFactory) {
-  // Baah. Angular just calls this thing repeatedly... this is insane.
-  var cache = { };
-  return function(principal, size) {
-    size = Number(size);
-    var hash = cache[principal];
-    if (hash === undefined) {
-      var email = principal;
-      try {
-        var obj = krb.Principal.fromString(principal);
-        if (obj.principalName.nameString.length == 2 &&
-            (obj.principalName.nameString[1] == "extra" ||
-             obj.principalName.nameString[1] == "root")) {
-          obj.principalName.nameString = [obj.principalName.nameString[0]];
-        }
-        if (obj.realm == "ATHENA.MIT.EDU") {
-          email = obj.nameToString() + "@mit.edu";
-        }
-      } catch (e) {
-        if (window.console && console.error)
-          console.error("Failed to parse principal", e);
-      }
-      // 1. Trim leading and trailing whitespace from an email address.
-      email = email.replace(/^\s+/, '');
-      email = email.replace(/\s+$/, '');
-      // 2. Force all characters to lower-case.
-      email = email.toLowerCase();
-      // 3. md5 hash the final string.
-      hash = CryptoJS.enc.Hex.stringify(
-        CryptoJS.MD5(CryptoJS.enc.Utf8.parse(email)));
-      cache[principal] = hash;
-    }
-    var ret = "https://secure.gravatar.com/avatar/" + hash + "?d=identicon";
-    if (size)
-      ret += "&s=" + size;
-    return ret;
-  };
+roostApp.filter("gravatar", [function() {
+  return getGravatar;
 }]);
 
 roostApp.controller("RoostController",

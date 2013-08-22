@@ -65,9 +65,9 @@
               data-toggle="dropdown">Recent positions <span class="caret"></span></button>
       <ul class="dropdown-menu">
         <li ng-repeat="state in scrollStates">
-          <a ng-click="setScrollState(state)">
-            {{state.scroll.receiveTime | date:'yyyy-MM-dd HH:mm:ss'}}
-          </a>
+          <a ng-click="setScrollState(state)"
+             bind-date="state.scroll.receiveTime"
+             date-format="yyyy-MM-dd HH:mm:ss"></a>
         </li>
       </ul>
     </div>
@@ -100,13 +100,14 @@
                >Chats with {{msg.conversation|shortZuser}}</a>
             / <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
             <span class="pull-right">
-              <a href="#msg-{{msg.id|urlencode}}">{{msg.time|date:'yyyy-MM-dd HH:mm:ss'}}</a>
+              <a href="#msg-{{msg.id|urlencode}}"
+                 bind-date="msg.time" date-format="yyyy-MM-dd HH:mm:ss"></a>
             </span>
           </div>
           <div class="message-table">
             <div class="message-row">
               <div class="message-sender-box" ng-hide="selfSent">
-                <img ng-src="{{msg.sender|gravatar:64}}" class="img-rounded"
+                <img gravatar-src="msg.sender" gravatar-size="64" class="img-rounded"
                      height="32" width="32" ng-show="msg.auth == 1">
                 <div class="message-sender">{{msg.sender|shortZuser}}</div>
                 <div class="message-unauth" ng-hide="msg.auth == 1"
@@ -120,7 +121,7 @@
                      bind-ztext="{{msg.signature}}"></div>
               </div>
               <div class="message-sender-box" ng-show="selfSent">
-                <img ng-src="{{msg.sender|gravatar:64}}" class="img-rounded"
+                <img gravatar-src="msg.sender" gravatar-size="64" class="img-rounded"
                      height="32" width="32" ng-show="msg.auth == 1">
                 <div class="message-sender">{{msg.sender|shortZuser}}</div>
 <!--                <div class="message-unauth" ng-hide="msg.auth == 1"
