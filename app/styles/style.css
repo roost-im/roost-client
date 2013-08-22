@@ -62,7 +62,9 @@ pre { padding: 0; margin: 0 }
   bottom: 0px;
   width: 100%;
   left: 0px;
-  padding: 20px;
+}
+#bottom-alerts > .alert {
+  margin: 20px;
 }
 .alert-link {
   /* Bootstrap sets 500 which doesn't seem to show? */
