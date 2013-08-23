@@ -1,13 +1,6 @@
 /*global describe, it */
 'use strict';
 
-/*
-Yes, I know the syntax is really weird.  Yeoman set that up... I do
-not understand JavaScript developers. But this thing has a cute
-phantomjs runner so let's just stick with it unless
-expect(it).gets.to.be.way.too.irritating.
-*/
-
 // Apparently PhantomJS is terrible.
 if (!Function.prototype.bind) {
   Function.prototype.bind = function (oThis) {
@@ -35,83 +28,47 @@ if (!Function.prototype.bind) {
 
 (function () {
   describe('ztext parser', function() {
-    function ztextTreeEquals(a, b) {
-      if (a.length !== b.length)
-        return false;
-      for (var i = 0; i < a.length; i++) {
-        if (typeof a[i] == "string" || typeof b[i] == "string") {
-          if (a[i] !== b[i])
-            return false;
-        } else {
-          if (a[i].tag !== b[i].tag ||
-              a[i].open !== b[i].open ||
-              a[i].close !== b[i].close ||
-              !ztextTreeEquals(a[i].children, b[i].children))
-            return false;
-        }
-      }
-      return true;
-    }
-
     it('should parse strings as is', function() {
-      expect(ztextTreeEquals(
-        parseZtext("foo{}"),
-        ["foo{}"]
-      )).to.be.true;
+      assert.deepEqual(parseZtext("foo{}"), ["foo{}"]);
     });
 
     it('should parse a bolded string', function() {
-      expect(ztextTreeEquals(
-        parseZtext("moo @bold{moo}"),
-        ["moo ", new ZtextNode("bold", "{", "}", ["moo"])]
-      )).to.be.true;
+      assert.deepEqual(parseZtext("moo @bold{moo}"),
+                       ["moo ", new ZtextNode("bold", "{", "}", ["moo"])]);
     });
 
     it('should handle all types of delimiters', function() {
-      expect(ztextTreeEquals(
-        parseZtext("@<moo @bold{moo} @asdf(parens)>"),
-        [
-          new ZtextNode("", "<", ">", [
-            "moo ",
-            new ZtextNode("bold", "{", "}", ["moo"]),
-            " ",
-            new ZtextNode("asdf", "(", ")", ["parens"])
-          ])
-        ]
-      )).to.be.true;
+      assert.deepEqual(parseZtext("@<moo @bold{moo} @asdf(parens)>"),
+                       [
+                         new ZtextNode("", "<", ">", [
+                           "moo ",
+                           new ZtextNode("bold", "{", "}", ["moo"]),
+                           " ",
+                           new ZtextNode("asdf", "(", ")", ["parens"])
+                         ])
+                       ]);
     });
 
     it('should never insert empty strings', function() {
-      expect(ztextTreeEquals(
-        parseZtext(""),
-        [ ]
-      )).to.be.true;
+      assert.deepEqual(parseZtext(""), []);
 
-      expect(ztextTreeEquals(
-        parseZtext("@{}"),
-        [ new ZtextNode("", "{", "}", []) ]
-      )).to.be.true;
+      assert.deepEqual(parseZtext("@{}"),
+                       [new ZtextNode("", "{", "}", [])]);
     });
 
     it('should parse escaped @ signs', function() {
-      expect(ztextTreeEquals(
-        parseZtext("foo@@bar@@@@@@"),
-        [ "foo@bar@@@" ]
-      )).to.be.true;
+      assert.deepEqual(parseZtext("foo@@bar@@@@@@"),
+                       ["foo@bar@@@"]);
     });
 
     it('should treat syntax errors as plain text', function() {
-      expect(ztextTreeEquals(
-        parseZtext("foo@bar {}"),
-        [ "foo@bar {}" ]
-      )).to.be.true;
+      assert.deepEqual(parseZtext("foo@bar {}"),
+                       ["foo@bar {}"]);
     });
 
     it('should allow numbers and _ in tag names', function() {
-      expect(ztextTreeEquals(
-        parseZtext("@aAzZ_09{moo}"),
-        [ new ZtextNode("aAzZ_09", "{", "}", ["moo"]) ]
-      )).to.be.true;
+      assert.deepEqual(parseZtext("@aAzZ_09{moo}"),
+                       [new ZtextNode("aAzZ_09", "{", "}", ["moo"])]);
     });
   })
 
@@ -142,15 +99,15 @@ if (!Function.prototype.bind) {
 
       handlerLog = [];
       target.dispatchEvent({type: "test"});
-      expect(handlerLog).to.deep.equal([0, 1]);
+      assert.deepEqual(handlerLog, [0, 1]);
 
       handlerLog = [];
       target.dispatchEvent({type: "test"});
-      expect(handlerLog).to.deep.equal([1, 3]);
+      assert.deepEqual(handlerLog, [1, 3]);
 
       handlerLog = [];
       target.dispatchEvent({type: "test"});
-      expect(handlerLog).to.deep.equal([1, 3]);
+      assert.deepEqual(handlerLog, [1, 3]);
     });
   });
 
@@ -175,7 +132,7 @@ if (!Function.prototype.bind) {
       findUrls(str,
                this.gotUrl_.bind(this),
                this.gotText_.bind(this));
-      expect(this.log_).to.deep.equal(this.expected_);
+      assert.deepEqual(this.log_, this.expected_);
     };
 
     it('should parse multiple URLs', function() {
@@ -224,52 +181,52 @@ if (!Function.prototype.bind) {
 
   describe('long zuser', function() {
     it('should expand simple strings', function() {
-      expect(longZuser("davidben")).to.be.equal("davidben@ATHENA.MIT.EDU");
+      assert.strictEqual(longZuser("davidben"), "davidben@ATHENA.MIT.EDU");
     });
 
     it('should not expand cross-realm principals', function() {
-      expect(longZuser("davidben@ZONE.MIT.EDU")).to.be.equal(
-        "davidben@ZONE.MIT.EDU");
+      assert.strictEqual(longZuser("davidben@ZONE.MIT.EDU"),
+                         "davidben@ZONE.MIT.EDU");
     });
 
     it('should not expand the empty recipient', function() {
-      expect(longZuser("")).to.be.equal("");
+      assert.strictEqual(longZuser(""), "");
     });
 
     it('should handle trailing @s', function() {
-      expect(longZuser("davidben@")).to.be.equal("davidben@ATHENA.MIT.EDU");
+      assert.strictEqual(longZuser("davidben@"), "davidben@ATHENA.MIT.EDU");
     });
   });
 
   describe('short zuser', function() {
     it('should strip off the default realm', function() {
-      expect(shortZuser("davidben@ATHENA.MIT.EDU")).to.be.equal("davidben");
+      assert.strictEqual(shortZuser("davidben@ATHENA.MIT.EDU"), "davidben");
     });
 
     it('should not shorten cross-realm principals', function() {
-      expect(shortZuser("davidben@ZONE.MIT.EDU")).to.be.equal(
-        "davidben@ZONE.MIT.EDU");
+      assert.strictEqual(shortZuser("davidben@ZONE.MIT.EDU"),
+                         "davidben@ZONE.MIT.EDU");
     });
 
     it('should handle trailing @s', function() {
-      expect(shortZuser("davidben@")).to.be.equal("davidben");
+      assert.strictEqual(shortZuser("davidben@"), "davidben");
     });
   });
 
   describe('zuser realm', function() {
     it('should handle the default realm', function() {
-      expect(zuserRealm("davidben")).to.be.equal("ATHENA.MIT.EDU");
-      expect(zuserRealm("")).to.be.equal("ATHENA.MIT.EDU");
+      assert.strictEqual(zuserRealm("davidben"), "ATHENA.MIT.EDU");
+      assert.strictEqual(zuserRealm(""), "ATHENA.MIT.EDU");
     });
 
     it('should handle cross-realm recipients', function() {
-      expect(zuserRealm("@ZONE.MIT.EDU")).to.be.equal("ZONE.MIT.EDU");
-      expect(zuserRealm("davidben@ZONE.MIT.EDU")).to.be.equal("ZONE.MIT.EDU");
+      assert.strictEqual(zuserRealm("@ZONE.MIT.EDU"), "ZONE.MIT.EDU");
+      assert.strictEqual(zuserRealm("davidben@ZONE.MIT.EDU"), "ZONE.MIT.EDU");
     });
 
     it('should handle trailing @s', function() {
-      expect(zuserRealm("davidben@")).to.be.equal("ATHENA.MIT.EDU");
-      expect(zuserRealm("@")).to.be.equal("ATHENA.MIT.EDU");
+      assert.strictEqual(zuserRealm("davidben@"), "ATHENA.MIT.EDU");
+      assert.strictEqual(zuserRealm("@"), "ATHENA.MIT.EDU");
     });
   });
 })();
