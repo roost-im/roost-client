@@ -1,1 +1,1 @@
-../bower_components/webathena/web_scripts/js/sjcl.js
+../bower_components/webathena/app/scripts/sjcl.js
