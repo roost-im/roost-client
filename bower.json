@@ -7,6 +7,7 @@
     "webathena": "https://github.com/davidben/webathena.git",
     "angular": "~1.0.7",
     "bootstrap": "3.0.1",
-    "MutationObservers": "https://github.com/Polymer/MutationObservers.git"
+    "MutationObservers": "https://github.com/Polymer/MutationObservers.git#~0.0.20131025",
+    "WeakMap": "https://github.com/Polymer/WeakMap.git#~0.0.20131025"
   }
 }

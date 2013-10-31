@@ -219,11 +219,3 @@ if (objCtr.defineProperty) {
     });
   }
 }());
-
-if (window.MutationObserver) {
-  ;
-} else if (window.WebKitMutationObserver) {
-  window.MutationObserver = window.WebKitMutationObserver;
-} else {
-  window.MutationObserver = window.JsMutationObserver;
-}
