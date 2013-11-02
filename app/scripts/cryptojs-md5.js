@@ -1,0 +1,1 @@
+../bower_components/cryptojs/rollups/md5.js
