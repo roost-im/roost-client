@@ -118,7 +118,7 @@
               <div class="message-area">
                 <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
                 <div class="message-signature" ng-show="msg.signature"
-                     bind-ztext="{{msg.signature}}"></div>
+                     bind-ztext="{{msg.signature|zsigParens}}"></div>
               </div>
               <div class="message-sender-box" ng-show="selfSent">
                 <img gravatar-src="msg.sender" gravatar-size="64" class="img-rounded"

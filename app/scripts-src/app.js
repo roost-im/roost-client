@@ -280,6 +280,14 @@ roostApp.filter("wrapText", [function() {
 roostApp.filter("gravatar", [function() {
   return getGravatar;
 }]);
+roostApp.filter("zsigParens", [function() {
+  return function(inp) {
+    // A hack to deal with people writing zsigs assuming BarnOwl's format.
+    if (/^[^(]*\).*\([^)]*$/.test(inp))
+      return "(" + inp + ")";
+    return inp;
+  };
+}]);
 
 roostApp.controller("RoostController",
                     ["$scope", "storageManager", "ticketManager", "api",
