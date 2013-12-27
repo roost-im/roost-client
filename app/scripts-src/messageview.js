@@ -52,8 +52,8 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", "$parse", function
           }
         });
 
-        $scope.$on("ensureSelectionVisible", function(ev) {
-          selectionTracker.ensureSelectionVisible();
+        $scope.$on("focusOnSelection", function(ev) {
+          selectionTracker.focusOnSelection();
         });
 
         var lastViewAnchor = null;
@@ -114,7 +114,8 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", "$parse", function
         $scope.$on("narrowSelection", function(ev, withInstance, related) {
           if (selectionTracker.selectedMessage()) {
             ev.preventDefault();
-            selectionTracker.ensureSelectionVisible();
+            if (!this.isSelectionVisible())
+              selectionTracker.focusOnSelection();
             $scope.smartNarrow(
               selectionTracker.selectedMessage(), withInstance, related);
           }
@@ -310,7 +311,7 @@ var MIN_BUFFER = 20;
 var TARGET_BUFFER = MIN_BUFFER * 2;
 var MAX_BUFFER = MIN_BUFFER * 3;
 
-var MAX_ARROW_SCROLL = 50;
+var MAX_ARROW_SCROLL = 200;
 var GOAL_RATIO_UP = 0.25;
 var GOAL_RATIO_DOWN = 0.60;
 
@@ -318,10 +319,6 @@ var MARGIN_TOP = 20;
 var MARGIN_BELOW = 40;
 
 var SCROLL_PAGE_MARGIN = 40;
-
-function clamp(a, b, c) {
-  return Math.max(a, Math.min(b, c));
-}
 
 var MESSAGE_VIEW_SCROLL_TOP = 0;
 var MESSAGE_VIEW_SCROLL_BOTTOM = 1;
@@ -1277,28 +1274,33 @@ SelectionTracker.prototype.adjustSelection_ = function(direction,
   this.selectMessage(newMsg.id);
   var newNode = this.messageView_.cachedNode(newIdx);
 
-  // What it would take to get the top of the new message at the top
-  // of the screen.
-  var topScroll = 0;
   // What it would take to get to the goal ratio.
   var goalScroll = ((direction < 0) ?
                     (bounds.height * GOAL_RATIO_UP) :
                     (bounds.height * GOAL_RATIO_DOWN));
-  var currentOffset = newNode.getBoundingClientRect().top - bounds.top;
-  if ((direction < 0 && currentOffset < goalScroll) ||
-      (direction > 0 && currentOffset > goalScroll)) {
-    // What it would take to keep the top of the selected message fixed.
-    var fixedScroll = b.top - bounds.top;
-
-    // Pick the first, but don't move the top of the selected message
-    // much.
-    var newScroll = clamp(fixedScroll - MAX_ARROW_SCROLL,
-                          goalScroll,
-                          fixedScroll + MAX_ARROW_SCROLL);
-    this.messageView_.scrollToMessage(newMsg.id, {offset: newScroll});
+  var newNodeBounds = newNode.getBoundingClientRect();
+  var currentOffset = newNodeBounds.top - bounds.top;
+  if (direction > 0) {
+    if (currentOffset > goalScroll) {
+      // Use the goal scroll, but don't move too much.
+      var newScroll = Math.max(currentOffset - MAX_ARROW_SCROLL, goalScroll);
+      this.messageView_.scrollToMessage(newMsg.id, {offset: newScroll});
+    }
+    // Whatever happens, make sure the message is visible.
+    if (!this.isSelectionVisible())
+      this.focusOnSelection();
+  } else {
+    if (currentOffset < goalScroll) {
+      // Use the goal scroll, but don't move too much.
+      var newScroll = Math.min(currentOffset + MAX_ARROW_SCROLL,
+                               goalScroll);
+      this.messageView_.scrollToMessage(newMsg.id, {offset: newScroll});
+    }
+    // Focus on the selection whether or not it's already visible; if clamping
+    // by currentOffset resulted in the top left invisible, move the top edge
+    // into view. People don't read backwards.
+    this.focusOnSelection();
   }
-  // Whatever happens, make sure the message is visible.
-  this.ensureSelectionVisible();
   return true;
 };
 
@@ -1310,7 +1312,7 @@ SelectionTracker.prototype.isSelectionVisible = function() {
   return this.messageView_.compareMessageToViewport(this.selectedMessage_) == 0;
 };
 
-SelectionTracker.prototype.ensureSelectionVisible = function() {
+SelectionTracker.prototype.focusOnSelection = function() {
   var bounds = this.messageView_.viewportBounds();
 
   // We never saw the selection. Don't do anything.

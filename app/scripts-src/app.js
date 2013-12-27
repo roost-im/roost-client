@@ -424,7 +424,7 @@ function($scope, storageManager, ticketManager, api) {
       var msg = $scope.selection;
       if (msg) {
         ev.preventDefault();
-        $scope.$broadcast("ensureSelectionVisible");
+        $scope.$broadcast("focusOnSelection");
 
         $scope.$apply(function() {
           $scope.showReplyBox = true;
