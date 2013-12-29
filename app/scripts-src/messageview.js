@@ -114,7 +114,7 @@ roostApp.directive("msgviewRepeatMessage", ["storageManager", "$parse", function
         $scope.$on("narrowSelection", function(ev, withInstance, related) {
           if (selectionTracker.selectedMessage()) {
             ev.preventDefault();
-            if (!this.isSelectionVisible())
+            if (!selectionTracker.isSelectionVisible())
               selectionTracker.focusOnSelection();
             $scope.smartNarrow(
               selectionTracker.selectedMessage(), withInstance, related);
