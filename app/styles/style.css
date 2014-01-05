@@ -338,6 +338,13 @@ pre { padding: 0; margin: 0 }
     right: 5px;
 }
 
+#compose-button {
+    position: fixed;
+    z-index: 10;
+    bottom: 5px;
+    left: 5px;
+}
+
 #recent-states {
     position: fixed;
     z-index: 10;

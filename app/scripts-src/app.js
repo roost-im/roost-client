@@ -371,6 +371,11 @@ function($scope, storageManager, ticketManager, api) {
     document.activeElement.blur();
   };
 
+  $scope.compose = function() {
+    $scope.showReplyBox = true;
+    $scope.focusClass = true;
+  };
+
   $scope.sendZwrite = function(msg) {
     var data = api.userInfo().ready().then(function() {
       var zsig = api.userInfo().get("zsig");
@@ -445,8 +450,7 @@ function($scope, storageManager, ticketManager, api) {
       ev.preventDefault();
 
       $scope.$apply(function() {
-        $scope.showReplyBox = true;
-        $scope.focusClass = true;
+        $scope.compose();
       });
     } else if (matchKey(ev, 78 /* n */, {altKey:true})) {
       $scope.$apply(function() {
