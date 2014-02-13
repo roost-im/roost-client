@@ -113,17 +113,18 @@ function ztextToDOM(ztext, parent) {
       // TODO(davidben): Implement zwgc's tags like @small, @medium,
       // @large, @left, @center, @right. Maybe even @font. Not @beep
       // though.
-      if (chunk.tag == "") {
+      var tag = chunk.tag.toLowerCase();
+      if (tag == "") {
         curParent.appendChild(ztextToDOM(chunk.children));
-      } else if (chunk.tag == "b" || chunk.tag == "bold") {
+      } else if (tag == "b" || tag == "bold") {
         var elem = document.createElement("b");
         ztextToDOM(chunk.children, elem);
         curParent.appendChild(elem);
-      } else if (chunk.tag == "i" || chunk.tag == "italic") {
+      } else if (tag == "i" || tag == "italic") {
         var elem = document.createElement("i");
         ztextToDOM(chunk.children, elem);
         curParent.appendChild(elem);
-      } else if (chunk.tag == "color" &&
+      } else if (tag == "color" &&
                  chunk.children.length == 1 &&
                  typeof chunk.children[0] == "string") {
         var color = chunk.children[0];
