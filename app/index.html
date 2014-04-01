@@ -5,8 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roost</title>
+
     <link rel="stylesheet" href="/styles/bootstrap.min.css">
     <link rel="stylesheet" href="/styles/style.css">
+
     <link rel="SHORTCUT ICON" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/roost-logo_57x57.png">
     <link rel="apple-touch-icon" sizes="72x72" href="/roost-logo_72x72.png">
@@ -16,7 +18,9 @@
     <!-- build:js /scripts/q.min.js -->
     <script src="/bower_components/q/q.js"></script>
     <!-- endbuild -->
+
     <script src="/scripts/sockjs.min.js"></script>
+
     <!-- build:js /scripts/winchan.min.js -->
     <script src="/bower_components/winchan/winchan.js"></script>
     <!-- endbuild -->
@@ -24,11 +28,10 @@
     <script src="/scripts/jquery.min.js"></script>
     <script src="/scripts/bootstrap.min.js"></script>
     <script src="/scripts/angular.min.js"></script>
-
     <script src="/scripts/cryptojs-md5.js"></script>
     <script src="/scripts/sjcl.js"></script>
-
     <script src="/scripts/webathena.js"></script>
+
     <!-- build:js /scripts/gss.min.js -->
     <script src="/bower_components/webathena/dist/gss.js"></script>
     <!-- endbuild -->
@@ -52,10 +55,12 @@
     <script src="/scripts-src/colors.js"></script>
     <script src="/scripts-src/ztext.js"></script>
     <!-- endbuild -->
+
     <!-- build:js /scripts/app.min.js -->
     <script src="/scripts-src/app.js"></script>
     <script src="/scripts-src/messageview.js"></script>
     <!-- endbuild -->
+
   </head>
   <body>
     <button id="reset-view" class="btn btn-default"
@@ -86,11 +91,11 @@
            msgview-empty-cache="emptyCache">
         <div class="message"
            ng-class="{
-'message-selected': selected,
-'message-personal': msg.isPersonal,
-'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art',
-'message-self-sent': selfSent
-}">
+                'message-selected': selected,
+                'message-personal': msg.isPersonal,
+                'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art',
+                'message-self-sent': selfSent
+                }">
           <div class="message-header clearfix"
                random-color-key="{{msg.classKeyBase}}">
             <a ng-click="smartNarrow(msg, false, true)"
@@ -126,10 +131,6 @@
                 <img gravatar-src="msg.sender" gravatar-size="64" class="img-rounded"
                      height="32" width="32" ng-show="msg.auth == 1">
                 <div class="message-sender">{{msg.sender|shortZuser}}</div>
-<!--                <div class="message-unauth" ng-hide="msg.auth == 1"
-                     title="Roost could not verify the sender of this message."
-                     bootstrap-tooltip data-placement="bottom" data-container="body"
-                     >NOT VERIFIED</div> -->
               </div>
             </div>
           </div>

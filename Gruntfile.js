@@ -2,6 +2,7 @@
 'use strict';
 var LIVERELOAD_PORT = 35729;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
+
 var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
 };
@@ -37,6 +38,7 @@ module.exports = function (grunt) {
         serverPrincipal: 'HTTP/roost-api.mit.edu',
         webathena: 'https://webathena.mit.edu'
     };
+
     if (grunt.option('realm'))
         appConfig.server = grunt.option('realm');
     if (grunt.option('server'))
@@ -50,7 +52,8 @@ module.exports = function (grunt) {
     // .htaccess and in the dev server.
     var websocketHost = appConfig.server.replace(/^http/, 'ws');
     var csp = "default-src 'self'; object-src 'none'; img-src https://secure.gravatar.com; connect-src " +
-        appConfig.server + ' ' + websocketHost
+        appConfig.server + ' ' + websocketHost;
+
     var headers = {
         // Standard header; Chrome 25+
         'Content-Security-Policy': csp,
@@ -77,6 +80,10 @@ module.exports = function (grunt) {
         watch: {
             options: {
                 nospawn: true
+            },
+            coffee: {
+                files: '<%= yeoman.app %>/coffee/{,*/}*.coffee',
+                tasks: ['coffee:compile'],
             },
             livereload: {
                 options: {
@@ -135,6 +142,16 @@ module.exports = function (grunt) {
         open: {
             server: {
                 path: 'http://localhost:<%= connect.options.port %>'
+            }
+        },
+        coffee: {
+            compile: {
+                expand: true,
+                flatten: true,
+                cwd: "<%= yeoman.app %>/coffee/",
+                src: ['{,*/}*.coffee'],
+                dest: '<%= yeoman.app %>/scripts-src/',
+                ext: '.js'
             }
         },
         clean: {
@@ -197,6 +214,7 @@ module.exports = function (grunt) {
             html: ['<%= yeoman.dist %>/{,*/}*.html'],
             css: ['<%= yeoman.dist %>/styles/{,*/}*.css']
         },
+
         // Put files not handled in other tasks here
         copy: {
             dist: {
@@ -254,6 +272,7 @@ module.exports = function (grunt) {
         grunt.task.run([
             'clean:server',
             'config',
+            'coffee:compile',
             'connect:livereload',
             'open',
             'watch'
@@ -263,6 +282,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'config',
+        'coffee:compile',
         'connect:test',
         'mocha'
     ]);
@@ -270,6 +290,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'config',
+        'coffee:compile',
         'useminPrepare',
         'concat',
         'uglify',
