@@ -8,13 +8,23 @@
         this.doAuthentication = __bind(this.doAuthentication, this);
         this.isAuthenticated = __bind(this.isAuthenticated, this);
         this.addPane = __bind(this.addPane, this);
-        this.userInfo = new Backbone.Model();
+        var ticket;
+        this.userInfo = new Backbone.Model({
+          username: null,
+          realm: null
+        });
         this.messageLists = new Backbone.Collection();
         this.localStorage = new LocalStorageWrapper();
         this.storageManager = new StorageManager(this.localStorage);
         this.ticketManager = new TicketManager(CONFIG.webathena, this.storageManager);
         this.api = new API(CONFIG.server, CONFIG.serverPrincipal, this.storageManager, this.ticketManager);
-        com.roost.ticketManager = this.ticketManager;
+        if (this.isAuthenticated()) {
+          ticket = this.ticketManager.getCachedTicket("server");
+          this.userInfo.set({
+            username: ticket.client.principalName.nameString[0],
+            realm: ticket.client.principalName.realm
+          });
+        }
       }
 
       RoostSession.prototype.addPane = function(filters, position) {
@@ -41,7 +51,12 @@
       };
 
       RoostSession.prototype.handleAuth = function(sessions) {
-        return console.log(sessions);
+        var ticket;
+        ticket = sessions.server;
+        return this.userInfo.set({
+          username: ticket.client.principalName.nameString[0],
+          realm: ticket.client.principalName.realm
+        });
       };
 
       return RoostSession;

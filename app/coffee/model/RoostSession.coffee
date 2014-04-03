@@ -2,18 +2,26 @@ do ->
   class com.roost.RoostSession
     constructor: ->
       # User info
-      @userInfo = new Backbone.Model()
+      @userInfo = new Backbone.Model
+        username: null
+        realm: null
 
       # Collection of Message List Models
       @messageLists = new Backbone.Collection()
 
       # Singleton services we need to hold on to
+      # Currently uses old Roost objects
       @localStorage = new LocalStorageWrapper()
       @storageManager = new StorageManager(@localStorage)
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
-      com.roost.ticketManager = @ticketManager
+      # Update user info based on cache
+      if @isAuthenticated()
+        ticket = @ticketManager.getCachedTicket("server")
+        @userInfo.set
+          username: ticket.client.principalName.nameString[0]
+          realm: ticket.client.principalName.realm
 
     addPane: (filters, position) =>
       # Add a new model
@@ -35,4 +43,10 @@ do ->
       @ticketManager.refreshTickets({interactive: true}, {}, @handleAuth)
 
     handleAuth: (sessions) =>
-      console.log(sessions)
+      # Updates user info model
+      # Ticket management controlled in the aptly named ticketManager
+      ticket = sessions.server
+
+      @userInfo.set
+        username: ticket.client.principalName.nameString[0]
+        realm: ticket.client.principalName.realm

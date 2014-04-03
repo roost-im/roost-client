@@ -83,7 +83,11 @@ module.exports = function (grunt) {
             },
             coffee: {
                 files: '<%= yeoman.app %>/coffee/{,*/}*.coffee',
-                tasks: ['coffee:compile'],
+                tasks: ['coffee'],
+            },
+            handlebars: {
+                files: ['<%= yeoman.app %>/templates/{,*/}*.hbs'],
+                tasks: ['handlebars']
             },
             livereload: {
                 options: {
@@ -152,6 +156,19 @@ module.exports = function (grunt) {
                 src: ['{,*/}*.coffee'],
                 dest: '<%= yeoman.app %>/scripts-src/',
                 ext: '.js'
+            }
+        },
+        handlebars: {
+            options: {
+                namespace: 'com.roost.templates',
+                processName: function(filePath) {
+                    return filePath.replace(new RegExp("^" + yeomanConfig.app + "\/templates\/"), '').replace(/\.hbs$/, '');
+                }
+            },
+            all: {
+                files: {
+                    "<%= yeoman.app %>/scripts-src/templates.js": ["<%= yeoman.app %>/templates{,*/}*.hbs"]
+                }
             }
         },
         clean: {
@@ -273,6 +290,7 @@ module.exports = function (grunt) {
             'clean:server',
             'config',
             'coffee',
+            'handlebars',
             'connect:livereload',
             'open',
             'watch'
@@ -283,6 +301,7 @@ module.exports = function (grunt) {
         'clean:server',
         'config',
         'coffee',
+        'handlebars',
         'connect:test',
         'mocha'
     ]);
@@ -291,6 +310,7 @@ module.exports = function (grunt) {
         'clean:dist',
         'config',
         'coffee',
+        'handlebars',
         'useminPrepare',
         'concat',
         'uglify',
