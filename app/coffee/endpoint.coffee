@@ -2,16 +2,20 @@ $('document').ready( =>
   # Create the session
   session = new com.roost.RoostSession()
 
-  # If not authenticated -> do authentication
-  if !session.isAuthenticated()
-    session.doAuthentication()
+  # Create the auth controller
+  authController = new com.roost.AuthenticationController
+    userInfo: session.userInfo
+    ticketManager: session.ticketManager
 
   # Add the first pane's model and controller
   session.addPane {}, null
 
   # Create the views
   navbar = new com.roost.NavBar
-    userInfo: session.userInfo
+    session: session
   navbar.render()
   $('body').append(navbar.$el)
+
+  # Trigger login for the user
+  session.userInfo.trigger 'login'
 )

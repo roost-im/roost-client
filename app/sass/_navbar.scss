@@ -1,0 +1,24 @@
+.navbar {
+  color: #EEE;
+  height: 50px;
+  line-height: 50px;
+  background: #333;
+  width: 100%;
+  padding-right: 20px;
+
+  .username {
+    display: inline;
+    float: right;
+  }
+
+  .btn {
+    @include button-variant(#EEE, blue);
+    float: right;
+    padding: 0px;
+    line-height: 28px;
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 0px 5px;
+  }
+}

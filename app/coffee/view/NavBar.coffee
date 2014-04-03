@@ -3,15 +3,22 @@ do ->
     className: 'navbar'
 
     events:
-      'click .btn-login': 'handleLogin'
+      'click .login': 'handleLogin'
+      'click .logout': 'handleLogout'
 
     initialize: (options) =>
-      @userInfo = options.userInfo
+      @session = options.session
+      @userInfo = @session.userInfo
 
       @listenTo @userInfo, 'change', @render
 
     render: =>
-      console.log @userInfo.attributes
       @$el.empty()
       template = com.roost.templates['NavBar']
       @$el.append template(_.defaults({loggedIn: @userInfo.get('username')?}, @userInfo.attributes))
+
+    handleLogin: =>
+      @userInfo.trigger 'login'
+
+    handleLogout: =>
+      @userInfo.trigger 'logout'

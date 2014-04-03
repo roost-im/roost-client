@@ -16,13 +16,6 @@ do ->
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
-      # Update user info based on cache
-      if @isAuthenticated()
-        ticket = @ticketManager.getCachedTicket("server")
-        @userInfo.set
-          username: ticket.client.principalName.nameString[0]
-          realm: ticket.client.principalName.realm
-
     addPane: (filters, position) =>
       # Add a new model
       paneModel = new com.roost.MessagePaneModel
@@ -35,18 +28,3 @@ do ->
       paneController.fetchFromBottom()
 
       @messageLists.push paneModel
-
-    isAuthenticated: =>
-      return @ticketManager.getCachedTicket("zephyr")?
-
-    doAuthentication: =>
-      @ticketManager.refreshTickets({interactive: true}, {}, @handleAuth)
-
-    handleAuth: (sessions) =>
-      # Updates user info model
-      # Ticket management controlled in the aptly named ticketManager
-      ticket = sessions.server
-
-      @userInfo.set
-        username: ticket.client.principalName.nameString[0]
-        realm: ticket.client.principalName.realm

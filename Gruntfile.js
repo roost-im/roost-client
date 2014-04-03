@@ -89,6 +89,10 @@ module.exports = function (grunt) {
                 files: ['<%= yeoman.app %>/templates/{,*/}*.hbs'],
                 tasks: ['handlebars']
             },
+            sass: {
+                files: ['<%= yeoman.app %>/sass/{,*/}*.scss'],
+                tasks: ['sass']
+            },
             livereload: {
                 options: {
                     livereload: LIVERELOAD_PORT
@@ -168,6 +172,13 @@ module.exports = function (grunt) {
             all: {
                 files: {
                     "<%= yeoman.app %>/scripts-src/templates.js": ["<%= yeoman.app %>/templates{,*/}*.hbs"]
+                }
+            }
+        },
+        sass: {
+            all: {
+                files: {
+                    '<%= yeoman.app %>/styles/main.css': '<%= yeoman.app %>/sass/main.scss',
                 }
             }
         },
@@ -291,6 +302,7 @@ module.exports = function (grunt) {
             'config',
             'coffee',
             'handlebars',
+            'sass',
             'connect:livereload',
             'open',
             'watch'
@@ -302,6 +314,7 @@ module.exports = function (grunt) {
         'config',
         'coffee',
         'handlebars',
+        'sass',
         'connect:test',
         'mocha'
     ]);
@@ -311,6 +324,7 @@ module.exports = function (grunt) {
         'config',
         'coffee',
         'handlebars',
+        'sass',
         'useminPrepare',
         'concat',
         'uglify',

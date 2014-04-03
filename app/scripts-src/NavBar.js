@@ -8,6 +8,8 @@
       __extends(NavBar, _super);
 
       function NavBar() {
+        this.handleLogout = __bind(this.handleLogout, this);
+        this.handleLogin = __bind(this.handleLogin, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return NavBar.__super__.constructor.apply(this, arguments);
@@ -16,22 +18,31 @@
       NavBar.prototype.className = 'navbar';
 
       NavBar.prototype.events = {
-        'click .btn-login': 'handleLogin'
+        'click .login': 'handleLogin',
+        'click .logout': 'handleLogout'
       };
 
       NavBar.prototype.initialize = function(options) {
-        this.userInfo = options.userInfo;
+        this.session = options.session;
+        this.userInfo = this.session.userInfo;
         return this.listenTo(this.userInfo, 'change', this.render);
       };
 
       NavBar.prototype.render = function() {
         var template;
-        console.log(this.userInfo.attributes);
         this.$el.empty();
         template = com.roost.templates['NavBar'];
         return this.$el.append(template(_.defaults({
           loggedIn: this.userInfo.get('username') != null
         }, this.userInfo.attributes)));
+      };
+
+      NavBar.prototype.handleLogin = function() {
+        return this.userInfo.trigger('login');
+      };
+
+      NavBar.prototype.handleLogout = function() {
+        return this.userInfo.trigger('logout');
       };
 
       return NavBar;

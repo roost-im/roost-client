@@ -10,7 +10,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n  <div class=\"username\">";
+  buffer += "\n  <div class=\"btn logout\">Logout</div>\n  <div class=\"username\">";
   if (helper = helpers.username) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.username); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -21,7 +21,7 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   
-  return "\n  <button class=\"btn-login\">Login</button>\n";
+  return "\n  <div class=\"btn login\">Login</div>\n";
   }
 
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.username), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
