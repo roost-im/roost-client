@@ -226,9 +226,9 @@ module.exports = function (grunt) {
                     src: [
                         '*.{ico,png,txt}',
                         '.htaccess',
-                        'images/{,*/}*.{webp,gif}',
-                        'images/{,*/}*.{png,jpg,jpeg}',
-                        'images/{,*/}*.svg',
+                        'img/{,*/}*.{webp,gif}',
+                        'img/{,*/}*.{png,jpg,jpeg}',
+                        'img/{,*/}*.svg',
                         'styles/{,*/}*.css',
 			// Anything to be compiled goes in scripts-src/. This
 			// directory is things that are already minified.
@@ -272,7 +272,7 @@ module.exports = function (grunt) {
         grunt.task.run([
             'clean:server',
             'config',
-            'coffee:compile',
+            'coffee',
             'connect:livereload',
             'open',
             'watch'
@@ -282,7 +282,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'config',
-        'coffee:compile',
+        'coffee',
         'connect:test',
         'mocha'
     ]);
@@ -290,7 +290,7 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'config',
-        'coffee:compile',
+        'coffee',
         'useminPrepare',
         'concat',
         'uglify',

@@ -58,7 +58,7 @@ TicketManager.prototype.loadFromStorage_ = function() {
   this.handleNewSessions_(sessions);
 };
 
-TicketManager.prototype.refreshInteractive_ = function() {
+TicketManager.prototype.refreshInteractive_ = function(callback) {
   // If there is already a pending request, just focus it.
   if (this.pendingRequest_) {
     this.pendingRequest_.focus();
@@ -89,6 +89,9 @@ TicketManager.prototype.refreshInteractive_ = function() {
     if (this.storageManager_.saveTickets(sessions)) {
       this.handleNewSessions_(sessions);
     }
+    if (callback) {
+      callback(sessions)
+    }
   }.bind(this), function(err) {
     this.pendingRequest_ = null;
     this.dispatchEvent({
@@ -114,7 +117,7 @@ TicketManager.prototype.getCachedTicket = function(which) {
   return null;
 };
 
-TicketManager.prototype.refreshTickets = function(opts, data) {
+TicketManager.prototype.refreshTickets = function(opts, data, callback) {
   opts = opts || {}; data = data || {};
   // If we have one saved, do nothing.
   if (this.getCachedTicket("server") != null &&
@@ -123,7 +126,7 @@ TicketManager.prototype.refreshTickets = function(opts, data) {
   }
 
   if (opts.interactive) {
-    this.refreshInteractive_();
+    this.refreshInteractive_(callback);
   } else {
     // TODO(davidben): Later this may first query an iframe for
     // asynchronous non-interactive ticket and then dispatch
