@@ -1,6 +1,14 @@
+<div class="title-logo">
+  <img class="logo" src="img/roost-logo_57x57.png">
+  <div class="title"> Roost </div>
+</div>
+
 {{#if username}}
   <div class="btn logout">Logout</div>
-  <div class="username">{{username}}</div>
+  <div class="user-info">
+    <div class="username">{{username}}</div>
+    <img class="gravatar" src="{{gravatar}}">
+  </div>
 {{else}}
   <div class="btn login">Login</div>
 {{/if}}

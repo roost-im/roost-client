@@ -13,15 +13,19 @@
       }
 
       MessagePaneModel.prototype.defaults = function() {
-        return {
+        var attrs;
+        attrs = {
           filters: {},
           position: null,
           lastPositions: [],
           messages: new Backbone.Collection(),
           showFilters: false,
           showCompose: false,
-          selected: false
+          selected: false,
+          isDone: false
         };
+        attrs.messages.model = com.roost.MessageModel;
+        return attrs;
       };
 
       return MessagePaneModel;

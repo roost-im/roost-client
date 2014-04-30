@@ -7,15 +7,21 @@ $('document').ready( =>
     userInfo: session.userInfo
     ticketManager: session.ticketManager
 
-  # Add the first pane's model and controller
-  session.addPane {}, null
-
   # Create the views
   navbar = new com.roost.NavBar
     session: session
   navbar.render()
   $('body').append(navbar.$el)
 
-  # Trigger login for the user
+  messagePane = new com.roost.MessagePane
+    messageLists: session.messageLists
+  messagePane.render()
+  $('body').append(messagePane.$el)
+
+  # Trigger login for the user if necessary
   session.userInfo.trigger 'login'
+
+  # Add the first pane's model and controller if the user is logged in
+  if session.userInfo.get('username')?
+    session.addPane {}, null
 )

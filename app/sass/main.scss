@@ -1,10 +1,12 @@
+@import "theme";
 @import "components";
 @import "navbar";
+@import "messagePane";
+@import "message";
 
 html, body {
   width: 100%;
   height: 100%;
-  overflow: hidden;
   padding: 0px;
   margin: 0px;
   font-family: sans-serif;

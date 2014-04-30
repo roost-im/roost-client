@@ -73,3 +73,32 @@ function wrapText(text, fillcol) {
   }
   return chunks.join("");
 }
+
+var getGravatarFromName = (function() {
+  var cache = { };
+  return function(name, realm, size) {
+    size = Number(size);
+    var hash = cache[name + "@" + realm];
+    if (hash === undefined) {
+      var email = name + "@" + realm;
+
+      if (realm == "ATHENA.MIT.EDU") {
+        email = name + "@mit.edu";
+      }
+
+      // 1. Trim leading and trailing whitespace from an email address.
+      email = email.replace(/^\s+/, '');
+      email = email.replace(/\s+$/, '');
+      // 2. Force all characters to lower-case.
+      email = email.toLowerCase();
+      // 3. md5 hash the final string.
+      hash = CryptoJS.enc.Hex.stringify(
+        CryptoJS.MD5(CryptoJS.enc.Utf8.parse(email)));
+      cache[name + "@" + realm] = hash;
+    }
+    var ret = "https://secure.gravatar.com/avatar/" + hash + "?d=identicon";
+    if (size)
+      ret += "&s=" + size;
+    return ret;
+  };
+})();

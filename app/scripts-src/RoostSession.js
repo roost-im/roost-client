@@ -23,7 +23,8 @@
           position: position
         });
         paneController = new com.roost.MessagePaneController({
-          model: paneModel
+          model: paneModel,
+          api: this.api
         });
         paneController.fetchFromBottom();
         return this.messageLists.push(paneModel);

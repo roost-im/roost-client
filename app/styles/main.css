@@ -30,14 +30,38 @@
 
 .navbar {
   color: #EEE;
+  position: fixed;
   height: 50px;
   line-height: 50px;
   background: #333;
   width: 100%;
-  padding-right: 20px; }
-  .navbar .username {
+  padding-right: 20px;
+  z-index: 20; }
+  .navbar .title-logo {
+    display: inline;
+    float: left; }
+    .navbar .title-logo .logo {
+      height: 36px;
+      margin-top: 7px;
+      margin-right: 10px;
+      margin-left: 10px;
+      float: left; }
+    .navbar .title-logo .title {
+      display: inline;
+      float: left; }
+  .navbar .user-info {
     display: inline;
     float: right; }
+    .navbar .user-info .gravatar {
+      height: 36px;
+      margin-top: 7px;
+      float: right;
+      display: inline;
+      margin-right: 10px;
+      border-radius: 20px; }
+    .navbar .user-info .username {
+      display: inline;
+      float: right; }
   .navbar .btn {
     color: #eeeeee;
     background-color: blue;
@@ -59,10 +83,22 @@
     .navbar .btn.disabled, .navbar .btn.disabled:hover, .navbar .btn.disabled:focus, .navbar .btn.disabled:active, .navbar .btn.disabled.active, .navbar .btn[disabled], .navbar .btn[disabled]:hover, .navbar .btn[disabled]:focus, .navbar .btn[disabled]:active, .navbar .btn[disabled].active, fieldset[disabled] .navbar .btn, fieldset[disabled] .navbar .btn:hover, fieldset[disabled] .navbar .btn:focus, fieldset[disabled] .navbar .btn:active, fieldset[disabled] .navbar .btn.active {
       background-color: blue !important; }
 
+.message-pane {
+  position: absolute;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  overflow-wrap: break-word; }
+
+.message-view {
+  width: 100%;
+  max-width: 800px;
+  margin: auto; }
+
 html, body {
   width: 100%;
   height: 100%;
-  overflow: hidden;
   padding: 0px;
   margin: 0px;
   font-family: sans-serif; }

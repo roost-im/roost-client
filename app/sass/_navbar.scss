@@ -1,14 +1,48 @@
 .navbar {
   color: #EEE;
-  height: 50px;
-  line-height: 50px;
+  position: fixed;
+  height: $navbar-height;
+  line-height: $navbar-height;
   background: #333;
   width: 100%;
   padding-right: 20px;
+  z-index: 20;
 
-  .username {
+  .title-logo {
+    display: inline;
+    float: left;
+
+    .logo {
+      height: 36px;
+      margin-top: ($navbar-height - 36px) / 2;
+      margin-right: 10px;
+      margin-left: 10px;
+      float: left;
+    }
+
+    .title {
+      display: inline;
+      float: left;
+    }
+  }
+
+  .user-info {
     display: inline;
     float: right;
+
+    .gravatar {
+      height: 36px;
+      margin-top: ($navbar-height - 36px) / 2;
+      float: right;
+      display: inline;
+      margin-right: 10px;
+      border-radius: 20px;
+    }
+
+    .username {
+      display: inline;
+      float: right;
+    }
   }
 
   .btn {

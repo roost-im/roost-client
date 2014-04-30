@@ -25,6 +25,7 @@ do ->
       # Add a new controller and fetch data
       paneController = new com.roost.MessagePaneController
         model: paneModel
+        api: @api
       paneController.fetchFromBottom()
 
       @messageLists.push paneModel

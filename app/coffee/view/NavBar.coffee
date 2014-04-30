@@ -15,7 +15,10 @@ do ->
     render: =>
       @$el.empty()
       template = com.roost.templates['NavBar']
-      @$el.append template(_.defaults({loggedIn: @userInfo.get('username')?}, @userInfo.attributes))
+
+      if @userInfo.get('username')?
+        gravatar = getGravatarFromName @userInfo.get('username'), @userInfo.get('realm'), 100
+      @$el.append template(_.defaults({loggedIn: @userInfo.get('username')?, gravatar: gravatar}, @userInfo.attributes))
 
     handleLogin: =>
       @userInfo.trigger 'login'

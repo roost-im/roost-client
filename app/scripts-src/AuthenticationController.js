@@ -25,7 +25,7 @@
           ticket = this.ticketManager.getCachedTicket("server");
           return this.userInfo.set({
             username: ticket.client.principalName.nameString[0],
-            realm: ticket.client.principalName.realm
+            realm: ticket.client.realm
           });
         } else {
           return this.ticketManager.refreshTickets({
@@ -47,7 +47,7 @@
         ticket = sessions.server;
         return this.userInfo.set({
           username: ticket.client.principalName.nameString[0],
-          realm: ticket.client.principalName.realm
+          realm: ticket.client.realm
         });
       };
 

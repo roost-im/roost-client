@@ -29,11 +29,15 @@
       };
 
       NavBar.prototype.render = function() {
-        var template;
+        var gravatar, template;
         this.$el.empty();
         template = com.roost.templates['NavBar'];
+        if (this.userInfo.get('username') != null) {
+          gravatar = getGravatarFromName(this.userInfo.get('username'), this.userInfo.get('realm'), 100);
+        }
         return this.$el.append(template(_.defaults({
-          loggedIn: this.userInfo.get('username') != null
+          loggedIn: this.userInfo.get('username') != null,
+          gravatar: gravatar
         }, this.userInfo.attributes)));
       };
 

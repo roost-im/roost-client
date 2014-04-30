@@ -1,19 +1,26 @@
 (function() {
   $('document').ready((function(_this) {
     return function() {
-      var authController, navbar, session;
+      var authController, messagePane, navbar, session;
       session = new com.roost.RoostSession();
       authController = new com.roost.AuthenticationController({
         userInfo: session.userInfo,
         ticketManager: session.ticketManager
       });
-      session.addPane({}, null);
       navbar = new com.roost.NavBar({
         session: session
       });
       navbar.render();
       $('body').append(navbar.$el);
-      return session.userInfo.trigger('login');
+      messagePane = new com.roost.MessagePane({
+        messageLists: session.messageLists
+      });
+      messagePane.render();
+      $('body').append(messagePane.$el);
+      session.userInfo.trigger('login');
+      if (session.userInfo.get('username') != null) {
+        return session.addPane({}, null);
+      }
     };
   })(this));
 
