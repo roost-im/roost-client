@@ -10,6 +10,6 @@
     "MutationObservers": "https://github.com/Polymer/MutationObservers.git#~0.0.20131025",
     "WeakMap": "https://github.com/Polymer/WeakMap.git#~0.0.20131025",
     "cryptojs": "https://crypto-js.googlecode.com/files/CryptoJS%20v3.1.2.zip",
-    "jquery": "2.1.0",
+    "jquery": "2.1.0"
   }
 }
