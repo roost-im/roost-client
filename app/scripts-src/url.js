@@ -22,7 +22,10 @@
 //
 //   http://daringfireball.net/2010/07/improved_regex_for_matching_urls
 //   http://url.spec.whatwg.org/
-var URL_REGEX = new RegExp(
+//
+// The path portion is replaced with a loop for sanity and to avoid
+// exponential backtracking.
+var HOST_REGEX = new RegExp(
   "\\b(?:https|http):\\/\\/" +
   "(?:" +
     "\\[" +
@@ -41,31 +44,51 @@ var URL_REGEX = new RegExp(
     "[-a-zA-Z0-9_\\u00a0-\\uefffd]+(?:\\.[-a-zA-Z0-9_\\u00a0-\\uefffd]+)*" +
   ")" +
   "(?::[0-9]+)?" +
-  "(?:/" +
-    "(?:" +
-      "(?:" +                       // Zero or more:
-        "[^\\s()<>]+" +             // Run of non-space, non-()<>
-      "|" +                         // or
-        "\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)" +  // balanced parens, up to 2 levels
-      ")*" +
-      "(?:" +                       // End with:
-        "\\(([^\\s()<>]+|(\\([^\\s()<>]+\\)))*\\)" +  // balanced parens, up to 2 levels
-      "|" +                         // or
-        "[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’]" +  // not a space or one of these punct chars
-      ")" +
-    ")?" +
-  ")?",
+  "/?",
   "g");
+
+var PATH_REGEX = /[^\s()<>]/;
+var PUNCTUATION_REGEX = /[`!\[\]{};:'".,?«»“”‘’]/;
 
 function findUrls(str, urlCb, textCb) {
   var m, idx = 0;
-  URL_REGEX.lastIndex = 0;
-  while ((m = URL_REGEX.exec(str))) {
-    var nextIdx = URL_REGEX.lastIndex - m[0].length;
-    if (idx < nextIdx)
-      textCb(str.substring(idx, nextIdx));
-    urlCb(m[0]);
-    idx = URL_REGEX.lastIndex;
+  HOST_REGEX.lastIndex = 0;
+  // First look for a hostname.
+  while ((m = HOST_REGEX.exec(str))) {
+    var urlStart = HOST_REGEX.lastIndex - m[0].length;
+    if (idx < urlStart)
+      textCb(str.substring(idx, urlStart));
+    // Extend to the path. Doing this as a regular expression hits
+    // exponential lookup pains. Also this way we can count
+    // parentheses.
+    var urlEnd = HOST_REGEX.lastIndex;
+    if (str[urlEnd-1] == '/') {
+      var parenCount = 0;
+      // Allow characters that match PATH_REGEX and matches parens.
+      while (urlEnd < str.length) {
+        if (str[urlEnd] == '(') {
+          urlEnd++;
+          parenCount++;
+        } else if (str[urlEnd] == ')') {
+          if (parenCount > 0) {
+            urlEnd++;
+            parenCount--;
+          } else {
+            break;
+          }
+        } else if (PATH_REGEX.exec(str[urlEnd])) {
+          urlEnd++;
+        } else {
+          break;
+        }
+      }
+      // Cannot end with a PUNCTUATION_REGEX.
+      while (urlEnd > urlStart && PUNCTUATION_REGEX.exec(str[urlEnd-1])) {
+        urlEnd--;
+      }
+    }
+    urlCb(str.substring(urlStart, urlEnd));
+    HOST_REGEX.lastIndex = idx = urlEnd;
   }
   if (idx < str.length)
     textCb(str.substring(idx));
