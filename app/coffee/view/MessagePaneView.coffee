@@ -35,7 +35,6 @@ do ->
       @currentBottom = @model.get('messages').length
 
     _scrollHandle: =>
-      console.log @currentTop + ', ' + @currentBottom
       messages = @model.get('messages').models
       if @$el.scrollTop() < @$el[0].scrollHeight * 0.25
         # Check if we have any more messages to spare

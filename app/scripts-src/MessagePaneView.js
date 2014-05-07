@@ -57,7 +57,6 @@
 
       MessagePaneView.prototype._scrollHandle = function() {
         var limit, message, messages, _i, _j, _len, _len1, _ref, _ref1, _results, _results1;
-        console.log(this.currentTop + ', ' + this.currentBottom);
         messages = this.model.get('messages').models;
         if (this.$el.scrollTop() < this.$el[0].scrollHeight * 0.25) {
           if (this.currentTop > 0) {
