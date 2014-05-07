@@ -8,7 +8,8 @@
       __extends(MessagePane, _super);
 
       function MessagePane() {
-        this.addPaneView = __bind(this.addPaneView, this);
+        this._recalculateWidth = __bind(this._recalculateWidth, this);
+        this._addPaneView = __bind(this._addPaneView, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return MessagePane.__super__.constructor.apply(this, arguments);
@@ -19,7 +20,7 @@
       MessagePane.prototype.initialize = function(options) {
         this.messageLists = options.messageLists;
         this.childViews = [];
-        return this.listenTo(this.messageLists, 'add', this.addPaneView);
+        return this.listenTo(this.messageLists, 'add', this._addPaneView);
       };
 
       MessagePane.prototype.render = function() {
@@ -29,19 +30,34 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           paneModel = _ref[_i];
-          _results.push(this.addPaneView(paneModel));
+          _results.push(this._addPaneView(paneModel));
         }
         return _results;
       };
 
-      MessagePane.prototype.addPaneView = function(paneModel) {
+      MessagePane.prototype._addPaneView = function(paneModel) {
         var paneView;
         paneView = new com.roost.MessagePaneView({
           model: paneModel
         });
         this.childViews.push(paneView);
         paneView.render();
-        return this.$el.append(paneView.$el);
+        this.$el.append(paneView.$el);
+        this._recalculateWidth();
+        paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
+        return paneModel.once('messagesSet', ((function(_this) {
+          return function() {
+            return paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
+          };
+        })(this)));
+      };
+
+      MessagePane.prototype._recalculateWidth = function() {
+        var width;
+        width = Math.floor(100 / this.childViews.length);
+        return this.$('.message-pane-view').css({
+          width: "" + width + "%"
+        });
       };
 
       return MessagePane;

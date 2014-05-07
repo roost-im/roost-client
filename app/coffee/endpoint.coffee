@@ -4,6 +4,7 @@ $('document').ready( =>
 
   # Create the auth controller
   authController = new com.roost.AuthenticationController
+    session: session
     userInfo: session.userInfo
     ticketManager: session.ticketManager
 
@@ -23,5 +24,6 @@ $('document').ready( =>
 
   # Add the first pane's model and controller if the user is logged in
   if session.userInfo.get('username')?
+    session.addPane {}, null
     session.addPane {}, null
 )

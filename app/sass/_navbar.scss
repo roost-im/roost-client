@@ -46,7 +46,7 @@
   }
 
   .btn {
-    @include button-variant(#EEE, blue);
+    @include button-variant($primary-btn-color, $primary-btn-bg);
     float: right;
     padding: 0px;
     line-height: 28px;

@@ -9,6 +9,7 @@
         this.doAuthentication = __bind(this.doAuthentication, this);
         this.isAuthenticated = __bind(this.isAuthenticated, this);
         $.extend(this, Backbone.Events);
+        this.session = options.session;
         this.userInfo = options.userInfo;
         this.ticketManager = options.ticketManager;
         this.listenTo(this.userInfo, 'login', this.doAuthentication);
@@ -45,10 +46,11 @@
       AuthenticationController.prototype.handleAuth = function(sessions) {
         var ticket;
         ticket = sessions.server;
-        return this.userInfo.set({
+        this.userInfo.set({
           username: ticket.client.principalName.nameString[0],
           realm: ticket.client.realm
         });
+        return this.session.addPane({}, null);
       };
 
       return AuthenticationController;

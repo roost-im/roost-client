@@ -5,4 +5,14 @@
   left: 0;
   right: 0;
   overflow-wrap: break-word;
+
+  .message-pane-view {
+    float: left;
+    height: 100%;
+    overflow-y: scroll;
+
+    .filler-view {
+      height: 60%;
+    }
+  }
 }

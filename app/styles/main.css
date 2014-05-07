@@ -64,7 +64,7 @@
       float: right; }
   .navbar .btn {
     color: #eeeeee;
-    background-color: blue;
+    background-color: #3178d3;
     border-color: transparent;
     float: right;
     padding: 0px;
@@ -75,13 +75,13 @@
     padding: 0px 5px; }
     .navbar .btn:hover, .navbar .btn:focus, .navbar .btn:active, .navbar .btn.active {
       color: #eeeeee;
-      background-color: #0000d6; }
+      background-color: #2765b5; }
     .open .navbar .btn.dropdown-toggle {
       color: #eeeeee;
-      background-color: #0000d6;
+      background-color: #2765b5;
       background-image: none; }
     .navbar .btn.disabled, .navbar .btn.disabled:hover, .navbar .btn.disabled:focus, .navbar .btn.disabled:active, .navbar .btn.disabled.active, .navbar .btn[disabled], .navbar .btn[disabled]:hover, .navbar .btn[disabled]:focus, .navbar .btn[disabled]:active, .navbar .btn[disabled].active, fieldset[disabled] .navbar .btn, fieldset[disabled] .navbar .btn:hover, fieldset[disabled] .navbar .btn:focus, fieldset[disabled] .navbar .btn:active, fieldset[disabled] .navbar .btn.active {
-      background-color: blue !important; }
+      background-color: #3178d3 !important; }
 
 .message-pane {
   position: absolute;
@@ -90,6 +90,12 @@
   left: 0;
   right: 0;
   overflow-wrap: break-word; }
+  .message-pane .message-pane-view {
+    float: left;
+    height: 100%;
+    overflow-y: scroll; }
+    .message-pane .message-pane-view .filler-view {
+      height: 60%; }
 
 .message-view {
   width: 100%;
@@ -101,4 +107,5 @@ html, body {
   height: 100%;
   padding: 0px;
   margin: 0px;
-  font-family: sans-serif; }
+  font-family: sans-serif;
+  overflow: hidden; }

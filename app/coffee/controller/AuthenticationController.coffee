@@ -4,6 +4,7 @@ do ->
     constructor: (options) ->
       $.extend @, Backbone.Events
 
+      @session = options.session
       @userInfo = options.userInfo
       @ticketManager = options.ticketManager
 
@@ -42,4 +43,4 @@ do ->
         username: ticket.client.principalName.nameString[0]
         realm: ticket.client.realm
 
-      #TODO: add first pane
+      @session.addPane {}, null

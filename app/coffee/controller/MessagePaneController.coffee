@@ -1,6 +1,8 @@
 do ->
-  STARTING_SIZE = 50
+  com.roost.STARTING_SIZE = 40
+  com.roost.EXPANSION_SIZE = 10
 
+  # Uhhhhh fuck
   class com.roost.MessagePaneController
     constructor: (options) ->
       $.extend @, Backbone.Events
@@ -9,13 +11,14 @@ do ->
       @api = options.api
 
       @messageModel = new MessageModel(@api)
+
       # Listen to events on the model
+      @listenTo @model, 'scrollUp', @onScrollUp
 
     fetchFromBottom: =>
       # Fetches the first set of data from the bottom of the list
       @reverseTail = @messageModel.newReverseTail(null, @model.get('filters'), @addMessagesToEndOfModel)
-      @reverseTail.expandTo(STARTING_SIZE)
-      return
+      @reverseTail.expandTo(com.roost.STARTING_SIZE)
 
     onPositionJump: =>
       # Handles fetching a new set of data on a position jump
@@ -23,7 +26,8 @@ do ->
 
     onScrollUp: =>
       # Handles building the reverse tail upward
-      return
+      newSize = @model.get('messages').models.length + com.roost.EXPANSION_SIZE
+      @reverseTail.expandTo(newSize)
 
     onScrollDown: =>
       # Handles building the tail down
@@ -39,9 +43,12 @@ do ->
 
     addMessagesToEndOfModel: (msgs, isDone) =>
       @model.set 'isDone', isDone
-
       messages = @model.get 'messages'
-      messages.reset msgs
+      if messages.models.length == 0
+        messages.reset msgs
+      else
+        for message in msgs.slice(0).reverse()
+          messages.add message, {at: 0}
 
     addMessageToStartOfModel: (msgs, isDone) =>
       return

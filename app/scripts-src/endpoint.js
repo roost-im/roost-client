@@ -4,6 +4,7 @@
       var authController, messagePane, navbar, session;
       session = new com.roost.RoostSession();
       authController = new com.roost.AuthenticationController({
+        session: session,
         userInfo: session.userInfo,
         ticketManager: session.ticketManager
       });
@@ -19,6 +20,7 @@
       $('body').append(messagePane.$el);
       session.userInfo.trigger('login');
       if (session.userInfo.get('username') != null) {
+        session.addPane({}, null);
         return session.addPane({}, null);
       }
     };

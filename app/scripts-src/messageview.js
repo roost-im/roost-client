@@ -24,7 +24,8 @@
         var template;
         this.$el.empty();
         template = com.roost.templates['MessageView'];
-        return this.$el.append(template(this.message.attributes));
+        this.$el.append(template(this.message.attributes));
+        return this.$el.attr('id', this.message.cid + '');
       };
 
       return MessageView;
