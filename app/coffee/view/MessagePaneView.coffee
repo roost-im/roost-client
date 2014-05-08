@@ -36,22 +36,29 @@ do ->
 
     _scrollHandle: =>
       messages = @model.get('messages').models
-      if @$el.scrollTop() < @$el[0].scrollHeight * 0.25
+      if @$el.scrollTop() < @$el[0].scrollHeight * 0.15
         # Check if we have any more messages to spare
         if @currentTop > 0
           limit = Math.max(@currentTop - com.roost.EXPANSION_SIZE, 0)
           for message in messages.slice(limit, @currentTop)
             @_prependMessage(message)
             @_removeBottomMessage()
-            @currentBottom -= 1
-        else
+        else if @currentTop <= 0 and !@model.get('isTopDone')
           @model.trigger 'scrollUp'
-      else if @$el.scrollTop() > @$el[0].scrollHeight * 0.75 - @$('.filler-view').height()
+        else
+          #TODO: show something to say top has been reached
+          return
+      else if @$el.scrollTop() > @$el[0].scrollHeight * 0.85 - @$('.filler-view').height()
         if @currentBottom < messages.length
           limit = Math.min(@currentBottom + com.roost.EXPANSION_SIZE, messages.length)
           for message in messages.slice(@currentBottom, limit)
             @_appendMessage(message)
             @_removeTopMessage()
+        else if @currentBottom >= messages.length and !@model.get('isBottomDone')
+          @model.trigger 'scrollDown'
+        else
+          #TODO: show something to say latest messages reached
+          return
 
     _addMessages: (message, collection, options) =>
       if options.at == 0
@@ -68,7 +75,8 @@ do ->
       view.render()
       @$('.filler-view').before(view.$el)
       @childViews.push(view)
-      @currentBottom += 1
+
+      @currentBottom = Math.min(@currentBottom + 1, @model.get('messages').length)
 
     _prependMessage: (message) =>
       oldHeight = @$el[0].scrollHeight
@@ -93,7 +101,7 @@ do ->
       delete view.$el
       delete view.el
 
-      @currentTop += 1
+      @currentTop = @currentBottom - @childViews.length
       newHeight = @$el[0].scrollHeight
       change = oldHeight - newHeight
       @$el.scrollTop(@$el.scrollTop() - change)
@@ -105,3 +113,5 @@ do ->
       view.remove()
       delete view.$el
       delete view.el
+
+      @currentBottom = @currentTop + @childViews.length

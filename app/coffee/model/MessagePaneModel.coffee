@@ -12,7 +12,8 @@ do ->
 
         selected: false
 
-        isDone: false
+        isTopDone: false
+        isBottomDone: true
       }
 
       attrs.messages.model = com.roost.MessageModel

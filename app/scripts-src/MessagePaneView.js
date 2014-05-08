@@ -58,7 +58,7 @@
       MessagePaneView.prototype._scrollHandle = function() {
         var limit, message, messages, _i, _j, _len, _len1, _ref, _ref1, _results, _results1;
         messages = this.model.get('messages').models;
-        if (this.$el.scrollTop() < this.$el[0].scrollHeight * 0.25) {
+        if (this.$el.scrollTop() < this.$el[0].scrollHeight * 0.15) {
           if (this.currentTop > 0) {
             limit = Math.max(this.currentTop - com.roost.EXPANSION_SIZE, 0);
             _ref = messages.slice(limit, this.currentTop);
@@ -66,14 +66,15 @@
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               message = _ref[_i];
               this._prependMessage(message);
-              this._removeBottomMessage();
-              _results.push(this.currentBottom -= 1);
+              _results.push(this._removeBottomMessage());
             }
             return _results;
-          } else {
+          } else if (this.currentTop <= 0 && !this.model.get('isTopDone')) {
             return this.model.trigger('scrollUp');
+          } else {
+
           }
-        } else if (this.$el.scrollTop() > this.$el[0].scrollHeight * 0.75 - this.$('.filler-view').height()) {
+        } else if (this.$el.scrollTop() > this.$el[0].scrollHeight * 0.85 - this.$('.filler-view').height()) {
           if (this.currentBottom < messages.length) {
             limit = Math.min(this.currentBottom + com.roost.EXPANSION_SIZE, messages.length);
             _ref1 = messages.slice(this.currentBottom, limit);
@@ -84,6 +85,10 @@
               _results1.push(this._removeTopMessage());
             }
             return _results1;
+          } else if (this.currentBottom >= messages.length && !this.model.get('isBottomDone')) {
+            return this.model.trigger('scrollDown');
+          } else {
+
           }
         }
       };
@@ -107,7 +112,7 @@
         view.render();
         this.$('.filler-view').before(view.$el);
         this.childViews.push(view);
-        return this.currentBottom += 1;
+        return this.currentBottom = Math.min(this.currentBottom + 1, this.model.get('messages').length);
       };
 
       MessagePaneView.prototype._prependMessage = function(message) {
@@ -135,7 +140,7 @@
         view.remove();
         delete view.$el;
         delete view.el;
-        this.currentTop += 1;
+        this.currentTop = this.currentBottom - this.childViews.length;
         newHeight = this.$el[0].scrollHeight;
         change = oldHeight - newHeight;
         return this.$el.scrollTop(this.$el.scrollTop() - change);
@@ -148,7 +153,8 @@
         $(view.$el).removeData().unbind();
         view.remove();
         delete view.$el;
-        return delete view.el;
+        delete view.el;
+        return this.currentBottom = this.currentTop + this.childViews.length;
       };
 
       return MessagePaneView;

@@ -100,7 +100,8 @@
 .message-view {
   width: 100%;
   max-width: 800px;
-  margin: auto; }
+  margin: auto;
+  max-height: 200px; }
 
 html, body {
   width: 100%;

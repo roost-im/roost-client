@@ -4,12 +4,14 @@
   (function() {
     com.roost.STARTING_SIZE = 40;
     com.roost.EXPANSION_SIZE = 10;
+    com.roost.CACHE_SIZE = 200;
     return com.roost.MessagePaneController = (function() {
       function MessagePaneController(options) {
-        this.addMessageToStartOfModel = __bind(this.addMessageToStartOfModel, this);
-        this.addMessagesToEndOfModel = __bind(this.addMessagesToEndOfModel, this);
+        this.clearBottomOfCache = __bind(this.clearBottomOfCache, this);
+        this.clearTopOfCache = __bind(this.clearTopOfCache, this);
+        this.addMessagesToBottomOfList = __bind(this.addMessagesToBottomOfList, this);
+        this.addMessagesToTopOfList = __bind(this.addMessagesToTopOfList, this);
         this.onFilterChange = __bind(this.onFilterChange, this);
-        this.onNewMessages = __bind(this.onNewMessages, this);
         this.onScrollDown = __bind(this.onScrollDown, this);
         this.onScrollUp = __bind(this.onScrollUp, this);
         this.onPositionJump = __bind(this.onPositionJump, this);
@@ -19,34 +21,42 @@
         this.api = options.api;
         this.messageModel = new MessageModel(this.api);
         this.listenTo(this.model, 'scrollUp', this.onScrollUp);
+        this.listenTo(this.model, 'scrollDown', this.onScrollDown);
+        this.lastReverseStep = 0;
+        this.lastForwardStep = 0;
       }
 
       MessagePaneController.prototype.fetchFromBottom = function() {
-        this.reverseTail = this.messageModel.newReverseTail(null, this.model.get('filters'), this.addMessagesToEndOfModel);
-        return this.reverseTail.expandTo(com.roost.STARTING_SIZE);
+        this.reverseTail = this.messageModel.newReverseTail(null, this.model.get('filters'), this.addMessagesToTopOfList);
+        this.reverseTail.expandTo(com.roost.STARTING_SIZE);
+        return this.lastReverseStep = com.roost.STARTING_SIZE;
       };
 
       MessagePaneController.prototype.onPositionJump = function() {};
 
       MessagePaneController.prototype.onScrollUp = function() {
-        var newSize;
-        newSize = this.model.get('messages').models.length + com.roost.EXPANSION_SIZE;
-        return this.reverseTail.expandTo(newSize);
+        this.lastReverseStep += com.roost.EXPANSION_SIZE;
+        return this.reverseTail.expandTo(this.lastReverseStep);
       };
 
-      MessagePaneController.prototype.onScrollDown = function() {};
-
-      MessagePaneController.prototype.onNewMessages = function() {};
+      MessagePaneController.prototype.onScrollDown = function() {
+        this.lastForwardStep += com.roost.EXPANSION_SIZE;
+        return this.forwardTail.expandTo(this.lastForwardStep);
+      };
 
       MessagePaneController.prototype.onFilterChange = function() {};
 
-      MessagePaneController.prototype.addMessagesToEndOfModel = function(msgs, isDone) {
+      MessagePaneController.prototype.addMessagesToTopOfList = function(msgs, isDone) {
         var message, messages, _i, _len, _ref, _results;
-        this.model.set('isDone', isDone);
+        this.model.set('isTopDone', isDone);
         messages = this.model.get('messages');
         if (messages.models.length === 0) {
-          return messages.reset(msgs);
+          messages.reset(msgs);
+          return this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
         } else {
+          if (messages.length >= com.roost.CACHE_SIZE) {
+            this.clearBottomOfCache(msgs.length);
+          }
           _ref = msgs.slice(0).reverse();
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -59,7 +69,45 @@
         }
       };
 
-      MessagePaneController.prototype.addMessageToStartOfModel = function(msgs, isDone) {};
+      MessagePaneController.prototype.addMessagesToBottomOfList = function(msgs, isDone) {
+        var message, messages, _i, _len, _ref, _results;
+        this.model.set('isBottomDone', isDone);
+        messages = this.model.get('messages');
+        if (messages.length >= com.roost.CACHE_SIZE) {
+          this.clearTopOfCache(msgs.length);
+        }
+        _ref = msgs.slice(0);
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          message = _ref[_i];
+          _results.push(messages.add(message, {
+            at: messages.length
+          }));
+        }
+        return _results;
+      };
+
+      MessagePaneController.prototype.clearTopOfCache = function(length) {
+        var i, messages, _i, _ref;
+        messages = this.model.get('messages');
+        for (i = _i = 0, _ref = length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+          messages.shift();
+        }
+        this.reverseTail = this.messageModel.newReverseTail(messages.at(0).id, this.model.get('filters'), this.addMessagesToTopOfList);
+        this.model.set('isTopDone', false);
+        return this.lastReverseStep = 0;
+      };
+
+      MessagePaneController.prototype.clearBottomOfCache = function(length) {
+        var i, messages, _i, _ref;
+        messages = this.model.get('messages');
+        for (i = _i = 0, _ref = length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+          messages.pop();
+        }
+        this.forwardTail = this.messageModel.newTailInclusive(messages.at(messages.length - 1).id, this.model.get('filters'), this.addMessagesToBottomOfList);
+        this.model.set('isBottomDone', false);
+        return this.lastForwardStep = 0;
+      };
 
       return MessagePaneController;
 
