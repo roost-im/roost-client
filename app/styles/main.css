@@ -99,9 +99,38 @@
 
 .message-view {
   width: 100%;
-  max-width: 800px;
+  max-width: 650px;
   margin: auto;
-  max-height: 200px; }
+  box-sizing: border-box;
+  padding: 5px;
+  border: 1px solid black; }
+  .message-view .header {
+    border-bottom: 1px solid black;
+    box-sizing: border-box;
+    margin-left: -5px;
+    margin-right: -5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    height: 20px;
+    line-height: 15px; }
+    .message-view .header .time {
+      float: right; }
+  .message-view .content {
+    display: table-row; }
+    .message-view .content .sender {
+      width: 130px;
+      padding: 3px;
+      box-sizing: border-box; }
+    .message-view .content .message-block {
+      display: table-cell;
+      width: 100%; }
+      .message-view .content .message-block .message {
+        padding: 3px;
+        margin-bottom: 40px;
+        word-break: break-all;
+        word-wrap: break-word; }
+      .message-view .content .message-block .signature {
+        text-align: right; }
 
 html, body {
   width: 100%;
