@@ -35,7 +35,11 @@
         _ref = this.childViews;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           view = _ref[_i];
+          view.undelegateEvents();
+          $(view.$el).removeData().unbind();
           view.remove();
+          delete view.$el;
+          delete view.el;
         }
         this.$el.empty();
         _ref1 = this.model.get('messages').models;

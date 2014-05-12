@@ -52,7 +52,8 @@
         messages = this.model.get('messages');
         if (messages.models.length === 0) {
           messages.reset(msgs);
-          return this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
+          this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
+          return this.onScrollDown();
         } else {
           if (messages.length >= com.roost.CACHE_SIZE) {
             this.clearBottomOfCache(msgs.length);
