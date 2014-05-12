@@ -177,6 +177,20 @@ if (!Function.prototype.bind) {
       test.expectUrl("https://davidben.net:443/is-crazy.txt");
       test.run("https://davidben.net:443/is-crazy.txt");
     });
+
+    it('should not hang on a stray open paren', function() {
+      var test = new UrlTest();
+      var url = "http://example.com/something/really/really/really/long(and/even/more/longness/long";
+      test.expectUrl(url);
+      test.run(url);
+    });
+
+    it('should not extend paths without a /', function() {
+      var test = new UrlTest();
+      test.expectUrl("https://davidben.net");
+      test.expectText("(1234)");
+      test.run("https://davidben.net(1234)");
+    });
   });
 
   describe('long zuser', function() {
