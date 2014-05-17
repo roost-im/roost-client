@@ -56,6 +56,10 @@ do ->
       @model.set 'isTopDone', isDone
       messages = @model.get 'messages'
 
+      # Let's make our times more friendly
+      for message in msgs
+        message.time = moment(message.time)
+
       # If this is our first time populating the list, reset
       # Also create the forward tail.
       if messages.models.length == 0
@@ -81,6 +85,10 @@ do ->
     addMessagesToBottomOfList: (msgs, isDone) =>
       @model.set 'isBottomDone', isDone
       messages = @model.get 'messages'
+
+      # Let's make our times more friendly
+      for message in msgs
+        message.time = moment(message.time)
 
       # If we are at our cache size, reduce the size of our cache
       # by as many messages as we just received.

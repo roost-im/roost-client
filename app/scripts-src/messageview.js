@@ -8,6 +8,7 @@
       __extends(MessageView, _super);
 
       function MessageView() {
+        this.updateTime = __bind(this.updateTime, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return MessageView.__super__.constructor.apply(this, arguments);
@@ -25,7 +26,12 @@
         this.$el.empty();
         template = com.roost.templates['MessageView'];
         this.$el.append(template(this.message.attributes));
-        return this.$el.attr('id', this.message.cid + '');
+        this.$el.attr('id', this.message.cid + '');
+        return this.updateTime();
+      };
+
+      MessageView.prototype.updateTime = function() {
+        return this.$('.time').text(this.message.get('time').fromNow());
       };
 
       return MessageView;

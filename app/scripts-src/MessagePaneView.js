@@ -14,6 +14,7 @@
         this._appendMessage = __bind(this._appendMessage, this);
         this._addMessages = __bind(this._addMessages, this);
         this._scrollHandle = __bind(this._scrollHandle, this);
+        this._updateMessageTimes = __bind(this._updateMessageTimes, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return MessagePaneView.__super__.constructor.apply(this, arguments);
@@ -27,7 +28,8 @@
         this.listenTo(this.model.get('messages'), 'reset', this.render);
         this.listenTo(this.model.get('messages'), 'add', this._addMessages);
         this.throttled = _.throttle(this._scrollHandle, 50);
-        return this.$el.scroll(this.throttled);
+        this.$el.scroll(this.throttled);
+        return setInterval(this._updateMessageTimes, 30000);
       };
 
       MessagePaneView.prototype.render = function() {
@@ -57,6 +59,17 @@
         this.model.trigger('messagesSet');
         this.currentTop = 0;
         return this.currentBottom = this.model.get('messages').length;
+      };
+
+      MessagePaneView.prototype._updateMessageTimes = function() {
+        var view, _i, _len, _ref, _results;
+        _ref = this.childViews;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          _results.push(view.updateTime());
+        }
+        return _results;
       };
 
       MessagePaneView.prototype._scrollHandle = function() {

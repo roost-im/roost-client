@@ -22,6 +22,10 @@ do ->
       @throttled = _.throttle(@_scrollHandle, 50)
       @$el.scroll(@throttled)
 
+      # Do this at the pane level instead of message level since otherwise you're
+      # spawning/deleting a ton of intervals with each scroll.
+      setInterval(@_updateMessageTimes, 30000)
+
     render: =>
       # Clear out old views
       for view in @childViews
@@ -54,6 +58,10 @@ do ->
       # Mark off which subsection of the list we are currently showing
       @currentTop = 0
       @currentBottom = @model.get('messages').length
+
+    _updateMessageTimes: =>
+      for view in @childViews
+        view.updateTime()
 
     _scrollHandle: =>
       messages = @model.get('messages').models

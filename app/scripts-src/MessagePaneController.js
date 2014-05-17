@@ -47,9 +47,13 @@
       MessagePaneController.prototype.onFilterChange = function() {};
 
       MessagePaneController.prototype.addMessagesToTopOfList = function(msgs, isDone) {
-        var message, messages, _i, _len, _ref, _results;
+        var message, messages, _i, _j, _len, _len1, _ref, _results;
         this.model.set('isTopDone', isDone);
         messages = this.model.get('messages');
+        for (_i = 0, _len = msgs.length; _i < _len; _i++) {
+          message = msgs[_i];
+          message.time = moment(message.time);
+        }
         if (messages.models.length === 0) {
           messages.reset(msgs);
           this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
@@ -60,8 +64,8 @@
           }
           _ref = msgs.slice(0).reverse();
           _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            message = _ref[_i];
+          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+            message = _ref[_j];
             _results.push(messages.add(message, {
               at: 0
             }));
@@ -71,16 +75,20 @@
       };
 
       MessagePaneController.prototype.addMessagesToBottomOfList = function(msgs, isDone) {
-        var message, messages, _i, _len, _ref, _results;
+        var message, messages, _i, _j, _len, _len1, _ref, _results;
         this.model.set('isBottomDone', isDone);
         messages = this.model.get('messages');
+        for (_i = 0, _len = msgs.length; _i < _len; _i++) {
+          message = msgs[_i];
+          message.time = moment(message.time);
+        }
         if (messages.length >= com.roost.CACHE_SIZE) {
           this.clearTopOfCache(msgs.length);
         }
         _ref = msgs.slice(0);
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          message = _ref[_i];
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          message = _ref[_j];
           _results.push(messages.add(message, {
             at: messages.length
           }));
