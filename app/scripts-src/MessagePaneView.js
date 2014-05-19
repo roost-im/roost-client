@@ -15,6 +15,7 @@
         this._addMessages = __bind(this._addMessages, this);
         this._scrollHandle = __bind(this._scrollHandle, this);
         this._updateMessageTimes = __bind(this._updateMessageTimes, this);
+        this.remove = __bind(this.remove, this);
         this.recalculateWidth = __bind(this.recalculateWidth, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
@@ -25,12 +26,13 @@
 
       MessagePaneView.prototype.initialize = function(options) {
         this.model = options.model;
+        this.session = options.session;
         this.childViews = [];
         this.listenTo(this.model.get('messages'), 'reset', this.render);
         this.listenTo(this.model.get('messages'), 'add', this._addMessages);
         this.throttled = _.throttle(this._scrollHandle, 50);
         this.$el.scroll(this.throttled);
-        setInterval(this._updateMessageTimes, 30000);
+        this.interval = setInterval(this._updateMessageTimes, 30000);
         this.index = 0;
         return this.width = 100;
       };
@@ -40,14 +42,10 @@
         _ref = this.childViews;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           view = _ref[_i];
-          view.undelegateEvents();
-          $(view.$el).removeData().unbind();
           view.remove();
-          delete view.$el;
-          delete view.el;
         }
-        this.childViews = [];
         this.$el.empty();
+        this.childViews = [];
         _ref1 = this.model.get('messages').models;
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           message = _ref1[_j];
@@ -69,7 +67,8 @@
         this.composeView.render();
         this.$el.append(this.composeView.$el);
         this.filterView = new com.roost.FilterBar({
-          paneModel: this.model
+          paneModel: this.model,
+          session: this.session
         });
         this.filterView.render();
         this.$el.append(this.filterView.$el);
@@ -90,6 +89,24 @@
           width: "" + width + "%",
           left: "" + (index * width) + "%"
         });
+      };
+
+      MessagePaneView.prototype.remove = function() {
+        var view, _i, _len, _ref;
+        this.composeView.remove();
+        this.filterView.remove();
+        clearInterval(this.interval);
+        _ref = this.childViews;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          view.remove();
+        }
+        this.undelegateEvents();
+        this.stopListening();
+        this.$el.removeData().unbind();
+        MessagePaneView.__super__.remove.apply(this, arguments);
+        delete this.$el;
+        return delete this.el;
       };
 
       MessagePaneView.prototype._updateMessageTimes = function() {
@@ -183,11 +200,7 @@
         var change, newHeight, oldHeight, view;
         oldHeight = this.$el[0].scrollHeight;
         view = this.childViews.shift();
-        view.undelegateEvents();
-        $(view.$el).removeData().unbind();
         view.remove();
-        delete view.$el;
-        delete view.el;
         this.currentTop = this.currentBottom - this.childViews.length;
         newHeight = this.$el[0].scrollHeight;
         change = oldHeight - newHeight;
@@ -197,11 +210,7 @@
       MessagePaneView.prototype._removeBottomMessage = function() {
         var view;
         view = this.childViews.pop();
-        view.undelegateEvents();
-        $(view.$el).removeData().unbind();
         view.remove();
-        delete view.$el;
-        delete view.el;
         return this.currentBottom = this.currentTop + this.childViews.length;
       };
 

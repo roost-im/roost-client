@@ -14,13 +14,13 @@
       navbar.render();
       $('body').append(navbar.$el);
       messagePane = new com.roost.MessagePane({
+        session: session,
         messageLists: session.messageLists
       });
       messagePane.render();
       $('body').append(messagePane.$el);
       session.userInfo.trigger('login');
       if (session.userInfo.get('username') != null) {
-        session.addPane({}, null);
         return session.addPane({}, null);
       }
     };

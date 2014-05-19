@@ -24,6 +24,7 @@
 
       FilterBar.prototype.initialize = function(options) {
         this.paneModel = options.paneModel;
+        this.session = options.session;
         return this.listenTo(this.paneModel, 'change:showFilters', this.render);
       };
 
@@ -38,7 +39,9 @@
         return this.paneModel.set('showFilters', !this.paneModel.get('showFilters'));
       };
 
-      FilterBar.prototype._removePane = function() {};
+      FilterBar.prototype._removePane = function() {
+        return this.session.removePane(this.paneModel.cid);
+      };
 
       return FilterBar;
 

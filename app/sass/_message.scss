@@ -10,7 +10,7 @@
     box-sizing: border-box;
     height: $msg-header-height;
     line-height: $msg-header-height;
-    background-color: #DDD;
+    background-color: #CCC;
     position: relative;
 
     &:hover {
@@ -66,8 +66,17 @@
     display: table-row;
 
     .sender {
+      text-align: center;
+      height: 100%;
+      display: table-cell;
+      vertical-align: middle;
+      padding: 0 5px;
+      background-color: #DDD;
+      font-size: 14px;
+      position: relative;
+      z-index: 2;
+      max-width: 130px;
       width: 130px;
-      padding: 3px;
       box-sizing: border-box;
     }
 

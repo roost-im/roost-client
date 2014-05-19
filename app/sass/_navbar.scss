@@ -44,6 +44,12 @@
     .username {
       display: inline;
       float: right;
+      color: #EEE;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 

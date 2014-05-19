@@ -8,6 +8,7 @@ do ->
 
     initialize: (options) =>
       @paneModel = options.paneModel
+      @session = options.session
 
       @listenTo @paneModel, 'change:showFilters', @render
 
@@ -20,4 +21,4 @@ do ->
       @paneModel.set('showFilters', !@paneModel.get('showFilters'))
 
     _removePane: =>
-      return
+      @session.removePane(@paneModel.cid)

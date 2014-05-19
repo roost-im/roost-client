@@ -10,6 +10,7 @@
       __extends(MessageView, _super);
 
       function MessageView() {
+        this.remove = __bind(this.remove, this);
         this.updateTime = __bind(this.updateTime, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
@@ -35,6 +36,15 @@
 
       MessageView.prototype.updateTime = function() {
         return this.$('.time.from-now').text(this.message.get('time').fromNow());
+      };
+
+      MessageView.prototype.remove = function() {
+        this.undelegateEvents();
+        this.stopListening();
+        this.$el.removeData().unbind();
+        MessageView.__super__.remove.apply(this, arguments);
+        delete this.$el;
+        return delete this.el;
       };
 
       return MessageView;

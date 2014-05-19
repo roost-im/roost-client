@@ -68,7 +68,11 @@
       border-radius: 20px; }
     .navbar .user-info .username {
       display: inline;
-      float: right; }
+      float: right;
+      color: #EEE;
+      text-decoration: none; }
+      .navbar .user-info .username:hover {
+        text-decoration: underline; }
   .navbar .add-pane {
     float: right;
     margin-right: 25px;
@@ -113,6 +117,16 @@
       border: none; }
     .message-pane .message-pane-view .filler-view {
       height: 60%; }
+  .message-pane .no-panes {
+    width: 100%;
+    text-align: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    height: 280px;
+    font-size: 40px;
+    color: #BBB; }
 
 .message-view {
   width: 100%;
@@ -125,7 +139,7 @@
     box-sizing: border-box;
     height: 25px;
     line-height: 25px;
-    background-color: #DDD;
+    background-color: #CCC;
     position: relative; }
     .message-view .header:hover .time.from-now {
       opacity: 0; }
@@ -162,8 +176,17 @@
   .message-view .content {
     display: table-row; }
     .message-view .content .sender {
+      text-align: center;
+      height: 100%;
+      display: table-cell;
+      vertical-align: middle;
+      padding: 0 5px;
+      background-color: #DDD;
+      font-size: 14px;
+      position: relative;
+      z-index: 2;
+      max-width: 130px;
       width: 130px;
-      padding: 3px;
       box-sizing: border-box; }
     .message-view .content .message-block {
       display: table-cell;

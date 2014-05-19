@@ -16,3 +16,12 @@ do ->
 
     updateTime: =>
       @$('.time.from-now').text(@message.get('time').fromNow())
+
+    remove: =>
+      @undelegateEvents()
+      @stopListening()
+      @$el.removeData().unbind()
+      super
+
+      delete @$el
+      delete @el

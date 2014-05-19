@@ -8,6 +8,9 @@ do ->
       # Pane model
       @model = options.model
 
+      # Roost session
+      @session = options.session
+
       # Keep track of all subviews we make to avoid memory leaks
       @childViews = []
 
@@ -24,7 +27,7 @@ do ->
 
       # Do this at the pane level instead of message level since otherwise you're
       # spawning/deleting a ton of intervals with each scroll.
-      setInterval(@_updateMessageTimes, 30000)
+      @interval = setInterval(@_updateMessageTimes, 30000)
 
       @index = 0
       @width = 100
@@ -32,17 +35,11 @@ do ->
     render: =>
       # Clear out old views
       for view in @childViews
-        # TODO: wrap this inside of a custom View class
-        view.undelegateEvents()
-        $(view.$el).removeData().unbind()
         view.remove()
-        delete view.$el
-        delete view.el
-
-      @childViews = []
 
       # Empty everything just to be sure
       @$el.empty()
+      @childViews = []
 
       # Add MessageView for each message in the list
       for message in @model.get('messages').models
@@ -64,19 +61,23 @@ do ->
       @currentTop = 0
       @currentBottom = @model.get('messages').length
 
+      # Create the message composing view
       @composeView = new com.roost.ComposeBar
         paneModel: @model
       @composeView.render()
       @$el.append @composeView.$el
 
+      # Create the filter view
       @filterView = new com.roost.FilterBar
         paneModel: @model
+        session: @session
       @filterView.render()
       @$el.append @filterView.$el
 
       @recalculateWidth(@index, @width)
 
     recalculateWidth: (index, width) =>
+      # HACK: store whatever we get to use again if needed
       @index = index
       @width = width
 
@@ -93,6 +94,22 @@ do ->
         width: "#{width}%",
         left: "#{index * width}%"
       )
+
+    remove: =>
+      @composeView.remove()
+      @filterView.remove()
+      clearInterval(@interval)
+
+      for view in @childViews
+        view.remove()
+
+      @undelegateEvents()
+      @stopListening()
+      @$el.removeData().unbind()
+      super
+
+      delete @$el
+      delete @el
 
     _updateMessageTimes: =>
       for view in @childViews
@@ -163,13 +180,7 @@ do ->
       # Save off old scroll height
       oldHeight = @$el[0].scrollHeight
       view = @childViews.shift()
-
-      # TODO: wrap this inside of a custom View class
-      view.undelegateEvents()
-      $(view.$el).removeData().unbind()
       view.remove()
-      delete view.$el
-      delete view.el
 
       # HACK: Jump scroll height as much as the change
       # Keeps view in seemingly same location
@@ -179,13 +190,7 @@ do ->
       @$el.scrollTop(@$el.scrollTop() - change)
 
     _removeBottomMessage: =>
-      view = @childViews.pop()
-      
-      # TODO: wrap this inside of a custom View class
-      view.undelegateEvents()
-      $(view.$el).removeData().unbind()
+      view = @childViews.pop()      
       view.remove()
-      delete view.$el
-      delete view.el
 
       @currentBottom = @currentTop + @childViews.length

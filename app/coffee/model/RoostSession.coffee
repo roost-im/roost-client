@@ -9,6 +9,9 @@ do ->
       # Collection of Message List Models
       @messageLists = new Backbone.Collection()
 
+      # Map of message controllers
+      @messageControllers = {}
+
       # Singleton services we need to hold on to
       # Currently uses old Roost objects
       @localStorage = new LocalStorageWrapper()
@@ -29,3 +32,9 @@ do ->
       paneController.fetchFromBottom()
 
       @messageLists.push paneModel
+      @messageControllers[paneModel.cid] = paneController
+
+    removePane: (cid) =>
+      @messageControllers[cid].stopListening()
+      @messageLists.remove(cid)
+      delete @messageControllers[cid]

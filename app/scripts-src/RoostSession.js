@@ -4,12 +4,14 @@
   (function() {
     return com.roost.RoostSession = (function() {
       function RoostSession() {
+        this.removePane = __bind(this.removePane, this);
         this.addPane = __bind(this.addPane, this);
         this.userInfo = new Backbone.Model({
           username: null,
           realm: null
         });
         this.messageLists = new Backbone.Collection();
+        this.messageControllers = {};
         this.localStorage = new LocalStorageWrapper();
         this.storageManager = new StorageManager(this.localStorage);
         this.ticketManager = new TicketManager(CONFIG.webathena, this.storageManager);
@@ -27,7 +29,14 @@
           api: this.api
         });
         paneController.fetchFromBottom();
-        return this.messageLists.push(paneModel);
+        this.messageLists.push(paneModel);
+        return this.messageControllers[paneModel.cid] = paneController;
+      };
+
+      RoostSession.prototype.removePane = function(cid) {
+        this.messageControllers[cid].stopListening();
+        this.messageLists.remove(cid);
+        return delete this.messageControllers[cid];
       };
 
       return RoostSession;

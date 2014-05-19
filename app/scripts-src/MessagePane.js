@@ -9,6 +9,7 @@
 
       function MessagePane() {
         this._recalculateWidth = __bind(this._recalculateWidth, this);
+        this._removePaneView = __bind(this._removePaneView, this);
         this._addPaneView = __bind(this._addPaneView, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
@@ -18,9 +19,11 @@
       MessagePane.prototype.className = 'message-pane';
 
       MessagePane.prototype.initialize = function(options) {
+        this.session = options.session;
         this.messageLists = options.messageLists;
         this.childViews = [];
-        return this.listenTo(this.messageLists, 'add', this._addPaneView);
+        this.listenTo(this.messageLists, 'add', this._addPaneView);
+        return this.listenTo(this.messageLists, 'remove', this._removePaneView);
       };
 
       MessagePane.prototype.render = function() {
@@ -37,7 +40,9 @@
 
       MessagePane.prototype._addPaneView = function(paneModel) {
         var paneView;
+        this.$('.no-panes').remove();
         paneView = new com.roost.MessagePaneView({
+          session: this.session,
           model: paneModel
         });
         this.childViews.push(paneView);
@@ -50,6 +55,27 @@
             return paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
           };
         })(this)));
+      };
+
+      MessagePane.prototype._removePaneView = function(model) {
+        var toDelete, view, _i, _len, _ref;
+        _ref = this.childViews;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          if (view.model.cid === model.cid) {
+            toDelete = view;
+          }
+        }
+        toDelete.remove();
+        this.childViews = _.reject(this.childViews, ((function(_this) {
+          return function(view) {
+            return view.cid === toDelete.cid;
+          };
+        })(this)));
+        this._recalculateWidth();
+        if (this.messageLists.length === 0) {
+          return this.$el.append($('<div class="no-panes">').text('Click "New Pane" above to start browsing your messages.'));
+        }
       };
 
       MessagePane.prototype._recalculateWidth = function() {
