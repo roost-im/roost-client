@@ -72,6 +72,7 @@
             return view.cid === toDelete.cid;
           };
         })(this)));
+        model.off();
         this._recalculateWidth();
         if (this.messageLists.length === 0) {
           return this.$el.append($('<div class="no-panes">').text('Click "New Pane" above to start browsing your messages.'));

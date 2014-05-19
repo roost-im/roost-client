@@ -5,7 +5,11 @@
   </div>
   <div class="remove">&times;</div>
   <div class="filters">
-    <i class="fa fa-filter"></i>&nbsp;&nbsp;Filters
+    {{#if showFilters}}
+      <i class="fa fa-filter fa-rotate-180"></i>&nbsp;&nbsp;Hide Filters
+    {{else}}
+      <i class="fa fa-filter"></i>&nbsp;&nbsp;Show Filters
+    {{/if}}
   </div>
 </div>
 {{#if showFilters}}

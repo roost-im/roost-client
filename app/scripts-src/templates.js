@@ -10,7 +10,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  return "\n  <div class=\"top-bar\">\n    <div class=\"title\">\n      Compose Message\n    </div>\n    <div class=\"close\">&times;</div>\n  </div>\n  <div class=\"composer\">\n  </div>\n";
+  return "\n  <div class=\"top-bar\">\n    <div class=\"title\">\n      Compose Message\n    </div>\n    <div class=\"close\">&times;</div>\n  </div>\n  <div class=\"composer\">\n    <input class=\"class-input\" type=\"text\" placeholder=\"Class\"></input>\n    <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\"></input>\n    <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\"></input>\n    <textarea rows=\"6\" placeholder=\"Type your message here\"></textarea>\n    <div class=\"btn send\">Send</div>\n  </div>\n";
   }
 
 function program3(depth0,data) {
@@ -32,11 +32,26 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
+  return "\n      <i class=\"fa fa-filter fa-rotate-180\"></i>&nbsp;&nbsp;Hide Filters\n    ";
+  }
+
+function program3(depth0,data) {
+  
+  
+  return "\n      <i class=\"fa fa-filter\"></i>&nbsp;&nbsp;Show Filters\n    ";
+  }
+
+function program5(depth0,data) {
+  
+  
   return "\n  <div class=\"filter-editor\">\n  </div>\n";
   }
 
-  buffer += "<div class=\"top-bar\">\n  <div class=\"title\">\n    \n    All Messages\n  </div>\n  <div class=\"remove\">&times;</div>\n  <div class=\"filters\">\n    <i class=\"fa fa-filter\"></i>&nbsp;&nbsp;Filters\n  </div>\n</div>\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  buffer += "<div class=\"top-bar\">\n  <div class=\"title\">\n    \n    All Messages\n  </div>\n  <div class=\"remove\">&times;</div>\n  <div class=\"filters\">\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </div>\n</div>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   return buffer;
   });

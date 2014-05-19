@@ -181,7 +181,7 @@
       display: table-cell;
       vertical-align: middle;
       padding: 0 5px;
-      background-color: #DDD;
+      background-color: #EEE;
       font-size: 14px;
       position: relative;
       z-index: 2;
@@ -208,14 +208,14 @@
   width: 100%;
   background-color: #555;
   color: white;
-  padding: 0px 25px 0px 10px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-shadow: 0px 0px 1px black;
   z-index: 10; }
   .compose-bar .single-bar {
     height: 30px;
-    line-height: 30px; }
+    line-height: 30px;
+    padding: 0px 25px 0px 10px; }
     .compose-bar .single-bar .compose {
       float: right;
       cursor: pointer; }
@@ -224,7 +224,9 @@
       cursor: pointer; }
   .compose-bar .top-bar {
     height: 30px;
-    line-height: 30px; }
+    line-height: 30px;
+    padding: 0px 25px 0px 10px;
+    background-color: #444; }
     .compose-bar .top-bar .title {
       float: left; }
     .compose-bar .top-bar .close {
@@ -234,7 +236,35 @@
       .compose-bar .top-bar .close:hover {
         color: #ff3333; }
   .compose-bar .composer {
-    height: 200px; }
+    height: 300px;
+    width: 100%;
+    max-width: 650px;
+    margin: auto;
+    margin-top: 15px; }
+    .compose-bar .composer input, .compose-bar .composer textarea {
+      width: 90%;
+      font-size: 16px;
+      padding: 3px 5px;
+      border: none;
+      outline: none;
+      margin-bottom: 5px;
+      margin-left: 5%;
+      margin-right: 5%; }
+    .compose-bar .composer .send {
+      color: #eeeeee;
+      background-color: #3178d3;
+      border-color: transparent;
+      float: right;
+      margin-right: 5%; }
+      .compose-bar .composer .send:hover, .compose-bar .composer .send:focus, .compose-bar .composer .send:active, .compose-bar .composer .send.active {
+        color: #eeeeee;
+        background-color: #2765b5; }
+      .open .compose-bar .composer .send.dropdown-toggle {
+        color: #eeeeee;
+        background-color: #2765b5;
+        background-image: none; }
+      .compose-bar .composer .send.disabled, .compose-bar .composer .send.disabled:hover, .compose-bar .composer .send.disabled:focus, .compose-bar .composer .send.disabled:active, .compose-bar .composer .send.disabled.active, .compose-bar .composer .send[disabled], .compose-bar .composer .send[disabled]:hover, .compose-bar .composer .send[disabled]:focus, .compose-bar .composer .send[disabled]:active, .compose-bar .composer .send[disabled].active, fieldset[disabled] .compose-bar .composer .send, fieldset[disabled] .compose-bar .composer .send:hover, fieldset[disabled] .compose-bar .composer .send:focus, fieldset[disabled] .compose-bar .composer .send:active, fieldset[disabled] .compose-bar .composer .send.active {
+        background-color: #3178d3 !important; }
 
 .filter-bar {
   top: 0;

@@ -42,6 +42,8 @@ do ->
       toDelete.remove()
       @childViews = _.reject(@childViews, ((view) => view.cid == toDelete.cid))
 
+      model.off()
+
       @_recalculateWidth()
 
       if @messageLists.length == 0

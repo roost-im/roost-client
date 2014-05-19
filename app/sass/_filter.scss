@@ -12,8 +12,8 @@
   z-index: 10;
 
   .top-bar {
-    height: 30px;
-    line-height: 30px;
+    height: $compose-filter-bar-height;
+    line-height: $compose-filter-bar-height;
 
     .title {
       float: left;
@@ -28,7 +28,7 @@
     .remove {
       float: right;
       cursor: pointer;
-      font-size: 30px;
+      font-size: $compose-filter-bar-height;
       margin-top: -2px;
 
       &:hover {
