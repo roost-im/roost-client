@@ -5,6 +5,7 @@ do ->
     events:
       'click .login': 'handleLogin'
       'click .logout': 'handleLogout'
+      'click .add-pane': '_addPane'
 
     initialize: (options) =>
       @session = options.session
@@ -25,3 +26,6 @@ do ->
 
     handleLogout: =>
       @userInfo.trigger 'logout'
+
+    _addPane: =>
+      @session.addPane {}, null

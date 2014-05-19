@@ -8,6 +8,7 @@
       __extends(NavBar, _super);
 
       function NavBar() {
+        this._addPane = __bind(this._addPane, this);
         this.handleLogout = __bind(this.handleLogout, this);
         this.handleLogin = __bind(this.handleLogin, this);
         this.render = __bind(this.render, this);
@@ -19,7 +20,8 @@
 
       NavBar.prototype.events = {
         'click .login': 'handleLogin',
-        'click .logout': 'handleLogout'
+        'click .logout': 'handleLogout',
+        'click .add-pane': '_addPane'
       };
 
       NavBar.prototype.initialize = function(options) {
@@ -47,6 +49,10 @@
 
       NavBar.prototype.handleLogout = function() {
         return this.userInfo.trigger('logout');
+      };
+
+      NavBar.prototype._addPane = function() {
+        return this.session.addPane({}, null);
       };
 
       return NavBar;

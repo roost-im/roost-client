@@ -1,5 +1,5 @@
-.compose-bar {
-  bottom: 0;
+.filter-bar {
+  top: 0;
   position: absolute;
   left: 0;
   width: 100%;
@@ -8,23 +8,8 @@
   padding: 0px 25px 0px 10px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
-  box-shadow: 0px 0px 1px black;
+  box-shadow: 0px 0px 5px black;
   z-index: 10;
-
-  .single-bar {
-    height: 30px;
-    line-height: 30px;
-
-    .compose {
-      float: right;
-      cursor: pointer;
-    }
-
-    .to-bottom {
-      float: left;
-      cursor: pointer;
-    }
-  }
 
   .top-bar {
     height: 30px;
@@ -34,10 +19,17 @@
       float: left;
     }
 
-    .close {
+    .filters {
       float: right;
       cursor: pointer;
-      font-size: 24px;
+      margin-right: 15px;
+    }
+
+    .remove {
+      float: right;
+      cursor: pointer;
+      font-size: 30px;
+      margin-top: -2px;
 
       &:hover {
         color: lighten(red, 10%);
@@ -45,7 +37,7 @@
     }
   }
 
-  .composer {
+  .filter-editor {
     height: 200px;
   }
 }

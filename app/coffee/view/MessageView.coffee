@@ -1,4 +1,6 @@
 do ->
+  TIME_FORMAT = 'MMMM Do YYYY, h:mm:ss a'
+
   class com.roost.MessageView extends Backbone.View
     className: 'message-view'
 
@@ -9,8 +11,8 @@ do ->
     render: =>
       @$el.empty()
       template = com.roost.templates['MessageView']
-      @$el.append template(@message.attributes)
+      @$el.append template(_.defaults({}, @message.attributes, {absoluteTime: @message.get('time').format(TIME_FORMAT)}))
       @updateTime()
 
     updateTime: =>
-      @$('.time').text(@message.get('time').fromNow())
+      @$('.time.from-now').text(@message.get('time').fromNow())

@@ -7,7 +7,6 @@
   width: 100%;
   padding-right: 20px;
   z-index: 20;
-  box-shadow: 0px 0px 10px black;
 
   .title-logo {
     display: inline;
@@ -46,6 +45,12 @@
       display: inline;
       float: right;
     }
+  }
+
+  .add-pane {
+    float: right;
+    margin-right: 25px;
+    cursor: pointer;
   }
 
   .btn {

@@ -68,6 +68,12 @@ do ->
         paneModel: @model
       @composeView.render()
       @$el.append @composeView.$el
+
+      @filterView = new com.roost.FilterBar
+        paneModel: @model
+      @filterView.render()
+      @$el.append @filterView.$el
+
       @recalculateWidth(@index, @width)
 
     recalculateWidth: (index, width) =>
@@ -79,6 +85,11 @@ do ->
       )
 
       @composeView.$el.css(
+        width: "#{width}%",
+        left: "#{index * width}%"
+      )
+
+      @filterView.$el.css(
         width: "#{width}%",
         left: "#{index * width}%"
       )

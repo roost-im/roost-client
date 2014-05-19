@@ -4,6 +4,8 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   (function() {
+    var TIME_FORMAT;
+    TIME_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
     return com.roost.MessageView = (function(_super) {
       __extends(MessageView, _super);
 
@@ -25,12 +27,14 @@
         var template;
         this.$el.empty();
         template = com.roost.templates['MessageView'];
-        this.$el.append(template(this.message.attributes));
+        this.$el.append(template(_.defaults({}, this.message.attributes, {
+          absoluteTime: this.message.get('time').format(TIME_FORMAT)
+        })));
         return this.updateTime();
       };
 
       MessageView.prototype.updateTime = function() {
-        return this.$('.time').text(this.message.get('time').fromNow());
+        return this.$('.time.from-now').text(this.message.get('time').fromNow());
       };
 
       return MessageView;

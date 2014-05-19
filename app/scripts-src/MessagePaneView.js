@@ -68,6 +68,11 @@
         });
         this.composeView.render();
         this.$el.append(this.composeView.$el);
+        this.filterView = new com.roost.FilterBar({
+          paneModel: this.model
+        });
+        this.filterView.render();
+        this.$el.append(this.filterView.$el);
         return this.recalculateWidth(this.index, this.width);
       };
 
@@ -77,7 +82,11 @@
         this.$el.css({
           width: "" + width + "%"
         });
-        return this.composeView.$el.css({
+        this.composeView.$el.css({
+          width: "" + width + "%",
+          left: "" + (index * width) + "%"
+        });
+        return this.filterView.$el.css({
           width: "" + width + "%",
           left: "" + (index * width) + "%"
         });
