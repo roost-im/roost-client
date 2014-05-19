@@ -1,0 +1,51 @@
+.compose-bar {
+  bottom: 0;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: #555;
+  color: white;
+  padding: 0px 15px 0px 10px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-shadow: 0px 0px 1px black;
+  z-index: 10;
+
+  .single-bar {
+    height: 30px;
+    line-height: 30px;
+
+    .compose {
+      float: right;
+      cursor: pointer;
+    }
+
+    .to-bottom {
+      float: left;
+      cursor: pointer;
+    }
+  }
+
+  .top-bar {
+    height: 30px;
+    line-height: 30px;
+
+    .title {
+      float: left;
+    }
+
+    .close {
+      float: right;
+      cursor: pointer;
+      font-size: 24px;
+
+      &:hover {
+        color: lighten(red, 10%);
+      }
+    }
+  }
+
+  .composer {
+    height: 200px;
+  }
+}

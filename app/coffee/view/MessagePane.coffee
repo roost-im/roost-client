@@ -24,12 +24,13 @@ do ->
 
       # Jank. Gotta jump the scrolling after first set of messages are in.
       paneView.$el.scrollTop(paneView.$el[0].scrollHeight)
-      paneModel.once 'messagesSet', (=> 
+      @listenTo paneModel, 'messagesSet', (=> 
         paneView.$el.scrollTop(paneView.$el[0].scrollHeight)
       )
 
     _recalculateWidth: =>
       width = Math.floor(100/@childViews.length)
-      @$('.message-pane-view').css(
-        width: "#{width}%"
-      )
+      index = 0
+      for view in @childViews
+        view.recalculateWidth index, width
+        index += 1

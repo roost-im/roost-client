@@ -22,6 +22,7 @@ do ->
       # Listen to events on the model
       @listenTo @model, 'scrollUp', @onScrollUp
       @listenTo @model, 'scrollDown', @onScrollDown
+      @listenTo @model, 'toBottom', @fetchFromBottom
 
       # Keep track of how far we've moved the tails up/down
       @lastReverseStep = 0
@@ -62,7 +63,8 @@ do ->
 
       # If this is our first time populating the list, reset
       # Also create the forward tail.
-      if messages.models.length == 0
+      if not @model.get('loaded')
+        @model.set('loaded', true)
         messages.reset msgs
 
         # Forward tail to get messages going downward (more recent).

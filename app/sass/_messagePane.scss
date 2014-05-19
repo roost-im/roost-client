@@ -10,6 +10,14 @@
     float: left;
     height: 100%;
     overflow-y: scroll;
+    overflow-x: hidden;
+    border-right: 1px solid #333;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+
+    &:last-child {
+      border: none;
+    }
 
     .filler-view {
       height: 60%;

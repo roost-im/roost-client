@@ -22,6 +22,7 @@
         this.messageModel = new MessageModel(this.api);
         this.listenTo(this.model, 'scrollUp', this.onScrollUp);
         this.listenTo(this.model, 'scrollDown', this.onScrollDown);
+        this.listenTo(this.model, 'toBottom', this.fetchFromBottom);
         this.lastReverseStep = 0;
         this.lastForwardStep = 0;
       }
@@ -54,7 +55,8 @@
           message = msgs[_i];
           message.time = moment(message.time);
         }
-        if (messages.models.length === 0) {
+        if (!this.model.get('loaded')) {
+          this.model.set('loaded', true);
           messages.reset(msgs);
           this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
           return this.onScrollDown();

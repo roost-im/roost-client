@@ -45,7 +45,7 @@
         this.$el.append(paneView.$el);
         this._recalculateWidth();
         paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
-        return paneModel.once('messagesSet', ((function(_this) {
+        return this.listenTo(paneModel, 'messagesSet', ((function(_this) {
           return function() {
             return paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
           };
@@ -53,11 +53,17 @@
       };
 
       MessagePane.prototype._recalculateWidth = function() {
-        var width;
+        var index, view, width, _i, _len, _ref, _results;
         width = Math.floor(100 / this.childViews.length);
-        return this.$('.message-pane-view').css({
-          width: "" + width + "%"
-        });
+        index = 0;
+        _ref = this.childViews;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          view.recalculateWidth(index, width);
+          _results.push(index += 1);
+        }
+        return _results;
       };
 
       return MessagePane;

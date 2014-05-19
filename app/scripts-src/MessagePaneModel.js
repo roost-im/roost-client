@@ -21,9 +21,16 @@
           messages: new Backbone.Collection(),
           showFilters: false,
           showCompose: false,
+          composeFields: {
+            klass: '',
+            instance: '',
+            recipient: '',
+            content: ''
+          },
           selected: false,
           isTopDone: false,
-          isBottomDone: true
+          isBottomDone: true,
+          loaded: false
         };
         attrs.messages.model = com.roost.MessageModel;
         return attrs;

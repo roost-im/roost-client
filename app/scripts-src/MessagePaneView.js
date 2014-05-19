@@ -15,6 +15,7 @@
         this._addMessages = __bind(this._addMessages, this);
         this._scrollHandle = __bind(this._scrollHandle, this);
         this._updateMessageTimes = __bind(this._updateMessageTimes, this);
+        this.recalculateWidth = __bind(this.recalculateWidth, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return MessagePaneView.__super__.constructor.apply(this, arguments);
@@ -29,7 +30,9 @@
         this.listenTo(this.model.get('messages'), 'add', this._addMessages);
         this.throttled = _.throttle(this._scrollHandle, 50);
         this.$el.scroll(this.throttled);
-        return setInterval(this._updateMessageTimes, 30000);
+        setInterval(this._updateMessageTimes, 30000);
+        this.index = 0;
+        return this.width = 100;
       };
 
       MessagePaneView.prototype.render = function() {
@@ -43,6 +46,7 @@
           delete view.$el;
           delete view.el;
         }
+        this.childViews = [];
         this.$el.empty();
         _ref1 = this.model.get('messages').models;
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
@@ -58,7 +62,25 @@
         this.$el.append('<div class="filler-view">');
         this.model.trigger('messagesSet');
         this.currentTop = 0;
-        return this.currentBottom = this.model.get('messages').length;
+        this.currentBottom = this.model.get('messages').length;
+        this.composeView = new com.roost.ComposeBar({
+          paneModel: this.model
+        });
+        this.composeView.render();
+        this.$el.append(this.composeView.$el);
+        return this.recalculateWidth(this.index, this.width);
+      };
+
+      MessagePaneView.prototype.recalculateWidth = function(index, width) {
+        this.index = index;
+        this.width = width;
+        this.$el.css({
+          width: "" + width + "%"
+        });
+        return this.composeView.$el.css({
+          width: "" + width + "%",
+          left: "" + (index * width) + "%"
+        });
       };
 
       MessagePaneView.prototype._updateMessageTimes = function() {

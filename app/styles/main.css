@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Krona One';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Krona One"), local("KronaOne-Regular"), url(https://themes.googleusercontent.com/static/fonts/kronaone/v2/ix3TbrGcGYAHLWi4hTTy1LO3LdcAZYWl9Si6vvxL-qU.woff) format("woff"); }
 .btn {
   display: inline-block;
   color: #fff;
@@ -36,7 +41,8 @@
   background: #333;
   width: 100%;
   padding-right: 20px;
-  z-index: 20; }
+  z-index: 20;
+  box-shadow: 0px 0px 10px black; }
   .navbar .title-logo {
     display: inline;
     float: left; }
@@ -48,7 +54,9 @@
       float: left; }
     .navbar .title-logo .title {
       display: inline;
-      float: left; }
+      float: left;
+      font-family: 'Krona One';
+      text-transform: uppercase; }
   .navbar .user-info {
     display: inline;
     float: right; }
@@ -93,7 +101,13 @@
   .message-pane .message-pane-view {
     float: left;
     height: 100%;
-    overflow-y: scroll; }
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border-right: 1px solid #333;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box; }
+    .message-pane .message-pane-view:last-child {
+      border: none; }
     .message-pane .message-pane-view .filler-view {
       height: 60%; }
 
@@ -146,7 +160,44 @@
         word-break: break-all;
         word-wrap: break-word; }
       .message-view .content .message-block .signature {
-        text-align: right; }
+        text-align: right;
+        padding: 5px;
+        font-size: 12px; }
+
+.compose-bar {
+  bottom: 0;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: #555;
+  color: white;
+  padding: 0px 15px 0px 10px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-shadow: 0px 0px 1px black;
+  z-index: 10; }
+  .compose-bar .single-bar {
+    height: 30px;
+    line-height: 30px; }
+    .compose-bar .single-bar .compose {
+      float: right;
+      cursor: pointer; }
+    .compose-bar .single-bar .to-bottom {
+      float: left;
+      cursor: pointer; }
+  .compose-bar .top-bar {
+    height: 30px;
+    line-height: 30px; }
+    .compose-bar .top-bar .title {
+      float: left; }
+    .compose-bar .top-bar .close {
+      float: right;
+      cursor: pointer;
+      font-size: 24px; }
+      .compose-bar .top-bar .close:hover {
+        color: #ff3333; }
+  .compose-bar .composer {
+    height: 200px; }
 
 html, body {
   width: 100%;

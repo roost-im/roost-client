@@ -26,6 +26,9 @@ do ->
       # spawning/deleting a ton of intervals with each scroll.
       setInterval(@_updateMessageTimes, 30000)
 
+      @index = 0
+      @width = 100
+
     render: =>
       # Clear out old views
       for view in @childViews
@@ -35,6 +38,8 @@ do ->
         view.remove()
         delete view.$el
         delete view.el
+
+      @childViews = []
 
       # Empty everything just to be sure
       @$el.empty()
@@ -58,6 +63,25 @@ do ->
       # Mark off which subsection of the list we are currently showing
       @currentTop = 0
       @currentBottom = @model.get('messages').length
+
+      @composeView = new com.roost.ComposeBar
+        paneModel: @model
+      @composeView.render()
+      @$el.append @composeView.$el
+      @recalculateWidth(@index, @width)
+
+    recalculateWidth: (index, width) =>
+      @index = index
+      @width = width
+
+      @$el.css(
+        width: "#{width}%"
+      )
+
+      @composeView.$el.css(
+        width: "#{width}%",
+        left: "#{index * width}%"
+      )
 
     _updateMessageTimes: =>
       for view in @childViews

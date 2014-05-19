@@ -2,21 +2,58 @@ this["com"] = this["com"] || {};
 this["com"]["roost"] = this["com"]["roost"] || {};
 this["com"]["roost"]["templates"] = this["com"]["roost"]["templates"] || {};
 
+this["com"]["roost"]["templates"]["ComposeBar"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var stack1, self=this;
+
+function program1(depth0,data) {
+  
+  
+  return "\n  <div class=\"top-bar\">\n    <div class=\"title\">\n      Compose Message\n    </div>\n    <div class=\"close\">&times;</div>\n  </div>\n  <div class=\"composer\">\n  </div>\n";
+  }
+
+function program3(depth0,data) {
+  
+  
+  return "\n  <div class=\"single-bar\">\n    <div class=\"compose\">\n      <i class=\"fa fa-send\"></i>\n      Compose Message\n    </div>\n    <div class=\"to-bottom\">\n      <i class=\"fa fa-chevron-down\"></i>\n      Bottom\n    </div>\n  </div>\n";
+  }
+
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showCompose), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { return stack1; }
+  else { return ''; }
+  });
+
 this["com"]["roost"]["templates"]["MessageView"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n    <div class=\"msg-instance\">";
+  if (helper = helpers.instance) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.instance); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n  ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  
+  return "\n    <div class=\"msg-instance\">*</div>\n  ";
+  }
 
   buffer += "<div class=\"header\">\n  <div class=\"msg-class\">";
   if (helper = helpers['class']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['class']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</div>\n  <div class=\"msg-instance\">";
-  if (helper = helpers.instance) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.instance); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</div>\n  <span class=\"time\">";
+    + "</div>\n  ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.instance), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  <span class=\"time\">";
   if (helper = helpers.prettyTime) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.prettyTime); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)

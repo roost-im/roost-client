@@ -10,8 +10,6 @@ do ->
       @$el.empty()
       template = com.roost.templates['MessageView']
       @$el.append template(@message.attributes)
-      @$el.attr('id', @message.cid + '')
-
       @updateTime()
 
     updateTime: =>

@@ -26,7 +26,6 @@
         this.$el.empty();
         template = com.roost.templates['MessageView'];
         this.$el.append(template(this.message.attributes));
-        this.$el.attr('id', this.message.cid + '');
         return this.updateTime();
       };
 

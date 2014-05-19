@@ -1,6 +1,10 @@
 <div class="header">
   <div class="msg-class">{{class}}</div>
-  <div class="msg-instance">{{instance}}</div>
+  {{#if instance}}
+    <div class="msg-instance">{{instance}}</div>
+  {{else}}
+    <div class="msg-instance">*</div>
+  {{/if}}
   <span class="time">{{prettyTime}}</span>
 </div>
 <div class="content">

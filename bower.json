@@ -14,6 +14,7 @@
     "underscore": "latest",
     "backbone": "latest",
     "handlebars": "latest",
-    "moment": "latest"
+    "moment": "latest",
+    "font-awesome": "latest"
   }
 }
