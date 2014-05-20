@@ -5,12 +5,21 @@ this["com"]["roost"]["templates"] = this["com"]["roost"]["templates"] || {};
 this["com"]["roost"]["templates"]["ComposeBar"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var stack1, self=this;
+  var stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
   
-  
-  return "\n  <div class=\"top-bar\">\n    <div class=\"title\">\n      Compose Message\n    </div>\n    <div class=\"close\">&times;</div>\n  </div>\n  <div class=\"composer\">\n    <input class=\"class-input\" type=\"text\" placeholder=\"Class\"></input>\n    <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\"></input>\n    <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\"></input>\n    <textarea rows=\"6\" placeholder=\"Type your message here\"></textarea>\n    <div class=\"btn send\">Send</div>\n  </div>\n";
+  var buffer = "", stack1;
+  buffer += "\n  <div class=\"top-bar\">\n    <div class=\"title\">\n      Compose Message\n    </div>\n    <div class=\"close\">&times;</div>\n  </div>\n  <div class=\"composer\">\n    <input class=\"class-input\" type=\"text\" placeholder=\"Class\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.composeFields)),stack1 == null || stack1 === false ? stack1 : stack1['class'])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"></input>\n    <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.composeFields)),stack1 == null || stack1 === false ? stack1 : stack1.instance)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"></input>\n    <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.composeFields)),stack1 == null || stack1 === false ? stack1 : stack1.recipient)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"></input>\n    <textarea class=\"content-input\" rows=\"6\" placeholder=\"Type your message here\">"
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.composeFields)),stack1 == null || stack1 === false ? stack1 : stack1.content)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</textarea>\n    <div class=\"btn send\">Send</div>\n  </div>\n";
+  return buffer;
   }
 
 function program3(depth0,data) {
@@ -32,7 +41,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   
-  return "\n      <i class=\"fa fa-filter fa-rotate-180\"></i>&nbsp;&nbsp;Hide Filters\n    ";
+  return "\n      <i class=\"fa fa-filter\"></i>&nbsp;&nbsp;Hide Filters\n    ";
   }
 
 function program3(depth0,data) {
@@ -59,33 +68,18 @@ function program5(depth0,data) {
 this["com"]["roost"]["templates"]["MessageView"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
-function program1(depth0,data) {
-  
-  var buffer = "", stack1, helper;
-  buffer += "\n    <div class=\"msg-instance\">";
-  if (helper = helpers.instance) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.instance); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "</div>\n  ";
-  return buffer;
-  }
-
-function program3(depth0,data) {
-  
-  
-  return "\n    <div class=\"msg-instance\">*</div>\n  ";
-  }
 
   buffer += "<div class=\"header\">\n  <div class=\"msg-class\">";
   if (helper = helpers['class']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0['class']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</div>\n  ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.instance), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
-  if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  <span class=\"time from-now\">";
+    + "</div>\n  <div class=\"msg-instance\">";
+  if (helper = helpers.instance) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.instance); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</div>\n  <span class=\"time from-now\">";
   if (helper = helpers.prettyTime) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.prettyTime); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -101,11 +95,11 @@ function program3(depth0,data) {
   if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    </div>\n    <div class=\"signature\">\n      ";
+    + "\n    </div>\n    <div class=\"bottom-row\">\n      <div class=\"signature\">\n        ";
   if (helper = helpers.signature) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.signature); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    </div>\n  </div>\n</div>";
+    + "\n      </div>\n      <div class=\"controls\">\n        <i class=\"fa fa-quote-right quote\"></i>\n        <i class=\"fa fa-reply reply\"></i>\n        <i class=\"fa fa-envelope pm\"></i>\n      </div>\n    </div>\n  </div>\n</div>";
   return buffer;
   });
 

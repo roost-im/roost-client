@@ -195,11 +195,31 @@
         padding: 3px;
         margin-bottom: 40px;
         word-break: break-all;
-        word-wrap: break-word; }
-      .message-view .content .message-block .signature {
-        text-align: right;
+        word-wrap: break-word;
+        margin-top: 0px; }
+      .message-view .content .message-block .bottom-row {
         padding: 5px;
-        font-size: 12px; }
+        font-size: 12px;
+        height: 15px;
+        position: relative; }
+        .message-view .content .message-block .bottom-row .signature {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 300px;
+          float: left; }
+        .message-view .content .message-block .bottom-row .controls {
+          position: absolute;
+          bottom: 5px;
+          right: 5px; }
+          .message-view .content .message-block .bottom-row .controls i.fa {
+            line-height: 15px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 16px;
+            color: #888; }
+            .message-view .content .message-block .bottom-row .controls i.fa:hover {
+              color: black; }
 
 .compose-bar {
   bottom: 0;

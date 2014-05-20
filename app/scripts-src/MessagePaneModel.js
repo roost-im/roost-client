@@ -15,18 +15,19 @@
       MessagePaneModel.prototype.defaults = function() {
         var attrs;
         attrs = {
-          filters: {},
           position: null,
           lastPositions: [],
           messages: new Backbone.Collection(),
           showFilters: false,
+          filters: {},
           showCompose: false,
           composeFields: {
-            klass: '',
+            "class": '',
             instance: '',
             recipient: '',
             content: ''
           },
+          sending: false,
           selected: false,
           isTopDone: false,
           isBottomDone: true,

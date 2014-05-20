@@ -91,6 +91,7 @@ do ->
       # Let's make our times more friendly
       for message in msgs
         message.time = moment(message.time)
+        message.message = message.message.trim()
 
       # If we are at our cache size, reduce the size of our cache
       # by as many messages as we just received.

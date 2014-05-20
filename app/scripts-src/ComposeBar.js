@@ -8,6 +8,8 @@
       __extends(ComposeBar, _super);
 
       function ComposeBar() {
+        this._updateButton = __bind(this._updateButton, this);
+        this._sendMessage = __bind(this._sendMessage, this);
         this._jumpToBottom = __bind(this._jumpToBottom, this);
         this._hideCompose = __bind(this._hideCompose, this);
         this._showCompose = __bind(this._showCompose, this);
@@ -21,12 +23,14 @@
       ComposeBar.prototype.events = {
         'click .compose': '_showCompose',
         'click .close': '_hideCompose',
-        'click .to-bottom': '_jumpToBottom'
+        'click .to-bottom': '_jumpToBottom',
+        'click .send': '_sendMessage'
       };
 
       ComposeBar.prototype.initialize = function(options) {
         this.paneModel = options.paneModel;
-        return this.listenTo(this.paneModel, 'change:showCompose change:composeFields', this.render);
+        this.listenTo(this.paneModel, 'change:showCompose', this.render);
+        return this.listenTo(this.paneModel, 'change:sending', this._updateButton);
       };
 
       ComposeBar.prototype.render = function() {
@@ -41,12 +45,41 @@
       };
 
       ComposeBar.prototype._hideCompose = function() {
-        return this.paneModel.set('showCompose', false);
+        return this.paneModel.set({
+          showCompose: false,
+          composeFields: {
+            "class": '',
+            instance: '',
+            recipient: '',
+            content: ''
+          }
+        });
       };
 
       ComposeBar.prototype._jumpToBottom = function() {
         this.paneModel.set('loaded', false);
         return this.paneModel.trigger('toBottom');
+      };
+
+      ComposeBar.prototype._sendMessage = function() {
+        if (!this.paneModel.get('sending')) {
+          this.paneModel.set('composeFields', {
+            "class": this.$('.class-input').val(),
+            instance: this.$('.instance-input').val(),
+            recipient: this.$('.recipient-input').val(),
+            content: this.$('.content-input').val()
+          });
+          this.paneModel.set('sending', true);
+          return this.paneModel.trigger('sendMessage');
+        }
+      };
+
+      ComposeBar.prototype._updateButton = function() {
+        if (this.paneModel.get('sending')) {
+          return this.$('.send').addClass('disabled').text('Sending...');
+        } else {
+          return this.$('.send').removeClass('disabled').text('Send');
+        }
       };
 
       return ComposeBar;

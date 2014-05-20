@@ -2,19 +2,21 @@ do ->
   class com.roost.MessagePaneModel extends Backbone.Model
     defaults: =>
       attrs = {
-        filters: {}
         position: null
         lastPositions: []
         messages: new Backbone.Collection()
 
         showFilters: false
+        filters: {}
+
         showCompose: false
         composeFields: {
-          klass: ''
+          class: ''
           instance: ''
           recipient: ''
           content: ''
         }
+        sending: false
 
         selected: false
 

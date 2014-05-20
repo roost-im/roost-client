@@ -89,12 +89,40 @@
         margin-bottom: 40px;
         word-break: break-all;
         word-wrap: break-word;
+        margin-top: 0px;
       }
 
-      .signature {
-        text-align: right;
+      .bottom-row {
         padding: 5px;
         font-size: 12px;
+        height: 15px;
+        position: relative;
+
+        .signature {
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          width: 300px; // FUCK THIS THING
+          float: left;
+        }
+
+        .controls {
+          position: absolute;
+          bottom: 5px;
+          right: 5px;
+
+          i.fa {
+            line-height: 15px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 16px;
+            color: #888;
+
+            &:hover {
+              color: black;
+            }
+          }
+        }
       }
     }
   }

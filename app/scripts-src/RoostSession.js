@@ -12,6 +12,7 @@
         });
         this.messageLists = new Backbone.Collection();
         this.messageControllers = {};
+        this.composeControllers = {};
         this.localStorage = new LocalStorageWrapper();
         this.storageManager = new StorageManager(this.localStorage);
         this.ticketManager = new TicketManager(CONFIG.webathena, this.storageManager);
@@ -19,7 +20,7 @@
       }
 
       RoostSession.prototype.addPane = function(filters, position) {
-        var paneController, paneModel;
+        var composeController, paneController, paneModel;
         paneModel = new com.roost.MessagePaneModel({
           filters: filters,
           position: position
@@ -29,14 +30,21 @@
           api: this.api
         });
         paneController.fetchFromBottom();
+        composeController = new com.roost.ComposeController({
+          model: paneModel,
+          api: this.api
+        });
         this.messageLists.push(paneModel);
-        return this.messageControllers[paneModel.cid] = paneController;
+        this.messageControllers[paneModel.cid] = paneController;
+        return this.composeControllers[paneModel.cid] = composeController;
       };
 
       RoostSession.prototype.removePane = function(cid) {
         this.messageControllers[cid].stopListening();
+        this.composeControllers[cid].stopListening();
         this.messageLists.remove(cid);
-        return delete this.messageControllers[cid];
+        delete this.messageControllers[cid];
+        return delete this.composeControllers[cid];
       };
 
       return RoostSession;

@@ -83,6 +83,7 @@
         for (_i = 0, _len = msgs.length; _i < _len; _i++) {
           message = msgs[_i];
           message.time = moment(message.time);
+          message.message = message.message.trim();
         }
         if (messages.length >= com.roost.CACHE_SIZE) {
           this.clearTopOfCache(msgs.length);

@@ -4,12 +4,16 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   (function() {
-    var TIME_FORMAT;
+    var QUOTE_LINE_PREFIX, TIME_FORMAT;
     TIME_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
+    QUOTE_LINE_PREFIX = '> ';
     return com.roost.MessageView = (function(_super) {
       __extends(MessageView, _super);
 
       function MessageView() {
+        this._openQuoteBox = __bind(this._openQuoteBox, this);
+        this._openMessageBox = __bind(this._openMessageBox, this);
+        this._openReplyBox = __bind(this._openReplyBox, this);
         this.remove = __bind(this.remove, this);
         this.updateTime = __bind(this.updateTime, this);
         this.render = __bind(this.render, this);
@@ -18,6 +22,12 @@
       }
 
       MessageView.prototype.className = 'message-view';
+
+      MessageView.prototype.events = {
+        'click .reply': '_openReplyBox',
+        'click .pm': '_openMessageBox',
+        'click .quote': '_openQuoteBox'
+      };
 
       MessageView.prototype.initialize = function(options) {
         this.message = options.message;
@@ -45,6 +55,44 @@
         MessageView.__super__.remove.apply(this, arguments);
         delete this.$el;
         return delete this.el;
+      };
+
+      MessageView.prototype._openReplyBox = function() {
+        return this.paneModel.set({
+          composeFields: {
+            "class": this.message.get('class'),
+            instance: this.message.get('instance'),
+            recipient: '',
+            content: ''
+          },
+          showCompose: true
+        });
+      };
+
+      MessageView.prototype._openMessageBox = function() {
+        return this.paneModel.set({
+          composeFields: {
+            "class": 'message',
+            instance: 'personal',
+            recipient: shortZuser(this.message.get('sender')),
+            content: ''
+          },
+          showCompose: true
+        });
+      };
+
+      MessageView.prototype._openQuoteBox = function() {
+        var quoted;
+        quoted = QUOTE_LINE_PREFIX + this.message.get('message').replace('\n', "\n" + QUOTE_LINE_PREFIX);
+        return this.paneModel.set({
+          composeFields: {
+            "class": this.message.get('class'),
+            instance: this.message.get('instance'),
+            recipient: '',
+            content: quoted
+          },
+          showCompose: true
+        });
       };
 
       return MessageView;

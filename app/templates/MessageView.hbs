@@ -1,10 +1,6 @@
 <div class="header">
   <div class="msg-class">{{class}}</div>
-  {{#if instance}}
-    <div class="msg-instance">{{instance}}</div>
-  {{else}}
-    <div class="msg-instance">*</div>
-  {{/if}}
+  <div class="msg-instance">{{instance}}</div>
   <span class="time from-now">{{prettyTime}}</span>
   <span class="time absolute">{{absoluteTime}}</span>
 </div>
@@ -16,8 +12,15 @@
     <div class="message">
       {{message}}
     </div>
-    <div class="signature">
-      {{signature}}
+    <div class="bottom-row">
+      <div class="signature">
+        {{signature}}
+      </div>
+      <div class="controls">
+        <i class="fa fa-quote-right quote"></i>
+        <i class="fa fa-reply reply"></i>
+        <i class="fa fa-envelope pm"></i>
+      </div>
     </div>
   </div>
 </div>

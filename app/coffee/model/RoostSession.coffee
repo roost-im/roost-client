@@ -12,6 +12,9 @@ do ->
       # Map of message controllers
       @messageControllers = {}
 
+      # Map of compose controllers
+      @composeControllers = {}
+
       # Singleton services we need to hold on to
       # Currently uses old Roost objects
       @localStorage = new LocalStorageWrapper()
@@ -31,10 +34,17 @@ do ->
         api: @api
       paneController.fetchFromBottom()
 
+      composeController = new com.roost.ComposeController
+        model: paneModel
+        api: @api
+
       @messageLists.push paneModel
       @messageControllers[paneModel.cid] = paneController
+      @composeControllers[paneModel.cid] = composeController
 
     removePane: (cid) =>
       @messageControllers[cid].stopListening()
+      @composeControllers[cid].stopListening()
       @messageLists.remove(cid)
       delete @messageControllers[cid]
+      delete @composeControllers[cid]
