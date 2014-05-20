@@ -68,8 +68,13 @@ do ->
         messages.reset msgs
 
         # Forward tail to get messages going downward (more recent).
-        # Must be created after reset because starting ID is the latest message. 
-        @forwardTail = @messageModel.newTailInclusive(msgs[msgs.length - 1].id, @model.get('filters'), @addMessagesToBottomOfList)
+        # Must be created after reset because starting ID is the latest message.
+        if msgs.length == 0
+          # Special case for handling when there are no messages to show
+          @model.set 'isBottomDone', true
+          @forwardTail = @messageModel.newTailInclusive(null, @model.get('filters'), @addMessagesToBottomOfList)
+        else
+          @forwardTail = @messageModel.newTailInclusive(msgs[msgs.length - 1].id, @model.get('filters'), @addMessagesToBottomOfList)
 
         # FIXME: for some reason, live messages only work if this is triggered once.
         @onScrollDown()

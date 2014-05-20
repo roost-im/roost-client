@@ -1,7 +1,16 @@
 <div class="top-bar">
   <div class="title">
-    {{!-- TODO: Make a handlebars helper --}}
-    All Messages
+    {{#if filters.instance_key}}
+      <div class="msg-class">{{filters.class_key}}</div>
+      <div class="divider"></div>
+      <div class="msg-instance">{{filters.instance_key}}</div>
+    {{else}}
+      {{#if filters.class_key}}
+        {{filters.class_key}}
+      {{else}}
+        All Messages
+      {{/if}}
+    {{/if}}
   </div>
   <div class="remove">&times;</div>
   <div class="filters">
@@ -11,8 +20,17 @@
       <i class="fa fa-filter"></i>&nbsp;&nbsp;Show Filters
     {{/if}}
   </div>
+  {{#if filters.class_key}}
+    <div class="clear-filters">
+      <i class="fa fa-ban"></i>&nbsp;&nbsp;Clear Filters
+    </div>
+  {{/if}}
 </div>
 {{#if showFilters}}
   <div class="filter-editor">
+    <input class="class-input" type="text" placeholder="Class" value="{{filters.class_key}}"></input>
+    <input class="instance-input" type="text" placeholder="Instance" value="{{filters.instance_key}}"></input>
+    <input class="recipient-input" type="text" placeholder="Recipient" value="{{filters.recipient}}"></input>
+    <div class="btn set-filters">Set Filters</div>
   </div>
 {{/if}}

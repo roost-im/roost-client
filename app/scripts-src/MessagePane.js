@@ -52,11 +52,12 @@
         this.$el.append(paneView.$el);
         this._recalculateWidth();
         paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
-        return this.listenTo(paneModel, 'messagesSet', ((function(_this) {
+        this.listenTo(paneModel, 'messagesSet', ((function(_this) {
           return function() {
             return paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
           };
         })(this)));
+        return this.$el.scrollLeft(this.$el[0].scrollWidth);
       };
 
       MessagePane.prototype._removePaneView = function(model) {

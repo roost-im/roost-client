@@ -36,31 +36,85 @@ function program3(depth0,data) {
 this["com"]["roost"]["templates"]["FilterBar"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, self=this;
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
 
 function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      <div class=\"msg-class\">"
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</div>\n      <div class=\"divider\"></div>\n      <div class=\"msg-instance\">"
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.instance_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</div>\n    ";
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n      ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key), {hash:{},inverse:self.program(6, program6, data),fn:self.program(4, program4, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    ";
+  return buffer;
+  }
+function program4(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n        "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\n      ";
+  return buffer;
+  }
+
+function program6(depth0,data) {
+  
+  
+  return "\n        All Messages\n      ";
+  }
+
+function program8(depth0,data) {
   
   
   return "\n      <i class=\"fa fa-filter\"></i>&nbsp;&nbsp;Hide Filters\n    ";
   }
 
-function program3(depth0,data) {
+function program10(depth0,data) {
   
   
   return "\n      <i class=\"fa fa-filter\"></i>&nbsp;&nbsp;Show Filters\n    ";
   }
 
-function program5(depth0,data) {
+function program12(depth0,data) {
   
   
-  return "\n  <div class=\"filter-editor\">\n  </div>\n";
+  return "\n    <div class=\"clear-filters\">\n      <i class=\"fa fa-ban\"></i>&nbsp;&nbsp;Clear Filters\n    </div>\n  ";
   }
 
-  buffer += "<div class=\"top-bar\">\n  <div class=\"title\">\n    \n    All Messages\n  </div>\n  <div class=\"remove\">&times;</div>\n  <div class=\"filters\">\n    ";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+function program14(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += "\n  <div class=\"filter-editor\">\n    <input class=\"class-input\" type=\"text\" placeholder=\"Class\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"></input>\n    <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.instance_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"></input>\n    <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\" value=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.recipient)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\"></input>\n    <div class=\"btn set-filters\">Set Filters</div>\n  </div>\n";
+  return buffer;
+  }
+
+  buffer += "<div class=\"top-bar\">\n  <div class=\"title\">\n    ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.instance_key), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </div>\n</div>\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  buffer += "\n  </div>\n  <div class=\"remove\">&times;</div>\n  <div class=\"filters\">\n    ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.program(10, program10, data),fn:self.program(8, program8, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </div>\n  ";
+  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key), {hash:{},inverse:self.noop,fn:self.program(12, program12, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n</div>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.noop,fn:self.program(14, program14, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   return buffer;
   });
@@ -119,7 +173,7 @@ function program1(depth0,data) {
   if (helper = helpers.gravatar) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.gravatar); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n  </div>\n  <div class=\"add-pane\">\n    <i class=\"fa fa-plus\"></i>&nbsp;New Pane\n  </div>\n";
+    + "\">\n  </div>\n  <div class=\"add-pane\">\n    <i class=\"fa fa-plus\"></i>&nbsp;&nbsp;New Pane\n  </div>\n  <div class=\"personal-message\">\n    <i class=\"fa fa-envelope-o\"></i>&nbsp;&nbsp;Personal Messages\n  </div>\n";
   return buffer;
   }
 

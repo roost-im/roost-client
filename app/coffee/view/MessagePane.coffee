@@ -37,6 +37,9 @@ do ->
         paneView.$el.scrollTop(paneView.$el[0].scrollHeight)
       )
 
+      # Move our scroll to the newest added pane
+      @$el.scrollLeft(@$el[0].scrollWidth)
+
     _removePaneView: (model) =>
       for view in @childViews
         if view.model.cid == model.cid

@@ -27,7 +27,7 @@ do ->
     updateColors: =>
       string = @message.get('class')
       color = shadeColor(stringToColor(string), 0.5)
-      lighterColor = shadeColor(color, 0.3)
+      lighterColor = shadeColor(color, 0.4)
 
       @$('.header').css
         background: lighterColor

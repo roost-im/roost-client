@@ -17,13 +17,14 @@
     -moz-box-sizing: border-box;
     display: inline-block;
     white-space: normal;
+    padding-top: $compose-filter-bar-height;
 
     &:last-child {
       border: none;
     }
 
     .filler-view {
-      height: 60%;
+      height: 70%;
     }
   }
 

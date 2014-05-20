@@ -86,12 +86,12 @@ do ->
       )
 
       @composeView.$el.css(
-        width: "#{width}%",
+        width: "#{width}%"
         left: "#{index * width}%"
       )
 
       @filterView.$el.css(
-        width: "#{width}%",
+        width: "#{width}%"
         left: "#{index * width}%"
       )
 

@@ -54,7 +54,7 @@
         var color, lighterColor, string;
         string = this.message.get('class');
         color = shadeColor(stringToColor(string), 0.5);
-        lighterColor = shadeColor(color, 0.3);
+        lighterColor = shadeColor(color, 0.4);
         this.$('.header').css({
           background: lighterColor
         });

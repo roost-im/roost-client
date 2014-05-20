@@ -58,7 +58,12 @@
         if (!this.model.get('loaded')) {
           this.model.set('loaded', true);
           messages.reset(msgs);
-          this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
+          if (msgs.length === 0) {
+            this.model.set('isBottomDone', true);
+            this.forwardTail = this.messageModel.newTailInclusive(null, this.model.get('filters'), this.addMessagesToBottomOfList);
+          } else {
+            this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
+          }
           return this.onScrollDown();
         } else {
           if (messages.length >= com.roost.CACHE_SIZE) {

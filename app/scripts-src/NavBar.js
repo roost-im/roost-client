@@ -8,6 +8,7 @@
       __extends(NavBar, _super);
 
       function NavBar() {
+        this._addPersonalMessagePane = __bind(this._addPersonalMessagePane, this);
         this._addPane = __bind(this._addPane, this);
         this.handleLogout = __bind(this.handleLogout, this);
         this.handleLogin = __bind(this.handleLogin, this);
@@ -21,7 +22,8 @@
       NavBar.prototype.events = {
         'click .login': 'handleLogin',
         'click .logout': 'handleLogout',
-        'click .add-pane': '_addPane'
+        'click .add-pane': '_addPane',
+        'click .personal-message': '_addPersonalMessagePane'
       };
 
       NavBar.prototype.initialize = function(options) {
@@ -53,6 +55,13 @@
 
       NavBar.prototype._addPane = function() {
         return this.session.addPane({}, null);
+      };
+
+      NavBar.prototype._addPersonalMessagePane = function() {
+        return this.session.addPane({
+          class_key: 'message',
+          instance_key: 'personal'
+        }, null);
       };
 
       return NavBar;

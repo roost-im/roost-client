@@ -3,7 +3,6 @@ do ->
     defaults: =>
       attrs = {
         position: null
-        lastPositions: []
         messages: new Backbone.Collection()
 
         showFilters: false

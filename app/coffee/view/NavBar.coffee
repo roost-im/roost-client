@@ -6,6 +6,7 @@ do ->
       'click .login': 'handleLogin'
       'click .logout': 'handleLogout'
       'click .add-pane': '_addPane'
+      'click .personal-message': '_addPersonalMessagePane'
 
     initialize: (options) =>
       @session = options.session
@@ -29,3 +30,6 @@ do ->
 
     _addPane: =>
       @session.addPane {}, null
+
+    _addPersonalMessagePane: =>
+      @session.addPane {class_key: 'message', instance_key: 'personal'}, null

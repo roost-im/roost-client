@@ -59,6 +59,12 @@
     cursor: pointer;
   }
 
+  .personal-message {
+    float: right;
+    margin-right: 25px;
+    cursor: pointer;
+  }
+
   .btn {
     @include button-variant($primary-btn-color, $primary-btn-bg);
     float: right;
