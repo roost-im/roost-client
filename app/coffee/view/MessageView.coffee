@@ -19,9 +19,23 @@ do ->
       template = com.roost.templates['MessageView']
       @$el.append template(_.defaults({}, @message.attributes, {absoluteTime: @message.get('time').format(TIME_FORMAT)}))
       @updateTime()
+      @updateColors()
 
     updateTime: =>
       @$('.time.from-now').text(@message.get('time').fromNow())
+
+    updateColors: =>
+      string = @message.get('class')
+      color = shadeColor(stringToColor(string), 0.5)
+      lighterColor = shadeColor(color, 0.3)
+
+      @$('.header').css
+        background: lighterColor
+
+      @$('.msg-class').css
+        background: color
+
+      @$('.divider').css("border-left", "5px solid #{color}")
 
     remove: =>
       @undelegateEvents()

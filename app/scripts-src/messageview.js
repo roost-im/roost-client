@@ -15,6 +15,7 @@
         this._openMessageBox = __bind(this._openMessageBox, this);
         this._openReplyBox = __bind(this._openReplyBox, this);
         this.remove = __bind(this.remove, this);
+        this.updateColors = __bind(this.updateColors, this);
         this.updateTime = __bind(this.updateTime, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
@@ -41,11 +42,26 @@
         this.$el.append(template(_.defaults({}, this.message.attributes, {
           absoluteTime: this.message.get('time').format(TIME_FORMAT)
         })));
-        return this.updateTime();
+        this.updateTime();
+        return this.updateColors();
       };
 
       MessageView.prototype.updateTime = function() {
         return this.$('.time.from-now').text(this.message.get('time').fromNow());
+      };
+
+      MessageView.prototype.updateColors = function() {
+        var color, lighterColor, string;
+        string = this.message.get('class');
+        color = shadeColor(stringToColor(string), 0.5);
+        lighterColor = shadeColor(color, 0.3);
+        this.$('.header').css({
+          background: lighterColor
+        });
+        this.$('.msg-class').css({
+          background: color
+        });
+        return this.$('.divider').css("border-left", "5px solid " + color);
       };
 
       MessageView.prototype.remove = function() {
