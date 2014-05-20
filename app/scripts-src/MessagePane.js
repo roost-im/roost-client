@@ -4,6 +4,8 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   (function() {
+    var MAX_PANES_ON_SCREEN;
+    MAX_PANES_ON_SCREEN = 3;
     return com.roost.MessagePane = (function(_super) {
       __extends(MessagePane, _super);
 
@@ -81,7 +83,7 @@
 
       MessagePane.prototype._recalculateWidth = function() {
         var index, view, width, _i, _len, _ref, _results;
-        width = Math.floor(100 / this.childViews.length);
+        width = Math.max(Math.floor(100 / this.childViews.length), Math.floor(100 / MAX_PANES_ON_SCREEN));
         index = 0;
         _ref = this.childViews;
         _results = [];

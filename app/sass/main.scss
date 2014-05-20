@@ -12,5 +12,6 @@ html, body {
   padding: 0px;
   margin: 0px;
   font-family: sans-serif;
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: auto;
 }

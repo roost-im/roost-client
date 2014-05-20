@@ -104,15 +104,18 @@
   bottom: 0;
   left: 0;
   right: 0;
-  overflow-wrap: break-word; }
+  overflow-wrap: break-word;
+  white-space: nowrap;
+  overflow-y: hidden; }
   .message-pane .message-pane-view {
-    float: left;
     height: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
     border-right: 1px solid #333;
     box-sizing: border-box;
-    -moz-box-sizing: border-box; }
+    -moz-box-sizing: border-box;
+    display: inline-block;
+    white-space: normal; }
     .message-pane .message-pane-view:last-child {
       border: none; }
     .message-pane .message-pane-view .filler-view {
@@ -263,13 +266,14 @@
     margin-top: 15px; }
     .compose-bar .composer input, .compose-bar .composer textarea {
       width: 90%;
-      font-size: 16px;
+      font-size: 14px;
       padding: 3px 5px;
       border: none;
       outline: none;
       margin-bottom: 5px;
       margin-left: 5%;
-      margin-right: 5%; }
+      margin-right: 5%;
+      font-family: monospace; }
     .compose-bar .composer .send {
       color: #eeeeee;
       background-color: #3178d3;
@@ -323,4 +327,5 @@ html, body {
   padding: 0px;
   margin: 0px;
   font-family: sans-serif;
-  overflow: hidden; }
+  overflow-y: hidden;
+  overflow-x: auto; }

@@ -1,4 +1,7 @@
 do ->
+  # TODO: determine this dynamically based on window size and adjust accordingly.
+  MAX_PANES_ON_SCREEN = 3
+
   class com.roost.MessagePane extends Backbone.View
     className: 'message-pane'
 
@@ -50,7 +53,7 @@ do ->
         @$el.append($('<div class="no-panes">').text('Click "New Pane" above to start browsing your messages.'))
 
     _recalculateWidth: =>
-      width = Math.floor(100/@childViews.length)
+      width = Math.max(Math.floor(100/@childViews.length), Math.floor(100/MAX_PANES_ON_SCREEN))
       index = 0
       for view in @childViews
         view.recalculateWidth index, width

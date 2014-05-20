@@ -11,7 +11,7 @@ do ->
     initialize: (options) =>
       @paneModel = options.paneModel
 
-      @listenTo @paneModel, 'change:showCompose', @render
+      @listenTo @paneModel, 'change:showCompose change:composeFields', @render
       @listenTo @paneModel, 'change:sending', @_updateButton
 
     render: =>

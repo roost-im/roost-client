@@ -29,7 +29,7 @@
 
       ComposeBar.prototype.initialize = function(options) {
         this.paneModel = options.paneModel;
-        this.listenTo(this.paneModel, 'change:showCompose', this.render);
+        this.listenTo(this.paneModel, 'change:showCompose change:composeFields', this.render);
         return this.listenTo(this.paneModel, 'change:sending', this._updateButton);
       };
 

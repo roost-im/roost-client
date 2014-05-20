@@ -5,15 +5,18 @@
   left: 0;
   right: 0;
   overflow-wrap: break-word;
+  white-space: nowrap;
+  overflow-y: hidden;
 
   .message-pane-view {
-    float: left;
     height: 100%;
     overflow-y: scroll;
     overflow-x: hidden;
     border-right: 1px solid #333;
     box-sizing: border-box;
     -moz-box-sizing: border-box;
+    display: inline-block;
+    white-space: normal;
 
     &:last-child {
       border: none;
