@@ -130,7 +130,7 @@
 
 .message-view {
   width: 100%;
-  max-width: 650px;
+  max-width: 700px;
   margin: auto;
   box-sizing: border-box;
   border: 1px solid black;
@@ -183,8 +183,8 @@
       font-size: 14px;
       position: relative;
       z-index: 2;
-      max-width: 130px;
-      width: 130px;
+      max-width: 90px;
+      width: 90px;
       box-sizing: border-box; }
     .message-view .content .message-block {
       display: table-cell;
@@ -194,7 +194,9 @@
         margin-bottom: 40px;
         word-break: break-all;
         word-wrap: break-word;
-        margin-top: 0px; }
+        margin-top: 0px;
+        white-space: pre-line;
+        font-size: 14px; }
       .message-view .content .message-block .bottom-row {
         padding: 5px;
         font-size: 12px;

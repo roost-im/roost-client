@@ -91,11 +91,11 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.sender) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.sender); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n  </div>\n  <div class=\"message-block\">\n    <div class=\"message\">\n      ";
+    + "\n  </div>\n  <div class=\"message-block\">\n    <pre class=\"message\">\n      ";
   if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n    </div>\n    <div class=\"bottom-row\">\n      <div class=\"signature\">\n        ";
+    + "\n    </pre>\n    <div class=\"bottom-row\">\n      <div class=\"signature\">\n        ";
   if (helper = helpers.signature) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.signature); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
