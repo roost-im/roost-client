@@ -37,7 +37,8 @@
         var template;
         this.$el.empty();
         template = com.roost.templates['ComposeBar'];
-        return this.$el.append(template(this.paneModel.attributes));
+        this.$el.append(template(this.paneModel.attributes));
+        return this.$('.class-input').focus();
       };
 
       ComposeBar.prototype._showCompose = function() {

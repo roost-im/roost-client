@@ -99,7 +99,7 @@
 
       MessageView.prototype._openQuoteBox = function() {
         var quoted;
-        quoted = QUOTE_LINE_PREFIX + this.message.get('message').replace('\n', "\n" + QUOTE_LINE_PREFIX);
+        quoted = QUOTE_LINE_PREFIX + this.message.get('message').replace(/\n/g, "\n" + QUOTE_LINE_PREFIX);
         return this.paneModel.set({
           composeFields: {
             "class": this.message.get('class'),

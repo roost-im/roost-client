@@ -19,6 +19,8 @@ do ->
       template = com.roost.templates['ComposeBar']
       @$el.append template(@paneModel.attributes)
 
+      @$('.class-input').focus()
+
     _showCompose: =>
       @paneModel.set('showCompose', true)
 

@@ -3,6 +3,26 @@
   font-style: normal;
   font-weight: 400;
   src: local("Krona One"), local("KronaOne-Regular"), url(https://themes.googleusercontent.com/static/fonts/kronaone/v2/ix3TbrGcGYAHLWi4hTTy1LO3LdcAZYWl9Si6vvxL-qU.woff) format("woff"); }
+@font-face {
+  font-family: 'Inconsolata';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Inconsolata"), url(https://themes.googleusercontent.com/static/fonts/inconsolata/v7/BjAYBlHtW3CJxDcjzrnZCLrIa-7acMAeDBVuclsi6Gc.woff) format("woff"); }
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: local("Roboto Light"), local("Roboto-Light"), url(https://themes.googleusercontent.com/static/fonts/roboto/v11/Hgo13k-tfSpn0qi1SFdUfbO3LdcAZYWl9Si6vvxL-qU.woff) format("woff"); }
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Roboto Regular"), local("Roboto-Regular"), url(https://themes.googleusercontent.com/static/fonts/roboto/v11/CrYjSnGjrRCn0pd9VQsnFOvvDin1pK8aKteLpeZ5c0A.woff) format("woff"); }
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local("Roboto Bold"), local("Roboto-Bold"), url(https://themes.googleusercontent.com/static/fonts/roboto/v11/d-6IYplOFocCacKzxwXSOLO3LdcAZYWl9Si6vvxL-qU.woff) format("woff"); }
 .btn {
   display: inline-block;
   color: #fff;
@@ -141,12 +161,12 @@
   max-width: 700px;
   margin: auto;
   box-sizing: border-box;
-  border: 1px solid black;
+  border: 1px solid #BBB;
   border-top: none; }
   .message-view .header {
     box-sizing: border-box;
     height: 25px;
-    line-height: 25px;
+    line-height: 24px;
     background-color: #CCC;
     position: relative; }
     .message-view .header:hover .time.from-now {
@@ -204,7 +224,8 @@
         word-wrap: break-word;
         margin-top: 0px;
         white-space: pre-line;
-        font-size: 14px; }
+        font-size: 14px;
+        font-family: "Inconsolata"; }
       .message-view .content .message-block .bottom-row {
         padding: 5px;
         font-size: 12px;
@@ -278,7 +299,7 @@
       margin-bottom: 5px;
       margin-left: 5%;
       margin-right: 5%;
-      font-family: monospace; }
+      font-family: "Inconsolata"; }
     .compose-bar .composer .send {
       color: #eeeeee;
       background-color: #3178d3;
@@ -343,8 +364,7 @@
     .filter-bar .top-bar .remove {
       float: right;
       cursor: pointer;
-      font-size: 30px;
-      margin-top: -2px; }
+      font-size: 30px; }
       .filter-bar .top-bar .remove:hover {
         color: #ff3333; }
   .filter-bar .filter-editor {
@@ -362,7 +382,7 @@
       margin-bottom: 5px;
       margin-left: 5%;
       margin-right: 5%;
-      font-family: monospace; }
+      font-family: "Inconsolata"; }
     .filter-bar .filter-editor .set-filters {
       color: #eeeeee;
       background-color: #3178d3;
@@ -384,6 +404,7 @@ html, body {
   height: 100%;
   padding: 0px;
   margin: 0px;
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
   overflow-y: hidden;
   overflow-x: auto; }

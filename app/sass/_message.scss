@@ -3,13 +3,13 @@
   max-width: 700px;
   margin: auto;
   box-sizing: border-box;
-  border: 1px solid black;
+  border: 1px solid #BBB;
   border-top: none;
 
   .header{
     box-sizing: border-box;
     height: $msg-header-height;
-    line-height: $msg-header-height;
+    line-height: $msg-header-height - 1px;
     background-color: #CCC;
     position: relative;
 
@@ -90,6 +90,7 @@
         margin-top: 0px;
         white-space: pre-line;
         font-size: 14px;
+        font-family: $monospace-font;
       }
 
       .bottom-row {

@@ -1,3 +1,4 @@
+@import "fonts";
 @import "theme";
 @import "components";
 @import "navbar";
@@ -11,7 +12,8 @@ html, body {
   height: 100%;
   padding: 0px;
   margin: 0px;
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
   overflow-y: hidden;
   overflow-x: auto;
 }

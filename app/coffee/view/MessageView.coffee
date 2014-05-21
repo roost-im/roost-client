@@ -65,7 +65,7 @@ do ->
         showCompose: true
 
     _openQuoteBox: =>
-      quoted = QUOTE_LINE_PREFIX + @message.get('message').replace('\n', "\n#{QUOTE_LINE_PREFIX}")
+      quoted = QUOTE_LINE_PREFIX + @message.get('message').replace(/\n/g, "\n#{QUOTE_LINE_PREFIX}")
       @paneModel.set
         composeFields:
           class: @message.get('class')
