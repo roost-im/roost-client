@@ -29,6 +29,7 @@ do ->
       # spawning/deleting a ton of intervals with each scroll.
       @interval = setInterval(@_updateMessageTimes, 30000)
 
+      # Starting index and width of view (as %)
       @index = 0
       @width = 100
 
@@ -42,6 +43,7 @@ do ->
       @childViews = []
 
       # Add MessageView for each message in the list
+      # TODO: Draw something nice in the case of no messages
       for message in @model.get('messages').models
         view = new com.roost.MessageView
           message: message
@@ -53,11 +55,10 @@ do ->
       # Add in the filler view
       @$el.append('<div class="filler-view">')
 
-      # HACK: trigger that the messages are set so parent view moves scroll position.
-      # Why does the parent view need to do that?
-      @model.trigger('messagesSet')
+      # With everything in place, jump the scroll to the bottom
+      @$el.scrollTop(@$el[0].scrollHeight)
 
-      # Mark off which subsection of the list we are currently showing
+      # Mark off which subsection of the cache we are currently showing
       @currentTop = 0
       @currentBottom = @model.get('messages').length
 
@@ -77,10 +78,15 @@ do ->
       @recalculateWidth(@index, @width)
 
     recalculateWidth: (index, width) =>
-      # HACK: store whatever we get to use again if needed
+      # HACK: store whatever we get to use again if rerendered
       @index = index
       @width = width
 
+      # Save our current scroll height
+      @_saveScrollHeight()
+
+      # Update the view, the compose bar, and the filter bar
+      # with the right horizontal position/width.
       @$el.css(
         width: "#{width}%"
       )
@@ -95,19 +101,26 @@ do ->
         left: "#{index * width}%"
       )
 
+      # Restore the scroll position
+      @_restoreScrollHeight()
+
     remove: =>
+      # Clear out compose and filter
       @composeView.remove()
       @filterView.remove()
+
+      # Stop updating times
       clearInterval(@interval)
 
+      # Remove all the messages
       for view in @childViews
         view.remove()
 
+      # Clean ourselves up
       @undelegateEvents()
       @stopListening()
       @$el.removeData().unbind()
       super
-
       delete @$el
       delete @el
 
@@ -123,7 +136,7 @@ do ->
         # Check if we have any more messages in our cache
         if @currentTop > 0
           limit = Math.max(@currentTop - com.roost.EXPANSION_SIZE, 0)
-          for message in messages.slice(limit, @currentTop)
+          for message in messages.slice(limit, @currentTop).reverse()
             @_prependMessage(message)
             @_removeBottomMessage()
         else if @currentTop <= 0 and !@model.get('isTopDone')
@@ -145,6 +158,7 @@ do ->
           return
 
     _addMessages: (message, collection, options) =>
+      # Check prepend vs append
       if options.at == 0
         @_prependMessage(message)
         @_removeBottomMessage()
@@ -153,44 +167,63 @@ do ->
         @_removeTopMessage()
 
     _appendMessage: (message) =>
+      # Add the next message before the filler view
       view = new com.roost.MessageView
         message: message
         paneModel: @model
       view.render()
       @$('.filler-view').before(view.$el)
+
+      # Store the view for update/cleanup later
       @childViews.push(view)
 
+      # Bump the current bottom point in the cache
       @currentBottom = Math.min(@currentBottom + 1, @model.get('messages').length)
 
     _prependMessage: (message) =>
-      oldHeight = @$el[0].scrollHeight
+      # Save off old scroll height
+      @_saveScrollHeight()
+
+      # Add new view to the top
       view = new com.roost.MessageView
         message: message
         paneModel: @model
       view.render()
       @$el.prepend(view.$el)
+
+      # Store the view for update/cleanup later
       @childViews.unshift(view)
 
+      # Update the current top point in the cache
       @currentTop = Math.max(@currentTop - 1, 0)
-      newHeight = @$el[0].scrollHeight
-      change = newHeight - oldHeight
-      @$el.scrollTop(@$el.scrollTop() + change)
+
+      # Jump the scroll position by the delta
+      @_restoreScrollHeight()
 
     _removeTopMessage: =>
       # Save off old scroll height
-      oldHeight = @$el[0].scrollHeight
+      @_saveScrollHeight()
+
+      # Remove the view
       view = @childViews.shift()
       view.remove()
 
-      # HACK: Jump scroll height as much as the change
-      # Keeps view in seemingly same location
+      # Move current top point for cache
       @currentTop = @currentBottom - @childViews.length
-      newHeight = @$el[0].scrollHeight
-      change = oldHeight - newHeight
-      @$el.scrollTop(@$el.scrollTop() - change)
+
+      # Jump scroll position by the delta
+      @_restoreScrollHeight()
 
     _removeBottomMessage: =>
       view = @childViews.pop()      
       view.remove()
 
       @currentBottom = @currentTop + @childViews.length
+
+    _saveScrollHeight: =>
+      @cachedHeight = @$el[0].scrollHeight
+
+    _restoreScrollHeight: =>
+      newHeight = @$el[0].scrollHeight
+      change = @cachedHeight - newHeight
+      @$el.scrollTop(@$el.scrollTop() - change)

@@ -20,11 +20,12 @@ do ->
       @messageModel = new MessageModel(@api)
 
       # Listen to events on the model
-      @listenTo @model, 'scrollUp', @onScrollUp
-      @listenTo @model, 'scrollDown', @onScrollDown
+      @listenTo @model, 'scrollUp', @_onScrollUp
+      @listenTo @model, 'scrollDown', @_onScrollDown
       @listenTo @model, 'toBottom', @fetchFromBottom
 
       # Keep track of how far we've moved the tails up/down
+      # This is kind of awkward but necessary state tracking
       @lastReverseStep = 0
       @lastForwardStep = 0
 
@@ -35,19 +36,19 @@ do ->
       @reverseTail.expandTo(com.roost.STARTING_SIZE)
       @lastReverseStep = com.roost.STARTING_SIZE
 
-    onPositionJump: =>
-      # Handles fetching a new set of data on a position jump
-      return
-
-    onScrollUp: =>
+    _onScrollUp: =>
       # Handles building the reverse tail upward
       @lastReverseStep += com.roost.EXPANSION_SIZE
       @reverseTail.expandTo(@lastReverseStep)
 
-    onScrollDown: =>
+    _onScrollDown: =>
       # Handles building the forward tail downward
       @lastForwardStep += com.roost.EXPANSION_SIZE
       @forwardTail.expandTo(@lastForwardStep)
+
+    onPositionJump: =>
+      # Handles fetching a new set of data on a position jump
+      return
 
     onFilterChange: =>
       # Handles updating the list when the filters have changed
@@ -59,7 +60,7 @@ do ->
 
       # Let's make our times more friendly
       for message in msgs
-        message.time = moment(message.time)
+        @_processMesssage(message)
 
       # If this is our first time populating the list, reset
       # Also create the forward tail.
@@ -70,19 +71,20 @@ do ->
         # Forward tail to get messages going downward (more recent).
         # Must be created after reset because starting ID is the latest message.
         if msgs.length == 0
-          # Special case for handling when there are no messages to show
+          # Special case for handling when there are no messages to show: both top and bottom done
           @model.set 'isBottomDone', true
           @forwardTail = @messageModel.newTailInclusive(null, @model.get('filters'), @addMessagesToBottomOfList)
         else
           @forwardTail = @messageModel.newTailInclusive(msgs[msgs.length - 1].id, @model.get('filters'), @addMessagesToBottomOfList)
 
-        # FIXME: for some reason, live messages only work if this is triggered once.
-        @onScrollDown()
+        # Trigger this to expand the forward tail down and get live messages
+        # Unclear as to why this has to happen, but it does
+        @_onScrollDown()
       else
         # If we are at our cache size, reduce the size of our cache
         # by as many messages as we just received.
         if messages.length >= com.roost.CACHE_SIZE
-          @clearBottomOfCache(msgs.length)
+          @_clearBottomOfCache(msgs.length)
 
         # Add all the messages in (reversed because reverse tail)
         # Messages are added to the START of our list
@@ -94,35 +96,42 @@ do ->
       messages = @model.get 'messages'
 
       # Let's make our times more friendly
+      # and remove any trailing whitespace
       for message in msgs
-        message.time = moment(message.time)
-        message.message = message.message.trim()
+        @_processMesssage(message)
 
       # If we are at our cache size, reduce the size of our cache
       # by as many messages as we just received.
       if messages.length >= com.roost.CACHE_SIZE
-        @clearTopOfCache(msgs.length)
+        @_clearTopOfCache(msgs.length)
 
       # Add all the messages in correct order to the END of our list
       for message in msgs.slice(0)
         messages.add message, {at: messages.length}
 
-    clearTopOfCache: (length) =>
+    _clearTopOfCache: (length) =>
       messages = @model.get 'messages'
       for i in [0..length-1]
-        messages.shift()
+        oldMsg = messages.shift()
+        oldMsg.off()
 
       # Bump down our upward tail to the new starting point and reset upward state
       @reverseTail = @messageModel.newReverseTail(messages.at(0).id, @model.get('filters'), @addMessagesToTopOfList)
       @model.set 'isTopDone', false
       @lastReverseStep = 0
 
-    clearBottomOfCache: (length) =>
+    _clearBottomOfCache: (length) =>
       messages = @model.get 'messages'
       for i in [0..length-1]
-        messages.pop()
+        oldMsg = messages.pop()
+        oldMsg.off()
 
       # Bump up our downward tail to the latest message and reset downward state
       @forwardTail = @messageModel.newTailInclusive(messages.at(messages.length - 1).id, @model.get('filters'), @addMessagesToBottomOfList)
       @model.set 'isBottomDone', false
       @lastForwardStep = 0
+
+    _processMesssage: (message) =>
+      # Makes times friendly and clears whitespace
+      message.time = moment(message.time)
+      message.message = message.message.trim()

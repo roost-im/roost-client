@@ -51,12 +51,6 @@
         paneView.render();
         this.$el.append(paneView.$el);
         this._recalculateWidth();
-        paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
-        this.listenTo(paneModel, 'messagesSet', ((function(_this) {
-          return function() {
-            return paneView.$el.scrollTop(paneView.$el[0].scrollHeight);
-          };
-        })(this)));
         return this.$el.scrollLeft(this.$el[0].scrollWidth);
       };
 

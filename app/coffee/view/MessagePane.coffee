@@ -20,6 +20,7 @@ do ->
         @_addPaneView(paneModel)
       
     _addPaneView: (paneModel) =>
+      # TODO: this still causes scroll issues, even with caching/restoring on width changes
       @$('.no-panes').remove()
 
       paneView = new com.roost.MessagePaneView
@@ -31,16 +32,11 @@ do ->
       @$el.append(paneView.$el)
       @_recalculateWidth()
 
-      # Jank. Gotta jump the scrolling after first set of messages are in.
-      paneView.$el.scrollTop(paneView.$el[0].scrollHeight)
-      @listenTo paneModel, 'messagesSet', (=> 
-        paneView.$el.scrollTop(paneView.$el[0].scrollHeight)
-      )
-
-      # Move our scroll to the newest added pane
+      # Move our scroll rightward to the newest added pane
       @$el.scrollLeft(@$el[0].scrollWidth)
 
     _removePaneView: (model) =>
+      # TODO: this still causes scroll issues, even with caching/restoring on width changes
       for view in @childViews
         if view.model.cid == model.cid
           toDelete = view

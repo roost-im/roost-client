@@ -20,10 +20,15 @@ do ->
       template = com.roost.templates['FilterBar']
       @$el.append template(@paneModel.attributes)
 
+      # Bring focus to first input box
+      @$('.class-input').focus()
+
+      # Make our header cooler
       if @paneModel.get('filters').class_key?
         @_updateColors()
 
     _updateColors: =>
+      # TODO: make this work through a Handlebars helper 
       string = @paneModel.get('filters').class_key
       color = shadeColor(stringToColor(string), 0.5)
       lighterColor = shadeColor(color, 0.4)
@@ -71,9 +76,9 @@ do ->
       if opts.recipient != ''
         filters.recipient = opts.recipient
 
+      # Set the filters and trigger a reset
       @paneModel.set
         filters: filters
         loaded: false
         showFilters: false
-
       @paneModel.trigger 'toBottom'

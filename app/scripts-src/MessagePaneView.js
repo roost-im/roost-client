@@ -8,6 +8,8 @@
       __extends(MessagePaneView, _super);
 
       function MessagePaneView() {
+        this._restoreScrollHeight = __bind(this._restoreScrollHeight, this);
+        this._saveScrollHeight = __bind(this._saveScrollHeight, this);
         this._removeBottomMessage = __bind(this._removeBottomMessage, this);
         this._removeTopMessage = __bind(this._removeTopMessage, this);
         this._prependMessage = __bind(this._prependMessage, this);
@@ -58,7 +60,7 @@
           this.childViews.push(view);
         }
         this.$el.append('<div class="filler-view">');
-        this.model.trigger('messagesSet');
+        this.$el.scrollTop(this.$el[0].scrollHeight);
         this.currentTop = 0;
         this.currentBottom = this.model.get('messages').length;
         this.composeView = new com.roost.ComposeBar({
@@ -78,6 +80,7 @@
       MessagePaneView.prototype.recalculateWidth = function(index, width) {
         this.index = index;
         this.width = width;
+        this._saveScrollHeight();
         this.$el.css({
           width: "" + width + "%"
         });
@@ -85,10 +88,11 @@
           width: "" + width + "%",
           left: "" + (index * width) + "%"
         });
-        return this.filterView.$el.css({
+        this.filterView.$el.css({
           width: "" + width + "%",
           left: "" + (index * width) + "%"
         });
+        return this._restoreScrollHeight();
       };
 
       MessagePaneView.prototype.remove = function() {
@@ -126,7 +130,7 @@
         if (this.$el.scrollTop() < this.$el[0].scrollHeight * 0.15) {
           if (this.currentTop > 0) {
             limit = Math.max(this.currentTop - com.roost.EXPANSION_SIZE, 0);
-            _ref = messages.slice(limit, this.currentTop);
+            _ref = messages.slice(limit, this.currentTop).reverse();
             _results = [];
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
               message = _ref[_i];
@@ -181,8 +185,8 @@
       };
 
       MessagePaneView.prototype._prependMessage = function(message) {
-        var change, newHeight, oldHeight, view;
-        oldHeight = this.$el[0].scrollHeight;
+        var view;
+        this._saveScrollHeight();
         view = new com.roost.MessageView({
           message: message,
           paneModel: this.model
@@ -191,20 +195,16 @@
         this.$el.prepend(view.$el);
         this.childViews.unshift(view);
         this.currentTop = Math.max(this.currentTop - 1, 0);
-        newHeight = this.$el[0].scrollHeight;
-        change = newHeight - oldHeight;
-        return this.$el.scrollTop(this.$el.scrollTop() + change);
+        return this._restoreScrollHeight();
       };
 
       MessagePaneView.prototype._removeTopMessage = function() {
-        var change, newHeight, oldHeight, view;
-        oldHeight = this.$el[0].scrollHeight;
+        var view;
+        this._saveScrollHeight();
         view = this.childViews.shift();
         view.remove();
         this.currentTop = this.currentBottom - this.childViews.length;
-        newHeight = this.$el[0].scrollHeight;
-        change = oldHeight - newHeight;
-        return this.$el.scrollTop(this.$el.scrollTop() - change);
+        return this._restoreScrollHeight();
       };
 
       MessagePaneView.prototype._removeBottomMessage = function() {
@@ -212,6 +212,17 @@
         view = this.childViews.pop();
         view.remove();
         return this.currentBottom = this.currentTop + this.childViews.length;
+      };
+
+      MessagePaneView.prototype._saveScrollHeight = function() {
+        return this.cachedHeight = this.$el[0].scrollHeight;
+      };
+
+      MessagePaneView.prototype._restoreScrollHeight = function() {
+        var change, newHeight;
+        newHeight = this.$el[0].scrollHeight;
+        change = this.cachedHeight - newHeight;
+        return this.$el.scrollTop(this.$el.scrollTop() - change);
       };
 
       return MessagePaneView;

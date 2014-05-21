@@ -1,4 +1,10 @@
 do ->
+
+  # TODO: it's unclear if the functionality of adding or removing panes should exist here,
+  # or if other views should be able to add/remove pains and this session just listens.
+  # The main point is that something has to exist to both bind controllers and clean up
+  # stuff when panes get deleted.
+
   class com.roost.RoostSession
     constructor: ->
       # User info

@@ -38,6 +38,7 @@
         this.$el.empty();
         template = com.roost.templates['FilterBar'];
         this.$el.append(template(this.paneModel.attributes));
+        this.$('.class-input').focus();
         if (this.paneModel.get('filters').class_key != null) {
           return this._updateColors();
         }
