@@ -208,12 +208,16 @@
       vertical-align: middle;
       padding: 0 5px;
       background-color: #EEE;
-      font-size: 14px;
+      font-size: 12px;
       position: relative;
       z-index: 2;
-      max-width: 90px;
       width: 90px;
-      box-sizing: border-box; }
+      min-width: 90px;
+      box-sizing: border-box;
+      word-wrap: break-word;
+      font-weight: 700; }
+      .message-view .content .sender .gravatar {
+        border: 1px solid #BBB; }
     .message-view .content .message-block {
       display: table-cell;
       width: 100%; }

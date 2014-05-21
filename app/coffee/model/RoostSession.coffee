@@ -28,6 +28,8 @@ do ->
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
+      Mousetrap.bind('shift+n', (=> @addPane {}, null))
+
     addPane: (filters, position) =>
       # Add a new model
       paneModel = new com.roost.MessagePaneModel

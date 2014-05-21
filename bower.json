@@ -15,6 +15,7 @@
     "backbone": "latest",
     "handlebars": "latest",
     "moment": "latest",
-    "font-awesome": "latest"
+    "font-awesome": "latest",
+    "mousetrap": "latest"
   }
 }

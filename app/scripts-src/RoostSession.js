@@ -17,6 +17,11 @@
         this.storageManager = new StorageManager(this.localStorage);
         this.ticketManager = new TicketManager(CONFIG.webathena, this.storageManager);
         this.api = new API(CONFIG.server, CONFIG.serverPrincipal, this.storageManager, this.ticketManager);
+        Mousetrap.bind('shift+n', ((function(_this) {
+          return function() {
+            return _this.addPane({}, null);
+          };
+        })(this)));
       }
 
       RoostSession.prototype.addPane = function(filters, position) {

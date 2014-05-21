@@ -17,7 +17,18 @@ do ->
     render: =>
       @$el.empty()
       template = com.roost.templates['MessageView']
-      @$el.append template(_.defaults({}, @message.attributes, {absoluteTime: @message.get('time').format(TIME_FORMAT)}))
+
+      name = shortZuser(@message.get('sender'))
+      realm = zuserRealm(@message.get('sender'))
+
+      gravatar = getGravatarFromName(name, realm, 40)
+
+      @$el.append template(_.defaults({}, @message.attributes, 
+          absoluteTime: @message.get('time').format(TIME_FORMAT)
+          shortSender: name
+          gravatar: gravatar
+        )
+      )
       @updateTime()
       @updateColors()
 

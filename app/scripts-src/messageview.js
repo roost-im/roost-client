@@ -36,11 +36,16 @@
       };
 
       MessageView.prototype.render = function() {
-        var template;
+        var gravatar, name, realm, template;
         this.$el.empty();
         template = com.roost.templates['MessageView'];
+        name = shortZuser(this.message.get('sender'));
+        realm = zuserRealm(this.message.get('sender'));
+        gravatar = getGravatarFromName(name, realm, 40);
         this.$el.append(template(_.defaults({}, this.message.attributes, {
-          absoluteTime: this.message.get('time').format(TIME_FORMAT)
+          absoluteTime: this.message.get('time').format(TIME_FORMAT),
+          shortSender: name,
+          gravatar: gravatar
         })));
         this.updateTime();
         return this.updateColors();

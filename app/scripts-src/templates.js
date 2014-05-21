@@ -141,9 +141,13 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   if (helper = helpers.absoluteTime) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.absoluteTime); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "</span>\n</div>\n<div class=\"content\">\n  <div class=\"sender\">\n    ";
-  if (helper = helpers.sender) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.sender); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+    + "</span>\n</div>\n<div class=\"content\">\n  <div class=\"sender\">\n    <img class=\"gravatar\" src=\"";
+  if (helper = helpers.gravatar) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.gravatar); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\"><br>\n    ";
+  if (helper = helpers.shortSender) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.shortSender); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
     + "\n  </div>\n  <div class=\"message-block\">\n    <pre class=\"message\">\n      ";
   if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
