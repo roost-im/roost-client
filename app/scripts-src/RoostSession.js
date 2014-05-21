@@ -22,6 +22,15 @@
             return _this.addPane({}, null);
           };
         })(this)));
+        Mousetrap.bind('alt+p', ((function(_this) {
+          return function() {
+            return _this.addPane({
+              class_key: 'message',
+              instance_key: 'personal',
+              is_personal: true
+            }, null);
+          };
+        })(this)));
       }
 
       RoostSession.prototype.addPane = function(filters, position) {

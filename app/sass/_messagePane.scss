@@ -23,6 +23,24 @@
       border: none;
     }
 
+    .loading {
+      height: 30%;
+      text-align: center;
+
+      i {
+        margin-top: 12%;
+        font-size: 6em;
+        color: #BBB;
+      }
+    }
+
+    .no-messages {
+      text-align: center;
+      font-size: 40px;
+      color: #BBB;
+      margin-top: 20%;
+    }
+
     .filler-view {
       height: 70%;
     }

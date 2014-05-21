@@ -60,7 +60,8 @@
       NavBar.prototype._addPersonalMessagePane = function() {
         return this.session.addPane({
           class_key: 'message',
-          instance_key: 'personal'
+          instance_key: 'personal',
+          is_personal: true
         }, null);
       };
 

@@ -143,6 +143,18 @@
     padding-top: 30px; }
     .message-pane .message-pane-view:last-child {
       border: none; }
+    .message-pane .message-pane-view .loading {
+      height: 30%;
+      text-align: center; }
+      .message-pane .message-pane-view .loading i {
+        margin-top: 12%;
+        font-size: 6em;
+        color: #BBB; }
+    .message-pane .message-pane-view .no-messages {
+      text-align: center;
+      font-size: 40px;
+      color: #BBB;
+      margin-top: 20%; }
     .message-pane .message-pane-view .filler-view {
       height: 70%; }
   .message-pane .no-panes {

@@ -32,4 +32,4 @@ do ->
       @session.addPane {}, null
 
     _addPersonalMessagePane: =>
-      @session.addPane {class_key: 'message', instance_key: 'personal'}, null
+      @session.addPane {class_key: 'message', instance_key: 'personal', is_personal: true}, null

@@ -8,6 +8,7 @@
       __extends(FilterBar, _super);
 
       function FilterBar() {
+        this._handleInputKey = __bind(this._handleInputKey, this);
         this._setFilters = __bind(this._setFilters, this);
         this._removePane = __bind(this._removePane, this);
         this._removeFilters = __bind(this._removeFilters, this);
@@ -24,7 +25,8 @@
         'click .filters': '_toggleFilters',
         'click .clear-filters': '_removeFilters',
         'click .remove': '_removePane',
-        'click .set-filters': '_setFilters'
+        'click .set-filters': '_setFilters',
+        'keyup input': '_handleInputKey'
       };
 
       FilterBar.prototype.initialize = function(options) {
@@ -106,6 +108,12 @@
           showFilters: false
         });
         return this.paneModel.trigger('toBottom');
+      };
+
+      FilterBar.prototype._handleInputKey = function(evt) {
+        if (evt.keyCode === 13) {
+          return this._setFilters();
+        }
       };
 
       return FilterBar;

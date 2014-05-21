@@ -8,6 +8,8 @@ do ->
       'click .to-bottom': '_jumpToBottom'
       'click .send': '_sendMessage'
 
+      'keyup textarea': '_handleTextareaKey'
+
     initialize: (options) =>
       @paneModel = options.paneModel
 
@@ -63,3 +65,7 @@ do ->
         @$('.send').addClass('disabled').text('Sending...')
       else
         @$('.send').removeClass('disabled').text('Send')
+
+    _handleTextareaKey: (evt) =>
+      if evt.keyCode == 13
+        @_sendMessage()

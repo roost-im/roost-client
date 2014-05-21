@@ -38,11 +38,13 @@ do ->
 
     _onScrollUp: =>
       # Handles building the reverse tail upward
+      @model.set('topLoading', true)
       @lastReverseStep += com.roost.EXPANSION_SIZE
       @reverseTail.expandTo(@lastReverseStep)
 
     _onScrollDown: =>
       # Handles building the forward tail downward
+      @model.set('bottomLoading', true)
       @lastForwardStep += com.roost.EXPANSION_SIZE
       @forwardTail.expandTo(@lastForwardStep)
 
@@ -55,7 +57,9 @@ do ->
       return
 
     addMessagesToTopOfList: (msgs, isDone) =>
-      @model.set 'isTopDone', isDone
+      @model.set
+        isTopDone: isDone
+        topLoading: false
       messages = @model.get 'messages'
 
       # Let's make our times more friendly
@@ -92,7 +96,9 @@ do ->
           messages.add message, {at: 0}
 
     addMessagesToBottomOfList: (msgs, isDone) =>
-      @model.set 'isBottomDone', isDone
+      @model.set 
+        isBottomDone: isDone
+        bottomLoading: false
       messages = @model.get 'messages'
 
       # Let's make our times more friendly

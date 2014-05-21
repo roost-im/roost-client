@@ -40,7 +40,7 @@
       };
 
       MessagePaneView.prototype.render = function() {
-        var message, view, _i, _j, _len, _len1, _ref, _ref1;
+        var $loading, $noMessages, message, view, _i, _j, _len, _len1, _ref, _ref1;
         _ref = this.childViews;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           view = _ref[_i];
@@ -58,6 +58,14 @@
           view.render();
           this.$el.append(view.$el);
           this.childViews.push(view);
+        }
+        if (!this.model.get('loaded') && this.model.get('messages').length === 0) {
+          $loading = $('<div class="loading">');
+          $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>');
+          this.$el.append($loading);
+        } else if (this.model.get('loaded') && this.model.get('messages').length === 0) {
+          $noMessages = $('<div class="no-messages">').text('No messages');
+          this.$el.append($noMessages);
         }
         this.$el.append('<div class="filler-view">');
         this.$el.scrollTop(this.$el[0].scrollHeight);
@@ -138,7 +146,7 @@
               _results.push(this._removeBottomMessage());
             }
             return _results;
-          } else if (this.currentTop <= 0 && !this.model.get('isTopDone')) {
+          } else if (this.currentTop <= 0 && !this.model.get('isTopDone') && !this.model.get('topLoading')) {
             return this.model.trigger('scrollUp');
           } else {
 
@@ -154,7 +162,7 @@
               _results1.push(this._removeTopMessage());
             }
             return _results1;
-          } else if (this.currentBottom >= messages.length && !this.model.get('isBottomDone')) {
+          } else if (this.currentBottom >= messages.length && !this.model.get('isBottomDone') && !this.model.get('bottomLoading')) {
             return this.model.trigger('scrollDown');
           } else {
 

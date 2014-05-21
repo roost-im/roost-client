@@ -28,7 +28,9 @@ do ->
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
+      # I really don't know if this is where the hotkeys go
       Mousetrap.bind('shift+n', (=> @addPane {}, null))
+      Mousetrap.bind('alt+p', (=> @addPane {class_key: 'message', instance_key: 'personal', is_personal: true}, null))
 
     addPane: (filters, position) =>
       # Add a new model

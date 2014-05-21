@@ -23,6 +23,8 @@ do ->
         isBottomDone: true
 
         loaded: false
+        topLoading: false
+        bottomLoading: false
       }
 
       attrs.messages.model = com.roost.MessageModel

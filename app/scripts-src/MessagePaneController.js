@@ -35,11 +35,13 @@
       };
 
       MessagePaneController.prototype._onScrollUp = function() {
+        this.model.set('topLoading', true);
         this.lastReverseStep += com.roost.EXPANSION_SIZE;
         return this.reverseTail.expandTo(this.lastReverseStep);
       };
 
       MessagePaneController.prototype._onScrollDown = function() {
+        this.model.set('bottomLoading', true);
         this.lastForwardStep += com.roost.EXPANSION_SIZE;
         return this.forwardTail.expandTo(this.lastForwardStep);
       };
@@ -50,7 +52,10 @@
 
       MessagePaneController.prototype.addMessagesToTopOfList = function(msgs, isDone) {
         var message, messages, _i, _j, _len, _len1, _ref, _results;
-        this.model.set('isTopDone', isDone);
+        this.model.set({
+          isTopDone: isDone,
+          topLoading: false
+        });
         messages = this.model.get('messages');
         for (_i = 0, _len = msgs.length; _i < _len; _i++) {
           message = msgs[_i];
@@ -84,7 +89,10 @@
 
       MessagePaneController.prototype.addMessagesToBottomOfList = function(msgs, isDone) {
         var message, messages, _i, _j, _len, _len1, _ref, _results;
-        this.model.set('isBottomDone', isDone);
+        this.model.set({
+          isBottomDone: isDone,
+          bottomLoading: false
+        });
         messages = this.model.get('messages');
         for (_i = 0, _len = msgs.length; _i < _len; _i++) {
           message = msgs[_i];

@@ -30,7 +30,9 @@
           selected: false,
           isTopDone: false,
           isBottomDone: true,
-          loaded: false
+          loaded: false,
+          topLoading: false,
+          bottomLoading: false
         };
         attrs.messages.model = com.roost.MessageModel;
         return attrs;

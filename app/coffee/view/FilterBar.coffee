@@ -9,6 +9,8 @@ do ->
 
       'click .set-filters': '_setFilters'
 
+      'keyup input': '_handleInputKey'
+
     initialize: (options) =>
       @paneModel = options.paneModel
       @session = options.session
@@ -82,3 +84,7 @@ do ->
         loaded: false
         showFilters: false
       @paneModel.trigger 'toBottom'
+
+    _handleInputKey: (evt) =>
+      if evt.keyCode == 13
+        @_setFilters()

@@ -43,7 +43,6 @@ do ->
       @childViews = []
 
       # Add MessageView for each message in the list
-      # TODO: Draw something nice in the case of no messages
       for message in @model.get('messages').models
         view = new com.roost.MessageView
           message: message
@@ -51,6 +50,16 @@ do ->
         view.render()
         @$el.append(view.$el)
         @childViews.push(view)
+
+      # Big loading spinner in case we're still loading stuff in
+      if not @model.get('loaded') and @model.get('messages').length == 0
+        $loading = $('<div class="loading">')
+        $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>')
+        @$el.append($loading)
+      # Nice looking message if there are no messages available
+      else if @model.get('loaded') and @model.get('messages').length == 0
+        $noMessages = $('<div class="no-messages">').text('No messages')
+        @$el.append($noMessages)
 
       # Add in the filler view
       @$el.append('<div class="filler-view">')
@@ -139,7 +148,9 @@ do ->
           for message in messages.slice(limit, @currentTop).reverse()
             @_prependMessage(message)
             @_removeBottomMessage()
-        else if @currentTop <= 0 and !@model.get('isTopDone')
+        # Trigger the scrollup if we're at the top, the top isn't done, and we aren't currently
+        # loading more messages at the top.
+        else if @currentTop <= 0 and !@model.get('isTopDone') and !@model.get('topLoading')
           @model.trigger 'scrollUp'
         else
           #TODO: show something to say top has been reached
@@ -151,7 +162,9 @@ do ->
           for message in messages.slice(@currentBottom, limit)
             @_appendMessage(message)
             @_removeTopMessage()
-        else if @currentBottom >= messages.length and !@model.get('isBottomDone')
+        # Trigger the scrolldown if we're at the bottom, the bottom isn't done, and we
+        # aren't currently loading more messages at the bottom.
+        else if @currentBottom >= messages.length and !@model.get('isBottomDone') and !@model.get('bottomLoading')
           @model.trigger 'scrollDown'
         else
           #TODO: show something to say latest messages reached
