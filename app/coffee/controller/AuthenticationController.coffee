@@ -43,4 +43,4 @@ do ->
         username: ticket.client.principalName.nameString[0]
         realm: ticket.client.realm
 
-      @session.addPane {}, null
+      @session.addPane {}

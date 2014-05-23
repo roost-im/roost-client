@@ -57,7 +57,6 @@ do ->
         filters: {}
         loaded: false
         showFilters: false
-        position: null
 
     _removePane: =>
       @session.removePane(@paneModel.cid)
@@ -87,3 +86,5 @@ do ->
     _handleInputKey: (evt) =>
       if evt.keyCode == 13
         @_setFilters()
+      else if evt.keyCode == 27
+        @_toggleFilters()

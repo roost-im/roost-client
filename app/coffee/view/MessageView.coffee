@@ -14,8 +14,10 @@ do ->
       'click .msg-instance': '_filterInstance'
 
     initialize: (options) =>
+      # TODO: find a better way to spawn new panes other than through the session
       @message = options.message
       @paneModel = options.paneModel
+      @session = options.session
 
     render: =>
       @$el.empty()
@@ -32,6 +34,8 @@ do ->
           gravatar: gravatar
         )
       )
+
+      @$el.addClass(@message.get('id'))
 
       @updatePosition()
       @updateTime()
@@ -94,17 +98,27 @@ do ->
           content: quoted
         showCompose: true
 
-    _filterClass: =>
-      @paneModel.set
+    _filterClass: (evt) =>
+      options = 
         filters: 
           class_key: @message.get('class')
         position: @message.get('id')
         posScroll: @$el.offset().top
 
-    _filterInstance: =>
-      @paneModel.set
+      if evt.shiftKey
+        @session.addPane options
+      else
+        @paneModel.set options
+
+    _filterInstance: (evt) =>
+      options = 
         filters: 
           class_key: @message.get('class')
           instance_key: @message.get('instance')
         position: @message.get('id')
         posScroll: @$el.offset().top
+
+      if evt.shiftKey
+        @session.addPane options
+      else
+        @paneModel.set options

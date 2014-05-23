@@ -50,7 +50,7 @@
           username: ticket.client.principalName.nameString[0],
           realm: ticket.client.realm
         });
-        return this.session.addPane({}, null);
+        return this.session.addPane({});
       };
 
       return AuthenticationController;

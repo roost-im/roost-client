@@ -37,7 +37,8 @@
 
       MessageView.prototype.initialize = function(options) {
         this.message = options.message;
-        return this.paneModel = options.paneModel;
+        this.paneModel = options.paneModel;
+        return this.session = options.session;
       };
 
       MessageView.prototype.render = function() {
@@ -52,6 +53,7 @@
           shortSender: name,
           gravatar: gravatar
         })));
+        this.$el.addClass(this.message.get('id'));
         this.updatePosition();
         this.updateTime();
         return this.updateColors();
@@ -128,25 +130,37 @@
         });
       };
 
-      MessageView.prototype._filterClass = function() {
-        return this.paneModel.set({
+      MessageView.prototype._filterClass = function(evt) {
+        var options;
+        options = {
           filters: {
             class_key: this.message.get('class')
           },
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
-        });
+        };
+        if (evt.shiftKey) {
+          return this.session.addPane(options);
+        } else {
+          return this.paneModel.set(options);
+        }
       };
 
-      MessageView.prototype._filterInstance = function() {
-        return this.paneModel.set({
+      MessageView.prototype._filterInstance = function(evt) {
+        var options;
+        options = {
           filters: {
             class_key: this.message.get('class'),
             instance_key: this.message.get('instance')
           },
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
-        });
+        };
+        if (evt.shiftKey) {
+          return this.session.addPane(options);
+        } else {
+          return this.paneModel.set(options);
+        }
       };
 
       return MessageView;

@@ -26,5 +26,5 @@ $('document').ready( =>
 
   # Add the first pane if the user is logged in
   if session.userInfo.get('username')?
-    session.addPane {}, null
+    session.addPane {}
 )

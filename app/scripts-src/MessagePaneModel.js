@@ -16,6 +16,7 @@
         var attrs;
         attrs = {
           position: null,
+          posScroll: 0,
           messages: new Backbone.Collection(),
           showFilters: false,
           filters: {},

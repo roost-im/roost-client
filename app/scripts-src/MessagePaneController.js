@@ -7,7 +7,6 @@
     com.roost.CACHE_SIZE = 200;
     return com.roost.MessagePaneController = (function() {
       function MessagePaneController(options) {
-        this._getProperReverseStart = __bind(this._getProperReverseStart, this);
         this._processMesssage = __bind(this._processMesssage, this);
         this._clearBottomOfCache = __bind(this._clearBottomOfCache, this);
         this._clearTopOfCache = __bind(this._clearTopOfCache, this);
@@ -15,6 +14,7 @@
         this.addMessagesToTopOfList = __bind(this.addMessagesToTopOfList, this);
         this._onScrollDown = __bind(this._onScrollDown, this);
         this._onScrollUp = __bind(this._onScrollUp, this);
+        this._properStartCb = __bind(this._properStartCb, this);
         this.fetchFromPosition = __bind(this.fetchFromPosition, this);
         $.extend(this, Backbone.Events);
         this.model = options.model;
@@ -22,17 +22,35 @@
         this.messageModel = new MessageModel(this.api);
         this.listenTo(this.model, 'scrollUp', this._onScrollUp);
         this.listenTo(this.model, 'scrollDown', this._onScrollDown);
-        this.listenTo(this.model, 'toBottom change:position change:filters', this.fetchFromPosition);
+        this.listenTo(this.model, 'reload change:filters', this.fetchFromPosition);
         this.lastReverseStep = 0;
         this.lastForwardStep = 0;
       }
 
       MessagePaneController.prototype.fetchFromPosition = function() {
+        var tempForwardTail;
         this.model.set({
           topLoading: true,
           loaded: false
         });
-        this.reverseTail = this.messageModel.newReverseTail(this._getProperReverseStart(), this.model.get('filters'), this.addMessagesToTopOfList);
+        if (this.model.get('position') !== null) {
+          tempForwardTail = this.messageModel.newTailInclusive(this.model.get('position'), this.model.get('filters'), this._properStartCb);
+          return tempForwardTail.expandTo(2);
+        } else {
+          this.reverseTail = this.messageModel.newReverseTail(this.model.get('position'), this.model.get('filters'), this.addMessagesToTopOfList);
+          this.reverseTail.expandTo(com.roost.STARTING_SIZE);
+          return this.lastReverseStep = com.roost.STARTING_SIZE;
+        }
+      };
+
+      MessagePaneController.prototype._properStartCb = function(msgs, isDone) {
+        var start;
+        if (msgs.length === 1) {
+          start = null;
+        } else {
+          start = msgs[1].id;
+        }
+        this.reverseTail = this.messageModel.newReverseTail(start, this.model.get('filters'), this.addMessagesToTopOfList);
         this.reverseTail.expandTo(com.roost.STARTING_SIZE);
         return this.lastReverseStep = com.roost.STARTING_SIZE;
       };
@@ -138,24 +156,6 @@
       MessagePaneController.prototype._processMesssage = function(message) {
         message.time = moment(message.time);
         return message.message = message.message.trim();
-      };
-
-      MessagePaneController.prototype._getProperReverseStart = function() {
-        var index, messages, positionMessage;
-        if (this.model.get('position') != null) {
-          messages = this.model.get('messages');
-          positionMessage = messages.where({
-            id: this.model.get('position')
-          })[0];
-          index = messages.models.indexOf(positionMessage) + 1;
-          if (messages.models[index] != null) {
-            return messages.models[index].get('id');
-          } else {
-            return null;
-          }
-        } else {
-          return null;
-        }
       };
 
       return MessagePaneController;

@@ -17,6 +17,7 @@
         this._addMessages = __bind(this._addMessages, this);
         this._scrollHandle = __bind(this._scrollHandle, this);
         this._updateMessageTimes = __bind(this._updateMessageTimes, this);
+        this._updatePosition = __bind(this._updatePosition, this);
         this.remove = __bind(this.remove, this);
         this.recalculateWidth = __bind(this.recalculateWidth, this);
         this.render = __bind(this.render, this);
@@ -32,6 +33,7 @@
         this.childViews = [];
         this.listenTo(this.model.get('messages'), 'reset', this.render);
         this.listenTo(this.model.get('messages'), 'add', this._addMessages);
+        this.listenTo(this.model, 'change:position', this._updatePosition);
         this.throttled = _.throttle(this._scrollHandle, 50);
         this.$el.scroll(this.throttled);
         this.interval = setInterval(this._updateMessageTimes, 30000);
@@ -53,24 +55,24 @@
           message = _ref1[_j];
           view = new com.roost.MessageView({
             message: message,
-            paneModel: this.model
+            paneModel: this.model,
+            session: this.session
           });
           view.render();
           this.$el.append(view.$el);
           this.childViews.push(view);
         }
+        this.$el.append('<div class="filler-view">');
         if (this.model.get('messages').length === 0) {
           if (this.model.get('loaded')) {
             $noMessages = $('<div class="no-messages">').text('No messages');
-            this.$el.append($noMessages);
+            this.$el.prepend($noMessages);
           } else {
             $loading = $('<div class="loading">');
             $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>');
-            this.$el.append($loading);
+            this.$el.prepend($loading);
           }
-          this.$el.append('<div class="filler-view">');
         } else {
-          this.$el.append('<div class="filler-view">');
           if (this.model.get('position') != null) {
             $positionMessage = this.$('.positioned');
             this.$el.scrollTop(this.$el.scrollTop() + ($positionMessage.offset().top - this.model.get('posScroll')));
@@ -130,6 +132,13 @@
         return delete this.el;
       };
 
+      MessagePaneView.prototype._updatePosition = function() {
+        if (this.$("." + (this.model.get('position'))).length > 0) {
+          this.$('.message-view').removeClass('positioned');
+          return this.$("." + (this.model.get('position'))).addClass('positioned');
+        }
+      };
+
       MessagePaneView.prototype._updateMessageTimes = function() {
         var view, _i, _len, _ref, _results;
         _ref = this.childViews;
@@ -157,7 +166,7 @@
             return _results;
           } else if (this.currentTop <= 0 && !this.model.get('isTopDone') && !this.model.get('topLoading')) {
             return this.model.trigger('scrollUp');
-          } else {
+          } else if (this.model.get('isTopDone')) {
 
           }
         } else if (this.$el.scrollTop() + this.$el.height() > this.$el[0].scrollHeight * 0.90 - this.$('.filler-view').height()) {
@@ -173,7 +182,7 @@
             return _results1;
           } else if (this.currentBottom >= messages.length && !this.model.get('isBottomDone') && !this.model.get('bottomLoading')) {
             return this.model.trigger('scrollDown');
-          } else {
+          } else if (this.model.get('isBottomDone')) {
 
           }
         }
@@ -197,7 +206,8 @@
         var view;
         view = new com.roost.MessageView({
           message: message,
-          paneModel: this.model
+          paneModel: this.model,
+          session: this.session
         });
         view.render();
         this.$('.filler-view').before(view.$el);
@@ -210,7 +220,8 @@
         this._saveScrollHeight();
         view = new com.roost.MessageView({
           message: message,
-          paneModel: this.model
+          paneModel: this.model,
+          session: this.session
         });
         view.render();
         this.$el.prepend(view.$el);

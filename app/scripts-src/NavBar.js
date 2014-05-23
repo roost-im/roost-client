@@ -54,15 +54,17 @@
       };
 
       NavBar.prototype._addPane = function() {
-        return this.session.addPane({}, null);
+        return this.session.addPane({});
       };
 
       NavBar.prototype._addPersonalMessagePane = function() {
         return this.session.addPane({
-          class_key: 'message',
-          instance_key: 'personal',
-          is_personal: true
-        }, null);
+          filters: {
+            class_key: 'message',
+            instance_key: 'personal',
+            is_personal: true
+          }
+        });
       };
 
       return NavBar;

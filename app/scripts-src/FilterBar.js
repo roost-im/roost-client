@@ -76,8 +76,7 @@
         return this.paneModel.set({
           filters: {},
           loaded: false,
-          showFilters: false,
-          position: null
+          showFilters: false
         });
       };
 
@@ -113,6 +112,8 @@
       FilterBar.prototype._handleInputKey = function(evt) {
         if (evt.keyCode === 13) {
           return this._setFilters();
+        } else if (evt.keyCode === 27) {
+          return this._toggleFilters();
         }
       };
 

@@ -2,7 +2,10 @@ do ->
   class com.roost.MessagePaneModel extends Backbone.Model
     defaults: =>
       attrs = {
+        # TODO: make this less jank
         position: null
+        posScroll: 0
+
         messages: new Backbone.Collection()
 
         showFilters: false

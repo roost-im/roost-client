@@ -19,26 +19,25 @@
         this.api = new API(CONFIG.server, CONFIG.serverPrincipal, this.storageManager, this.ticketManager);
         Mousetrap.bind('shift+n', ((function(_this) {
           return function() {
-            return _this.addPane({}, null);
+            return _this.addPane({});
           };
         })(this)));
         Mousetrap.bind('alt+p', ((function(_this) {
           return function() {
             return _this.addPane({
-              class_key: 'message',
-              instance_key: 'personal',
-              is_personal: true
-            }, null);
+              filters: {
+                class_key: 'message',
+                instance_key: 'personal',
+                is_personal: true
+              }
+            });
           };
         })(this)));
       }
 
-      RoostSession.prototype.addPane = function(filters, position) {
+      RoostSession.prototype.addPane = function(options) {
         var composeController, paneController, paneModel;
-        paneModel = new com.roost.MessagePaneModel({
-          filters: filters,
-          position: position
-        });
+        paneModel = new com.roost.MessagePaneModel(options);
         paneController = new com.roost.MessagePaneController({
           model: paneModel,
           api: this.api

@@ -29,14 +29,18 @@ do ->
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
       # I really don't know if this is where the hotkeys go
-      Mousetrap.bind('shift+n', (=> @addPane {}, null))
-      Mousetrap.bind('alt+p', (=> @addPane {class_key: 'message', instance_key: 'personal', is_personal: true}, null))
+      Mousetrap.bind('shift+n', (=> @addPane {}))
+      Mousetrap.bind('alt+p', (=> @addPane 
+        filters:
+          class_key: 'message'
+          instance_key: 'personal'
+          is_personal: true
+        )
+      )
 
-    addPane: (filters, position) =>
+    addPane: (options) =>
       # Add a new model
-      paneModel = new com.roost.MessagePaneModel
-        filters: filters
-        position: position
+      paneModel = new com.roost.MessagePaneModel(options)
 
       # Add a new controller and fetch data
       paneController = new com.roost.MessagePaneController

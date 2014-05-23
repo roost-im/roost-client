@@ -8,6 +8,7 @@ do ->
       'click .to-bottom': '_jumpToBottom'
       'click .send': '_sendMessage'
 
+      'keyup input': '_handleInputsKey'
       'keyup textarea': '_handleTextareaKey'
 
     initialize: (options) =>
@@ -45,9 +46,8 @@ do ->
     _jumpToBottom: =>
       # Treat as a complete reset
       @paneModel.set
-        loaded: false
         position: null
-      @paneModel.trigger 'toBottom'
+      @paneModel.trigger 'reload'
 
     _sendMessage: =>
       # If we aren't already sending, set the fields and fire the event
@@ -68,6 +68,12 @@ do ->
       else
         @$('.send').removeClass('disabled').text('Send')
 
+    _handleInputsKey: (evt) =>
+      if evt.keyCode == 27
+        @_hideCompose()
+
     _handleTextareaKey: (evt) =>
       if evt.keyCode == 13
         @_sendMessage()
+      else if evt.keyCode == 27
+        @_hideCompose()

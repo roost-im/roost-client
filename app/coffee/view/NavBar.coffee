@@ -29,7 +29,11 @@ do ->
       @userInfo.trigger 'logout'
 
     _addPane: =>
-      @session.addPane {}, null
+      @session.addPane {}
 
     _addPersonalMessagePane: =>
-      @session.addPane {class_key: 'message', instance_key: 'personal', is_personal: true}, null
+      @session.addPane 
+        filters:
+          class_key: 'message'
+          instance_key: 'personal'
+          is_personal: true

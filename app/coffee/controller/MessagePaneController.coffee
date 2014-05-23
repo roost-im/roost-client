@@ -22,7 +22,7 @@ do ->
       # Listen to events on the model
       @listenTo @model, 'scrollUp', @_onScrollUp
       @listenTo @model, 'scrollDown', @_onScrollDown
-      @listenTo @model, 'toBottom change:position change:filters', @fetchFromPosition
+      @listenTo @model, 'reload change:filters', @fetchFromPosition
 
       # Keep track of how far we've moved the tails up/down
       # This is kind of awkward but necessary state tracking
@@ -30,13 +30,31 @@ do ->
       @lastForwardStep = 0
 
     fetchFromPosition: =>
-      # Fetches the first set of data from the bottom of the list
-      # Reverse tail with null start will give messages from the bottom up
+      # Fetches the first set of data from our starting point
+      # We go upward first then build a bit downward
+      # Inefficient, but simplifies things.
       @model.set
         topLoading: true
         loaded: false
 
-      @reverseTail = @messageModel.newReverseTail(@_getProperReverseStart(), @model.get('filters'), @addMessagesToTopOfList)
+      # Lord have mercy.
+      # We make a forward tail briefly to figure out the right position for a reverse tail.
+      # This is entirely because there is no reverseTailInclusive and this design builds reverse, then forward
+      # in order to reset.
+      if @model.get('position') != null
+        tempForwardTail = @messageModel.newTailInclusive(@model.get('position'), @model.get('filters'), @_properStartCb)
+        tempForwardTail.expandTo(2)
+      else
+        @reverseTail = @messageModel.newReverseTail(@model.get('position'), @model.get('filters'), @addMessagesToTopOfList)
+        @reverseTail.expandTo(com.roost.STARTING_SIZE)
+        @lastReverseStep = com.roost.STARTING_SIZE
+
+    _properStartCb: (msgs, isDone) =>
+      if msgs.length == 1
+        start = null
+      else
+        start = msgs[1].id
+      @reverseTail = @messageModel.newReverseTail(start, @model.get('filters'), @addMessagesToTopOfList)
       @reverseTail.expandTo(com.roost.STARTING_SIZE)
       @lastReverseStep = com.roost.STARTING_SIZE
 
@@ -137,16 +155,3 @@ do ->
       # Makes times friendly and clears whitespace
       message.time = moment(message.time)
       message.message = message.message.trim()
-
-    _getProperReverseStart: =>
-      if @model.get('position')?
-        messages = @model.get('messages')
-        positionMessage = messages.where({id: @model.get('position')})[0]
-        index = messages.models.indexOf(positionMessage) + 1
-
-        if messages.models[index]?
-          return messages.models[index].get('id')
-        else
-          return null
-      else
-        return null

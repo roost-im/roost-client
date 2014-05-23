@@ -20,6 +20,9 @@ do ->
       @listenTo @model.get('messages'), 'reset', @render
       @listenTo @model.get('messages'), 'add', @_addMessages
 
+      # Redraw if our selected position changes
+      @listenTo @model, 'change:position', @_updatePosition
+
       # Throttled scroll handle to avoid firing every event
       # Improves framerate drastically
       @throttled = _.throttle(@_scrollHandle, 50)
@@ -47,22 +50,26 @@ do ->
         view = new com.roost.MessageView
           message: message
           paneModel: @model
+          session: @session
         view.render()
         @$el.append(view.$el)
         @childViews.push(view)
+      
+      # Filler view to pad the bottom
+      @$el.append('<div class="filler-view">')
 
+      # If we didn't get any messages this time around, then show something informative
       if @model.get('messages').length == 0
         if @model.get('loaded')
           $noMessages = $('<div class="no-messages">').text('No messages')
-          @$el.append($noMessages)
+          @$el.prepend($noMessages)
         else
           $loading = $('<div class="loading">')
           $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>')
-          @$el.append($loading)
-        @$el.append('<div class="filler-view">')
+          @$el.prepend($loading)
+      # Otherwise, get our scroll position right
       else
-        @$el.append('<div class="filler-view">')
-        if  @model.get('position')?
+        if @model.get('position')?
           $positionMessage = @$('.positioned')
           @$el.scrollTop(@$el.scrollTop() + ($positionMessage.offset().top - @model.get('posScroll')))
         else
@@ -134,6 +141,11 @@ do ->
       delete @$el
       delete @el
 
+    _updatePosition: =>
+      if @$(".#{@model.get('position')}").length > 0
+        @$('.message-view').removeClass('positioned')
+        @$(".#{@model.get('position')}").addClass('positioned')
+
     _updateMessageTimes: =>
       for view in @childViews
         view.updateTime()
@@ -153,7 +165,7 @@ do ->
         # loading more messages at the top.
         else if @currentTop <= 0 and !@model.get('isTopDone') and !@model.get('topLoading')
           @model.trigger 'scrollUp'
-        else
+        else if @model.get('isTopDone')
           #TODO: show something to say top has been reached
           return
       else if @$el.scrollTop() + @$el.height() > @$el[0].scrollHeight * 0.90 - @$('.filler-view').height()
@@ -167,7 +179,7 @@ do ->
         # aren't currently loading more messages at the bottom.
         else if @currentBottom >= messages.length and !@model.get('isBottomDone') and !@model.get('bottomLoading')
           @model.trigger 'scrollDown'
-        else
+        else if @model.get('isBottomDone')
           #TODO: show something to say latest messages reached
           return
 
@@ -176,11 +188,13 @@ do ->
       if options.at == 0
         @_prependMessage(message)
 
+        # Start clearing stuff out if we're past our proper size
         if @childViews.length > com.roost.STARTING_SIZE
           @_removeBottomMessage()
       else
         @_appendMessage(message)
 
+        # Start clearing stuff out if we're past our proper size
         if @childViews.length > com.roost.STARTING_SIZE
           @_removeTopMessage()
 
@@ -189,6 +203,7 @@ do ->
       view = new com.roost.MessageView
         message: message
         paneModel: @model
+        session: @session
       view.render()
       @$('.filler-view').before(view.$el)
 
@@ -206,6 +221,7 @@ do ->
       view = new com.roost.MessageView
         message: message
         paneModel: @model
+        session: @session
       view.render()
       @$el.prepend(view.$el)
 
