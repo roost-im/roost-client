@@ -9,7 +9,7 @@ do ->
   # For each tail, you have:
   #  The actual tail
   #  The step we've moved thus far
-  # Whenever a tail gets expanded/closed/recreated, reset the step.
+  # Whenever a tail gets expanded/closed/recreated, set the step properly.
   # Whenever a tail is recreated, close the previous one.
 
   class com.roost.MessagePaneController
@@ -29,6 +29,7 @@ do ->
       @listenTo @model, 'scrollUp', @_onScrollUp
       @listenTo @model, 'scrollDown', @_onScrollDown
       @listenTo @model, 'reload change:filters', @fetchFromPosition
+      @listenTo @model, 'toTop', @_jumpToTop
 
       # Keep track of how far we've moved the tails up/down
       # This is kind of awkward but necessary state tracking
@@ -80,6 +81,24 @@ do ->
       @model.set('bottomLoading', true)
       @lastForwardStep += com.roost.EXPANSION_SIZE
       @forwardTail.expandTo(@lastForwardStep)
+
+    _jumpToTop: =>
+      # Reset the important bits
+      @model.set
+        topLoading: false
+        loaded: false
+        bottomLoading: true
+        isTopDone: true
+
+      # Close the reverse tail
+      @reverseTail?.close()
+      @lastReverseStep = 0
+
+      # Create a new forward tail. null start for forward is the top.
+      @forwardTail?.close()
+      @forwardTail = @messageModel.newTailInclusive(null, @model.get('filters'), @addMessagesToBottomOfList)
+      @forwardTail.expandTo(com.roost.STARTING_SIZE)
+      @lastForwardStep = com.roost.STARTING_SIZE
 
     addMessagesToTopOfList: (msgs, isDone) =>
       @model.set
@@ -138,6 +157,13 @@ do ->
       # by as many messages as we just received.
       if messages.length >= com.roost.CACHE_SIZE
         @_clearTopOfCache(msgs.length)
+
+      # If we aren't loaded yet, let's clear our messages out.
+      # We don't reset with our messages since it will jump the scrolling down.
+      # TODO: stop that from happening.
+      if not @model.get('loaded')
+        @model.set('loaded', true)
+        messages.reset []
 
       # Add all the messages in correct order to the END of our list
       for message in msgs.slice(0)

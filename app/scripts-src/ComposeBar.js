@@ -42,7 +42,7 @@
         var composeFields, defaultFields, template;
         this.$el.empty();
         defaultFields = this._getDefaultFields();
-        composeFields = _.defaults(this.paneModel.get('composeFields'), defaultFields);
+        composeFields = _.defaults({}, this.paneModel.get('composeFields'), defaultFields);
         template = com.roost.templates['ComposeBar'];
         this.$el.append(template(_.defaults({
           composeFields: composeFields

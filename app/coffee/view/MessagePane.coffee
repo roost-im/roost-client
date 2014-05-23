@@ -28,6 +28,8 @@ do ->
       Mousetrap.bind('left', (=> @_moveSelection(1)))
       Mousetrap.bind('right', (=> @_moveSelection(-1)))
       Mousetrap.bind('>', @_sendPaneToBottom)
+      Mousetrap.bind('<', @_sendPaneToTop)
+      Mousetrap.bind('shift+v', @_clearPaneFilters)
 
     render: =>
       @$el.empty()
@@ -66,7 +68,6 @@ do ->
 
     _moveSelection: (diff) =>
       # Keep our selected position within proper bounds.
-      # TODO: can underscore clamp a value?
       @selectedPosition = @selectedPosition - diff
       @selectedPosition = Math.min(@selectedPosition, @childViews.length - 1)
       @selectedPosition = Math.max(@selectedPosition, 0)
@@ -79,7 +80,8 @@ do ->
       # If we actually have a selected view, make sure to set the model and move the scroll
       if selectedView?
         for view in @childViews
-          view.model.set('selected', false)
+          if view.cid != selectedView.cid
+            view.model.set('selected', false)
         selectedView.model.set('selected', true)
         offset = selectedView.$el.offset().left
         width = selectedView.$el.width()
@@ -91,6 +93,13 @@ do ->
     _sendPaneToBottom: =>
       @childViews[@selectedPosition].model.set('position', null)
       @childViews[@selectedPosition].model.trigger 'reload'
+
+    _sendPaneToTop: =>
+      @childViews[@selectedPosition].model.set('position', null)
+      @childViews[@selectedPosition].model.trigger 'toTop'
+
+    _clearPaneFilters: =>
+      @childViews[@selectedPosition].model.set('filters', {})
       
     _addPaneView: (paneModel) =>
       # TODO: this still causes scroll issues, even with caching/restoring on width changes

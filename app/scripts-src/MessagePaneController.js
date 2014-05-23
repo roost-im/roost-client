@@ -12,6 +12,7 @@
         this._clearTopOfCache = __bind(this._clearTopOfCache, this);
         this.addMessagesToBottomOfList = __bind(this.addMessagesToBottomOfList, this);
         this.addMessagesToTopOfList = __bind(this.addMessagesToTopOfList, this);
+        this._jumpToTop = __bind(this._jumpToTop, this);
         this._onScrollDown = __bind(this._onScrollDown, this);
         this._onScrollUp = __bind(this._onScrollUp, this);
         this._properStartCb = __bind(this._properStartCb, this);
@@ -23,6 +24,7 @@
         this.listenTo(this.model, 'scrollUp', this._onScrollUp);
         this.listenTo(this.model, 'scrollDown', this._onScrollDown);
         this.listenTo(this.model, 'reload change:filters', this.fetchFromPosition);
+        this.listenTo(this.model, 'toTop', this._jumpToTop);
         this.lastReverseStep = 0;
         this.lastForwardStep = 0;
       }
@@ -70,6 +72,26 @@
         this.model.set('bottomLoading', true);
         this.lastForwardStep += com.roost.EXPANSION_SIZE;
         return this.forwardTail.expandTo(this.lastForwardStep);
+      };
+
+      MessagePaneController.prototype._jumpToTop = function() {
+        var _ref, _ref1;
+        this.model.set({
+          topLoading: false,
+          loaded: false,
+          bottomLoading: true,
+          isTopDone: true
+        });
+        if ((_ref = this.reverseTail) != null) {
+          _ref.close();
+        }
+        this.lastReverseStep = 0;
+        if ((_ref1 = this.forwardTail) != null) {
+          _ref1.close();
+        }
+        this.forwardTail = this.messageModel.newTailInclusive(null, this.model.get('filters'), this.addMessagesToBottomOfList);
+        this.forwardTail.expandTo(com.roost.STARTING_SIZE);
+        return this.lastForwardStep = com.roost.STARTING_SIZE;
       };
 
       MessagePaneController.prototype.addMessagesToTopOfList = function(msgs, isDone) {
@@ -129,6 +151,10 @@
         }
         if (messages.length >= com.roost.CACHE_SIZE) {
           this._clearTopOfCache(msgs.length);
+        }
+        if (!this.model.get('loaded')) {
+          this.model.set('loaded', true);
+          messages.reset([]);
         }
         _ref = msgs.slice(0);
         _results = [];

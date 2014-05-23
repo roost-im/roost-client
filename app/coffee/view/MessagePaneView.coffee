@@ -184,6 +184,10 @@ do ->
           return
 
     _addMessages: (message, collection, options) =>
+      # Since we're adding messages, let's get rid of these.
+      @$('.no-messages').remove()
+      @$('.loading').remove()
+
       # Check prepend vs append
       if options.at == 0
         @_prependMessage(message)

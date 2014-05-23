@@ -193,6 +193,8 @@
       };
 
       MessagePaneView.prototype._addMessages = function(message, collection, options) {
+        this.$('.no-messages').remove();
+        this.$('.loading').remove();
         if (options.at === 0) {
           this._prependMessage(message);
           if (this.childViews.length > com.roost.STARTING_SIZE) {

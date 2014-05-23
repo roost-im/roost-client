@@ -13,6 +13,8 @@
         this._recalculateWidth = __bind(this._recalculateWidth, this);
         this._removePaneView = __bind(this._removePaneView, this);
         this._addPaneView = __bind(this._addPaneView, this);
+        this._clearPaneFilters = __bind(this._clearPaneFilters, this);
+        this._sendPaneToTop = __bind(this._sendPaneToTop, this);
         this._sendPaneToBottom = __bind(this._sendPaneToBottom, this);
         this._setSelection = __bind(this._setSelection, this);
         this._moveSelection = __bind(this._moveSelection, this);
@@ -48,7 +50,9 @@
             return _this._moveSelection(-1);
           };
         })(this)));
-        return Mousetrap.bind('>', this._sendPaneToBottom);
+        Mousetrap.bind('>', this._sendPaneToBottom);
+        Mousetrap.bind('<', this._sendPaneToTop);
+        return Mousetrap.bind('shift+v', this._clearPaneFilters);
       };
 
       MessagePane.prototype.render = function() {
@@ -113,7 +117,9 @@
           _ref = this.childViews;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             view = _ref[_i];
-            view.model.set('selected', false);
+            if (view.cid !== selectedView.cid) {
+              view.model.set('selected', false);
+            }
           }
           selectedView.model.set('selected', true);
           offset = selectedView.$el.offset().left;
@@ -129,6 +135,15 @@
       MessagePane.prototype._sendPaneToBottom = function() {
         this.childViews[this.selectedPosition].model.set('position', null);
         return this.childViews[this.selectedPosition].model.trigger('reload');
+      };
+
+      MessagePane.prototype._sendPaneToTop = function() {
+        this.childViews[this.selectedPosition].model.set('position', null);
+        return this.childViews[this.selectedPosition].model.trigger('toTop');
+      };
+
+      MessagePane.prototype._clearPaneFilters = function() {
+        return this.childViews[this.selectedPosition].model.set('filters', {});
       };
 
       MessagePane.prototype._addPaneView = function(paneModel) {

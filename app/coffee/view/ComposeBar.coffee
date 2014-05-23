@@ -25,7 +25,7 @@ do ->
       @$el.empty()
 
       defaultFields = @_getDefaultFields()
-      composeFields = _.defaults(@paneModel.get('composeFields'), defaultFields)
+      composeFields = _.defaults({}, @paneModel.get('composeFields'), defaultFields)
 
       template = com.roost.templates['ComposeBar']
       @$el.append template(_.defaults({composeFields: composeFields}, @paneModel.attributes))
