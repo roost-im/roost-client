@@ -73,12 +73,12 @@
       };
 
       FilterBar.prototype._removeFilters = function() {
-        this.paneModel.set({
+        return this.paneModel.set({
           filters: {},
           loaded: false,
-          showFilters: false
+          showFilters: false,
+          position: null
         });
-        return this.paneModel.trigger('toBottom');
       };
 
       FilterBar.prototype._removePane = function() {
@@ -102,12 +102,12 @@
         if (opts.recipient !== '') {
           filters.recipient = opts.recipient;
         }
-        this.paneModel.set({
+        return this.paneModel.set({
           filters: filters,
           loaded: false,
-          showFilters: false
+          showFilters: false,
+          position: null
         });
-        return this.paneModel.trigger('toBottom');
       };
 
       FilterBar.prototype._handleInputKey = function(evt) {

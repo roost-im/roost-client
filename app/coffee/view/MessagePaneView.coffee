@@ -51,21 +51,22 @@ do ->
         @$el.append(view.$el)
         @childViews.push(view)
 
-      # Big loading spinner in case we're still loading stuff in
-      if not @model.get('loaded') and @model.get('messages').length == 0
-        $loading = $('<div class="loading">')
-        $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>')
-        @$el.append($loading)
-      # Nice looking message if there are no messages available
-      else if @model.get('loaded') and @model.get('messages').length == 0
-        $noMessages = $('<div class="no-messages">').text('No messages')
-        @$el.append($noMessages)
-
-      # Add in the filler view
-      @$el.append('<div class="filler-view">')
-
-      # With everything in place, jump the scroll to the bottom
-      @$el.scrollTop(@$el[0].scrollHeight)
+      if @model.get('messages').length == 0
+        if @model.get('loaded')
+          $noMessages = $('<div class="no-messages">').text('No messages')
+          @$el.append($noMessages)
+        else
+          $loading = $('<div class="loading">')
+          $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>')
+          @$el.append($loading)
+        @$el.append('<div class="filler-view">')
+      else
+        @$el.append('<div class="filler-view">')
+        if  @model.get('position')?
+          $positionMessage = @$('.positioned')
+          @$el.scrollTop(@$el.scrollTop() + ($positionMessage.offset().top - @model.get('posScroll')))
+        else
+          @$el.scrollTop(@$el[0].scrollHeight)
 
       # Mark off which subsection of the cache we are currently showing
       @currentTop = 0
@@ -155,7 +156,7 @@ do ->
         else
           #TODO: show something to say top has been reached
           return
-      else if @$el.scrollTop() > @$el[0].scrollHeight * 0.85 - @$('.filler-view').height()
+      else if @$el.scrollTop() + @$el.height() > @$el[0].scrollHeight * 0.90 - @$('.filler-view').height()
         # Check if we have any more messages in our cache
         if @currentBottom < messages.length
           limit = Math.min(@currentBottom + com.roost.EXPANSION_SIZE, messages.length)
@@ -174,10 +175,14 @@ do ->
       # Check prepend vs append
       if options.at == 0
         @_prependMessage(message)
-        @_removeBottomMessage()
+
+        if @childViews.length > com.roost.STARTING_SIZE
+          @_removeBottomMessage()
       else
         @_appendMessage(message)
-        @_removeTopMessage()
+
+        if @childViews.length > com.roost.STARTING_SIZE
+          @_removeTopMessage()
 
     _appendMessage: (message) =>
       # Add the next message before the filler view

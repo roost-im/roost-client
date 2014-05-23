@@ -42,7 +42,7 @@ do ->
       paneController = new com.roost.MessagePaneController
         model: paneModel
         api: @api
-      paneController.fetchFromBottom()
+      paneController.fetchFromPosition()
 
       composeController = new com.roost.ComposeController
         model: paneModel

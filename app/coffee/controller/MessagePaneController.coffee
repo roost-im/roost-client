@@ -22,17 +22,21 @@ do ->
       # Listen to events on the model
       @listenTo @model, 'scrollUp', @_onScrollUp
       @listenTo @model, 'scrollDown', @_onScrollDown
-      @listenTo @model, 'toBottom', @fetchFromBottom
+      @listenTo @model, 'toBottom change:position change:filters', @fetchFromPosition
 
       # Keep track of how far we've moved the tails up/down
       # This is kind of awkward but necessary state tracking
       @lastReverseStep = 0
       @lastForwardStep = 0
 
-    fetchFromBottom: =>
+    fetchFromPosition: =>
       # Fetches the first set of data from the bottom of the list
       # Reverse tail with null start will give messages from the bottom up
-      @reverseTail = @messageModel.newReverseTail(null, @model.get('filters'), @addMessagesToTopOfList)
+      @model.set
+        topLoading: true
+        loaded: false
+
+      @reverseTail = @messageModel.newReverseTail(@_getProperReverseStart(), @model.get('filters'), @addMessagesToTopOfList)
       @reverseTail.expandTo(com.roost.STARTING_SIZE)
       @lastReverseStep = com.roost.STARTING_SIZE
 
@@ -47,14 +51,6 @@ do ->
       @model.set('bottomLoading', true)
       @lastForwardStep += com.roost.EXPANSION_SIZE
       @forwardTail.expandTo(@lastForwardStep)
-
-    onPositionJump: =>
-      # Handles fetching a new set of data on a position jump
-      return
-
-    onFilterChange: =>
-      # Handles updating the list when the filters have changed
-      return
 
     addMessagesToTopOfList: (msgs, isDone) =>
       @model.set
@@ -141,3 +137,16 @@ do ->
       # Makes times friendly and clears whitespace
       message.time = moment(message.time)
       message.message = message.message.trim()
+
+    _getProperReverseStart: =>
+      if @model.get('position')?
+        messages = @model.get('messages')
+        positionMessage = messages.where({id: @model.get('position')})[0]
+        index = messages.models.indexOf(positionMessage) + 1
+
+        if messages.models[index]?
+          return messages.models[index].get('id')
+        else
+          return null
+      else
+        return null

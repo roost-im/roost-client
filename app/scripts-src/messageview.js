@@ -11,12 +11,15 @@
       __extends(MessageView, _super);
 
       function MessageView() {
+        this._filterInstance = __bind(this._filterInstance, this);
+        this._filterClass = __bind(this._filterClass, this);
         this._openQuoteBox = __bind(this._openQuoteBox, this);
         this._openMessageBox = __bind(this._openMessageBox, this);
         this._openReplyBox = __bind(this._openReplyBox, this);
         this.remove = __bind(this.remove, this);
         this.updateColors = __bind(this.updateColors, this);
         this.updateTime = __bind(this.updateTime, this);
+        this.updatePosition = __bind(this.updatePosition, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return MessageView.__super__.constructor.apply(this, arguments);
@@ -27,7 +30,9 @@
       MessageView.prototype.events = {
         'click .reply': '_openReplyBox',
         'click .pm': '_openMessageBox',
-        'click .quote': '_openQuoteBox'
+        'click .quote': '_openQuoteBox',
+        'click .msg-class': '_filterClass',
+        'click .msg-instance': '_filterInstance'
       };
 
       MessageView.prototype.initialize = function(options) {
@@ -47,8 +52,15 @@
           shortSender: name,
           gravatar: gravatar
         })));
+        this.updatePosition();
         this.updateTime();
         return this.updateColors();
+      };
+
+      MessageView.prototype.updatePosition = function() {
+        if (this.paneModel.get('position') === this.message.get('id')) {
+          return this.$el.addClass('positioned');
+        }
       };
 
       MessageView.prototype.updateTime = function() {
@@ -113,6 +125,27 @@
             content: quoted
           },
           showCompose: true
+        });
+      };
+
+      MessageView.prototype._filterClass = function() {
+        return this.paneModel.set({
+          filters: {
+            class_key: this.message.get('class')
+          },
+          position: this.message.get('id'),
+          posScroll: this.$el.offset().top
+        });
+      };
+
+      MessageView.prototype._filterInstance = function() {
+        return this.paneModel.set({
+          filters: {
+            class_key: this.message.get('class'),
+            instance_key: this.message.get('instance')
+          },
+          position: this.message.get('id'),
+          posScroll: this.$el.offset().top
         });
       };
 

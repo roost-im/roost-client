@@ -44,7 +44,9 @@ do ->
 
     _jumpToBottom: =>
       # Treat as a complete reset
-      @paneModel.set('loaded', false)
+      @paneModel.set
+        loaded: false
+        position: null
       @paneModel.trigger 'toBottom'
 
     _sendMessage: =>

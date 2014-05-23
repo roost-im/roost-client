@@ -173,8 +173,11 @@
   max-width: 700px;
   margin: auto;
   box-sizing: border-box;
+  -moz-box-sizing: border-box;
   border: 1px solid #BBB;
   border-top: none; }
+  .message-view.positioned {
+    border: 2px solid black; }
   .message-view .header {
     box-sizing: border-box;
     height: 25px;
@@ -200,7 +203,10 @@
       padding-left: 5px;
       padding-right: 3px;
       box-sizing: border-box;
-      float: left; }
+      float: left;
+      cursor: pointer; }
+      .message-view .header .msg-class:hover {
+        text-decoration: underline; }
     .message-view .header .divider {
       display: inline-block;
       border-left: 5px solid #BBB;
@@ -210,7 +216,10 @@
       float: left; }
     .message-view .header .msg-instance {
       display: inline-block;
-      padding-left: 3px; }
+      padding-left: 3px;
+      cursor: pointer; }
+      .message-view .header .msg-instance:hover {
+        text-decoration: underline; }
   .message-view .content {
     display: table-row; }
     .message-view .content .sender {

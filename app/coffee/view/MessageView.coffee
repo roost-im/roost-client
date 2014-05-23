@@ -10,6 +10,9 @@ do ->
       'click .pm': '_openMessageBox'
       'click .quote': '_openQuoteBox'
 
+      'click .msg-class': '_filterClass'
+      'click .msg-instance': '_filterInstance'
+
     initialize: (options) =>
       @message = options.message
       @paneModel = options.paneModel
@@ -29,8 +32,14 @@ do ->
           gravatar: gravatar
         )
       )
+
+      @updatePosition()
       @updateTime()
       @updateColors()
+
+    updatePosition: =>
+      if @paneModel.get('position') == @message.get('id')
+        @$el.addClass('positioned')
 
     updateTime: =>
       @$('.time.from-now').text(@message.get('time').fromNow())
@@ -84,3 +93,18 @@ do ->
           recipient: ''
           content: quoted
         showCompose: true
+
+    _filterClass: =>
+      @paneModel.set
+        filters: 
+          class_key: @message.get('class')
+        position: @message.get('id')
+        posScroll: @$el.offset().top
+
+    _filterInstance: =>
+      @paneModel.set
+        filters: 
+          class_key: @message.get('class')
+          instance_key: @message.get('instance')
+        position: @message.get('id')
+        posScroll: @$el.offset().top

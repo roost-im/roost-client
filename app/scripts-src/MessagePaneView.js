@@ -40,7 +40,7 @@
       };
 
       MessagePaneView.prototype.render = function() {
-        var $loading, $noMessages, message, view, _i, _j, _len, _len1, _ref, _ref1;
+        var $loading, $noMessages, $positionMessage, message, view, _i, _j, _len, _len1, _ref, _ref1;
         _ref = this.childViews;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           view = _ref[_i];
@@ -59,16 +59,25 @@
           this.$el.append(view.$el);
           this.childViews.push(view);
         }
-        if (!this.model.get('loaded') && this.model.get('messages').length === 0) {
-          $loading = $('<div class="loading">');
-          $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>');
-          this.$el.append($loading);
-        } else if (this.model.get('loaded') && this.model.get('messages').length === 0) {
-          $noMessages = $('<div class="no-messages">').text('No messages');
-          this.$el.append($noMessages);
+        if (this.model.get('messages').length === 0) {
+          if (this.model.get('loaded')) {
+            $noMessages = $('<div class="no-messages">').text('No messages');
+            this.$el.append($noMessages);
+          } else {
+            $loading = $('<div class="loading">');
+            $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>');
+            this.$el.append($loading);
+          }
+          this.$el.append('<div class="filler-view">');
+        } else {
+          this.$el.append('<div class="filler-view">');
+          if (this.model.get('position') != null) {
+            $positionMessage = this.$('.positioned');
+            this.$el.scrollTop(this.$el.scrollTop() + ($positionMessage.offset().top - this.model.get('posScroll')));
+          } else {
+            this.$el.scrollTop(this.$el[0].scrollHeight);
+          }
         }
-        this.$el.append('<div class="filler-view">');
-        this.$el.scrollTop(this.$el[0].scrollHeight);
         this.currentTop = 0;
         this.currentBottom = this.model.get('messages').length;
         this.composeView = new com.roost.ComposeBar({
@@ -151,7 +160,7 @@
           } else {
 
           }
-        } else if (this.$el.scrollTop() > this.$el[0].scrollHeight * 0.85 - this.$('.filler-view').height()) {
+        } else if (this.$el.scrollTop() + this.$el.height() > this.$el[0].scrollHeight * 0.90 - this.$('.filler-view').height()) {
           if (this.currentBottom < messages.length) {
             limit = Math.min(this.currentBottom + com.roost.EXPANSION_SIZE, messages.length);
             _ref1 = messages.slice(this.currentBottom, limit);
@@ -173,10 +182,14 @@
       MessagePaneView.prototype._addMessages = function(message, collection, options) {
         if (options.at === 0) {
           this._prependMessage(message);
-          return this._removeBottomMessage();
+          if (this.childViews.length > com.roost.STARTING_SIZE) {
+            return this._removeBottomMessage();
+          }
         } else {
           this._appendMessage(message);
-          return this._removeTopMessage();
+          if (this.childViews.length > com.roost.STARTING_SIZE) {
+            return this._removeTopMessage();
+          }
         }
       };
 

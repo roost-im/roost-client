@@ -43,7 +43,7 @@
           model: paneModel,
           api: this.api
         });
-        paneController.fetchFromBottom();
+        paneController.fetchFromPosition();
         composeController = new com.roost.ComposeController({
           model: paneModel,
           api: this.api

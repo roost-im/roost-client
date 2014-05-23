@@ -7,29 +7,32 @@
     com.roost.CACHE_SIZE = 200;
     return com.roost.MessagePaneController = (function() {
       function MessagePaneController(options) {
+        this._getProperReverseStart = __bind(this._getProperReverseStart, this);
         this._processMesssage = __bind(this._processMesssage, this);
         this._clearBottomOfCache = __bind(this._clearBottomOfCache, this);
         this._clearTopOfCache = __bind(this._clearTopOfCache, this);
         this.addMessagesToBottomOfList = __bind(this.addMessagesToBottomOfList, this);
         this.addMessagesToTopOfList = __bind(this.addMessagesToTopOfList, this);
-        this.onFilterChange = __bind(this.onFilterChange, this);
-        this.onPositionJump = __bind(this.onPositionJump, this);
         this._onScrollDown = __bind(this._onScrollDown, this);
         this._onScrollUp = __bind(this._onScrollUp, this);
-        this.fetchFromBottom = __bind(this.fetchFromBottom, this);
+        this.fetchFromPosition = __bind(this.fetchFromPosition, this);
         $.extend(this, Backbone.Events);
         this.model = options.model;
         this.api = options.api;
         this.messageModel = new MessageModel(this.api);
         this.listenTo(this.model, 'scrollUp', this._onScrollUp);
         this.listenTo(this.model, 'scrollDown', this._onScrollDown);
-        this.listenTo(this.model, 'toBottom', this.fetchFromBottom);
+        this.listenTo(this.model, 'toBottom change:position change:filters', this.fetchFromPosition);
         this.lastReverseStep = 0;
         this.lastForwardStep = 0;
       }
 
-      MessagePaneController.prototype.fetchFromBottom = function() {
-        this.reverseTail = this.messageModel.newReverseTail(null, this.model.get('filters'), this.addMessagesToTopOfList);
+      MessagePaneController.prototype.fetchFromPosition = function() {
+        this.model.set({
+          topLoading: true,
+          loaded: false
+        });
+        this.reverseTail = this.messageModel.newReverseTail(this._getProperReverseStart(), this.model.get('filters'), this.addMessagesToTopOfList);
         this.reverseTail.expandTo(com.roost.STARTING_SIZE);
         return this.lastReverseStep = com.roost.STARTING_SIZE;
       };
@@ -45,10 +48,6 @@
         this.lastForwardStep += com.roost.EXPANSION_SIZE;
         return this.forwardTail.expandTo(this.lastForwardStep);
       };
-
-      MessagePaneController.prototype.onPositionJump = function() {};
-
-      MessagePaneController.prototype.onFilterChange = function() {};
 
       MessagePaneController.prototype.addMessagesToTopOfList = function(msgs, isDone) {
         var message, messages, _i, _j, _len, _len1, _ref, _results;
@@ -139,6 +138,24 @@
       MessagePaneController.prototype._processMesssage = function(message) {
         message.time = moment(message.time);
         return message.message = message.message.trim();
+      };
+
+      MessagePaneController.prototype._getProperReverseStart = function() {
+        var index, messages, positionMessage;
+        if (this.model.get('position') != null) {
+          messages = this.model.get('messages');
+          positionMessage = messages.where({
+            id: this.model.get('position')
+          })[0];
+          index = messages.models.indexOf(positionMessage) + 1;
+          if (messages.models[index] != null) {
+            return messages.models[index].get('id');
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
       };
 
       return MessagePaneController;

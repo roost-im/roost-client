@@ -57,8 +57,7 @@ do ->
         filters: {}
         loaded: false
         showFilters: false
-
-      @paneModel.trigger 'toBottom'
+        position: null
 
     _removePane: =>
       @session.removePane(@paneModel.cid)
@@ -83,7 +82,7 @@ do ->
         filters: filters
         loaded: false
         showFilters: false
-      @paneModel.trigger 'toBottom'
+        position: null
 
     _handleInputKey: (evt) =>
       if evt.keyCode == 13

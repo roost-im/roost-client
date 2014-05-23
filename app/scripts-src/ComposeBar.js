@@ -60,7 +60,10 @@
       };
 
       ComposeBar.prototype._jumpToBottom = function() {
-        this.paneModel.set('loaded', false);
+        this.paneModel.set({
+          loaded: false,
+          position: null
+        });
         return this.paneModel.trigger('toBottom');
       };
 
