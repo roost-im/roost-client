@@ -6,6 +6,12 @@ do ->
   com.roost.EXPANSION_SIZE = 10
   com.roost.CACHE_SIZE = 200
 
+  # For each tail, you have:
+  #  The actual tail
+  #  The step we've moved thus far
+  # Whenever a tail gets expanded/closed/recreated, reset the step.
+  # Whenever a tail is recreated, close the previous one.
+
   class com.roost.MessagePaneController
     constructor: (options) ->
       $.extend @, Backbone.Events
@@ -38,7 +44,7 @@ do ->
         loaded: false
 
       @reverseTail?.close()
-      @forwardTail?.close()
+      @lastReverseStep = 0
 
       # Lord have mercy.
       # We make a forward tail briefly to figure out the right position for a reverse tail.
@@ -93,6 +99,7 @@ do ->
 
         # Forward tail to get messages going downward (more recent).
         # Must be created after reset because starting ID is the latest message.
+        @lastForwardStep = 0
         if msgs.length == 0
           # Special case for handling when there are no messages to show: both top and bottom done
           @model.set 'isBottomDone', true
@@ -137,6 +144,7 @@ do ->
         messages.add message, {at: messages.length}
 
     _clearTopOfCache: (length) =>
+      # Take a message off the top (beginning of our list)
       messages = @model.get 'messages'
       for i in [0..length-1]
         oldMsg = messages.shift()
@@ -149,6 +157,7 @@ do ->
       @lastReverseStep = 0
 
     _clearBottomOfCache: (length) =>
+      # Take a message off the bottom (end of our list)
       messages = @model.get 'messages'
       for i in [0..length-1]
         oldMsg = messages.pop()

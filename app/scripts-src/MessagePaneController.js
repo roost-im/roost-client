@@ -28,7 +28,7 @@
       }
 
       MessagePaneController.prototype.fetchFromPosition = function() {
-        var _ref, _ref1;
+        var _ref;
         this.model.set({
           topLoading: true,
           loaded: false
@@ -36,9 +36,7 @@
         if ((_ref = this.reverseTail) != null) {
           _ref.close();
         }
-        if ((_ref1 = this.forwardTail) != null) {
-          _ref1.close();
-        }
+        this.lastReverseStep = 0;
         if (this.model.get('position') !== null) {
           this.tempForwardTail = this.messageModel.newTailInclusive(this.model.get('position'), this.model.get('filters'), this._properStartCb);
           return this.tempForwardTail.expandTo(2);
@@ -88,6 +86,7 @@
         if (!this.model.get('loaded')) {
           this.model.set('loaded', true);
           messages.reset(msgs);
+          this.lastForwardStep = 0;
           if (msgs.length === 0) {
             this.model.set('isBottomDone', true);
             if ((_ref = this.forwardTail) != null) {

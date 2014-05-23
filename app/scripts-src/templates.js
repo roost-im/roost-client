@@ -88,7 +88,7 @@ function program10(depth0,data) {
 function program12(depth0,data) {
   
   
-  return "\n    <div class=\"clear-filters\">\n      <i class=\"fa fa-ban\"></i>&nbsp;&nbsp;Clear Filters\n    </div>\n  ";
+  return "\n    <div class=\"clear-filters\">\n      <i class=\"fa fa-ban\"></i>&nbsp;&nbsp;Clear\n    </div>\n  ";
   }
 
 function program14(depth0,data) {
