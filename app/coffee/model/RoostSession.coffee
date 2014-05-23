@@ -29,7 +29,7 @@ do ->
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
       # I really don't know if this is where the hotkeys go
-      Mousetrap.bind('shift+n', (=> @addPane {}))
+      Mousetrap.bind('alt+n', (=> @addPane {}))
       Mousetrap.bind('alt+p', (=> @addPane 
         filters:
           class_key: 'message'

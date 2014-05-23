@@ -15,12 +15,17 @@ do ->
       @paneModel = options.paneModel
       @session = options.session
 
-      @listenTo @paneModel, 'change:showFilters change:filters', @render
+      @listenTo @paneModel, 'change:showFilters change:filters change:selected', @render
 
     render: =>
       @$el.empty()
       template = com.roost.templates['FilterBar']
       @$el.append template(@paneModel.attributes)
+
+      if @paneModel.get('selected')
+        @$el.addClass('selected')
+      else
+        @$el.removeClass('selected')
 
       # Bring focus to first input box
       @$('.class-input').focus()

@@ -32,7 +32,7 @@
       FilterBar.prototype.initialize = function(options) {
         this.paneModel = options.paneModel;
         this.session = options.session;
-        return this.listenTo(this.paneModel, 'change:showFilters change:filters', this.render);
+        return this.listenTo(this.paneModel, 'change:showFilters change:filters change:selected', this.render);
       };
 
       FilterBar.prototype.render = function() {
@@ -40,6 +40,11 @@
         this.$el.empty();
         template = com.roost.templates['FilterBar'];
         this.$el.append(template(this.paneModel.attributes));
+        if (this.paneModel.get('selected')) {
+          this.$el.addClass('selected');
+        } else {
+          this.$el.removeClass('selected');
+        }
         this.$('.class-input').focus();
         if (this.paneModel.get('filters').class_key != null) {
           return this._updateColors();

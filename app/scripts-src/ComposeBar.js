@@ -33,7 +33,7 @@
 
       ComposeBar.prototype.initialize = function(options) {
         this.paneModel = options.paneModel;
-        this.listenTo(this.paneModel, 'change:showCompose change:composeFields', this.render);
+        this.listenTo(this.paneModel, 'change:showCompose change:composeFields change:selected', this.render);
         return this.listenTo(this.paneModel, 'change:sending', this._updateButton);
       };
 
@@ -42,6 +42,11 @@
         this.$el.empty();
         template = com.roost.templates['ComposeBar'];
         this.$el.append(template(this.paneModel.attributes));
+        if (this.paneModel.get('selected')) {
+          this.$el.addClass('selected');
+        } else {
+          this.$el.removeClass('selected');
+        }
         return this.$('.class-input').focus();
       };
 

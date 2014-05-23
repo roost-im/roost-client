@@ -15,7 +15,7 @@ do ->
       @paneModel = options.paneModel
 
       # Re-render, either to show the composer, update fields, or both
-      @listenTo @paneModel, 'change:showCompose change:composeFields', @render
+      @listenTo @paneModel, 'change:showCompose change:composeFields change:selected', @render
 
       # Disable the send button while a message is sending to prevent spamming
       @listenTo @paneModel, 'change:sending', @_updateButton
@@ -24,6 +24,11 @@ do ->
       @$el.empty()
       template = com.roost.templates['ComposeBar']
       @$el.append template(@paneModel.attributes)
+
+      if @paneModel.get('selected')
+        @$el.addClass('selected')
+      else
+        @$el.removeClass('selected')
 
       # TODO: focus properly depending on what fields are filled in
       # Bring focus to first input box

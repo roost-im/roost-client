@@ -13,6 +13,9 @@
         this._recalculateWidth = __bind(this._recalculateWidth, this);
         this._removePaneView = __bind(this._removePaneView, this);
         this._addPaneView = __bind(this._addPaneView, this);
+        this._sendPaneToBottom = __bind(this._sendPaneToBottom, this);
+        this._moveSelection = __bind(this._moveSelection, this);
+        this._setSelection = __bind(this._setSelection, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return MessagePane.__super__.constructor.apply(this, arguments);
@@ -20,24 +23,64 @@
 
       MessagePane.prototype.className = 'message-pane';
 
+      MessagePane.prototype.events = {
+        'click .message-pane-view': '_setSelection'
+      };
+
       MessagePane.prototype.initialize = function(options) {
         this.session = options.session;
         this.messageLists = options.messageLists;
-        this.childViews = [];
         this.listenTo(this.messageLists, 'add', this._addPaneView);
-        return this.listenTo(this.messageLists, 'remove', this._removePaneView);
+        this.listenTo(this.messageLists, 'remove', this._removePaneView);
+        Mousetrap.bind('left', ((function(_this) {
+          return function() {
+            return _this._moveSelection(1);
+          };
+        })(this)));
+        Mousetrap.bind('right', ((function(_this) {
+          return function() {
+            return _this._moveSelection(-1);
+          };
+        })(this)));
+        Mousetrap.bind('>', this._sendPaneToBottom);
+        return this.selectedPosition = 0;
       };
 
       MessagePane.prototype.render = function() {
-        var paneModel, _i, _len, _ref, _results;
+        var paneModel, _i, _len, _ref;
         this.$el.empty();
+        this.childViews = [];
         _ref = this.messageLists.models;
-        _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           paneModel = _ref[_i];
-          _results.push(this._addPaneView(paneModel));
+          this._addPaneView(paneModel);
         }
-        return _results;
+        if (this.childViews.length > 0) {
+          return this._moveSelection(0);
+        }
+      };
+
+      MessagePane.prototype._setSelection = function(evt) {
+        this.selectedPosition = this.$('.message-pane-view').index(evt.currentTarget);
+        return this._moveSelection(0);
+      };
+
+      MessagePane.prototype._moveSelection = function(diff) {
+        var view, _i, _len, _ref, _ref1;
+        _ref = this.childViews;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          view.model.set('selected', false);
+        }
+        this.selectedPosition = this.selectedPosition - diff;
+        this.selectedPosition = Math.min(this.selectedPosition, this.childViews.length - 1);
+        this.selectedPosition = Math.max(this.selectedPosition, 0);
+        return (_ref1 = this.childViews[this.selectedPosition]) != null ? _ref1.model.set('selected', true) : void 0;
+      };
+
+      MessagePane.prototype._sendPaneToBottom = function() {
+        this.childViews[this.selectedPosition].model.set('position', null);
+        return this.childViews[this.selectedPosition].model.trigger('reload');
       };
 
       MessagePane.prototype._addPaneView = function(paneModel) {
@@ -51,6 +94,7 @@
         paneView.render();
         this.$el.append(paneView.$el);
         this._recalculateWidth();
+        this._moveSelection(-1 * this.childViews.length);
         return this.$el.scrollLeft(this.$el[0].scrollWidth);
       };
 
@@ -70,6 +114,9 @@
           };
         })(this)));
         model.off();
+        if (model.get('selected')) {
+          this._moveSelection(1);
+        }
         this._recalculateWidth();
         if (this.messageLists.length === 0) {
           return this.$el.append($('<div class="no-panes">').text('Click "New Pane" above to start browsing your messages.'));

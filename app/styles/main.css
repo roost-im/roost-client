@@ -141,6 +141,10 @@
     display: inline-block;
     white-space: normal;
     padding-top: 30px; }
+    .message-pane .message-pane-view:hover .filter-bar {
+      opacity: 0.8; }
+    .message-pane .message-pane-view:hover .compose-bar {
+      opacity: 0.8; }
     .message-pane .message-pane-view:last-child {
       border: none; }
     .message-pane .message-pane-view .loading {
@@ -285,7 +289,11 @@
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-shadow: 0px 0px 1px black;
-  z-index: 10; }
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s; }
+  .compose-bar.selected {
+    opacity: 1 !important; }
   .compose-bar .single-bar {
     height: 30px;
     line-height: 30px;
@@ -351,7 +359,11 @@
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-shadow: 0px 0px 5px black;
-  z-index: 10; }
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s; }
+  .filter-bar.selected {
+    opacity: 1 !important; }
   .filter-bar .top-bar {
     height: 30px;
     line-height: 30px;

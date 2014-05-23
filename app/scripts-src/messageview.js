@@ -139,8 +139,10 @@
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
         };
-        if (evt.shiftKey) {
-          return this.session.addPane(options);
+        if (evt.altKey) {
+          this.session.addPane(options);
+          evt.preventDefault();
+          return evt.stopPropagation();
         } else {
           return this.paneModel.set(options);
         }
@@ -156,8 +158,10 @@
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
         };
-        if (evt.shiftKey) {
-          return this.session.addPane(options);
+        if (evt.altKey) {
+          this.session.addPane(options);
+          evt.preventDefault();
+          return evt.stopPropagation();
         } else {
           return this.paneModel.set(options);
         }

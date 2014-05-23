@@ -19,6 +19,16 @@
     white-space: normal;
     padding-top: $compose-filter-bar-height;
 
+    &:hover {
+      .filter-bar {
+        opacity: 0.8;
+      }
+
+      .compose-bar {
+        opacity: 0.8;
+      }
+    }
+
     &:last-child {
       border: none;
     }

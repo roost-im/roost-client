@@ -105,8 +105,10 @@ do ->
         position: @message.get('id')
         posScroll: @$el.offset().top
 
-      if evt.shiftKey
+      if evt.altKey
         @session.addPane options
+        evt.preventDefault()
+        evt.stopPropagation()
       else
         @paneModel.set options
 
@@ -118,7 +120,9 @@ do ->
         position: @message.get('id')
         posScroll: @$el.offset().top
 
-      if evt.shiftKey
+      if evt.altKey
         @session.addPane options
+        evt.preventDefault()
+        evt.stopPropagation()
       else
         @paneModel.set options
