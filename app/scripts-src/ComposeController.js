@@ -21,7 +21,6 @@
               zsig = "Sent from Roost";
             }
             msg = _this.model.get('composeFields');
-            console.log(msg);
             return {
               message: {
                 "class": msg["class"],
@@ -46,12 +45,7 @@
             return _this.model.set({
               showCompose: false,
               sending: false,
-              composeFields: {
-                "class": '',
-                instance: '',
-                recipient: '',
-                content: ''
-              }
+              composeFields: {}
             });
           };
         })(this)).done();

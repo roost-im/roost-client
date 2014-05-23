@@ -12,6 +12,7 @@
         this._handleInputsKey = __bind(this._handleInputsKey, this);
         this._updateButton = __bind(this._updateButton, this);
         this._sendMessage = __bind(this._sendMessage, this);
+        this._getDefaultFields = __bind(this._getDefaultFields, this);
         this._jumpToBottom = __bind(this._jumpToBottom, this);
         this._hideCompose = __bind(this._hideCompose, this);
         this._showCompose = __bind(this._showCompose, this);
@@ -33,15 +34,19 @@
 
       ComposeBar.prototype.initialize = function(options) {
         this.paneModel = options.paneModel;
-        this.listenTo(this.paneModel, 'change:showCompose change:composeFields change:selected', this.render);
+        this.listenTo(this.paneModel, 'change:showCompose change:composeFields change:selected change:filters', this.render);
         return this.listenTo(this.paneModel, 'change:sending', this._updateButton);
       };
 
       ComposeBar.prototype.render = function() {
-        var template;
+        var composeFields, defaultFields, template;
         this.$el.empty();
+        defaultFields = this._getDefaultFields();
+        composeFields = _.defaults(this.paneModel.get('composeFields'), defaultFields);
         template = com.roost.templates['ComposeBar'];
-        this.$el.append(template(this.paneModel.attributes));
+        this.$el.append(template(_.defaults({
+          composeFields: composeFields
+        }, this.paneModel.attributes)));
         if (this.paneModel.get('selected')) {
           this.$el.addClass('selected');
         } else {
@@ -57,12 +62,7 @@
       ComposeBar.prototype._hideCompose = function() {
         return this.paneModel.set({
           showCompose: false,
-          composeFields: {
-            "class": '',
-            instance: '',
-            recipient: '',
-            content: ''
-          }
+          composeFields: {}
         });
       };
 
@@ -71,6 +71,24 @@
           position: null
         });
         return this.paneModel.trigger('reload');
+      };
+
+      ComposeBar.prototype._getDefaultFields = function() {
+        var filteredFields, filters;
+        filteredFields = {
+          "class": '',
+          instance: '',
+          recipient: '',
+          content: ''
+        };
+        filters = this.paneModel.get('filters');
+        if (filters.class_key != null) {
+          filteredFields["class"] = filters.class_key;
+          if (filters.instance_key != null) {
+            filteredFields.instance = filters.instance_key;
+          }
+        }
+        return filteredFields;
       };
 
       ComposeBar.prototype._sendMessage = function() {

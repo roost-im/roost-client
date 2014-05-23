@@ -28,14 +28,20 @@
       }
 
       MessagePaneController.prototype.fetchFromPosition = function() {
-        var tempForwardTail;
+        var _ref, _ref1;
         this.model.set({
           topLoading: true,
           loaded: false
         });
+        if ((_ref = this.reverseTail) != null) {
+          _ref.close();
+        }
+        if ((_ref1 = this.forwardTail) != null) {
+          _ref1.close();
+        }
         if (this.model.get('position') !== null) {
-          tempForwardTail = this.messageModel.newTailInclusive(this.model.get('position'), this.model.get('filters'), this._properStartCb);
-          return tempForwardTail.expandTo(2);
+          this.tempForwardTail = this.messageModel.newTailInclusive(this.model.get('position'), this.model.get('filters'), this._properStartCb);
+          return this.tempForwardTail.expandTo(2);
         } else {
           this.reverseTail = this.messageModel.newReverseTail(this.model.get('position'), this.model.get('filters'), this.addMessagesToTopOfList);
           this.reverseTail.expandTo(com.roost.STARTING_SIZE);
@@ -52,7 +58,8 @@
         }
         this.reverseTail = this.messageModel.newReverseTail(start, this.model.get('filters'), this.addMessagesToTopOfList);
         this.reverseTail.expandTo(com.roost.STARTING_SIZE);
-        return this.lastReverseStep = com.roost.STARTING_SIZE;
+        this.lastReverseStep = com.roost.STARTING_SIZE;
+        return this.tempForwardTail.close();
       };
 
       MessagePaneController.prototype._onScrollUp = function() {
@@ -68,7 +75,7 @@
       };
 
       MessagePaneController.prototype.addMessagesToTopOfList = function(msgs, isDone) {
-        var message, messages, _i, _j, _len, _len1, _ref, _results;
+        var message, messages, _i, _j, _len, _len1, _ref, _ref1, _ref2, _results;
         this.model.set({
           isTopDone: isDone,
           topLoading: false
@@ -83,8 +90,14 @@
           messages.reset(msgs);
           if (msgs.length === 0) {
             this.model.set('isBottomDone', true);
+            if ((_ref = this.forwardTail) != null) {
+              _ref.close();
+            }
             this.forwardTail = this.messageModel.newTailInclusive(null, this.model.get('filters'), this.addMessagesToBottomOfList);
           } else {
+            if ((_ref1 = this.forwardTail) != null) {
+              _ref1.close();
+            }
             this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
           }
           return this._onScrollDown();
@@ -92,10 +105,10 @@
           if (messages.length >= com.roost.CACHE_SIZE) {
             this._clearBottomOfCache(msgs.length);
           }
-          _ref = msgs.slice(0).reverse();
+          _ref2 = msgs.slice(0).reverse();
           _results = [];
-          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-            message = _ref[_j];
+          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+            message = _ref2[_j];
             _results.push(messages.add(message, {
               at: 0
             }));
@@ -130,11 +143,14 @@
       };
 
       MessagePaneController.prototype._clearTopOfCache = function(length) {
-        var i, messages, oldMsg, _i, _ref;
+        var i, messages, oldMsg, _i, _ref, _ref1;
         messages = this.model.get('messages');
         for (i = _i = 0, _ref = length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
           oldMsg = messages.shift();
           oldMsg.off();
+        }
+        if ((_ref1 = this.reverseTail) != null) {
+          _ref1.close();
         }
         this.reverseTail = this.messageModel.newReverseTail(messages.at(0).id, this.model.get('filters'), this.addMessagesToTopOfList);
         this.model.set('isTopDone', false);
@@ -142,11 +158,14 @@
       };
 
       MessagePaneController.prototype._clearBottomOfCache = function(length) {
-        var i, messages, oldMsg, _i, _ref;
+        var i, messages, oldMsg, _i, _ref, _ref1;
         messages = this.model.get('messages');
         for (i = _i = 0, _ref = length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
           oldMsg = messages.pop();
           oldMsg.off();
+        }
+        if ((_ref1 = this.forwardTail) != null) {
+          _ref1.close();
         }
         this.forwardTail = this.messageModel.newTailInclusive(messages.at(messages.length - 1).id, this.model.get('filters'), this.addMessagesToBottomOfList);
         this.model.set('isBottomDone', false);

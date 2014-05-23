@@ -48,14 +48,14 @@
             return _this._moveSelection(-1);
           };
         })(this)));
-        Mousetrap.bind('>', this._sendPaneToBottom);
-        return this.selectedPosition = 0;
+        return Mousetrap.bind('>', this._sendPaneToBottom);
       };
 
       MessagePane.prototype.render = function() {
         var paneModel, _i, _len, _ref;
         this.$el.empty();
         this.childViews = [];
+        this.selectedPosition = 0;
         _ref = this.messageLists.models;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           paneModel = _ref[_i];
@@ -100,12 +100,6 @@
       };
 
       MessagePane.prototype._moveSelection = function(diff) {
-        var view, _i, _len, _ref;
-        _ref = this.childViews;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          view = _ref[_i];
-          view.model.set('selected', false);
-        }
         this.selectedPosition = this.selectedPosition - diff;
         this.selectedPosition = Math.min(this.selectedPosition, this.childViews.length - 1);
         this.selectedPosition = Math.max(this.selectedPosition, 0);

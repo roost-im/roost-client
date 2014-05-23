@@ -12,12 +12,7 @@ do ->
         filters: {}
 
         showCompose: false
-        composeFields: {
-          class: ''
-          instance: ''
-          recipient: ''
-          content: ''
-        }
+        composeFields: {}
         sending: false
 
         selected: false

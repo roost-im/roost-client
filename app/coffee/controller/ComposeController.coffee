@@ -14,7 +14,6 @@ do ->
         if !zsig?
           zsig = "Sent from Roost"
         msg = @model.get('composeFields')
-        console.log msg
         return {
           message:
             class: msg.class
@@ -35,9 +34,5 @@ do ->
         @model.set
           showCompose: false
           sending: false
-          composeFields:
-            class: ''
-            instance: ''
-            recipient: ''
-            content: ''
+          composeFields: {}
       ).done()

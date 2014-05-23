@@ -37,13 +37,16 @@ do ->
         topLoading: true
         loaded: false
 
+      @reverseTail?.close()
+      @forwardTail?.close()
+
       # Lord have mercy.
       # We make a forward tail briefly to figure out the right position for a reverse tail.
       # This is entirely because there is no reverseTailInclusive and this design builds reverse, then forward
       # in order to reset.
       if @model.get('position') != null
-        tempForwardTail = @messageModel.newTailInclusive(@model.get('position'), @model.get('filters'), @_properStartCb)
-        tempForwardTail.expandTo(2)
+        @tempForwardTail = @messageModel.newTailInclusive(@model.get('position'), @model.get('filters'), @_properStartCb)
+        @tempForwardTail.expandTo(2)
       else
         @reverseTail = @messageModel.newReverseTail(@model.get('position'), @model.get('filters'), @addMessagesToTopOfList)
         @reverseTail.expandTo(com.roost.STARTING_SIZE)
@@ -57,6 +60,8 @@ do ->
       @reverseTail = @messageModel.newReverseTail(start, @model.get('filters'), @addMessagesToTopOfList)
       @reverseTail.expandTo(com.roost.STARTING_SIZE)
       @lastReverseStep = com.roost.STARTING_SIZE
+
+      @tempForwardTail.close()
 
     _onScrollUp: =>
       # Handles building the reverse tail upward
@@ -91,8 +96,10 @@ do ->
         if msgs.length == 0
           # Special case for handling when there are no messages to show: both top and bottom done
           @model.set 'isBottomDone', true
+          @forwardTail?.close()
           @forwardTail = @messageModel.newTailInclusive(null, @model.get('filters'), @addMessagesToBottomOfList)
         else
+          @forwardTail?.close()
           @forwardTail = @messageModel.newTailInclusive(msgs[msgs.length - 1].id, @model.get('filters'), @addMessagesToBottomOfList)
 
         # Trigger this to expand the forward tail down and get live messages
@@ -136,6 +143,7 @@ do ->
         oldMsg.off()
 
       # Bump down our upward tail to the new starting point and reset upward state
+      @reverseTail?.close()
       @reverseTail = @messageModel.newReverseTail(messages.at(0).id, @model.get('filters'), @addMessagesToTopOfList)
       @model.set 'isTopDone', false
       @lastReverseStep = 0
@@ -147,6 +155,7 @@ do ->
         oldMsg.off()
 
       # Bump up our downward tail to the latest message and reset downward state
+      @forwardTail?.close()
       @forwardTail = @messageModel.newTailInclusive(messages.at(messages.length - 1).id, @model.get('filters'), @addMessagesToBottomOfList)
       @model.set 'isBottomDone', false
       @lastForwardStep = 0
