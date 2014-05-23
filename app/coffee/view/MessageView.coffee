@@ -19,15 +19,22 @@ do ->
       @paneModel = options.paneModel
       @session = options.session
 
+      # One might think of listening to @message for some events, or even
+      # @paneModel for events, but that's a bad idea in general. These views
+      # get created and disposed of quickly, so there's a high chance of errors
+      # if listeners are firing in here. Even with proper cleanup, it gets bad.
+      # Therefore, all listening to stuff is delegated to the parent view.
+
     render: =>
       @$el.empty()
       template = com.roost.templates['MessageView']
 
+      # Get the gravatar for the user
       name = shortZuser(@message.get('sender'))
       realm = zuserRealm(@message.get('sender'))
-
       gravatar = getGravatarFromName(name, realm, 40)
 
+      # TODO: move some of this to handlebars helpers
       @$el.append template(_.defaults({}, @message.attributes, 
           absoluteTime: @message.get('time').format(TIME_FORMAT)
           shortSender: name
@@ -35,8 +42,8 @@ do ->
         )
       )
 
-      @$el.addClass(@message.get('id'))
-
+      # Various updates to make sure the view is decorated properly.
+      # Done separate from handlebars since these things have a habit of changing.
       @updatePosition()
       @updateTime()
       @updateColors()
@@ -44,6 +51,8 @@ do ->
     updatePosition: =>
       if @paneModel.get('position') == @message.get('id')
         @$el.addClass('positioned')
+      else
+        @$el.removeClass('positioned')
 
     updateTime: =>
       @$('.time.from-now').text(@message.get('time').fromNow())
@@ -71,6 +80,7 @@ do ->
       delete @el
 
     _openReplyBox: =>
+      # Fill in proper fields and open the compose box
       @paneModel.set
         composeFields:
           class: @message.get('class')
@@ -80,6 +90,8 @@ do ->
         showCompose: true
 
     _openMessageBox: =>
+      # Fill in proper fields and open the compose box
+      # TODO: should this be a shortZuser or something else?
       @paneModel.set
         composeFields:
           class: 'message'
@@ -89,7 +101,10 @@ do ->
         showCompose: true
 
     _openQuoteBox: =>
+      # Build the quoted message string using the prefix defined above
       quoted = QUOTE_LINE_PREFIX + @message.get('message').replace(/\n/g, "\n#{QUOTE_LINE_PREFIX}")
+
+      # Set the fields for the composer open it
       @paneModel.set
         composeFields:
           class: @message.get('class')
@@ -98,31 +113,28 @@ do ->
           content: quoted
         showCompose: true
 
-    _filterClass: (evt) =>
+    _applyFilter: (evt, withInstance) =>
+      # Set the proper position and get the filter
       options = 
         filters: 
           class_key: @message.get('class')
         position: @message.get('id')
         posScroll: @$el.offset().top
 
+      if withInstance
+        options.filters.instance_key = @message.get('instance')
+
+      # If holding alt, create a new pane and kill the event.
+      # We don't want the event bubbling up to selecting this pane.
       if evt.altKey
         @session.addPane options
         evt.preventDefault()
         evt.stopPropagation()
       else
         @paneModel.set options
+
+    _filterClass: (evt) =>
+      @_applyFilter(evt, false)
 
     _filterInstance: (evt) =>
-      options = 
-        filters: 
-          class_key: @message.get('class')
-          instance_key: @message.get('instance')
-        position: @message.get('id')
-        posScroll: @$el.offset().top
-
-      if evt.altKey
-        @session.addPane options
-        evt.preventDefault()
-        evt.stopPropagation()
-      else
-        @paneModel.set options
+      @_applyFilter(evt, true)

@@ -17,6 +17,10 @@
         this.storageManager = new StorageManager(this.localStorage);
         this.ticketManager = new TicketManager(CONFIG.webathena, this.storageManager);
         this.api = new API(CONFIG.server, CONFIG.serverPrincipal, this.storageManager, this.ticketManager);
+        this.settingsModel = new Backbone.Model({
+          keyboard: true,
+          panes: true
+        });
         Mousetrap.bind('alt+n', ((function(_this) {
           return function() {
             return _this.addPane({});
@@ -37,19 +41,23 @@
 
       RoostSession.prototype.addPane = function(options) {
         var composeController, paneController, paneModel;
-        paneModel = new com.roost.MessagePaneModel(options);
-        paneController = new com.roost.MessagePaneController({
-          model: paneModel,
-          api: this.api
-        });
-        paneController.fetchFromPosition();
-        composeController = new com.roost.ComposeController({
-          model: paneModel,
-          api: this.api
-        });
-        this.messageLists.push(paneModel);
-        this.messageControllers[paneModel.cid] = paneController;
-        return this.composeControllers[paneModel.cid] = composeController;
+        if (this.settingsModel.get('panes') || this.messageLists.length === 0) {
+          paneModel = new com.roost.MessagePaneModel(options);
+          paneController = new com.roost.MessagePaneController({
+            model: paneModel,
+            api: this.api
+          });
+          paneController.fetchFromPosition();
+          composeController = new com.roost.ComposeController({
+            model: paneModel,
+            api: this.api
+          });
+          this.messageLists.push(paneModel);
+          this.messageControllers[paneModel.cid] = paneController;
+          return this.composeControllers[paneModel.cid] = composeController;
+        } else {
+          return this.messageLists.at(0).set(options);
+        }
       };
 
       RoostSession.prototype.removePane = function(cid) {

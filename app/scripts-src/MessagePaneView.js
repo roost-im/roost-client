@@ -133,10 +133,14 @@
       };
 
       MessagePaneView.prototype._updatePosition = function() {
-        if (this.$("." + (this.model.get('position'))).length > 0) {
-          this.$('.message-view').removeClass('positioned');
-          return this.$("." + (this.model.get('position'))).addClass('positioned');
+        var view, _i, _len, _ref, _results;
+        _ref = this.childViews;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          view = _ref[_i];
+          _results.push(view.updatePosition());
         }
+        return _results;
       };
 
       MessagePaneView.prototype._updateMessageTimes = function() {

@@ -28,7 +28,13 @@ do ->
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
-      # I really don't know if this is where the hotkeys go
+      # UI settings
+      @settingsModel = new Backbone.Model
+        keyboard: true
+        panes: true
+
+      # I really don't know if this is where the hotkeys go.
+      # Most of the hotkeys hang out in the MessagePane view.
       Mousetrap.bind('alt+n', (=> @addPane {}))
       Mousetrap.bind('alt+p', (=> @addPane 
         filters:
@@ -39,26 +45,38 @@ do ->
       )
 
     addPane: (options) =>
-      # Add a new model
-      paneModel = new com.roost.MessagePaneModel(options)
+      # Add a pane to our list if we have the multi-pane setting enabled,
+      # or if we don't have any panes at all.
+      if @settingsModel.get('panes') or @messageLists.length == 0
+        # Add a new model
+        paneModel = new com.roost.MessagePaneModel(options)
 
-      # Add a new controller and fetch data
-      paneController = new com.roost.MessagePaneController
-        model: paneModel
-        api: @api
-      paneController.fetchFromPosition()
+        # Add a new controller and fetch data
+        paneController = new com.roost.MessagePaneController
+          model: paneModel
+          api: @api
+        paneController.fetchFromPosition()
 
-      composeController = new com.roost.ComposeController
-        model: paneModel
-        api: @api
+        # Add compose controller for sending messages
+        composeController = new com.roost.ComposeController
+          model: paneModel
+          api: @api
 
-      @messageLists.push paneModel
-      @messageControllers[paneModel.cid] = paneController
-      @composeControllers[paneModel.cid] = composeController
+        # Save references to the controllers and model
+        @messageLists.push paneModel
+        @messageControllers[paneModel.cid] = paneController
+        @composeControllers[paneModel.cid] = composeController
+
+      # If we don't want multiple panes, just update this one.
+      else
+        @messageLists.at(0).set options
 
     removePane: (cid) =>
+      # Stop the controllers from listening to the model
       @messageControllers[cid].stopListening()
       @composeControllers[cid].stopListening()
+
+      # Remove references to the model and the controller
       @messageLists.remove(cid)
       delete @messageControllers[cid]
       delete @composeControllers[cid]

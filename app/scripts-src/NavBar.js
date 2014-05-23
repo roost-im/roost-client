@@ -8,10 +8,12 @@
       __extends(NavBar, _super);
 
       function NavBar() {
+        this._toggleKeyboard = __bind(this._toggleKeyboard, this);
+        this._togglePanes = __bind(this._togglePanes, this);
         this._addPersonalMessagePane = __bind(this._addPersonalMessagePane, this);
         this._addPane = __bind(this._addPane, this);
-        this.handleLogout = __bind(this.handleLogout, this);
-        this.handleLogin = __bind(this.handleLogin, this);
+        this._handleLogout = __bind(this._handleLogout, this);
+        this._handleLogin = __bind(this._handleLogin, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return NavBar.__super__.constructor.apply(this, arguments);
@@ -20,16 +22,20 @@
       NavBar.prototype.className = 'navbar';
 
       NavBar.prototype.events = {
-        'click .login': 'handleLogin',
-        'click .logout': 'handleLogout',
+        'click .login': '_handleLogin',
+        'click .logout': '_handleLogout',
         'click .add-pane': '_addPane',
-        'click .personal-message': '_addPersonalMessagePane'
+        'click .personal-message': '_addPersonalMessagePane',
+        'click .toggle-panes': '_togglePanes',
+        'click .toggle-keyboard': '_toggleKeyboard'
       };
 
       NavBar.prototype.initialize = function(options) {
         this.session = options.session;
         this.userInfo = this.session.userInfo;
-        return this.listenTo(this.userInfo, 'change', this.render);
+        this.settings = this.session.settingsModel;
+        this.listenTo(this.userInfo, 'change', this.render);
+        return this.listenTo(this.settings, 'change', this.render);
       };
 
       NavBar.prototype.render = function() {
@@ -42,14 +48,14 @@
         return this.$el.append(template(_.defaults({
           loggedIn: this.userInfo.get('username') != null,
           gravatar: gravatar
-        }, this.userInfo.attributes)));
+        }, this.userInfo.attributes, this.settings.attributes)));
       };
 
-      NavBar.prototype.handleLogin = function() {
+      NavBar.prototype._handleLogin = function() {
         return this.userInfo.trigger('login');
       };
 
-      NavBar.prototype.handleLogout = function() {
+      NavBar.prototype._handleLogout = function() {
         return this.userInfo.trigger('logout');
       };
 
@@ -65,6 +71,14 @@
             is_personal: true
           }
         });
+      };
+
+      NavBar.prototype._togglePanes = function() {
+        return this.settings.set('panes', !this.settings.get('panes'));
+      };
+
+      NavBar.prototype._toggleKeyboard = function() {
+        return this.settings.set('keyboard', !this.settings.get('keyboard'));
       };
 
       return NavBar;

@@ -93,14 +93,10 @@
       text-decoration: none; }
       .navbar .user-info .username:hover {
         text-decoration: underline; }
-  .navbar .add-pane {
+  .navbar .personal-message, .navbar .add-pane, .navbar .toggle-keyboard, .navbar .toggle-panes {
     float: right;
-    margin-right: 25px;
-    cursor: pointer; }
-  .navbar .personal-message {
-    float: right;
-    margin-right: 25px;
-    cursor: pointer; }
+    cursor: pointer;
+    margin-right: 25px; }
   .navbar .btn {
     color: #eeeeee;
     background-color: #3178d3;

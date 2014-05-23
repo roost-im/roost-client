@@ -13,6 +13,7 @@
       function MessageView() {
         this._filterInstance = __bind(this._filterInstance, this);
         this._filterClass = __bind(this._filterClass, this);
+        this._applyFilter = __bind(this._applyFilter, this);
         this._openQuoteBox = __bind(this._openQuoteBox, this);
         this._openMessageBox = __bind(this._openMessageBox, this);
         this._openReplyBox = __bind(this._openReplyBox, this);
@@ -53,7 +54,6 @@
           shortSender: name,
           gravatar: gravatar
         })));
-        this.$el.addClass(this.message.get('id'));
         this.updatePosition();
         this.updateTime();
         return this.updateColors();
@@ -62,6 +62,8 @@
       MessageView.prototype.updatePosition = function() {
         if (this.paneModel.get('position') === this.message.get('id')) {
           return this.$el.addClass('positioned');
+        } else {
+          return this.$el.removeClass('positioned');
         }
       };
 
@@ -130,7 +132,7 @@
         });
       };
 
-      MessageView.prototype._filterClass = function(evt) {
+      MessageView.prototype._applyFilter = function(evt, withInstance) {
         var options;
         options = {
           filters: {
@@ -139,6 +141,9 @@
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
         };
+        if (withInstance) {
+          options.filters.instance_key = this.message.get('instance');
+        }
         if (evt.altKey) {
           this.session.addPane(options);
           evt.preventDefault();
@@ -148,23 +153,12 @@
         }
       };
 
+      MessageView.prototype._filterClass = function(evt) {
+        return this._applyFilter(evt, false);
+      };
+
       MessageView.prototype._filterInstance = function(evt) {
-        var options;
-        options = {
-          filters: {
-            class_key: this.message.get('class'),
-            instance_key: this.message.get('instance')
-          },
-          position: this.message.get('id'),
-          posScroll: this.$el.offset().top
-        };
-        if (evt.altKey) {
-          this.session.addPane(options);
-          evt.preventDefault();
-          return evt.stopPropagation();
-        } else {
-          return this.paneModel.set(options);
-        }
+        return this._applyFilter(evt, true);
       };
 
       return MessageView;

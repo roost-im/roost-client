@@ -14,7 +14,8 @@ do ->
     initialize: (options) =>
       @paneModel = options.paneModel
 
-      # Re-render, either to show the composer, update fields, or both
+      # Re-render, either to show the composer, update fields, or update that this pane
+      # is selected.
       @listenTo @paneModel, 'change:showCompose change:composeFields change:selected', @render
 
       # Disable the send button while a message is sending to prevent spamming
@@ -25,12 +26,13 @@ do ->
       template = com.roost.templates['ComposeBar']
       @$el.append template(@paneModel.attributes)
 
+      # Set full opacity class if this pane is selected
       if @paneModel.get('selected')
         @$el.addClass('selected')
       else
         @$el.removeClass('selected')
 
-      # TODO: focus properly depending on what fields are filled in
+      # TODO: focus properly depending on what fields are filled in already.
       # Bring focus to first input box
       @$('.class-input').focus()
 
@@ -49,7 +51,7 @@ do ->
           content: ''
 
     _jumpToBottom: =>
-      # Treat as a complete reset
+      # Treat as a complete reset, clearing position and reloading
       @paneModel.set
         position: null
       @paneModel.trigger 'reload'
@@ -68,16 +70,19 @@ do ->
         @paneModel.trigger 'sendMessage'
 
     _updateButton: =>
+      # Disable send button if we are sending
       if @paneModel.get('sending')
         @$('.send').addClass('disabled').text('Sending...')
       else
         @$('.send').removeClass('disabled').text('Send')
 
     _handleInputsKey: (evt) =>
+      # Handle escape key (should work in ANY input box)
       if evt.keyCode == 27
         @_hideCompose()
 
     _handleTextareaKey: (evt) =>
+      # Handle enter and escape in the textarea (message compose area)
       if evt.keyCode == 13
         @_sendMessage()
       else if evt.keyCode == 27

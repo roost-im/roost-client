@@ -53,16 +53,10 @@
     }
   }
 
-  .add-pane {
+  .personal-message, .add-pane, .toggle-keyboard, .toggle-panes {
     float: right;
-    margin-right: 25px;
     cursor: pointer;
-  }
-
-  .personal-message {
-    float: right;
     margin-right: 25px;
-    cursor: pointer;
   }
 
   .btn {

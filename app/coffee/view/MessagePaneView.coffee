@@ -142,9 +142,9 @@ do ->
       delete @el
 
     _updatePosition: =>
-      if @$(".#{@model.get('position')}").length > 0
-        @$('.message-view').removeClass('positioned')
-        @$(".#{@model.get('position')}").addClass('positioned')
+      # Delegate this down to the view level
+      for view in @childViews
+        view.updatePosition()
 
     _updateMessageTimes: =>
       for view in @childViews
@@ -251,7 +251,6 @@ do ->
     _removeBottomMessage: =>
       view = @childViews.pop()      
       view.remove()
-
       @currentBottom = @currentTop + @childViews.length
 
     _saveScrollHeight: =>

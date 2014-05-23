@@ -15,6 +15,22 @@
   <div class="personal-message">
     <i class="fa fa-envelope-o"></i>&nbsp;&nbsp;Personal Messages
   </div>
+  <div class="toggle-keyboard">
+    {{#if keyboard}}
+      <i class="fa fa-check-square-o"></i>
+    {{else}}
+      <i class="fa fa-square-o"></i>
+    {{/if}}
+    &nbsp;&nbsp;Keyboard
+  </div>
+  <div class="toggle-panes">
+    {{#if panes}}
+      <i class="fa fa-check-square-o"></i>
+    {{else}}
+      <i class="fa fa-square-o"></i>
+    {{/if}}
+    &nbsp;&nbsp;Panes
+  </div>
 {{else}}
   <div class="btn login">Login</div>
 {{/if}}
