@@ -7,6 +7,7 @@ do ->
 
     events:
       'click .message-pane-view': '_setSelectionOnClick'
+      'click .close-help': '_hideHelp'
 
     initialize: (options) =>
       @session = options.session
@@ -23,13 +24,24 @@ do ->
       @listenTo @settingsModel, 'change:keyboard', @_toggleKeyboard
       @listenTo @settingsModel, 'change:panes', @_togglePanes
 
-      # Hotkeys that will either move the selection or only affect
-      # the selected pane.
+      # Hotkeys related to the selected pane.
+      # Feel free to add more, just be sure to add any new hotkeys
+      # to the HotkeyHelp modal. 
       Mousetrap.bind('left', (=> @_moveSelection(1)))
       Mousetrap.bind('right', (=> @_moveSelection(-1)))
       Mousetrap.bind('>', @_sendPaneToBottom)
       Mousetrap.bind('<', @_sendPaneToTop)
       Mousetrap.bind('shift+v', @_clearPaneFilters)
+      Mousetrap.bind('shift+c', @_showPaneCompose)
+      Mousetrap.bind('shift+f', @_showPaneFilters)
+
+      # Awkward that this is here, since all it does is call something
+      # in the session.
+      Mousetrap.bind('alt+x', @_closeSelectedPane)
+
+      # Hotkeys for showing/hiding the hotkey help.
+      Mousetrap.bind('?', @_showHelp)
+      Mousetrap.bind('esc', @_hideHelp)
 
     render: =>
       @$el.empty()
@@ -100,6 +112,19 @@ do ->
 
     _clearPaneFilters: =>
       @childViews[@selectedPosition].model.set('filters', {})
+
+    _showPaneCompose: (e) =>
+      @childViews[@selectedPosition].model.set('showCompose', true)
+      e.preventDefault()
+      e.stopPropagation()
+
+    _showPaneFilters: (e) =>
+      @childViews[@selectedPosition].model.set('showFilters', true)
+      e.preventDefault()
+      e.stopPropagation()
+
+    _closeSelectedPane: =>
+      @session.removePane(@childViews[@selectedPosition].model.cid)
       
     _addPaneView: (paneModel) =>
       # TODO: this still causes scroll issues, even with caching/restoring on width changes
@@ -143,3 +168,11 @@ do ->
       for view in @childViews
         view.recalculateWidth index, width
         index += 1
+
+    _showHelp: =>
+      if @$('.modal-overlay').length == 0
+        @$el.append com.roost.templates['HotkeyHelp']({})
+
+    _hideHelp: =>
+      @$('.modal-overlay').remove()
+      @$('.modal').remove()

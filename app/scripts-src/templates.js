@@ -119,6 +119,15 @@ function program14(depth0,data) {
   return buffer;
   });
 
+this["com"]["roost"]["templates"]["HotkeyHelp"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"modal-overlay\"/>\n<div class=\"modal\">\n  <div class=\"header\">\n    <div class=\"title\">\n      Roost Hotkeys\n    </div>\n    <div class=\"close-help\">\n      &times;\n    </div>\n  </div>\n  <table class=\"content\" cellspacing=\"0\">\n    <tr>\n      <th> Hotkey </th>\n      <th> Function </th>\n    </tr>\n    <tr>\n      <td> Alt+n </td>\n      <td> Open new pane </td>\n    </tr>\n    <tr>\n      <td> Alt+p </td>\n      <td> Open PM pane </td>\n    </tr>\n    <tr>\n      <td> Alt+x </td>\n      <td> Close selected pane </td>\n    </tr>\n    <tr>\n      <td> Left/Right </td>\n      <td> Move pane selection </td>\n    </tr>\n    <tr>\n      <td> &gt; </td>\n      <td> Go to bottom </td>\n    </tr>\n    <tr>\n      <td> &lt; </td>\n      <td> Go to top </td>\n    </tr>\n    <tr>\n      <td> Shift+v </td>\n      <td> Clear filters </td>\n    </tr>\n    <tr>\n      <td> Shift+f </td>\n      <td> Show fitlers </td>\n    </tr>\n    <tr>\n      <td> Shift+c </td>\n      <td> Show composer </td>\n    </tr>\n    <tr>\n      <td> ? </td>\n      <td> Show this box </td>\n    </tr>\n    <tr>\n      <td> Esc </td>\n      <td> Hide this box </td>\n    </tr>\n  </table>\n</div>";
+  });
+
 this["com"]["roost"]["templates"]["MessageView"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -169,7 +178,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n  <div class=\"btn logout\">Logout</div>\n  <div class=\"user-info\">\n    <a class=\"username\" href=\"settings.html\">";
+  buffer += "\n  <div class=\"btn logout\">Logout</div>\n  <div class=\"user-info\">\n    <a class=\"username\" href=\"settings.html\" tabIndex=\"-1\">";
   if (helper = helpers.username) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.username); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)

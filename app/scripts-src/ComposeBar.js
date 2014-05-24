@@ -39,7 +39,7 @@
       };
 
       ComposeBar.prototype.render = function() {
-        var composeFields, defaultFields, template;
+        var composeFields, defaultFields, oldVal, template;
         this.$el.empty();
         defaultFields = this._getDefaultFields();
         composeFields = _.defaults({}, this.paneModel.get('composeFields'), defaultFields);
@@ -52,7 +52,12 @@
         } else {
           this.$el.removeClass('selected');
         }
-        return this.$('.class-input').focus();
+        if (composeFields["class"] !== '') {
+          oldVal = this.$('.content-input').val();
+          return this.$('.content-input').focus().val("").val(oldVal);
+        } else {
+          return this.$('.class-input').focus();
+        }
       };
 
       ComposeBar.prototype._showCompose = function() {

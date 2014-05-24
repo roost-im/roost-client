@@ -1,0 +1,64 @@
+$overlay-z-index: 100;
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: black;
+  z-index: $overlay-z-index;
+  opacity: 0.5;
+}
+
+.modal {
+  width: 400px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+  background-color: #555;
+  color: white;
+  z-index: $overlay-z-index + 1;
+
+  .header {
+    position: relative;
+    height: 30px;
+    line-height: 12px;
+    background-color: #333;
+
+    .title {
+      padding: 10px;
+      font-size: 20px;
+    }
+
+    .close-help {
+      position: absolute;
+      right: 10px;
+      font-size: 30px;
+      top: 10px;
+      cursor: pointer;
+
+      &:hover {
+        color: lighten(red, 10%);
+      }
+    }
+  }
+
+  .content {
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+
+    th {
+      border: 1px solid white;
+    }
+
+    td {
+      border: 1px solid #BBB;
+    }
+  }
+}

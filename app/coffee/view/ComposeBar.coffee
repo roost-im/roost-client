@@ -36,9 +36,13 @@ do ->
       else
         @$el.removeClass('selected')
 
-      # TODO: focus properly depending on what fields are filled in already.
-      # Bring focus to first input box
-      @$('.class-input').focus()
+      # Bring focus to class box OR message box in case stuff filled already
+      if composeFields.class != ''
+        # Hack to get the cursor to the end of the input
+        oldVal = @$('.content-input').val();
+        @$('.content-input').focus().val("").val(oldVal);
+      else
+        @$('.class-input').focus()
 
     _showCompose: =>
       # Update model (triggers rerender)

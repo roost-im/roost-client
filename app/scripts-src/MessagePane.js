@@ -10,9 +10,14 @@
       __extends(MessagePane, _super);
 
       function MessagePane() {
+        this._hideHelp = __bind(this._hideHelp, this);
+        this._showHelp = __bind(this._showHelp, this);
         this._recalculateWidth = __bind(this._recalculateWidth, this);
         this._removePaneView = __bind(this._removePaneView, this);
         this._addPaneView = __bind(this._addPaneView, this);
+        this._closeSelectedPane = __bind(this._closeSelectedPane, this);
+        this._showPaneFilters = __bind(this._showPaneFilters, this);
+        this._showPaneCompose = __bind(this._showPaneCompose, this);
         this._clearPaneFilters = __bind(this._clearPaneFilters, this);
         this._sendPaneToTop = __bind(this._sendPaneToTop, this);
         this._sendPaneToBottom = __bind(this._sendPaneToBottom, this);
@@ -29,7 +34,8 @@
       MessagePane.prototype.className = 'message-pane';
 
       MessagePane.prototype.events = {
-        'click .message-pane-view': '_setSelectionOnClick'
+        'click .message-pane-view': '_setSelectionOnClick',
+        'click .close-help': '_hideHelp'
       };
 
       MessagePane.prototype.initialize = function(options) {
@@ -52,7 +58,12 @@
         })(this)));
         Mousetrap.bind('>', this._sendPaneToBottom);
         Mousetrap.bind('<', this._sendPaneToTop);
-        return Mousetrap.bind('shift+v', this._clearPaneFilters);
+        Mousetrap.bind('shift+v', this._clearPaneFilters);
+        Mousetrap.bind('shift+c', this._showPaneCompose);
+        Mousetrap.bind('shift+f', this._showPaneFilters);
+        Mousetrap.bind('alt+x', this._closeSelectedPane);
+        Mousetrap.bind('?', this._showHelp);
+        return Mousetrap.bind('esc', this._hideHelp);
       };
 
       MessagePane.prototype.render = function() {
@@ -146,6 +157,22 @@
         return this.childViews[this.selectedPosition].model.set('filters', {});
       };
 
+      MessagePane.prototype._showPaneCompose = function(e) {
+        this.childViews[this.selectedPosition].model.set('showCompose', true);
+        e.preventDefault();
+        return e.stopPropagation();
+      };
+
+      MessagePane.prototype._showPaneFilters = function(e) {
+        this.childViews[this.selectedPosition].model.set('showFilters', true);
+        e.preventDefault();
+        return e.stopPropagation();
+      };
+
+      MessagePane.prototype._closeSelectedPane = function() {
+        return this.session.removePane(this.childViews[this.selectedPosition].model.cid);
+      };
+
       MessagePane.prototype._addPaneView = function(paneModel) {
         var paneView;
         this.$('.no-panes').remove();
@@ -197,6 +224,17 @@
           _results.push(index += 1);
         }
         return _results;
+      };
+
+      MessagePane.prototype._showHelp = function() {
+        if (this.$('.modal-overlay').length === 0) {
+          return this.$el.append(com.roost.templates['HotkeyHelp']({}));
+        }
+      };
+
+      MessagePane.prototype._hideHelp = function() {
+        this.$('.modal-overlay').remove();
+        return this.$('.modal').remove();
       };
 
       return MessagePane;

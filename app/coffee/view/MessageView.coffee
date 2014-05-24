@@ -102,7 +102,7 @@ do ->
 
     _openQuoteBox: =>
       # Build the quoted message string using the prefix defined above
-      quoted = QUOTE_LINE_PREFIX + @message.get('message').replace(/\n/g, "\n#{QUOTE_LINE_PREFIX}")
+      quoted = QUOTE_LINE_PREFIX + @message.get('message').replace(/\n/g, "\n#{QUOTE_LINE_PREFIX}") + '\n\n'
 
       # Set the fields for the composer open it
       @paneModel.set
