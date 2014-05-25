@@ -32,6 +32,7 @@ do ->
       @settingsModel = new Backbone.Model
         keyboard: true
         panes: true
+        showNavbar: true
 
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.

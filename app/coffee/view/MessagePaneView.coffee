@@ -141,6 +141,87 @@ do ->
       delete @$el
       delete @el
 
+    moveSelectedMessage: (diff) =>
+      # If we already have a message selected, check if it's visible.
+      # If it isn't, this chunk fails and we select the highest or lowest
+      # visible message.
+      if @model.get('position')?
+        selectedIndex = @_getSelectedViewIndex()
+        selectedView = @childViews[selectedIndex]
+
+        # The selected view may have moved off screen by now and not be
+        # in the childViews array any more
+        if selectedView?
+          $view = selectedView.$el
+          bottomPoint = $view.offset().top + $view.height()
+          topPoint = $view.offset().top - 80  # correct for top bars
+
+          # Check if either the top or bottom point of the view are within the pane
+          if (topPoint < @$el.height() and topPoint > 0) or (bottomPoint > 0 and bottomPoint < @$el.height())
+            newIndex = Math.min(Math.max(selectedIndex + diff, 0), @childViews.length-1)  # clamp the index
+            newSelectedView = @childViews[newIndex]
+            @model.set('position', newSelectedView.message.get('id'))
+            @_setScrollForSelectedMessage(newSelectedView)
+            return
+
+      # Going up, so start from the bottom
+      if diff < 0
+        for i in [@childViews.length - 1..0]
+          selectedView = @childViews[i]
+          $view = selectedView.$el
+          bottomPoint = $view.offset().top + $view.height()
+          if bottomPoint < @$el.height()
+            @model.set 'position', selectedView.message.get('id')
+            break
+      # Otherwise, going down, so start from the top
+      else
+        for i in [0..@childViews.length - 1]
+          selectedView = @childViews[i]
+          $view = selectedView.$el
+          topPoint = $view.offset().top - 80  # correct for top bars
+          if topPoint > 0
+            @model.set 'position', selectedView.message.get('id')
+            break
+
+      @_setScrollForSelectedMessage(selectedView)
+
+    _setScrollForSelectedMessage: (selectedView) =>
+      # Shift the scrolling such that the selected message is always
+      # in view and completely readable.
+      $view = selectedView.$el
+      bottomPoint = $view.offset().top + $view.height()
+      topPoint = $view.offset().top - 80  # correct for top 
+
+      if topPoint < 0
+        scrollDiff = 100 - topPoint
+      else if bottomPoint > @$el.height()
+        scrollDiff = (@$el.height() - 100) - bottomPoint
+      else
+        return
+      
+      @$el.scrollTop(@$el.scrollTop() - scrollDiff)
+
+    selectedMessageReply: =>
+      view = @childViews[@_getSelectedViewIndex()]
+      view?.openReplyBox()
+
+    selectedMessageQuote: =>
+      view = @childViews[@_getSelectedViewIndex()]
+      view?.openQuoteBox()
+
+    selectedMessagePM: =>
+      view = @childViews[@_getSelectedViewIndex()]
+      view?.openMessageBox()
+
+    _getSelectedViewIndex: =>
+      if @model.get('position')?
+        for i in [0..@childViews.length - 1]
+          view = @childViews[i]
+          if view.message.get('id') == @model.get('position')
+            return i
+
+      return -1
+
     _updatePosition: =>
       # Delegate this down to the view level
       for view in @childViews

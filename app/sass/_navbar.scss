@@ -7,6 +7,15 @@
   width: 100%;
   padding-right: 20px;
   z-index: 20;
+  transition: height 0.3s ease-out;
+
+  &.hidden {
+    height: 0px;
+
+    * {
+      display: none !important;
+    }
+  }
 
   .title-logo {
     display: inline;

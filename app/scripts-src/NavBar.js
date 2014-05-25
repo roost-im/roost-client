@@ -45,6 +45,11 @@
         if (this.userInfo.get('username') != null) {
           gravatar = getGravatarFromName(this.userInfo.get('username'), this.userInfo.get('realm'), 100);
         }
+        if (!this.settings.get('showNavbar')) {
+          this.$el.addClass('hidden');
+        } else {
+          this.$el.removeClass('hidden');
+        }
         return this.$el.append(template(_.defaults({
           loggedIn: this.userInfo.get('username') != null,
           gravatar: gravatar

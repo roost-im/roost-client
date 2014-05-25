@@ -6,9 +6,9 @@ do ->
     className: 'message-view'
 
     events:
-      'click .reply': '_openReplyBox'
-      'click .pm': '_openMessageBox'
-      'click .quote': '_openQuoteBox'
+      'click .reply': 'openReplyBox'
+      'click .pm': 'openMessageBox'
+      'click .quote': 'openQuoteBox'
 
       'click .msg-class': '_filterClass'
       'click .msg-instance': '_filterInstance'
@@ -79,7 +79,7 @@ do ->
       delete @$el
       delete @el
 
-    _openReplyBox: =>
+    openReplyBox: =>
       # Fill in proper fields and open the compose box
       @paneModel.set
         composeFields:
@@ -89,7 +89,7 @@ do ->
           content: ''
         showCompose: true
 
-    _openMessageBox: =>
+    openMessageBox: =>
       # Fill in proper fields and open the compose box
       # TODO: should this be a shortZuser or something else?
       @paneModel.set
@@ -100,7 +100,7 @@ do ->
           content: ''
         showCompose: true
 
-    _openQuoteBox: =>
+    openQuoteBox: =>
       # Build the quoted message string using the prefix defined above
       quoted = QUOTE_LINE_PREFIX + @message.get('message').replace(/\n/g, "\n#{QUOTE_LINE_PREFIX}") + '\n\n'
 

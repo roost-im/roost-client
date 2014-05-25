@@ -14,9 +14,9 @@
         this._filterInstance = __bind(this._filterInstance, this);
         this._filterClass = __bind(this._filterClass, this);
         this._applyFilter = __bind(this._applyFilter, this);
-        this._openQuoteBox = __bind(this._openQuoteBox, this);
-        this._openMessageBox = __bind(this._openMessageBox, this);
-        this._openReplyBox = __bind(this._openReplyBox, this);
+        this.openQuoteBox = __bind(this.openQuoteBox, this);
+        this.openMessageBox = __bind(this.openMessageBox, this);
+        this.openReplyBox = __bind(this.openReplyBox, this);
         this.remove = __bind(this.remove, this);
         this.updateColors = __bind(this.updateColors, this);
         this.updateTime = __bind(this.updateTime, this);
@@ -29,9 +29,9 @@
       MessageView.prototype.className = 'message-view';
 
       MessageView.prototype.events = {
-        'click .reply': '_openReplyBox',
-        'click .pm': '_openMessageBox',
-        'click .quote': '_openQuoteBox',
+        'click .reply': 'openReplyBox',
+        'click .pm': 'openMessageBox',
+        'click .quote': 'openQuoteBox',
         'click .msg-class': '_filterClass',
         'click .msg-instance': '_filterInstance'
       };
@@ -94,7 +94,7 @@
         return delete this.el;
       };
 
-      MessageView.prototype._openReplyBox = function() {
+      MessageView.prototype.openReplyBox = function() {
         return this.paneModel.set({
           composeFields: {
             "class": this.message.get('class'),
@@ -106,7 +106,7 @@
         });
       };
 
-      MessageView.prototype._openMessageBox = function() {
+      MessageView.prototype.openMessageBox = function() {
         return this.paneModel.set({
           composeFields: {
             "class": 'message',
@@ -118,7 +118,7 @@
         });
       };
 
-      MessageView.prototype._openQuoteBox = function() {
+      MessageView.prototype.openQuoteBox = function() {
         var quoted;
         quoted = QUOTE_LINE_PREFIX + this.message.get('message').replace(/\n/g, "\n" + QUOTE_LINE_PREFIX) + '\n\n';
         return this.paneModel.set({

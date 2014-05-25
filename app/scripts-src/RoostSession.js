@@ -19,7 +19,8 @@
         this.api = new API(CONFIG.server, CONFIG.serverPrincipal, this.storageManager, this.ticketManager);
         this.settingsModel = new Backbone.Model({
           keyboard: true,
-          panes: true
+          panes: true,
+          showNavbar: true
         });
         Mousetrap.bind('alt+n', ((function(_this) {
           return function() {

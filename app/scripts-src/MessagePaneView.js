@@ -18,6 +18,12 @@
         this._scrollHandle = __bind(this._scrollHandle, this);
         this._updateMessageTimes = __bind(this._updateMessageTimes, this);
         this._updatePosition = __bind(this._updatePosition, this);
+        this._getSelectedViewIndex = __bind(this._getSelectedViewIndex, this);
+        this.selectedMessagePM = __bind(this.selectedMessagePM, this);
+        this.selectedMessageQuote = __bind(this.selectedMessageQuote, this);
+        this.selectedMessageReply = __bind(this.selectedMessageReply, this);
+        this._setScrollForSelectedMessage = __bind(this._setScrollForSelectedMessage, this);
+        this.moveSelectedMessage = __bind(this.moveSelectedMessage, this);
         this.remove = __bind(this.remove, this);
         this.recalculateWidth = __bind(this.recalculateWidth, this);
         this.render = __bind(this.render, this);
@@ -130,6 +136,94 @@
         MessagePaneView.__super__.remove.apply(this, arguments);
         delete this.$el;
         return delete this.el;
+      };
+
+      MessagePaneView.prototype.moveSelectedMessage = function(diff) {
+        var $view, bottomPoint, i, newIndex, newSelectedView, selectedIndex, selectedView, topPoint, _i, _j, _ref, _ref1;
+        if (this.model.get('position') != null) {
+          selectedIndex = this._getSelectedViewIndex();
+          selectedView = this.childViews[selectedIndex];
+          if (selectedView != null) {
+            $view = selectedView.$el;
+            bottomPoint = $view.offset().top + $view.height();
+            topPoint = $view.offset().top - 80;
+            if ((topPoint < this.$el.height() && topPoint > 0) || (bottomPoint > 0 && bottomPoint < this.$el.height())) {
+              newIndex = Math.min(Math.max(selectedIndex + diff, 0), this.childViews.length - 1);
+              newSelectedView = this.childViews[newIndex];
+              this.model.set('position', newSelectedView.message.get('id'));
+              this._setScrollForSelectedMessage(newSelectedView);
+              return;
+            }
+          }
+        }
+        if (diff < 0) {
+          for (i = _i = _ref = this.childViews.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) {
+            selectedView = this.childViews[i];
+            $view = selectedView.$el;
+            bottomPoint = $view.offset().top + $view.height();
+            if (bottomPoint < this.$el.height()) {
+              this.model.set('position', selectedView.message.get('id'));
+              break;
+            }
+          }
+        } else {
+          for (i = _j = 0, _ref1 = this.childViews.length - 1; 0 <= _ref1 ? _j <= _ref1 : _j >= _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+            selectedView = this.childViews[i];
+            $view = selectedView.$el;
+            topPoint = $view.offset().top - 80;
+            if (topPoint > 0) {
+              this.model.set('position', selectedView.message.get('id'));
+              break;
+            }
+          }
+        }
+        return this._setScrollForSelectedMessage(selectedView);
+      };
+
+      MessagePaneView.prototype._setScrollForSelectedMessage = function(selectedView) {
+        var $view, bottomPoint, scrollDiff, topPoint;
+        $view = selectedView.$el;
+        bottomPoint = $view.offset().top + $view.height();
+        topPoint = $view.offset().top - 80;
+        if (topPoint < 0) {
+          scrollDiff = 100 - topPoint;
+        } else if (bottomPoint > this.$el.height()) {
+          scrollDiff = (this.$el.height() - 100) - bottomPoint;
+        } else {
+          return;
+        }
+        return this.$el.scrollTop(this.$el.scrollTop() - scrollDiff);
+      };
+
+      MessagePaneView.prototype.selectedMessageReply = function() {
+        var view;
+        view = this.childViews[this._getSelectedViewIndex()];
+        return view != null ? view.openReplyBox() : void 0;
+      };
+
+      MessagePaneView.prototype.selectedMessageQuote = function() {
+        var view;
+        view = this.childViews[this._getSelectedViewIndex()];
+        return view != null ? view.openQuoteBox() : void 0;
+      };
+
+      MessagePaneView.prototype.selectedMessagePM = function() {
+        var view;
+        view = this.childViews[this._getSelectedViewIndex()];
+        return view != null ? view.openMessageBox() : void 0;
+      };
+
+      MessagePaneView.prototype._getSelectedViewIndex = function() {
+        var i, view, _i, _ref;
+        if (this.model.get('position') != null) {
+          for (i = _i = 0, _ref = this.childViews.length - 1; 0 <= _ref ? _i <= _ref : _i >= _ref; i = 0 <= _ref ? ++_i : --_i) {
+            view = this.childViews[i];
+            if (view.message.get('id') === this.model.get('position')) {
+              return i;
+            }
+          }
+        }
+        return -1;
       };
 
       MessagePaneView.prototype._updatePosition = function() {

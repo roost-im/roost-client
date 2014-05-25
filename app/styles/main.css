@@ -61,7 +61,12 @@
   background: #333;
   width: 100%;
   padding-right: 20px;
-  z-index: 20; }
+  z-index: 20;
+  transition: height 0.3s ease-out; }
+  .navbar.hidden {
+    height: 0px; }
+    .navbar.hidden * {
+      display: none !important; }
   .navbar .title-logo {
     display: inline;
     float: left; }
@@ -126,7 +131,10 @@
   right: 0;
   overflow-wrap: break-word;
   white-space: nowrap;
-  overflow-y: hidden; }
+  overflow-y: hidden;
+  transition: top 0.3s ease-out; }
+  .message-pane.expanded {
+    top: 0px; }
   .message-pane .message-pane-view {
     height: 100%;
     overflow-y: scroll;

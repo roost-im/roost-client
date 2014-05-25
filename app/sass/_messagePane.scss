@@ -7,6 +7,11 @@
   overflow-wrap: break-word;
   white-space: nowrap;
   overflow-y: hidden;
+  transition: top 0.3s ease-out;
+
+  &.expanded {
+    top: 0px;
+  }
 
   .message-pane-view {
     height: 100%;

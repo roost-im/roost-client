@@ -28,6 +28,11 @@ do ->
       if @userInfo.get('username')?
         gravatar = getGravatarFromName @userInfo.get('username'), @userInfo.get('realm'), 100
 
+      if not @settings.get('showNavbar')
+        @$el.addClass('hidden')
+      else
+        @$el.removeClass('hidden')
+
       @$el.append template(_.defaults({loggedIn: @userInfo.get('username')?, gravatar: gravatar}, @userInfo.attributes, @settings.attributes))
 
     _handleLogin: =>

@@ -23,17 +23,25 @@ do ->
       # listen for any settings changes and act accordingly
       @listenTo @settingsModel, 'change:keyboard', @_toggleKeyboard
       @listenTo @settingsModel, 'change:panes', @_togglePanes
+      @listenTo @settingsModel, 'change:showNavbar', @_toggleNavbar
 
       # Hotkeys related to the selected pane.
       # Feel free to add more, just be sure to add any new hotkeys
       # to the HotkeyHelp modal. 
-      Mousetrap.bind('left', (=> @_moveSelection(1)))
-      Mousetrap.bind('right', (=> @_moveSelection(-1)))
+      Mousetrap.bind('left', ((e) => @_moveSelection(1, e)))
+      Mousetrap.bind('right', ((e) => @_moveSelection(-1, e)))
+      Mousetrap.bind('up', ((e) => @_moveMessageSelection(-1, e)))
+      Mousetrap.bind('down', ((e) => @_moveMessageSelection(1, e)))
       Mousetrap.bind('>', @_sendPaneToBottom)
       Mousetrap.bind('<', @_sendPaneToTop)
       Mousetrap.bind('shift+v', @_clearPaneFilters)
       Mousetrap.bind('shift+c', @_showPaneCompose)
       Mousetrap.bind('shift+f', @_showPaneFilters)
+
+      # Hotkeys that affect the selected message
+      Mousetrap.bind('r', @_selectedMessageReply)
+      Mousetrap.bind('q', @_selectedMessageQuote)
+      Mousetrap.bind('p', @_selectedMessagePM)
 
       # Awkward that this is here, since all it does is call something
       # in the session.
@@ -42,6 +50,9 @@ do ->
       # Hotkeys for showing/hiding the hotkey help.
       Mousetrap.bind('?', @_showHelp)
       Mousetrap.bind('esc', @_hideHelp)
+
+      # Hotkeys for toggling settings      
+      Mousetrap.bind('alt+h', @_toggleNavbarSetting)
 
     render: =>
       @$el.empty()
@@ -73,18 +84,27 @@ do ->
         for i in [@childViews.length-1..1]
           @session.removePane(@childViews[i].model.cid)
 
+    _toggleNavbar: =>
+      if not @settingsModel.get('showNavbar')
+        @$el.addClass('expanded')
+      else
+        @$el.removeClass('expanded')
+
     _setSelectionOnClick: (evt) =>
       # Set the selection to a pane if that pane has received a click event
       @selectedPosition = @$('.message-pane-view').index(evt.currentTarget)
       @_setSelection()
 
-    _moveSelection: (diff) =>
+    _moveSelection: (diff, e) =>
       # Keep our selected position within proper bounds.
       @selectedPosition = @selectedPosition - diff
       @selectedPosition = Math.min(@selectedPosition, @childViews.length - 1)
       @selectedPosition = Math.max(@selectedPosition, 0)
 
       @_setSelection()
+
+      e?.preventDefault()
+      e?.stopPropagation()
 
     _setSelection: =>
       selectedView = @childViews[@selectedPosition]
@@ -102,6 +122,9 @@ do ->
         else if (offset + width) > @$el.width()
           @$el.scrollLeft(@$el.scrollLeft() + (offset + width - @$el.width()))
 
+    _toggleNavbarSetting: =>
+      @settingsModel.set 'showNavbar', !@settingsModel.get('showNavbar')
+
     _sendPaneToBottom: =>
       @childViews[@selectedPosition].model.set('position', null)
       @childViews[@selectedPosition].model.trigger 'reload'
@@ -109,6 +132,12 @@ do ->
     _sendPaneToTop: =>
       @childViews[@selectedPosition].model.set('position', null)
       @childViews[@selectedPosition].model.trigger 'toTop'
+
+    _moveMessageSelection: (diff, e) =>
+      @childViews[@selectedPosition].moveSelectedMessage(diff)
+
+      e?.preventDefault()
+      e?.stopPropagation()
 
     _clearPaneFilters: =>
       @childViews[@selectedPosition].model.set('filters', {})
@@ -125,6 +154,24 @@ do ->
 
     _closeSelectedPane: =>
       @session.removePane(@childViews[@selectedPosition].model.cid)
+
+    _selectedMessageReply: (e) =>
+      @childViews[@selectedPosition].selectedMessageReply()
+
+      e?.preventDefault()
+      e?.stopPropagation()
+
+    _selectedMessageQuote: (e) =>
+      @childViews[@selectedPosition].selectedMessageQuote()
+
+      e?.preventDefault()
+      e?.stopPropagation()
+
+    _selectedMessagePM: (e) =>
+      @childViews[@selectedPosition].selectedMessagePM()
+
+      e?.preventDefault()
+      e?.stopPropagation()
       
     _addPaneView: (paneModel) =>
       # TODO: this still causes scroll issues, even with caching/restoring on width changes
