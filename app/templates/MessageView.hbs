@@ -5,7 +5,7 @@
   <span class="time from-now">{{prettyTime}}</span>
   <span class="time absolute">{{absoluteTime}}</span>
 </div>
-<div class="content">
+<div class="content {{#if isSentByUser}}outgoing{{/if}}">
   <div class="sender">
     <img class="gravatar" src="{{gravatar}}"><br>
     {{shortSender}}

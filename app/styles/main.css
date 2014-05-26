@@ -230,6 +230,8 @@
         text-decoration: underline; }
   .message-view .content {
     display: table-row; }
+    .message-view .content.outgoing .sender {
+      background-color: #d6f3d6; }
     .message-view .content .sender {
       text-align: center;
       height: 100%;

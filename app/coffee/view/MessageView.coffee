@@ -34,11 +34,15 @@ do ->
       realm = zuserRealm(@message.get('sender'))
       gravatar = getGravatarFromName(name, realm, 40)
 
+      isSentByUser = @message.get('sender') == @session.userInfo.get('username') + '@' + @session.userInfo.get('realm')
+      isSentByUser = @message.get('isOutgoing') or isSentByUser
+
       # TODO: move some of this to handlebars helpers
       @$el.append template(_.defaults({}, @message.attributes, 
           absoluteTime: @message.get('time').format(TIME_FORMAT)
           shortSender: name
           gravatar: gravatar
+          isSentByUser: isSentByUser 
         )
       )
 

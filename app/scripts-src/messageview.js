@@ -43,16 +43,19 @@
       };
 
       MessageView.prototype.render = function() {
-        var gravatar, name, realm, template;
+        var gravatar, isSentByUser, name, realm, template;
         this.$el.empty();
         template = com.roost.templates['MessageView'];
         name = shortZuser(this.message.get('sender'));
         realm = zuserRealm(this.message.get('sender'));
         gravatar = getGravatarFromName(name, realm, 40);
+        isSentByUser = this.message.get('sender') === this.session.userInfo.get('username') + '@' + this.session.userInfo.get('realm');
+        isSentByUser = this.message.get('isOutgoing') || isSentByUser;
         this.$el.append(template(_.defaults({}, this.message.attributes, {
           absoluteTime: this.message.get('time').format(TIME_FORMAT),
           shortSender: name,
-          gravatar: gravatar
+          gravatar: gravatar,
+          isSentByUser: isSentByUser
         })));
         this.updatePosition();
         this.updateTime();
