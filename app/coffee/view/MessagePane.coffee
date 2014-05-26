@@ -1,6 +1,7 @@
 do ->
-  # TODO: determine this dynamically based on window size and adjust accordingly.
-  MAX_PANES_ON_SCREEN = 3
+  # We have to enforce this here, because just doing CSS on the messages
+  # neglects the filter/compose bars, which are also jankily placed.
+  MIN_MESSAGE_WIDTH = 580
 
   class com.roost.MessagePane extends Backbone.View
     className: 'message-pane'
@@ -53,6 +54,8 @@ do ->
 
       # Hotkeys for toggling settings      
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
+
+      $(window).resize(@_recalculateWidth)
 
     render: =>
       @$el.empty()
@@ -210,7 +213,7 @@ do ->
 
     _recalculateWidth: =>
       # Tell all the child views to recalculate their width
-      width = Math.max(Math.floor(100/@childViews.length), Math.floor(100/MAX_PANES_ON_SCREEN))
+      width = Math.max(Math.floor(100/@childViews.length), Math.floor(100 * MIN_MESSAGE_WIDTH/@$el.width()))
       index = 0
       for view in @childViews
         view.recalculateWidth index, width

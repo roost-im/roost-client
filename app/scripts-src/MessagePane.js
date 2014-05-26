@@ -4,8 +4,8 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   (function() {
-    var MAX_PANES_ON_SCREEN;
-    MAX_PANES_ON_SCREEN = 3;
+    var MIN_MESSAGE_WIDTH;
+    MIN_MESSAGE_WIDTH = 580;
     return com.roost.MessagePane = (function(_super) {
       __extends(MessagePane, _super);
 
@@ -84,7 +84,8 @@
         Mousetrap.bind('alt+x', this._closeSelectedPane);
         Mousetrap.bind('?', this._showHelp);
         Mousetrap.bind('esc', this._hideHelp);
-        return Mousetrap.bind('alt+h', this._toggleNavbarSetting);
+        Mousetrap.bind('alt+h', this._toggleNavbarSetting);
+        return $(window).resize(this._recalculateWidth);
       };
 
       MessagePane.prototype.render = function() {
@@ -283,7 +284,7 @@
 
       MessagePane.prototype._recalculateWidth = function() {
         var index, view, width, _i, _len, _ref, _results;
-        width = Math.max(Math.floor(100 / this.childViews.length), Math.floor(100 / MAX_PANES_ON_SCREEN));
+        width = Math.max(Math.floor(100 / this.childViews.length), Math.floor(100 * MIN_MESSAGE_WIDTH / this.$el.width()));
         index = 0;
         _ref = this.childViews;
         _results = [];

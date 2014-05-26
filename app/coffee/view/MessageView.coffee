@@ -12,6 +12,7 @@ do ->
 
       'click .msg-class': '_filterClass'
       'click .msg-instance': '_filterInstance'
+      'click .chat-header': '_filterConversation'
 
     initialize: (options) =>
       # TODO: find a better way to spawn new panes other than through the session
@@ -23,7 +24,8 @@ do ->
       # @paneModel for events, but that's a bad idea in general. These views
       # get created and disposed of quickly, so there's a high chance of errors
       # if listeners are firing in here. Even with proper cleanup, it gets bad.
-      # Therefore, all listening to stuff is delegated to the parent view.
+      # Therefore, all listening to stuff is delegated to the parent view, which
+      # then calls into this view to do updates and such.
 
     render: =>
       @$el.empty()
@@ -34,15 +36,21 @@ do ->
       realm = zuserRealm(@message.get('sender'))
       gravatar = getGravatarFromName(name, realm, 40)
 
+      # Check if the user sent it
       isSentByUser = @message.get('sender') == @session.userInfo.get('username') + '@' + @session.userInfo.get('realm')
       isSentByUser = @message.get('isOutgoing') or isSentByUser
+
+      # Check if this is a personal message, and if so, save the convo partner
+      if @message.get('isPersonal')
+        convoPartner = shortZuser(@message.get('conversation'))
 
       # TODO: move some of this to handlebars helpers
       @$el.append template(_.defaults({}, @message.attributes, 
           absoluteTime: @message.get('time').format(TIME_FORMAT)
           shortSender: name
           gravatar: gravatar
-          isSentByUser: isSentByUser 
+          isSentByUser: isSentByUser
+          convoPartner: convoPartner
         )
       )
 
@@ -116,17 +124,7 @@ do ->
           content: quoted
         showCompose: true
 
-    _applyFilter: (evt, withInstance) =>
-      # Set the proper position and get the filter
-      options = 
-        filters: 
-          class_key: @message.get('class')
-        position: @message.get('id')
-        posScroll: @$el.offset().top
-
-      if withInstance
-        options.filters.instance_key = @message.get('instance')
-
+    _applyFilter: (evt, options) =>
       # If holding alt, create a new pane and kill the event.
       # We don't want the event bubbling up to selecting this pane.
       if evt.altKey
@@ -137,7 +135,31 @@ do ->
         @paneModel.set options
 
     _filterClass: (evt) =>
-      @_applyFilter(evt, false)
+      options = 
+        filters: 
+          class_key: @message.get('class')
+        position: @message.get('id')
+        posScroll: @$el.offset().top
+      @_applyFilter(evt, options)
 
     _filterInstance: (evt) =>
-      @_applyFilter(evt, true)
+      options = 
+        filters: 
+          class_key: @message.get('class')
+          instance_key: @message.get('instance')
+        position: @message.get('id')
+        posScroll: @$el.offset().top
+      @_applyFilter(evt, options)
+
+    _filterConversation: (evt) =>
+      # Include class and instance so the filter bar coloring code doesn't
+      # get yet another control flow change.
+      options = 
+        filters:
+          class_key: @message.get('class')
+          instance_key: @message.get('instance')
+          conversation: @message.get('conversation')
+        position: @message.get('id')
+        posScroll: @$el.offset().top
+      @_applyFilter(evt, options)
+

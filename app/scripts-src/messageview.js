@@ -11,6 +11,7 @@
       __extends(MessageView, _super);
 
       function MessageView() {
+        this._filterConversation = __bind(this._filterConversation, this);
         this._filterInstance = __bind(this._filterInstance, this);
         this._filterClass = __bind(this._filterClass, this);
         this._applyFilter = __bind(this._applyFilter, this);
@@ -33,7 +34,8 @@
         'click .pm': 'openMessageBox',
         'click .quote': 'openQuoteBox',
         'click .msg-class': '_filterClass',
-        'click .msg-instance': '_filterInstance'
+        'click .msg-instance': '_filterInstance',
+        'click .chat-header': '_filterConversation'
       };
 
       MessageView.prototype.initialize = function(options) {
@@ -43,7 +45,7 @@
       };
 
       MessageView.prototype.render = function() {
-        var gravatar, isSentByUser, name, realm, template;
+        var convoPartner, gravatar, isSentByUser, name, realm, template;
         this.$el.empty();
         template = com.roost.templates['MessageView'];
         name = shortZuser(this.message.get('sender'));
@@ -51,11 +53,15 @@
         gravatar = getGravatarFromName(name, realm, 40);
         isSentByUser = this.message.get('sender') === this.session.userInfo.get('username') + '@' + this.session.userInfo.get('realm');
         isSentByUser = this.message.get('isOutgoing') || isSentByUser;
+        if (this.message.get('isPersonal')) {
+          convoPartner = shortZuser(this.message.get('conversation'));
+        }
         this.$el.append(template(_.defaults({}, this.message.attributes, {
           absoluteTime: this.message.get('time').format(TIME_FORMAT),
           shortSender: name,
           gravatar: gravatar,
-          isSentByUser: isSentByUser
+          isSentByUser: isSentByUser,
+          convoPartner: convoPartner
         })));
         this.updatePosition();
         this.updateTime();
@@ -135,18 +141,7 @@
         });
       };
 
-      MessageView.prototype._applyFilter = function(evt, withInstance) {
-        var options;
-        options = {
-          filters: {
-            class_key: this.message.get('class')
-          },
-          position: this.message.get('id'),
-          posScroll: this.$el.offset().top
-        };
-        if (withInstance) {
-          options.filters.instance_key = this.message.get('instance');
-        }
+      MessageView.prototype._applyFilter = function(evt, options) {
         if (evt.altKey) {
           this.session.addPane(options);
           evt.preventDefault();
@@ -157,11 +152,42 @@
       };
 
       MessageView.prototype._filterClass = function(evt) {
-        return this._applyFilter(evt, false);
+        var options;
+        options = {
+          filters: {
+            class_key: this.message.get('class')
+          },
+          position: this.message.get('id'),
+          posScroll: this.$el.offset().top
+        };
+        return this._applyFilter(evt, options);
       };
 
       MessageView.prototype._filterInstance = function(evt) {
-        return this._applyFilter(evt, true);
+        var options;
+        options = {
+          filters: {
+            class_key: this.message.get('class'),
+            instance_key: this.message.get('instance')
+          },
+          position: this.message.get('id'),
+          posScroll: this.$el.offset().top
+        };
+        return this._applyFilter(evt, options);
+      };
+
+      MessageView.prototype._filterConversation = function(evt) {
+        var options;
+        options = {
+          filters: {
+            class_key: this.message.get('class'),
+            instance_key: this.message.get('instance'),
+            conversation: this.message.get('conversation')
+          },
+          position: this.message.get('id'),
+          posScroll: this.$el.offset().top
+        };
+        return this._applyFilter(evt, options);
       };
 
       return MessageView;

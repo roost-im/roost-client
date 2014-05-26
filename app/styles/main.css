@@ -91,11 +91,14 @@
       display: inline;
       margin-right: 10px;
       border-radius: 20px; }
+    .navbar .user-info span {
+      float: right; }
     .navbar .user-info .username {
       display: inline;
       float: right;
       color: #EEE;
-      text-decoration: none; }
+      text-decoration: none;
+      margin-right: 20px; }
       .navbar .user-info .username:hover {
         text-decoration: underline; }
   .navbar .personal-message, .navbar .add-pane, .navbar .toggle-keyboard, .navbar .toggle-panes {
@@ -204,6 +207,16 @@
       transition: opacity 0.2s 0.5s; }
       .message-view .header .time.absolute {
         opacity: 0; }
+    .message-view .header .chat-header {
+      display: inline-block;
+      float: left;
+      background-color: none;
+      cursor: pointer;
+      padding-left: 5px;
+      padding-right: 3px;
+      box-sizing: border-box; }
+      .message-view .header .chat-header:hover {
+        text-decoration: underline; }
     .message-view .header .msg-class {
       background-color: #BBB;
       display: inline-block;
@@ -242,8 +255,8 @@
       font-size: 12px;
       position: relative;
       z-index: 2;
-      width: 90px;
-      min-width: 90px;
+      width: 75px;
+      min-width: 75px;
       box-sizing: border-box;
       word-wrap: break-word;
       font-weight: 700; }
@@ -324,7 +337,7 @@
       .compose-bar .top-bar .close:hover {
         color: #ff3333; }
   .compose-bar .composer {
-    height: 300px;
+    height: 250px;
     width: 100%;
     max-width: 650px;
     margin: auto;
@@ -498,3 +511,18 @@ html, body {
   font-weight: 300;
   overflow-y: hidden;
   overflow-x: auto; }
+
+.navbar .logout {
+  display: none !important; }
+
+@media only screen and (max-width: 760px) {
+  .navbar .title {
+    display: none !important; }
+  .navbar .user-info span {
+    display: none !important; }
+  .navbar .add-pane span {
+    display: none; }
+  .navbar .personal-message span {
+    display: none; }
+  .navbar .toggle-keyboard {
+    display: none !important; } }

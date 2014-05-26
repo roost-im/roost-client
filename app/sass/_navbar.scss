@@ -50,11 +50,16 @@
       border-radius: 20px;
     }
 
+    span {
+      float: right;
+    }
+
     .username {
       display: inline;
       float: right;
       color: #EEE;
       text-decoration: none;
+      margin-right: 20px;
 
       &:hover {
         text-decoration: underline;

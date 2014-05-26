@@ -18,3 +18,32 @@ html, body {
   overflow-y: hidden;
   overflow-x: auto;
 }
+
+// Hide the logout button for now
+.navbar .logout {
+  display: none !important;
+}
+
+@media only screen and (max-width: 760px) {
+  .navbar {
+    .title {
+      display: none !important;
+    }
+
+    .user-info span {
+      display: none !important;
+    }
+
+    .add-pane span {
+      display: none;
+    }
+
+    .personal-message span {
+      display: none;
+    }
+    
+    .toggle-keyboard {
+      display: none !important;
+    }
+  }
+}

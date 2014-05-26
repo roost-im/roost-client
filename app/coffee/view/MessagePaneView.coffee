@@ -118,7 +118,7 @@ do ->
         left: "#{index * width}%"
       )
 
-      # Restore the scroll position
+      # Restore the scroll position, except this isn't working for some reason.
       @_restoreScrollHeight()
 
     remove: =>

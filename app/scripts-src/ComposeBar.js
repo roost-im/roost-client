@@ -124,11 +124,7 @@
       };
 
       ComposeBar.prototype._handleTextareaKey = function(evt) {
-        if (evt.keyCode === 13 && !evt.shiftKey) {
-          this._sendMessage();
-          evt.preventDefault();
-          return evt.stopPropagation();
-        } else if (evt.keyCode === 27) {
+        if (evt.keyCode === 27) {
           return this._hideCompose();
         }
       };

@@ -101,10 +101,5 @@ do ->
         @_hideCompose()
 
     _handleTextareaKey: (evt) =>
-      # Handle enter and escape in the textarea (message compose area)
-      if evt.keyCode == 13 and not evt.shiftKey
-        @_sendMessage()
-        evt.preventDefault()
-        evt.stopPropagation()
-      else if evt.keyCode == 27
+      if evt.keyCode == 27
         @_hideCompose()

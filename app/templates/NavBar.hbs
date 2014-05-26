@@ -6,14 +6,15 @@
 {{#if username}}
   <div class="btn logout">Logout</div>
   <div class="user-info">
-    <a class="username" href="settings.html" tabIndex="-1">{{username}}</a>
-    <img class="gravatar" src="{{gravatar}}">
+    <a class="username" href="settings.html" tabIndex="-1">
+      <span>{{username}}</span> <img class="gravatar" src="{{gravatar}}">
+    </a>
   </div>
   <div class="add-pane">
-    <i class="fa fa-plus"></i>&nbsp;&nbsp;New Pane
+    <i class="fa fa-plus"></i><span>&nbsp;&nbsp;New Pane</span>
   </div>
   <div class="personal-message">
-    <i class="fa fa-envelope-o"></i>&nbsp;&nbsp;Personal Messages
+    <i class="fa fa-envelope-o"></i><span>&nbsp;&nbsp;Personal Messages</span>
   </div>
   <div class="toggle-keyboard">
     {{#if keyboard}}

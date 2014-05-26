@@ -1,7 +1,11 @@
 <div class="header">
-  <div class="msg-class">{{class}}</div>
-  <div class="divider"></div>
-  <div class="msg-instance">{{instance}}</div>
+  {{#if isPersonal}}
+    <div class="chat-header">Chat with {{convoPartner}}</div>
+  {{else}}
+    <div class="msg-class">{{class}}</div>
+    <div class="divider"></div>
+    <div class="msg-instance">{{instance}}</div>
+  {{/if}}
   <span class="time from-now">{{prettyTime}}</span>
   <span class="time absolute">{{absoluteTime}}</span>
 </div>

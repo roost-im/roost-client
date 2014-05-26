@@ -1,14 +1,19 @@
 <div class="top-bar">
   <div class="title">
-    {{#if filters.instance_key}}
-      <div class="msg-class">{{filters.class_key}}</div>
-      <div class="divider"></div>
-      <div class="msg-instance">{{filters.instance_key}}</div>
+    {{!-- This is getting out of hand. --}}
+    {{#if filters.conversation}}
+      Chat with {{filters.conversation}}
     {{else}}
-      {{#if filters.class_key}}
-        {{filters.class_key}}
+      {{#if filters.instance_key}}
+        <div class="msg-class">{{filters.class_key}}</div>
+        <div class="divider"></div>
+        <div class="msg-instance">{{filters.instance_key}}</div>
       {{else}}
-        All Messages
+        {{#if filters.class_key}}
+          {{filters.class_key}}
+        {{else}}
+          All Messages
+        {{/if}}
       {{/if}}
     {{/if}}
   </div>

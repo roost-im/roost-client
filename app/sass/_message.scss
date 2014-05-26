@@ -40,6 +40,20 @@
       }
     }
 
+    .chat-header {
+      display: inline-block;
+      float: left;
+      background-color: none;
+      cursor: pointer;
+      padding-left: 5px;
+      padding-right: 3px;
+      box-sizing: border-box;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
     .msg-class {
       background-color: #BBB;
       display: inline-block;
@@ -94,8 +108,8 @@
       font-size: 12px;
       position: relative;
       z-index: 2;
-      width: 90px;
-      min-width: 90px;
+      width: 75px;
+      min-width: 75px;
       box-sizing: border-box;
       word-wrap: break-word;
       font-weight: 700;
