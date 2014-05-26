@@ -9,7 +9,7 @@ do ->
       'click .send': '_sendMessage'
 
       'keydown input': '_handleInputsKey'
-      'keydown textarea': '_handleTextareaKey'
+      'keydown textarea': '_handleInputsKey'
 
     initialize: (options) =>
       @paneModel = options.paneModel
@@ -97,9 +97,5 @@ do ->
 
     _handleInputsKey: (evt) =>
       # Handle escape key (should work in ANY input box)
-      if evt.keyCode == 27
-        @_hideCompose()
-
-    _handleTextareaKey: (evt) =>
       if evt.keyCode == 27
         @_hideCompose()

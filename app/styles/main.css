@@ -512,17 +512,13 @@ html, body {
   overflow-y: hidden;
   overflow-x: auto; }
 
-.navbar .logout {
+.navbar .logout, .navbar .toggle-keyboard, .navbar .toggle-panes {
   display: none !important; }
 
-@media only screen and (max-width: 760px) {
-  .navbar .title {
-    display: none !important; }
+@media only screen and (max-width: 720px) {
   .navbar .user-info span {
     display: none !important; }
   .navbar .add-pane span {
     display: none; }
   .navbar .personal-message span {
-    display: none; }
-  .navbar .toggle-keyboard {
-    display: none !important; } }
+    display: none; } }

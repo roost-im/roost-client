@@ -213,7 +213,11 @@ do ->
 
     _recalculateWidth: =>
       # Tell all the child views to recalculate their width
-      width = Math.max(Math.floor(100/@childViews.length), Math.floor(100 * MIN_MESSAGE_WIDTH/@$el.width()))
+      if @$el.width() < MIN_MESSAGE_WIDTH
+        percentageLimit = 100
+      else
+        percentageLimit = 100 * MIN_MESSAGE_WIDTH/@$el.width()
+      width = Math.max(Math.floor(100/@childViews.length), Math.floor(percentageLimit))
       index = 0
       for view in @childViews
         view.recalculateWidth index, width

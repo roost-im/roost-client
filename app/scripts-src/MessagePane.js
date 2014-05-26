@@ -283,8 +283,13 @@
       };
 
       MessagePane.prototype._recalculateWidth = function() {
-        var index, view, width, _i, _len, _ref, _results;
-        width = Math.max(Math.floor(100 / this.childViews.length), Math.floor(100 * MIN_MESSAGE_WIDTH / this.$el.width()));
+        var index, percentageLimit, view, width, _i, _len, _ref, _results;
+        if (this.$el.width() < MIN_MESSAGE_WIDTH) {
+          percentageLimit = 100;
+        } else {
+          percentageLimit = 100 * MIN_MESSAGE_WIDTH / this.$el.width();
+        }
+        width = Math.max(Math.floor(100 / this.childViews.length), Math.floor(percentageLimit));
         index = 0;
         _ref = this.childViews;
         _results = [];

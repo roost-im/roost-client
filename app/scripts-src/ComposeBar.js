@@ -8,7 +8,6 @@
       __extends(ComposeBar, _super);
 
       function ComposeBar() {
-        this._handleTextareaKey = __bind(this._handleTextareaKey, this);
         this._handleInputsKey = __bind(this._handleInputsKey, this);
         this._updateButton = __bind(this._updateButton, this);
         this._sendMessage = __bind(this._sendMessage, this);
@@ -29,7 +28,7 @@
         'click .to-bottom': '_jumpToBottom',
         'click .send': '_sendMessage',
         'keydown input': '_handleInputsKey',
-        'keydown textarea': '_handleTextareaKey'
+        'keydown textarea': '_handleInputsKey'
       };
 
       ComposeBar.prototype.initialize = function(options) {
@@ -118,12 +117,6 @@
       };
 
       ComposeBar.prototype._handleInputsKey = function(evt) {
-        if (evt.keyCode === 27) {
-          return this._hideCompose();
-        }
-      };
-
-      ComposeBar.prototype._handleTextareaKey = function(evt) {
         if (evt.keyCode === 27) {
           return this._hideCompose();
         }

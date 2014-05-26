@@ -19,17 +19,15 @@ html, body {
   overflow-x: auto;
 }
 
-// Hide the logout button for now
-.navbar .logout {
-  display: none !important;
+// Hide extra testing stuff that might be useful later.
+.navbar {
+  .logout, .toggle-keyboard, .toggle-panes {
+    display: none !important;
+  }
 }
 
-@media only screen and (max-width: 760px) {
+@media only screen and (max-width: 720px) {
   .navbar {
-    .title {
-      display: none !important;
-    }
-
     .user-info span {
       display: none !important;
     }
@@ -40,10 +38,6 @@ html, body {
 
     .personal-message span {
       display: none;
-    }
-    
-    .toggle-keyboard {
-      display: none !important;
     }
   }
 }
