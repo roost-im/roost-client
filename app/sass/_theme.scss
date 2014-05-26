@@ -9,4 +9,4 @@ $msg-header-height: 25px;
 
 $compose-filter-bar-height: 30px;
 
-$outgoing-sender-color: rgb(214, 243, 214);
+$outgoing-sender-color: lighten($primary-btn-bg, 40%);

@@ -96,7 +96,7 @@ do ->
 
       # Create a new forward tail. null start for forward is the top.
       @forwardTail?.close()
-      @forwardTail = @messageModel.newTailInclusive(null, @model.get('filters'), @addMessagesToBottomOfList)
+      @forwardTail = @messageModel.newTail(null, @model.get('filters'), @addMessagesToBottomOfList)
       @forwardTail.expandTo(com.roost.STARTING_SIZE)
       @lastForwardStep = com.roost.STARTING_SIZE
 
@@ -123,10 +123,10 @@ do ->
           # Special case for handling when there are no messages to show: both top and bottom done
           @model.set 'isBottomDone', true
           @forwardTail?.close()
-          @forwardTail = @messageModel.newTailInclusive(null, @model.get('filters'), @addMessagesToBottomOfList)
+          @forwardTail = @messageModel.newTail(null, @model.get('filters'), @addMessagesToBottomOfList)
         else
           @forwardTail?.close()
-          @forwardTail = @messageModel.newTailInclusive(msgs[msgs.length - 1].id, @model.get('filters'), @addMessagesToBottomOfList)
+          @forwardTail = @messageModel.newTail(msgs[msgs.length - 1].id, @model.get('filters'), @addMessagesToBottomOfList)
 
         # Trigger this to expand the forward tail down and get live messages
         # Unclear as to why this has to happen, but it does
@@ -191,7 +191,7 @@ do ->
 
       # Bump up our downward tail to the latest message and reset downward state
       @forwardTail?.close()
-      @forwardTail = @messageModel.newTailInclusive(messages.at(messages.length - 1).id, @model.get('filters'), @addMessagesToBottomOfList)
+      @forwardTail = @messageModel.newTail(messages.at(messages.length - 1).id, @model.get('filters'), @addMessagesToBottomOfList)
       @model.set 'isBottomDone', false
       @lastForwardStep = 0
 

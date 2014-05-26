@@ -89,7 +89,7 @@
         if ((_ref1 = this.forwardTail) != null) {
           _ref1.close();
         }
-        this.forwardTail = this.messageModel.newTailInclusive(null, this.model.get('filters'), this.addMessagesToBottomOfList);
+        this.forwardTail = this.messageModel.newTail(null, this.model.get('filters'), this.addMessagesToBottomOfList);
         this.forwardTail.expandTo(com.roost.STARTING_SIZE);
         return this.lastForwardStep = com.roost.STARTING_SIZE;
       };
@@ -114,12 +114,12 @@
             if ((_ref = this.forwardTail) != null) {
               _ref.close();
             }
-            this.forwardTail = this.messageModel.newTailInclusive(null, this.model.get('filters'), this.addMessagesToBottomOfList);
+            this.forwardTail = this.messageModel.newTail(null, this.model.get('filters'), this.addMessagesToBottomOfList);
           } else {
             if ((_ref1 = this.forwardTail) != null) {
               _ref1.close();
             }
-            this.forwardTail = this.messageModel.newTailInclusive(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
+            this.forwardTail = this.messageModel.newTail(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
           }
           return this._onScrollDown();
         } else {
@@ -192,7 +192,7 @@
         if ((_ref1 = this.forwardTail) != null) {
           _ref1.close();
         }
-        this.forwardTail = this.messageModel.newTailInclusive(messages.at(messages.length - 1).id, this.model.get('filters'), this.addMessagesToBottomOfList);
+        this.forwardTail = this.messageModel.newTail(messages.at(messages.length - 1).id, this.model.get('filters'), this.addMessagesToBottomOfList);
         this.model.set('isBottomDone', false);
         return this.lastForwardStep = 0;
       };

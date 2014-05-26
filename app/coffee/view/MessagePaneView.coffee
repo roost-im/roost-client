@@ -246,9 +246,6 @@ do ->
         # loading more messages at the top.
         else if @currentTop <= 0 and !@model.get('isTopDone') and !@model.get('topLoading')
           @model.trigger 'scrollUp'
-        else if @model.get('isTopDone')
-          #TODO: show something to say top has been reached
-          return
       else if @$el.scrollTop() + @$el.height() > @$el[0].scrollHeight * 0.90 - @$('.filler-view').height()
         # Check if we have any more messages in our cache
         if @currentBottom < messages.length
@@ -260,9 +257,6 @@ do ->
         # aren't currently loading more messages at the bottom.
         else if @currentBottom >= messages.length and !@model.get('isBottomDone') and !@model.get('bottomLoading')
           @model.trigger 'scrollDown'
-        else if @model.get('isBottomDone')
-          #TODO: show something to say latest messages reached
-          return
 
     _addMessages: (message, collection, options) =>
       # Since we're adding messages, let's get rid of these.

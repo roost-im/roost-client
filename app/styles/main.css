@@ -165,7 +165,7 @@
       text-align: center;
       font-size: 40px;
       color: #BBB;
-      margin-top: 20%; }
+      margin-top: 200px; }
     .message-pane .message-pane-view .filler-view {
       height: 70%; }
   .message-pane .no-panes {
@@ -176,7 +176,7 @@
     bottom: 0;
     margin: auto;
     height: 280px;
-    font-size: 40px;
+    font-size: 30px;
     color: #BBB; }
 
 .message-view {
@@ -244,7 +244,7 @@
   .message-view .content {
     display: table-row; }
     .message-view .content.outgoing .sender {
-      background-color: #d6f3d6; }
+      background-color: #d9e6f7; }
     .message-view .content .sender {
       text-align: center;
       height: 100%;
@@ -521,4 +521,7 @@ html, body {
   .navbar .add-pane span {
     display: none; }
   .navbar .personal-message span {
-    display: none; } }
+    display: none; }
+
+  .no-panes {
+    font-size: 16px !important; } }

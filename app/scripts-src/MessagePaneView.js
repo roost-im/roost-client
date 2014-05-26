@@ -264,8 +264,6 @@
             return _results;
           } else if (this.currentTop <= 0 && !this.model.get('isTopDone') && !this.model.get('topLoading')) {
             return this.model.trigger('scrollUp');
-          } else if (this.model.get('isTopDone')) {
-
           }
         } else if (this.$el.scrollTop() + this.$el.height() > this.$el[0].scrollHeight * 0.90 - this.$('.filler-view').height()) {
           if (this.currentBottom < messages.length) {
@@ -280,8 +278,6 @@
             return _results1;
           } else if (this.currentBottom >= messages.length && !this.model.get('isBottomDone') && !this.model.get('bottomLoading')) {
             return this.model.trigger('scrollDown');
-          } else if (this.model.get('isBottomDone')) {
-
           }
         }
       };

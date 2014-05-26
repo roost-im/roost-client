@@ -118,7 +118,7 @@ function program17(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.instance_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"></input>\n    <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\" value=\""
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.recipient)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"></input>\n    <div class=\"btn set-filters\">Set Filters</div>\n  </div>\n";
+    + "\"></input>\n    <button class=\"btn set-filters\">Set Filters</button>\n  </div>\n";
   return buffer;
   }
 
