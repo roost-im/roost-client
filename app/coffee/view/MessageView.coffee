@@ -91,12 +91,11 @@ do ->
 
     openMessageBox: =>
       # Fill in proper fields and open the compose box
-      # TODO: should this be a shortZuser or something else?
       @paneModel.set
         composeFields:
           class: 'message'
           instance: 'personal'
-          recipient: shortZuser(@message.get('sender'))
+          recipient: @message.get('sender')
           content: ''
         showCompose: true
 

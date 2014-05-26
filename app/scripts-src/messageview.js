@@ -111,7 +111,7 @@
           composeFields: {
             "class": 'message',
             instance: 'personal',
-            recipient: shortZuser(this.message.get('sender')),
+            recipient: this.message.get('sender'),
             content: ''
           },
           showCompose: true

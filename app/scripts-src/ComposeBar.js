@@ -28,8 +28,8 @@
         'click .close': '_hideCompose',
         'click .to-bottom': '_jumpToBottom',
         'click .send': '_sendMessage',
-        'keyup input': '_handleInputsKey',
-        'keyup textarea': '_handleTextareaKey'
+        'keydown input': '_handleInputsKey',
+        'keydown textarea': '_handleTextareaKey'
       };
 
       ComposeBar.prototype.initialize = function(options) {
@@ -102,7 +102,7 @@
             "class": this.$('.class-input').val(),
             instance: this.$('.instance-input').val(),
             recipient: this.$('.recipient-input').val(),
-            content: this.$('.content-input').val()
+            content: wrapText(this.$('.content-input').val())
           });
           this.paneModel.set('sending', true);
           return this.paneModel.trigger('sendMessage');
@@ -124,8 +124,10 @@
       };
 
       ComposeBar.prototype._handleTextareaKey = function(evt) {
-        if (evt.keyCode === 13) {
-          return this._sendMessage();
+        if (evt.keyCode === 13 && !evt.shiftKey) {
+          this._sendMessage();
+          evt.preventDefault();
+          return evt.stopPropagation();
         } else if (evt.keyCode === 27) {
           return this._hideCompose();
         }

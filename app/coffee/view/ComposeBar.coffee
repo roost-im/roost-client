@@ -8,8 +8,8 @@ do ->
       'click .to-bottom': '_jumpToBottom'
       'click .send': '_sendMessage'
 
-      'keyup input': '_handleInputsKey'
-      'keyup textarea': '_handleTextareaKey'
+      'keydown input': '_handleInputsKey'
+      'keydown textarea': '_handleTextareaKey'
 
     initialize: (options) =>
       @paneModel = options.paneModel
@@ -83,7 +83,7 @@ do ->
           class: @$('.class-input').val()
           instance: @$('.instance-input').val()
           recipient: @$('.recipient-input').val()
-          content: @$('.content-input').val()
+          content: wrapText(@$('.content-input').val())
         )
         @paneModel.set('sending', true)
         @paneModel.trigger 'sendMessage'
@@ -102,7 +102,9 @@ do ->
 
     _handleTextareaKey: (evt) =>
       # Handle enter and escape in the textarea (message compose area)
-      if evt.keyCode == 13
+      if evt.keyCode == 13 and not evt.shiftKey
         @_sendMessage()
+        evt.preventDefault()
+        evt.stopPropagation()
       else if evt.keyCode == 27
         @_hideCompose()
