@@ -16,6 +16,7 @@
     "handlebars": "latest",
     "moment": "latest",
     "font-awesome": "latest",
-    "mousetrap": "latest"
+    "mousetrap": "latest",
+    "jquery-linkify": "latest"
   }
 }

@@ -274,6 +274,8 @@
         white-space: pre-line;
         font-size: 14px;
         font-family: "Inconsolata"; }
+        .message-view .content .message-block .message a {
+          text-decoration: none; }
       .message-view .content .message-block .bottom-row {
         padding: 5px;
         font-size: 12px;

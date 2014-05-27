@@ -77,7 +77,7 @@ do ->
 
       # Mark off which subsection of the cache we are currently showing
       @currentTop = 0
-      @currentBottom = @model.get('messages').length
+      @currentBottom = @model.get('messages').length + 1
 
       # Create the message composing view
       @composeView = new com.roost.ComposeBar

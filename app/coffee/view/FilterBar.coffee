@@ -67,7 +67,6 @@ do ->
         showFilters: false
 
     _removePane: =>
-      # TODO: stop this from bubbling up to the session
       @session.removePane(@paneModel.cid)
 
     _setFilters: =>

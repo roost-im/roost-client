@@ -44,7 +44,6 @@ do ->
       @userInfo.trigger 'logout'
 
     _addPane: =>
-      #TODO: stop doing this in the session object
       @session.addPane {}
 
     _addPersonalMessagePane: =>

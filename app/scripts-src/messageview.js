@@ -63,6 +63,7 @@
           isSentByUser: isSentByUser,
           convoPartner: convoPartner
         })));
+        this.$('.message').linkify();
         this.updatePosition();
         this.updateTime();
         return this.updateColors();
@@ -155,7 +156,7 @@
         var options;
         options = {
           filters: {
-            class_key: this.message.get('class')
+            class_key: this.message.get('classKey')
           },
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
@@ -167,8 +168,8 @@
         var options;
         options = {
           filters: {
-            class_key: this.message.get('class'),
-            instance_key: this.message.get('instance')
+            class_key_base: this.message.get('classKeyBase'),
+            instance_key: this.message.get('instanceKey')
           },
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
@@ -180,8 +181,8 @@
         var options;
         options = {
           filters: {
-            class_key: this.message.get('class'),
-            instance_key: this.message.get('instance'),
+            class_key_base: this.message.get('classKeyBase'),
+            instance_key: this.message.get('instanceKey'),
             conversation: this.message.get('conversation')
           },
           position: this.message.get('id'),

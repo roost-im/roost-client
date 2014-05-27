@@ -15,7 +15,6 @@ do ->
       'click .chat-header': '_filterConversation'
 
     initialize: (options) =>
-      # TODO: find a better way to spawn new panes other than through the session
       @message = options.message
       @paneModel = options.paneModel
       @session = options.session
@@ -53,6 +52,13 @@ do ->
           convoPartner: convoPartner
         )
       )
+
+      # TODO: figure out why ztext parsing isn't working
+      # Chosen to use linkify library and get links, since at least that should work.
+      # Ztext parsing doesn't seem to get that even.
+      # @$('.message').empty()
+      # ztextToDOM(@message.get('message'), @$('.message')[0])
+      @$('.message').linkify()
 
       # Various updates to make sure the view is decorated properly.
       # Done separate from handlebars since these things have a habit of changing.
@@ -137,7 +143,7 @@ do ->
     _filterClass: (evt) =>
       options = 
         filters: 
-          class_key: @message.get('class')
+          class_key: @message.get('classKey')
         position: @message.get('id')
         posScroll: @$el.offset().top
       @_applyFilter(evt, options)
@@ -145,8 +151,8 @@ do ->
     _filterInstance: (evt) =>
       options = 
         filters: 
-          class_key: @message.get('class')
-          instance_key: @message.get('instance')
+          class_key_base: @message.get('classKeyBase')
+          instance_key: @message.get('instanceKey')
         position: @message.get('id')
         posScroll: @$el.offset().top
       @_applyFilter(evt, options)
@@ -156,8 +162,8 @@ do ->
       # get yet another control flow change.
       options = 
         filters:
-          class_key: @message.get('class')
-          instance_key: @message.get('instance')
+          class_key_base: @message.get('classKeyBase')
+          instance_key: @message.get('instanceKey')
           conversation: @message.get('conversation')
         position: @message.get('id')
         posScroll: @$el.offset().top
