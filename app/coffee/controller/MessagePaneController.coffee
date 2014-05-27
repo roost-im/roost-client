@@ -130,7 +130,8 @@ do ->
 
         # Trigger this to expand the forward tail down and get live messages
         # Unclear as to why this has to happen, but it does
-        @_onScrollDown()
+        @lastForwardStep += 1
+        @forwardTail.expandTo(@lastForwardStep)
       else
         # If we are at our cache size, reduce the size of our cache
         # by as many messages as we just received.
@@ -143,6 +144,12 @@ do ->
           messages.add message, {at: 0}
 
     addMessagesToBottomOfList: (msgs, isDone) =>
+      # This means we have a live message
+      if @model.get('isBottomDone') and isDone
+        @lastForwardStep += 1
+        @forwardTail.expandTo(@lastForwardStep)
+        live = true
+
       @model.set 
         isBottomDone: isDone
         bottomLoading: false
@@ -156,7 +163,11 @@ do ->
       # If we are at our cache size, reduce the size of our cache
       # by as many messages as we just received.
       if messages.length >= com.roost.CACHE_SIZE
-        @_clearTopOfCache(msgs.length)
+        # If this is a live message, we really don't want to add it to our list.
+        if live
+          return
+        else
+          @_clearTopOfCache(msgs.length)
 
       # If we aren't loaded yet, let's clear our messages out.
       # We don't reset with our messages since it will jump the scrolling down.

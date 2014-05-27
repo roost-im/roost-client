@@ -121,7 +121,8 @@
             }
             this.forwardTail = this.messageModel.newTail(msgs[msgs.length - 1].id, this.model.get('filters'), this.addMessagesToBottomOfList);
           }
-          return this._onScrollDown();
+          this.lastForwardStep += 1;
+          return this.forwardTail.expandTo(this.lastForwardStep);
         } else {
           if (messages.length >= com.roost.CACHE_SIZE) {
             this._clearBottomOfCache(msgs.length);
@@ -139,7 +140,12 @@
       };
 
       MessagePaneController.prototype.addMessagesToBottomOfList = function(msgs, isDone) {
-        var message, messages, _i, _j, _len, _len1, _ref, _results;
+        var live, message, messages, _i, _j, _len, _len1, _ref, _results;
+        if (this.model.get('isBottomDone') && isDone) {
+          this.lastForwardStep += 1;
+          this.forwardTail.expandTo(this.lastForwardStep);
+          live = true;
+        }
         this.model.set({
           isBottomDone: isDone,
           bottomLoading: false
@@ -150,7 +156,11 @@
           this._processMesssage(message);
         }
         if (messages.length >= com.roost.CACHE_SIZE) {
-          this._clearTopOfCache(msgs.length);
+          if (live) {
+            return;
+          } else {
+            this._clearTopOfCache(msgs.length);
+          }
         }
         if (!this.model.get('loaded')) {
           this.model.set('loaded', true);

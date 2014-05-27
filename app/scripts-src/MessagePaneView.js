@@ -87,7 +87,7 @@
           }
         }
         this.currentTop = 0;
-        this.currentBottom = this.model.get('messages').length + 1;
+        this.currentBottom = this.model.get('messages').length + 2;
         this.composeView = new com.roost.ComposeBar({
           paneModel: this.model
         });
@@ -291,7 +291,9 @@
             return this._removeBottomMessage();
           }
         } else {
-          this._appendMessage(message);
+          if (this.currentBottom >= this.model.get('messages').length - 1) {
+            this._appendMessage(message);
+          }
           if (this.childViews.length > com.roost.STARTING_SIZE) {
             return this._removeTopMessage();
           }

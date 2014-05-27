@@ -77,7 +77,7 @@ do ->
 
       # Mark off which subsection of the cache we are currently showing
       @currentTop = 0
-      @currentBottom = @model.get('messages').length + 1
+      @currentBottom = @model.get('messages').length + 2
 
       # Create the message composing view
       @composeView = new com.roost.ComposeBar
@@ -271,7 +271,10 @@ do ->
         if @childViews.length > com.roost.STARTING_SIZE
           @_removeBottomMessage()
       else
-        @_appendMessage(message)
+        # Awkward way of avoiding adding live messages when we are not at
+        # the actual bottom.
+        if @currentBottom >= @model.get('messages').length - 1
+          @_appendMessage(message)
 
         # Start clearing stuff out if we're past our proper size
         if @childViews.length > com.roost.STARTING_SIZE
