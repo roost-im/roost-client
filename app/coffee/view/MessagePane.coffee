@@ -54,6 +54,7 @@ do ->
 
       # Hotkeys for toggling settings      
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
+      Mousetrap.bind('alt+s', @_toggleSubSetting)
 
       $(window).resize(@_recalculateWidth)
 
@@ -67,6 +68,12 @@ do ->
 
       if @childViews.length > 0
         @_setSelection()
+
+      @subView = new com.roost.SubscriptionPanel
+        settings: @settingsModel
+        subscriptions: @session.subscriptions
+      @subView.render()
+      @$el.append(@subView.$el)
 
     _toggleKeyboard: =>
       # Pause or unpause hotkeys.
@@ -125,8 +132,15 @@ do ->
         else if (offset + width) > @$el.width()
           @$el.scrollLeft(@$el.scrollLeft() + (offset + width - @$el.width()))
 
-    _toggleNavbarSetting: =>
+    _toggleNavbarSetting: (e)=>
       @settingsModel.set 'showNavbar', !@settingsModel.get('showNavbar')
+      e?.preventDefault()
+      e?.stopPropagation()
+
+    _toggleSubSetting: (e) =>
+      @settingsModel.set 'showSubs', !@settingsModel.get('showSubs')
+      e?.preventDefault()
+      e?.stopPropagation()
 
     _sendPaneToBottom: =>
       @childViews[@selectedPosition].model.set('position', null)

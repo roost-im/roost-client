@@ -8,6 +8,7 @@
       __extends(NavBar, _super);
 
       function NavBar() {
+        this._toggleSubs = __bind(this._toggleSubs, this);
         this._toggleKeyboard = __bind(this._toggleKeyboard, this);
         this._togglePanes = __bind(this._togglePanes, this);
         this._addPersonalMessagePane = __bind(this._addPersonalMessagePane, this);
@@ -26,6 +27,7 @@
         'click .logout': '_handleLogout',
         'click .add-pane': '_addPane',
         'click .personal-message': '_addPersonalMessagePane',
+        'click .user-info': '_toggleSubs',
         'click .toggle-panes': '_togglePanes',
         'click .toggle-keyboard': '_toggleKeyboard'
       };
@@ -35,7 +37,7 @@
         this.userInfo = this.session.userInfo;
         this.settings = this.session.settingsModel;
         this.listenTo(this.userInfo, 'change', this.render);
-        return this.listenTo(this.settings, 'change', this.render);
+        return this.listenTo(this.settings, 'change:showNavbar', this.render);
       };
 
       NavBar.prototype.render = function() {
@@ -84,6 +86,10 @@
 
       NavBar.prototype._toggleKeyboard = function() {
         return this.settings.set('keyboard', !this.settings.get('keyboard'));
+      };
+
+      NavBar.prototype._toggleSubs = function() {
+        return this.settings.set('showSubs', !this.settings.get('showSubs'));
       };
 
       return NavBar;

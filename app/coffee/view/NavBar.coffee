@@ -7,6 +7,7 @@ do ->
       'click .logout': '_handleLogout'
       'click .add-pane': '_addPane'
       'click .personal-message': '_addPersonalMessagePane'
+      'click .user-info': '_toggleSubs'
 
       'click .toggle-panes': '_togglePanes'
       'click .toggle-keyboard': '_toggleKeyboard'
@@ -18,7 +19,7 @@ do ->
 
       # Re-render on login/logout or settings changes.
       @listenTo @userInfo, 'change', @render
-      @listenTo @settings, 'change', @render
+      @listenTo @settings, 'change:showNavbar', @render
 
     render: =>
       @$el.empty()
@@ -61,3 +62,7 @@ do ->
     _toggleKeyboard: =>
       # Flip on/off using keyboard shortcuts
       @settings.set 'keyboard', !@settings.get('keyboard')
+
+    _toggleSubs: =>
+      # Flip on/off showing subscriptions
+      @settings.set 'showSubs', !@settings.get('showSubs')

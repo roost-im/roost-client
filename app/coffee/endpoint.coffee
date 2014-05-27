@@ -8,6 +8,12 @@ $('document').ready( =>
     userInfo: session.userInfo
     ticketManager: session.ticketManager
 
+  # Create the sub controller
+  subController = new com.roost.SubscriptionController
+    api: session.api
+    userInfo: session.userInfo
+    subscriptions: session.subscriptions
+
   # Create the navbar view and add it to the DOM
   navbar = new com.roost.NavBar
     session: session

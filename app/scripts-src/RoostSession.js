@@ -10,6 +10,8 @@
           username: null,
           realm: null
         });
+        this.subscriptions = new Backbone.Collection();
+        this.subscriptions.model = com.roost.SubscriptionModel;
         this.messageLists = new Backbone.Collection();
         this.messageControllers = {};
         this.composeControllers = {};
@@ -20,7 +22,8 @@
         this.settingsModel = new Backbone.Model({
           keyboard: true,
           panes: true,
-          showNavbar: true
+          showNavbar: true,
+          showSubs: false
         });
         Mousetrap.bind('alt+n', ((function(_this) {
           return function() {

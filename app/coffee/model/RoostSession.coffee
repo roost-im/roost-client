@@ -12,6 +12,10 @@ do ->
         username: null
         realm: null
 
+      # User's subscriptions
+      @subscriptions = new Backbone.Collection()
+      @subscriptions.model = com.roost.SubscriptionModel
+
       # Collection of Message List Models
       @messageLists = new Backbone.Collection()
 
@@ -33,6 +37,7 @@ do ->
         keyboard: true
         panes: true
         showNavbar: true
+        showSubs: false
 
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.

@@ -70,7 +70,6 @@ do ->
       @session.removePane(@paneModel.cid)
 
     _setFilters: =>
-      # Clear position on filter change
       opts = 
         class_key: @$('.class-input').val()
         instance_key: @$('.instance-input').val()
@@ -86,6 +85,7 @@ do ->
         filters.recipient = opts.recipient
 
       # Set the filters and trigger a reset
+      # Clear position on filter change
       @paneModel.set
         filters: filters
         loaded: false

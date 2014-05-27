@@ -1,0 +1,25 @@
+<div class="header">
+  Manage Subscriptions
+</div>
+<div class="sub-form">
+  <input class="class-input" type="text" placeholder="Class"></input>
+  <input class="instance-input" type="text" placeholder="Instance" value="*"></input>
+  <input class="recipient-input" type="text" placeholder="Recipient"></input>
+  <br>
+  <button class="btn subscribe">Subscribe</button>
+</div>
+<div class="subs-label">
+  Current Subscriptions
+</div>
+<div class="table-container">
+  <table cellspacing="0" class="subs-table">
+    {{#each models}}
+      <tr>
+        <td>{{attributes.class}}</td>
+        <td>{{attributes.instance}}</td>
+        <td>{{attributes.recipient}}</td>
+        <td class="close-td" data-cid="{{cid}}">&times;</td>
+      </tr>
+    {{/each}}
+  </table>
+</div>

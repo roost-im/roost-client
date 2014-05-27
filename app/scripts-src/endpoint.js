@@ -1,12 +1,17 @@
 (function() {
   $('document').ready((function(_this) {
     return function() {
-      var authController, messagePane, navbar, session;
+      var authController, messagePane, navbar, session, subController;
       session = new com.roost.RoostSession();
       authController = new com.roost.AuthenticationController({
         session: session,
         userInfo: session.userInfo,
         ticketManager: session.ticketManager
+      });
+      subController = new com.roost.SubscriptionController({
+        api: session.api,
+        userInfo: session.userInfo,
+        subscriptions: session.subscriptions
       });
       navbar = new com.roost.NavBar({
         session: session

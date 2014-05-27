@@ -143,7 +143,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
 
 
-  return "<div class=\"modal-overlay\"/>\n<div class=\"modal\">\n  <div class=\"header\">\n    <div class=\"title\">\n      Roost Hotkeys\n    </div>\n    <div class=\"close-help\">\n      &times;\n    </div>\n  </div>\n  <table class=\"content\" cellspacing=\"0\">\n    <tr>\n      <th> Hotkey </th>\n      <th> Function </th>\n    </tr>\n    <tr>\n      <td> Alt+h </td>\n      <td> Toggle top bar </td>\n    </tr>\n    <tr>\n      <td> Alt+n </td>\n      <td> Open new pane </td>\n    </tr>\n    <tr>\n      <td> Alt+p </td>\n      <td> Open PM pane </td>\n    </tr>\n    <tr>\n      <td> Alt+x </td>\n      <td> Close selected pane </td>\n    </tr>\n    <tr>\n      <td> Left/Right </td>\n      <td> Move pane selection </td>\n    </tr>\n    <tr>\n      <td> &gt; </td>\n      <td> Go to bottom </td>\n    </tr>\n    <tr>\n      <td> &lt; </td>\n      <td> Go to top </td>\n    </tr>\n    <tr>\n      <td> Shift+v </td>\n      <td> Clear filters </td>\n    </tr>\n    <tr>\n      <td> Shift+f </td>\n      <td> Show fitlers </td>\n    </tr>\n    <tr>\n      <td> Shift+c </td>\n      <td> Show composer </td>\n    </tr>\n    <tr>\n      <td> Up/Down </td>\n      <td> Move message selection </td>\n    </tr>\n    <tr>\n      <td> r </td>\n      <td> Reply to selected message </td>\n    </tr>\n    <tr>\n      <td> q </td>\n      <td> Quote selected message </td>\n    </tr>\n    <tr>\n      <td> p </td>\n      <td> PM selected message sender </td>\n    </tr>\n    <tr>\n      <td> ? </td>\n      <td> Show this box </td>\n    </tr>\n    <tr>\n      <td> Esc </td>\n      <td> Hide this box </td>\n    </tr>\n  </table>\n</div>";
+  return "<div class=\"modal-overlay\"/>\n<div class=\"modal\">\n  <div class=\"header\">\n    <div class=\"title\">\n      Roost Hotkeys\n    </div>\n    <div class=\"close-help\">\n      &times;\n    </div>\n  </div>\n  <table class=\"content\" cellspacing=\"0\">\n    <tr>\n      <th> Hotkey </th>\n      <th> Function </th>\n    </tr>\n    <tr>\n      <td> Alt+h </td>\n      <td> Toggle top bar </td>\n    </tr>\n    <tr>\n      <td> Alt+s </td>\n      <td> Toggle subscription panel </td>\n    </tr>\n    <tr>\n      <td> Alt+n </td>\n      <td> Open new pane </td>\n    </tr>\n    <tr>\n      <td> Alt+p </td>\n      <td> Open PM pane </td>\n    </tr>\n    <tr>\n      <td> Alt+x </td>\n      <td> Close selected pane </td>\n    </tr>\n    <tr>\n      <td> Left/Right </td>\n      <td> Move pane selection </td>\n    </tr>\n    <tr>\n      <td> &gt; </td>\n      <td> Go to bottom </td>\n    </tr>\n    <tr>\n      <td> &lt; </td>\n      <td> Go to top </td>\n    </tr>\n    <tr>\n      <td> Shift+v </td>\n      <td> Clear filters </td>\n    </tr>\n    <tr>\n      <td> Shift+f </td>\n      <td> Show fitlers </td>\n    </tr>\n    <tr>\n      <td> Shift+c </td>\n      <td> Show composer </td>\n    </tr>\n    <tr>\n      <td> Up/Down </td>\n      <td> Move message selection </td>\n    </tr>\n    <tr>\n      <td> r </td>\n      <td> Reply to selected message </td>\n    </tr>\n    <tr>\n      <td> q </td>\n      <td> Quote selected message </td>\n    </tr>\n    <tr>\n      <td> p </td>\n      <td> PM selected message sender </td>\n    </tr>\n    <tr>\n      <td> ? </td>\n      <td> Show this box </td>\n    </tr>\n    <tr>\n      <td> Esc </td>\n      <td> Hide this box </td>\n    </tr>\n  </table>\n</div>";
   });
 
 this["com"]["roost"]["templates"]["MessageView"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -225,7 +225,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n  <div class=\"btn logout\">Logout</div>\n  <div class=\"user-info\">\n    <a class=\"username\" href=\"settings.html\" tabIndex=\"-1\">\n      <span>";
+  buffer += "\n  <div class=\"btn logout\">Logout</div>\n  <div class=\"user-info\">\n      <span>";
   if (helper = helpers.username) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.username); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
@@ -233,7 +233,7 @@ function program1(depth0,data) {
   if (helper = helpers.gravatar) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.gravatar); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\">\n    </a>\n  </div>\n  <div class=\"add-pane\">\n    <i class=\"fa fa-plus\"></i><span>&nbsp;&nbsp;New Pane</span>\n  </div>\n  <div class=\"personal-message\">\n    <i class=\"fa fa-envelope-o\"></i><span>&nbsp;&nbsp;Personal Messages</span>\n  </div>\n  <div class=\"toggle-keyboard\">\n    ";
+    + "\">\n  </div>\n  <div class=\"add-pane\">\n    <i class=\"fa fa-plus\"></i><span>&nbsp;&nbsp;New Pane</span>\n  </div>\n  <div class=\"personal-message\">\n    <i class=\"fa fa-envelope-o\"></i><span>&nbsp;&nbsp;Personal Messages</span>\n  </div>\n  <div class=\"toggle-keyboard\">\n    ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.keyboard), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n    &nbsp;&nbsp;Keyboard\n  </div>\n  <div class=\"toggle-panes\">\n    ";
@@ -263,5 +263,34 @@ function program6(depth0,data) {
   buffer += "<div class=\"title-logo\">\n  <img class=\"logo\" src=\"img/roost-logo_57x57.png\">\n  <div class=\"title\"> Roost </div>\n</div>\n\n";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.username), {hash:{},inverse:self.program(6, program6, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer;
+  });
+
+this["com"]["roost"]["templates"]["SubscriptionPanel"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n      <tr>\n        <td>"
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.attributes)),stack1 == null || stack1 === false ? stack1 : stack1['class'])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td>\n        <td>"
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.attributes)),stack1 == null || stack1 === false ? stack1 : stack1.instance)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td>\n        <td>"
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.attributes)),stack1 == null || stack1 === false ? stack1 : stack1.recipient)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "</td>\n        <td class=\"close-td\" data-cid=\"";
+  if (helper = helpers.cid) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.cid); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">&times;</td>\n      </tr>\n    ";
+  return buffer;
+  }
+
+  buffer += "<div class=\"header\">\n  Manage Subscriptions\n</div>\n<div class=\"sub-form\">\n  <input class=\"class-input\" type=\"text\" placeholder=\"Class\"></input>\n  <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\" value=\"*\"></input>\n  <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\"></input>\n  <br>\n  <button class=\"btn subscribe\">Subscribe</button>\n</div>\n<div class=\"subs-label\">\n  Current Subscriptions\n</div>\n<div class=\"table-container\">\n  <table cellspacing=\"0\" class=\"subs-table\">\n    ";
+  stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </table>\n</div>";
   return buffer;
   });

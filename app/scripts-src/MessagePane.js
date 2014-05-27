@@ -25,6 +25,7 @@
         this._moveMessageSelection = __bind(this._moveMessageSelection, this);
         this._sendPaneToTop = __bind(this._sendPaneToTop, this);
         this._sendPaneToBottom = __bind(this._sendPaneToBottom, this);
+        this._toggleSubSetting = __bind(this._toggleSubSetting, this);
         this._toggleNavbarSetting = __bind(this._toggleNavbarSetting, this);
         this._setSelection = __bind(this._setSelection, this);
         this._moveSelection = __bind(this._moveSelection, this);
@@ -85,6 +86,7 @@
         Mousetrap.bind('?', this._showHelp);
         Mousetrap.bind('esc', this._hideHelp);
         Mousetrap.bind('alt+h', this._toggleNavbarSetting);
+        Mousetrap.bind('alt+s', this._toggleSubSetting);
         return $(window).resize(this._recalculateWidth);
       };
 
@@ -99,8 +101,14 @@
           this._addPaneView(paneModel);
         }
         if (this.childViews.length > 0) {
-          return this._setSelection();
+          this._setSelection();
         }
+        this.subView = new com.roost.SubscriptionPanel({
+          settings: this.settingsModel,
+          subscriptions: this.session.subscriptions
+        });
+        this.subView.render();
+        return this.$el.append(this.subView.$el);
       };
 
       MessagePane.prototype._toggleKeyboard = function() {
@@ -177,8 +185,20 @@
         }
       };
 
-      MessagePane.prototype._toggleNavbarSetting = function() {
-        return this.settingsModel.set('showNavbar', !this.settingsModel.get('showNavbar'));
+      MessagePane.prototype._toggleNavbarSetting = function(e) {
+        this.settingsModel.set('showNavbar', !this.settingsModel.get('showNavbar'));
+        if (e != null) {
+          e.preventDefault();
+        }
+        return e != null ? e.stopPropagation() : void 0;
+      };
+
+      MessagePane.prototype._toggleSubSetting = function(e) {
+        this.settingsModel.set('showSubs', !this.settingsModel.get('showSubs'));
+        if (e != null) {
+          e.preventDefault();
+        }
+        return e != null ? e.stopPropagation() : void 0;
       };
 
       MessagePane.prototype._sendPaneToBottom = function() {

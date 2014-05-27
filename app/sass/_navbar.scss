@@ -40,6 +40,8 @@
   .user-info {
     display: inline;
     float: right;
+    margin-right: 20px;
+    cursor: pointer;
 
     .gravatar {
       height: 36px;
@@ -52,18 +54,6 @@
 
     span {
       float: right;
-    }
-
-    .username {
-      display: inline;
-      float: right;
-      color: #EEE;
-      text-decoration: none;
-      margin-right: 20px;
-
-      &:hover {
-        text-decoration: underline;
-      }
     }
   }
 

@@ -39,8 +39,8 @@ do ->
       # Bring focus to class box OR message box in case stuff filled already
       if composeFields.class != ''
         # Hack to get the cursor to the end of the input
-        oldVal = @$('.content-input').val();
-        @$('.content-input').focus().val("").val(oldVal);
+        oldVal = @$('.content-input').val()
+        @$('.content-input').focus().val("").val(oldVal)
       else
         @$('.class-input').focus()
 
