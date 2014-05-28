@@ -39,7 +39,6 @@ do ->
 
     _updateColors: =>
       # TODO: make this work through a Handlebars helper 
-      console.log @paneModel.get('filters')
       string = if @paneModel.get('filters').class_key? then @paneModel.get('filters').class_key else @paneModel.get('filters').class_key_base
       color = shadeColor(stringToColor(string), 0.5)
       lighterColor = shadeColor(color, 0.4)
