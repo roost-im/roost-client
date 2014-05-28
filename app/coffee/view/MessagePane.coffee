@@ -36,7 +36,7 @@ do ->
       Mousetrap.bind('>', @_sendPaneToBottom)
       Mousetrap.bind('<', @_sendPaneToTop)
       Mousetrap.bind('shift+v', @_clearPaneFilters)
-      Mousetrap.bind('shift+c', @_showPaneCompose)
+      Mousetrap.bind('z', @_showPaneCompose)
       Mousetrap.bind('shift+f', @_showPaneFilters)
 
       # Hotkeys that affect the selected message

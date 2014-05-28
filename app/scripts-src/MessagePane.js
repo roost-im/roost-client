@@ -77,7 +77,7 @@
         Mousetrap.bind('>', this._sendPaneToBottom);
         Mousetrap.bind('<', this._sendPaneToTop);
         Mousetrap.bind('shift+v', this._clearPaneFilters);
-        Mousetrap.bind('shift+c', this._showPaneCompose);
+        Mousetrap.bind('z', this._showPaneCompose);
         Mousetrap.bind('shift+f', this._showPaneFilters);
         Mousetrap.bind('r', this._selectedMessageReply);
         Mousetrap.bind('q', this._selectedMessageQuote);

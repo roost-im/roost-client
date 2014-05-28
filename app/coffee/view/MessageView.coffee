@@ -99,21 +99,25 @@ do ->
 
     openReplyBox: =>
       # Fill in proper fields and open the compose box
+      recip = if @message.get('isPersonal') then @message.get('conversation') else '' 
+
       @paneModel.set
         composeFields:
           class: @message.get('class')
           instance: @message.get('instance')
-          recipient: ''
+          recipient: recip
           content: ''
         showCompose: true
 
     openMessageBox: =>
+      recip = if @message.get('isPersonal') then @message.get('conversation') else @message.get('sender')
+
       # Fill in proper fields and open the compose box
       @paneModel.set
         composeFields:
           class: 'message'
           instance: 'personal'
-          recipient: @message.get('sender')
+          recipient: recip
           content: ''
         showCompose: true
 

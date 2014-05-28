@@ -105,11 +105,13 @@
       };
 
       MessageView.prototype.openReplyBox = function() {
+        var recip;
+        recip = this.message.get('isPersonal') ? this.message.get('conversation') : '';
         return this.paneModel.set({
           composeFields: {
             "class": this.message.get('class'),
             instance: this.message.get('instance'),
-            recipient: '',
+            recipient: recip,
             content: ''
           },
           showCompose: true
@@ -117,11 +119,13 @@
       };
 
       MessageView.prototype.openMessageBox = function() {
+        var recip;
+        recip = this.message.get('isPersonal') ? this.message.get('conversation') : this.message.get('sender');
         return this.paneModel.set({
           composeFields: {
             "class": 'message',
             instance: 'personal',
-            recipient: this.message.get('sender'),
+            recipient: recip,
             content: ''
           },
           showCompose: true
