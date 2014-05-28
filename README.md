@@ -94,7 +94,7 @@ When models change, a view may choose to rerender itself entirely, or just chang
 
 In general, unless it is a parent-to-child relationship, views should not be poking other views. This would defeat the modularity of the view hierarchy design.
 
-When it's time to destroy a view, be sure to destroy it properly. MessageView.remove is an overcooked example of how to prevent memory leaks (hopefully). This is one of the minor pain points of Backbone; unlike other frameworks, you're left to do a lot of this messy stuff yourself.
+When it's time to destroy a view, be sure to destroy it properly. MessageView.remove is an overcooked example of how to prevent memory leaks (hopefully). Moreover, if a view creates many child views that could be destroyed during the course of the application, then that view is responsible for telling the child views to clean up. An example of this is in MessagePaneView, which maintains a list of all spawned MessageViews and destroys them accordingly. This is one of the minor pain points of Backbone; unlike other frameworks, you're left to do a lot of this messy stuff yourself.
 
 ### Controllers
 Controllers extend neither Backbone.Model or Backbone.View, but upon construction extend themselves with the Backbone.Events object. This extension provides the listeTo() method required for listening to model events.
