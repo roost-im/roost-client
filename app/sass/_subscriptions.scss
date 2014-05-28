@@ -13,6 +13,10 @@
 
   &.expanded {
     width: 400px;
+
+    .remove {
+      display: inline-block !important;
+    }
   }
 
   .header {
@@ -21,6 +25,17 @@
     background-color: #555;
     padding: 0px 10px 0px 10px;
     color: white;
+
+    .remove {
+      float: right;
+      cursor: pointer;
+      display: none;
+      font-size: $compose-filter-bar-height;
+
+      &:hover {
+        color: lighten(red, 10%);
+      }
+    }
   }
 
   .sub-form {
@@ -68,6 +83,14 @@
 
         &:hover {
           color: lighten(red, 10%);
+        }
+      }
+
+      .class-td {
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
         }
       }
 

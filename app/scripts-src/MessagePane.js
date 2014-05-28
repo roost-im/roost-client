@@ -105,7 +105,8 @@
         }
         this.subView = new com.roost.SubscriptionPanel({
           settings: this.settingsModel,
-          subscriptions: this.session.subscriptions
+          subscriptions: this.session.subscriptions,
+          session: this.session
         });
         this.subView.render();
         return this.$el.append(this.subView.$el);

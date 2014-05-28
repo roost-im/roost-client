@@ -62,7 +62,7 @@
   width: 100%;
   padding-right: 20px;
   z-index: 20;
-  transition: height 0.3s ease-out; }
+  transition: height 0.2s ease-out; }
   .navbar.hidden {
     height: 0px; }
     .navbar.hidden * {
@@ -129,7 +129,7 @@
   overflow-wrap: break-word;
   white-space: nowrap;
   overflow-y: hidden;
-  transition: top 0.3s ease-out; }
+  transition: top 0.2s ease-out; }
   .message-pane.expanded {
     top: 0px; }
   .message-pane .message-pane-view {
@@ -408,7 +408,7 @@
     .filter-bar .top-bar .filters {
       float: right;
       cursor: pointer;
-      margin-right: 15px; }
+      margin-right: 35px; }
     .filter-bar .top-bar .clear-filters {
       float: right;
       cursor: pointer;
@@ -510,12 +510,21 @@
   box-shadow: 0px 1px 10px black; }
   .subscription-panel.expanded {
     width: 400px; }
+    .subscription-panel.expanded .remove {
+      display: inline-block !important; }
   .subscription-panel .header {
     height: 30px;
     line-height: 30px;
     background-color: #555;
     padding: 0px 10px 0px 10px;
     color: white; }
+    .subscription-panel .header .remove {
+      float: right;
+      cursor: pointer;
+      display: none;
+      font-size: 30px; }
+      .subscription-panel .header .remove:hover {
+        color: #ff3333; }
   .subscription-panel .sub-form {
     padding: 5px;
     margin-top: 5px; }
@@ -561,6 +570,10 @@
         cursor: pointer; }
         .subscription-panel .table-container .subs-table .close-td:hover {
           color: #ff3333; }
+      .subscription-panel .table-container .subs-table .class-td {
+        cursor: pointer; }
+        .subscription-panel .table-container .subs-table .class-td:hover {
+          text-decoration: underline; }
       .subscription-panel .table-container .subs-table td {
         width: 90px;
         overflow: hidden;

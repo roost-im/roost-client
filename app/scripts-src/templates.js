@@ -274,7 +274,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 function program1(depth0,data) {
   
   var buffer = "", stack1, helper;
-  buffer += "\n      <tr>\n        <td>"
+  buffer += "\n      <tr>\n        <td class=\"class-td\" data-class=\""
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.attributes)),stack1 == null || stack1 === false ? stack1 : stack1['class'])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + "\">"
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.attributes)),stack1 == null || stack1 === false ? stack1 : stack1['class'])),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</td>\n        <td>"
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.attributes)),stack1 == null || stack1 === false ? stack1 : stack1.instance)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
@@ -288,7 +290,7 @@ function program1(depth0,data) {
   return buffer;
   }
 
-  buffer += "<div class=\"header\">\n  Manage Subscriptions\n</div>\n<div class=\"sub-form\">\n  <input class=\"class-input\" type=\"text\" placeholder=\"Class\"></input>\n  <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\" value=\"*\"></input>\n  <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\"></input>\n  <br>\n  <button class=\"btn subscribe\">Subscribe</button>\n</div>\n<div class=\"subs-label\">\n  Current Subscriptions\n</div>\n<div class=\"table-container\">\n  <table cellspacing=\"0\" class=\"subs-table\">\n    ";
+  buffer += "<div class=\"header\">\n  Manage Subscriptions\n  <div class=\"remove\">&times;</div>\n</div>\n<div class=\"sub-form\">\n  <input class=\"class-input\" type=\"text\" placeholder=\"Class\"></input>\n  <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\" value=\"*\"></input>\n  <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\"></input>\n  <br>\n  <button class=\"btn subscribe\">Subscribe</button>\n</div>\n<div class=\"subs-label\">\n  Current Subscriptions\n</div>\n<div class=\"table-container\">\n  <table cellspacing=\"0\" class=\"subs-table\">\n    ";
   stack1 = helpers.each.call(depth0, (depth0 && depth0.models), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </table>\n</div>";

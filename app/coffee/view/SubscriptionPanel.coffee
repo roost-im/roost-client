@@ -5,16 +5,19 @@ do ->
     events:
       'click .subscribe': '_addSubscription'
       'click .close-td': '_removeSubscription'
+      'click .class-td': '_addClassPane'
+      'click .remove': '_hide'
 
       'keyup input': '_handleInputKey'
 
     initialize: (options) =>
       @subscriptions = options.subscriptions
       @settings = options.settings
+      @session = options.session
 
       @listenTo @subscriptions, 'add remove reset', @render
       @listenTo @settings, 'change:showSubs', @_toggleDisplay
-      @listenTo @settings, 'change:showNavbar', @_hideWithNavbar
+      @listenTo @settings, 'change:showNavbar', @_hide
 
     render: =>
       @$el.empty()
@@ -34,8 +37,16 @@ do ->
         @$('.instance-input').val('*')
         @$('.recipient-input').val('')
 
-    _hideWithNavbar: =>
+    _hide: =>
       @settings.set('showSubs', false)
+
+    _addClassPane: (evt) =>
+      klass = $(evt.target).data().class
+      options = 
+        filters: 
+          class_key: klass.toLowerCase()
+
+      @session.addPane options
 
     _addSubscription: =>
       opts = 

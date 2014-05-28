@@ -11,7 +11,8 @@
         this._handleInputKey = __bind(this._handleInputKey, this);
         this._removeSubscription = __bind(this._removeSubscription, this);
         this._addSubscription = __bind(this._addSubscription, this);
-        this._hideWithNavbar = __bind(this._hideWithNavbar, this);
+        this._addClassPane = __bind(this._addClassPane, this);
+        this._hide = __bind(this._hide, this);
         this._toggleDisplay = __bind(this._toggleDisplay, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
@@ -23,15 +24,18 @@
       SubscriptionPanel.prototype.events = {
         'click .subscribe': '_addSubscription',
         'click .close-td': '_removeSubscription',
+        'click .class-td': '_addClassPane',
+        'click .remove': '_hide',
         'keyup input': '_handleInputKey'
       };
 
       SubscriptionPanel.prototype.initialize = function(options) {
         this.subscriptions = options.subscriptions;
         this.settings = options.settings;
+        this.session = options.session;
         this.listenTo(this.subscriptions, 'add remove reset', this.render);
         this.listenTo(this.settings, 'change:showSubs', this._toggleDisplay);
-        return this.listenTo(this.settings, 'change:showNavbar', this._hideWithNavbar);
+        return this.listenTo(this.settings, 'change:showNavbar', this._hide);
       };
 
       SubscriptionPanel.prototype.render = function() {
@@ -55,8 +59,19 @@
         }
       };
 
-      SubscriptionPanel.prototype._hideWithNavbar = function() {
+      SubscriptionPanel.prototype._hide = function() {
         return this.settings.set('showSubs', false);
+      };
+
+      SubscriptionPanel.prototype._addClassPane = function(evt) {
+        var klass, options;
+        klass = $(evt.target).data()["class"];
+        options = {
+          filters: {
+            class_key: klass.toLowerCase()
+          }
+        };
+        return this.session.addPane(options);
       };
 
       SubscriptionPanel.prototype._addSubscription = function() {

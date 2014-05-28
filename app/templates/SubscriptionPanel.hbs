@@ -1,5 +1,6 @@
 <div class="header">
   Manage Subscriptions
+  <div class="remove">&times;</div>
 </div>
 <div class="sub-form">
   <input class="class-input" type="text" placeholder="Class"></input>
@@ -15,7 +16,7 @@
   <table cellspacing="0" class="subs-table">
     {{#each models}}
       <tr>
-        <td>{{attributes.class}}</td>
+        <td class="class-td" data-class="{{attributes.class}}">{{attributes.class}}</td>
         <td>{{attributes.instance}}</td>
         <td>{{attributes.recipient}}</td>
         <td class="close-td" data-cid="{{cid}}">&times;</td>

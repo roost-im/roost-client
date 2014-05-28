@@ -72,6 +72,7 @@ do ->
       @subView = new com.roost.SubscriptionPanel
         settings: @settingsModel
         subscriptions: @session.subscriptions
+        session: @session
       @subView.render()
       @$el.append(@subView.$el)
 
