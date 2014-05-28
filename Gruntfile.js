@@ -258,6 +258,8 @@ module.exports = function (grunt) {
                         'img/{,*/}*.{png,jpg,jpeg}',
                         'img/{,*/}*.svg',
                         'styles/{,*/}*.css',
+                        'styles/font-awesome/css/*.css',
+                        'styles/font-awesome/fonts/*.{eot,svg,ttf,woff,otf}',
 			// Anything to be compiled goes in scripts-src/. This
 			// directory is things that are already minified.
                         'scripts/{,*/}*.js',
