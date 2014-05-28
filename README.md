@@ -1,5 +1,5 @@
 Roost
-  where owls go to sleep
+=====================================================================
 
 Roost is an experimental new web-based zephyr client with proper
 authentication. This is the official web-based frontend. The backend lives in
