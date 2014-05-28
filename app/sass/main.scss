@@ -20,6 +20,24 @@ html, body {
   overflow-x: auto;
 }
 
+.login-cont {
+  text-align: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100px;
+  height: 100px;
+  z-index: 20;
+
+  .mobile-login {
+    @include button-variant($primary-btn-color, $primary-btn-bg);
+    display: none;
+  }
+}
+
 // Hide extra testing stuff that might be useful later.
 .navbar {
   .logout, .toggle-keyboard, .toggle-panes {
@@ -34,6 +52,10 @@ html, body {
     * {
       display: none !important;
     }
+  }
+
+  .mobile-login {
+    display: inline-block !important;
   }
 
   .message-pane {

@@ -33,7 +33,7 @@ do ->
       # Get the gravatar for the user
       name = shortZuser(@message.get('sender'))
       realm = zuserRealm(@message.get('sender'))
-      gravatar = getGravatarFromName(name, realm, 40)
+      gravatar = getGravatarFromName(name, realm, 80)
 
       # Check if the user sent it
       isSentByUser = @message.get('sender') == @session.userInfo.get('username') + '@' + @session.userInfo.get('realm')

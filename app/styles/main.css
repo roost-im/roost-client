@@ -255,7 +255,9 @@
       word-wrap: break-word;
       font-weight: 700; }
       .message-view .content .sender .gravatar {
-        border: 1px solid #BBB; }
+        border: 1px solid #BBB;
+        width: 40px;
+        height: 40px; }
     .message-view .content .message-block {
       display: table-cell;
       width: 100%; }
@@ -591,6 +593,32 @@ html, body {
   overflow-y: hidden;
   overflow-x: auto; }
 
+.login-cont {
+  text-align: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100px;
+  height: 100px;
+  z-index: 20; }
+  .login-cont .mobile-login {
+    color: #eeeeee;
+    background-color: #3178d3;
+    border-color: transparent;
+    display: none; }
+    .login-cont .mobile-login:hover, .login-cont .mobile-login:focus, .login-cont .mobile-login:active, .login-cont .mobile-login.active {
+      color: #eeeeee;
+      background-color: #2765b5; }
+    .open .login-cont .mobile-login.dropdown-toggle {
+      color: #eeeeee;
+      background-color: #2765b5;
+      background-image: none; }
+    .login-cont .mobile-login.disabled, .login-cont .mobile-login.disabled:hover, .login-cont .mobile-login.disabled:focus, .login-cont .mobile-login.disabled:active, .login-cont .mobile-login.disabled.active, .login-cont .mobile-login[disabled], .login-cont .mobile-login[disabled]:hover, .login-cont .mobile-login[disabled]:focus, .login-cont .mobile-login[disabled]:active, .login-cont .mobile-login[disabled].active, fieldset[disabled] .login-cont .mobile-login, fieldset[disabled] .login-cont .mobile-login:hover, fieldset[disabled] .login-cont .mobile-login:focus, fieldset[disabled] .login-cont .mobile-login:active, fieldset[disabled] .login-cont .mobile-login.active {
+      background-color: #3178d3 !important; }
+
 .navbar .logout, .navbar .toggle-keyboard, .navbar .toggle-panes {
   display: none !important; }
 
@@ -599,6 +627,9 @@ html, body {
     height: 0px !important; }
     .navbar * {
       display: none !important; }
+
+  .mobile-login {
+    display: inline-block !important; }
 
   .message-pane {
     top: 0px !important; }

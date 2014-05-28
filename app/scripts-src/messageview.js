@@ -50,7 +50,7 @@
         template = com.roost.templates['MessageView'];
         name = shortZuser(this.message.get('sender'));
         realm = zuserRealm(this.message.get('sender'));
-        gravatar = getGravatarFromName(name, realm, 40);
+        gravatar = getGravatarFromName(name, realm, 80);
         isSentByUser = this.message.get('sender') === this.session.userInfo.get('username') + '@' + this.session.userInfo.get('realm');
         isSentByUser = this.message.get('isOutgoing') || isSentByUser;
         if (this.message.get('isPersonal')) {

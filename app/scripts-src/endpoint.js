@@ -3,6 +3,13 @@
     return function() {
       var authController, messagePane, navbar, session, subController;
       session = new com.roost.RoostSession();
+      $('body').append('<div class="login-cont"><button class="btn mobile-login">Login</button></div>');
+      $('.mobile-login').click(function() {
+        return session.userInfo.trigger('login');
+      });
+      session.userInfo.once('change', (function() {
+        return $('.login-cont').hide();
+      }));
       subController = new com.roost.SubscriptionController({
         api: session.api,
         userInfo: session.userInfo,
