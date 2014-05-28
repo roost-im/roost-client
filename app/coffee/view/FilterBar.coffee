@@ -20,7 +20,9 @@ do ->
     render: =>
       @$el.empty()
       template = com.roost.templates['FilterBar']
-      @$el.append template(@paneModel.attributes)
+
+      fclass = if @paneModel.get('filters').class_key? then @paneModel.get('filters').class_key else @paneModel.get('filters').class_key_base
+      @$el.append template(_.defaults({}, @paneModel.attributes, {class: fclass}))
 
       # Set full opacity class if this pane is selected
       if @paneModel.get('selected')
@@ -32,12 +34,13 @@ do ->
       @$('.class-input').focus()
 
       # Make our header colored if filtering
-      if @paneModel.get('filters').class_key?
+      if fclass?
         @_updateColors()
 
     _updateColors: =>
       # TODO: make this work through a Handlebars helper 
-      string = @paneModel.get('filters').class_key
+      console.log @paneModel.get('filters')
+      string = if @paneModel.get('filters').class_key? then @paneModel.get('filters').class_key else @paneModel.get('filters').class_key_base
       color = shadeColor(stringToColor(string), 0.5)
       lighterColor = shadeColor(color, 0.4)
 

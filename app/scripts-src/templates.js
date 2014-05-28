@@ -25,7 +25,7 @@ function program1(depth0,data) {
 function program3(depth0,data) {
   
   
-  return "\n  <div class=\"single-bar\">\n    <div class=\"compose\">\n      <i class=\"fa fa-send\"></i>&nbsp;&nbsp;Compose Message\n    </div>\n    <div class=\"to-bottom\">\n      <i class=\"fa fa-chevron-down\"></i>&nbsp;&nbsp;Bottom\n    </div>\n  </div>\n";
+  return "\n  <div class=\"single-bar\">\n    <div class=\"compose\">\n      <i class=\"fa fa-send\"></i><span>&nbsp;&nbsp;Compose Message</span>\n    </div>\n    <div class=\"to-bottom\">\n      <i class=\"fa fa-chevron-down\"></i><span>&nbsp;&nbsp;Bottom</span>\n    </div>\n  </div>\n";
   }
 
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.showCompose), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
@@ -58,9 +58,11 @@ function program3(depth0,data) {
   }
 function program4(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n        <div class=\"msg-class\">"
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  var buffer = "", stack1, helper;
+  buffer += "\n        <div class=\"msg-class\">";
+  if (helper = helpers['class']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0['class']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "</div>\n        <div class=\"divider\"></div>\n        <div class=\"msg-instance\">"
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.instance_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</div>\n      ";
@@ -71,16 +73,18 @@ function program6(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n        ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key), {hash:{},inverse:self.program(9, program9, data),fn:self.program(7, program7, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0['class']), {hash:{},inverse:self.program(9, program9, data),fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n      ";
   return buffer;
   }
 function program7(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n          "
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  var buffer = "", stack1, helper;
+  buffer += "\n          ";
+  if (helper = helpers['class']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0['class']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "\n        ";
   return buffer;
   }
@@ -94,26 +98,28 @@ function program9(depth0,data) {
 function program11(depth0,data) {
   
   
-  return "\n      <i class=\"fa fa-filter\"></i>&nbsp;&nbsp;Hide Filters\n    ";
+  return "\n      <i class=\"fa fa-filter\"></i><span>&nbsp;&nbsp;Hide Filters</span>\n    ";
   }
 
 function program13(depth0,data) {
   
   
-  return "\n      <i class=\"fa fa-filter\"></i>&nbsp;&nbsp;Show Filters\n    ";
+  return "\n      <i class=\"fa fa-filter\"></i><span>&nbsp;&nbsp;Show Filters</span>\n    ";
   }
 
 function program15(depth0,data) {
   
   
-  return "\n    <div class=\"clear-filters\">\n      <i class=\"fa fa-ban\"></i>&nbsp;&nbsp;Clear\n    </div>\n  ";
+  return "\n    <div class=\"clear-filters\">\n      <i class=\"fa fa-ban\"></i><span>&nbsp;&nbsp;Clear</span>\n    </div>\n  ";
   }
 
 function program17(depth0,data) {
   
-  var buffer = "", stack1;
-  buffer += "\n  <div class=\"filter-editor\">\n    <input class=\"class-input\" type=\"text\" placeholder=\"Class\" value=\""
-    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+  var buffer = "", stack1, helper;
+  buffer += "\n  <div class=\"filter-editor\">\n    <input class=\"class-input\" type=\"text\" placeholder=\"Class\" value=\"";
+  if (helper = helpers['class']) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0['class']); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
     + "\"></input>\n    <input class=\"instance-input\" type=\"text\" placeholder=\"Instance\" value=\""
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.instance_key)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"></input>\n    <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\" value=\""
@@ -129,7 +135,7 @@ function program17(depth0,data) {
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.program(13, program13, data),fn:self.program(11, program11, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n  </div>\n  ";
-  stack1 = helpers['if'].call(depth0, ((stack1 = (depth0 && depth0.filters)),stack1 == null || stack1 === false ? stack1 : stack1.class_key), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0['class']), {hash:{},inverse:self.noop,fn:self.program(15, program15, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n</div>\n";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.showFilters), {hash:{},inverse:self.noop,fn:self.program(17, program17, data),data:data});

@@ -27,6 +27,52 @@ html, body {
   }
 }
 
+@media only screen and (max-width: 420px) {
+  .navbar {
+    height: 0px !important;
+
+    * {
+      display: none !important;
+    }
+  }
+
+  .message-pane {
+    top: 0px !important;
+
+    .message-view .signature {
+      width: 200px !important;
+    }
+  }
+
+  .filter-bar {
+    .top-bar {
+      padding: 0px 10px 0px 10px;
+    }
+
+    span, .remove {
+      display: none !important;
+    }
+
+    .filters {
+      margin-right: 0px !important;
+    }
+  }
+
+  .compose-bar {
+    .single-bar, .top-bar { 
+      padding: 0px 10px 0px 10px;
+    }
+
+    span {
+      display: none !important;
+    }
+  }
+
+  .no-panes {
+    font-size: 16px !important;
+  }
+}
+
 @media only screen and (max-width: 720px) {
   .navbar {
     .user-info span {

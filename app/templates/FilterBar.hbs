@@ -5,12 +5,12 @@
       Chat with {{filters.conversation}}
     {{else}}
       {{#if filters.instance_key}}
-        <div class="msg-class">{{filters.class_key}}</div>
+        <div class="msg-class">{{class}}</div>
         <div class="divider"></div>
         <div class="msg-instance">{{filters.instance_key}}</div>
       {{else}}
-        {{#if filters.class_key}}
-          {{filters.class_key}}
+        {{#if class}}
+          {{class}}
         {{else}}
           All Messages
         {{/if}}
@@ -20,20 +20,20 @@
   <div class="remove">&times;</div>
   <div class="filters">
     {{#if showFilters}}
-      <i class="fa fa-filter"></i>&nbsp;&nbsp;Hide Filters
+      <i class="fa fa-filter"></i><span>&nbsp;&nbsp;Hide Filters</span>
     {{else}}
-      <i class="fa fa-filter"></i>&nbsp;&nbsp;Show Filters
+      <i class="fa fa-filter"></i><span>&nbsp;&nbsp;Show Filters</span>
     {{/if}}
   </div>
-  {{#if filters.class_key}}
+  {{#if class}}
     <div class="clear-filters">
-      <i class="fa fa-ban"></i>&nbsp;&nbsp;Clear
+      <i class="fa fa-ban"></i><span>&nbsp;&nbsp;Clear</span>
     </div>
   {{/if}}
 </div>
 {{#if showFilters}}
   <div class="filter-editor">
-    <input class="class-input" type="text" placeholder="Class" value="{{filters.class_key}}"></input>
+    <input class="class-input" type="text" placeholder="Class" value="{{class}}"></input>
     <input class="instance-input" type="text" placeholder="Instance" value="{{filters.instance_key}}"></input>
     <input class="recipient-input" type="text" placeholder="Recipient" value="{{filters.recipient}}"></input>
     <button class="btn set-filters">Set Filters</button>

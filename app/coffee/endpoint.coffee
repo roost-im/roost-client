@@ -2,17 +2,17 @@ $('document').ready( =>
   # Create the session
   session = new com.roost.RoostSession()
 
-  # Create the auth controller
-  authController = new com.roost.AuthenticationController
-    session: session
-    userInfo: session.userInfo
-    ticketManager: session.ticketManager
-
   # Create the sub controller
   subController = new com.roost.SubscriptionController
     api: session.api
     userInfo: session.userInfo
     subscriptions: session.subscriptions
+
+  # Create the auth controller
+  authController = new com.roost.AuthenticationController
+    session: session
+    userInfo: session.userInfo
+    ticketManager: session.ticketManager
 
   # Create the navbar view and add it to the DOM
   navbar = new com.roost.NavBar

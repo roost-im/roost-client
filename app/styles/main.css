@@ -594,6 +594,31 @@ html, body {
 .navbar .logout, .navbar .toggle-keyboard, .navbar .toggle-panes {
   display: none !important; }
 
+@media only screen and (max-width: 420px) {
+  .navbar {
+    height: 0px !important; }
+    .navbar * {
+      display: none !important; }
+
+  .message-pane {
+    top: 0px !important; }
+    .message-pane .message-view .signature {
+      width: 200px !important; }
+
+  .filter-bar .top-bar {
+    padding: 0px 10px 0px 10px; }
+  .filter-bar span, .filter-bar .remove {
+    display: none !important; }
+  .filter-bar .filters {
+    margin-right: 0px !important; }
+
+  .compose-bar .single-bar, .compose-bar .top-bar {
+    padding: 0px 10px 0px 10px; }
+  .compose-bar span {
+    display: none !important; }
+
+  .no-panes {
+    font-size: 16px !important; } }
 @media only screen and (max-width: 720px) {
   .navbar .user-info span {
     display: none !important; }

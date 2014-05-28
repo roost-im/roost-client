@@ -36,24 +36,28 @@
       };
 
       FilterBar.prototype.render = function() {
-        var template;
+        var fclass, template;
         this.$el.empty();
         template = com.roost.templates['FilterBar'];
-        this.$el.append(template(this.paneModel.attributes));
+        fclass = this.paneModel.get('filters').class_key != null ? this.paneModel.get('filters').class_key : this.paneModel.get('filters').class_key_base;
+        this.$el.append(template(_.defaults({}, this.paneModel.attributes, {
+          "class": fclass
+        })));
         if (this.paneModel.get('selected')) {
           this.$el.addClass('selected');
         } else {
           this.$el.removeClass('selected');
         }
         this.$('.class-input').focus();
-        if (this.paneModel.get('filters').class_key != null) {
+        if (fclass != null) {
           return this._updateColors();
         }
       };
 
       FilterBar.prototype._updateColors = function() {
         var color, lighterColor, string;
-        string = this.paneModel.get('filters').class_key;
+        console.log(this.paneModel.get('filters'));
+        string = this.paneModel.get('filters').class_key != null ? this.paneModel.get('filters').class_key : this.paneModel.get('filters').class_key_base;
         color = shadeColor(stringToColor(string), 0.5);
         lighterColor = shadeColor(color, 0.4);
         if (this.paneModel.get('filters').instance_key) {
