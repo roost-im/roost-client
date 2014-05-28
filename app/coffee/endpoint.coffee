@@ -28,7 +28,7 @@ $('document').ready( =>
   $('body').append(messagePane.$el)
 
   # Trigger login for the user if necessary
-  session.userInfo.trigger 'login'
+  # session.userInfo.trigger 'login'
 
   # Add the first pane if the user is logged in
   if session.userInfo.get('username')?

@@ -8,8 +8,10 @@ do ->
       @userInfo = options.userInfo
       @ticketManager = options.ticketManager
 
-      @listenTo @userInfo, 'login', @doAuthentication
+      @listenTo @userInfo, 'login', @requestAuth
       @listenTo @userInfo, 'logout', @removeAuthentication
+
+      @doAuthentication()
 
     isAuthenticated: =>
       return @ticketManager.getCachedTicket("zephyr")?
@@ -20,8 +22,9 @@ do ->
         @userInfo.set
           username: ticket.client.principalName.nameString[0]
           realm: ticket.client.realm
-      else
-        @ticketManager.refreshTickets({interactive: true}, {}, @handleAuth)
+
+    requestAuth: =>
+      @ticketManager.refreshTickets({interactive: true}, {}, @handleAuth)
 
     removeAuthentication: =>
       @ticketManager.expireTickets()

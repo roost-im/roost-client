@@ -6,14 +6,16 @@
       function AuthenticationController(options) {
         this.handleAuth = __bind(this.handleAuth, this);
         this.removeAuthentication = __bind(this.removeAuthentication, this);
+        this.requestAuth = __bind(this.requestAuth, this);
         this.doAuthentication = __bind(this.doAuthentication, this);
         this.isAuthenticated = __bind(this.isAuthenticated, this);
         $.extend(this, Backbone.Events);
         this.session = options.session;
         this.userInfo = options.userInfo;
         this.ticketManager = options.ticketManager;
-        this.listenTo(this.userInfo, 'login', this.doAuthentication);
+        this.listenTo(this.userInfo, 'login', this.requestAuth);
         this.listenTo(this.userInfo, 'logout', this.removeAuthentication);
+        this.doAuthentication();
       }
 
       AuthenticationController.prototype.isAuthenticated = function() {
@@ -28,11 +30,13 @@
             username: ticket.client.principalName.nameString[0],
             realm: ticket.client.realm
           });
-        } else {
-          return this.ticketManager.refreshTickets({
-            interactive: true
-          }, {}, this.handleAuth);
         }
+      };
+
+      AuthenticationController.prototype.requestAuth = function() {
+        return this.ticketManager.refreshTickets({
+          interactive: true
+        }, {}, this.handleAuth);
       };
 
       AuthenticationController.prototype.removeAuthentication = function() {

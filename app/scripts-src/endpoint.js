@@ -24,7 +24,6 @@
       });
       messagePane.render();
       $('body').append(messagePane.$el);
-      session.userInfo.trigger('login');
       if (session.userInfo.get('username') != null) {
         return session.addPane({});
       }
