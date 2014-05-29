@@ -33,6 +33,7 @@ do ->
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
       # UI settings
+      # TODO: break out to a respectable class
       @settingsModel = new Backbone.Model
         keyboard: true
         panes: true

@@ -27,12 +27,14 @@
         this._sendPaneToBottom = __bind(this._sendPaneToBottom, this);
         this._toggleSubSetting = __bind(this._toggleSubSetting, this);
         this._toggleNavbarSetting = __bind(this._toggleNavbarSetting, this);
+        this._shiftSelection = __bind(this._shiftSelection, this);
         this._setSelection = __bind(this._setSelection, this);
         this._moveSelection = __bind(this._moveSelection, this);
         this._setSelectionOnClick = __bind(this._setSelectionOnClick, this);
         this._toggleNavbar = __bind(this._toggleNavbar, this);
         this._togglePanes = __bind(this._togglePanes, this);
         this._toggleKeyboard = __bind(this._toggleKeyboard, this);
+        this._checkSettings = __bind(this._checkSettings, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return MessagePane.__super__.constructor.apply(this, arguments);
@@ -41,8 +43,7 @@
       MessagePane.prototype.className = 'message-pane';
 
       MessagePane.prototype.events = {
-        'click .message-pane-view': '_setSelectionOnClick',
-        'click .close-help': '_hideHelp'
+        'click .message-pane-view': '_setSelectionOnClick'
       };
 
       MessagePane.prototype.initialize = function(options) {
@@ -59,9 +60,19 @@
             return _this._moveSelection(1, e);
           };
         })(this)));
+        Mousetrap.bind('shift+left', ((function(_this) {
+          return function(e) {
+            return _this._shiftSelection(-1, e);
+          };
+        })(this)));
         Mousetrap.bind('right', ((function(_this) {
           return function(e) {
             return _this._moveSelection(-1, e);
+          };
+        })(this)));
+        Mousetrap.bind('shift+right', ((function(_this) {
+          return function(e) {
+            return _this._shiftSelection(1, e);
           };
         })(this)));
         Mousetrap.bind('up', ((function(_this) {
@@ -109,7 +120,14 @@
           session: this.session
         });
         this.subView.render();
-        return this.$el.append(this.subView.$el);
+        this.$el.append(this.subView.$el);
+        return this._checkSettings();
+      };
+
+      MessagePane.prototype._checkSettings = function() {
+        this._toggleKeyboard();
+        this._togglePanes();
+        return this._toggleNavbar();
       };
 
       MessagePane.prototype._toggleKeyboard = function() {
@@ -186,6 +204,28 @@
         }
       };
 
+      MessagePane.prototype._shiftSelection = function(diff, e) {
+        var currentSelected, jumpTarget;
+        if ((this.selectedPosition + diff) <= this.childViews.length - 1 && (this.selectedPosition + diff) >= 0) {
+          currentSelected = this.childViews[this.selectedPosition];
+          jumpTarget = this.childViews[this.selectedPosition + diff];
+          if (diff < 0) {
+            jumpTarget.$el.before(currentSelected.$el);
+          } else {
+            jumpTarget.$el.after(currentSelected.$el);
+          }
+          this.childViews[this.selectedPosition] = jumpTarget;
+          this.childViews[this.selectedPosition + diff] = currentSelected;
+          this.selectedPosition = this.selectedPosition + diff;
+          this._setSelection();
+          this._recalculateWidth();
+        }
+        if (e != null) {
+          e.preventDefault();
+        }
+        return e != null ? e.stopPropagation() : void 0;
+      };
+
       MessagePane.prototype._toggleNavbarSetting = function(e) {
         this.settingsModel.set('showNavbar', !this.settingsModel.get('showNavbar'));
         if (e != null) {
@@ -226,14 +266,18 @@
 
       MessagePane.prototype._showPaneCompose = function(e) {
         this.childViews[this.selectedPosition].model.set('showCompose', true);
-        e.preventDefault();
-        return e.stopPropagation();
+        if (e != null) {
+          e.preventDefault();
+        }
+        return e != null ? e.stopPropagation() : void 0;
       };
 
       MessagePane.prototype._showPaneFilters = function(e) {
         this.childViews[this.selectedPosition].model.set('showFilters', true);
-        e.preventDefault();
-        return e.stopPropagation();
+        if (e != null) {
+          e.preventDefault();
+        }
+        return e != null ? e.stopPropagation() : void 0;
       };
 
       MessagePane.prototype._closeSelectedPane = function() {
@@ -323,14 +367,15 @@
       };
 
       MessagePane.prototype._showHelp = function() {
-        if (this.$('.modal-overlay').length === 0) {
-          return this.$el.append(com.roost.templates['HotkeyHelp']({}));
+        if ($('.modal-overlay').length === 0) {
+          $('body').append(com.roost.templates['HotkeyHelp']({}));
+          return $('.close-help').click(this._hideHelp);
         }
       };
 
       MessagePane.prototype._hideHelp = function() {
-        this.$('.modal-overlay').remove();
-        return this.$('.modal').remove();
+        $('.modal-overlay').remove();
+        return $('.modal').remove();
       };
 
       return MessagePane;

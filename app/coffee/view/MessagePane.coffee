@@ -8,7 +8,6 @@ do ->
 
     events:
       'click .message-pane-view': '_setSelectionOnClick'
-      'click .close-help': '_hideHelp'
 
     initialize: (options) =>
       @session = options.session
@@ -30,7 +29,9 @@ do ->
       # Feel free to add more, just be sure to add any new hotkeys
       # to the HotkeyHelp modal. 
       Mousetrap.bind('left', ((e) => @_moveSelection(1, e)))
+      Mousetrap.bind('shift+left', ((e) => @_shiftSelection(-1, e)))
       Mousetrap.bind('right', ((e) => @_moveSelection(-1, e)))
+      Mousetrap.bind('shift+right', ((e) => @_shiftSelection(1, e)))
       Mousetrap.bind('up', ((e) => @_moveMessageSelection(-1, e)))
       Mousetrap.bind('down', ((e) => @_moveMessageSelection(1, e)))
       Mousetrap.bind('>', @_sendPaneToBottom)
@@ -76,6 +77,13 @@ do ->
       @subView.render()
       @$el.append(@subView.$el)
 
+      @_checkSettings()
+
+    _checkSettings: =>
+      @_toggleKeyboard()
+      @_togglePanes()
+      @_toggleNavbar()
+
     _toggleKeyboard: =>
       # Pause or unpause hotkeys.
       # Requires moving the selection around since the pane selection concept
@@ -89,7 +97,6 @@ do ->
           view.model.set('selected', true)
 
     _togglePanes: =>
-      # TODO: as always, stop doing this in the session.
       # This is a pretty ass-backwards way of doing this.
       if !@settingsModel.get('panes') and @childViews.length > 1
         for i in [@childViews.length-1..1]
@@ -123,15 +130,50 @@ do ->
       # If we actually have a selected view, make sure to set the model and move the scroll
       if selectedView?
         for view in @childViews
+          # Make sure the other views stop being selected
           if view.cid != selectedView.cid
             view.model.set('selected', false)
+
+        # Mark our new selected view model as selected
         selectedView.model.set('selected', true)
+
+        # Figure out how much we need to scroll left/right to get the new selected pane on screen
         offset = selectedView.$el.offset().left
         width = selectedView.$el.width()
         if offset < 0
           @$el.scrollLeft(@$el.scrollLeft() + offset)
         else if (offset + width) > @$el.width()
           @$el.scrollLeft(@$el.scrollLeft() + (offset + width - @$el.width()))
+
+    _shiftSelection: (diff, e) =>
+      # TODO: this causes scroll issues but I'll be damned if there's a way out of it
+      # Operates under the assumption that diff is -1 or 1.
+
+      # No point in doing this if we're at the ends.
+      if (@selectedPosition + diff) <= @childViews.length - 1 and (@selectedPosition + diff) >= 0
+        currentSelected = @childViews[@selectedPosition]
+        jumpTarget = @childViews[@selectedPosition + diff]
+
+        # Jump before or after target, depending on diff
+        if diff < 0
+          jumpTarget.$el.before(currentSelected.$el)
+        else
+          jumpTarget.$el.after(currentSelected.$el)
+
+        # Swap places in the childViews array
+        @childViews[@selectedPosition] = jumpTarget
+        @childViews[@selectedPosition + diff] = currentSelected
+
+        # Update our selected position
+        @selectedPosition = @selectedPosition + diff
+        @_setSelection()
+
+        # This seems awkward to do here, but is necessary since recalcWidth also gets the fitler/
+        # compose bars into the right spots.
+        @_recalculateWidth()
+
+      e?.preventDefault()
+      e?.stopPropagation()
 
     _toggleNavbarSetting: (e)=>
       @settingsModel.set 'showNavbar', !@settingsModel.get('showNavbar')
@@ -143,6 +185,7 @@ do ->
       e?.preventDefault()
       e?.stopPropagation()
 
+    # Lots of tunneling into the selected pane for hotkeying
     _sendPaneToBottom: =>
       @childViews[@selectedPosition].model.set('position', null)
       @childViews[@selectedPosition].model.trigger 'reload'
@@ -153,7 +196,6 @@ do ->
 
     _moveMessageSelection: (diff, e) =>
       @childViews[@selectedPosition].moveSelectedMessage(diff)
-
       e?.preventDefault()
       e?.stopPropagation()
 
@@ -162,37 +204,35 @@ do ->
 
     _showPaneCompose: (e) =>
       @childViews[@selectedPosition].model.set('showCompose', true)
-      e.preventDefault()
-      e.stopPropagation()
+      e?.preventDefault()
+      e?.stopPropagation()
 
     _showPaneFilters: (e) =>
       @childViews[@selectedPosition].model.set('showFilters', true)
-      e.preventDefault()
-      e.stopPropagation()
+      e?.preventDefault()
+      e?.stopPropagation()
 
     _closeSelectedPane: =>
       @session.removePane(@childViews[@selectedPosition].model.cid)
 
+    # Tunneling down even further to the message
     _selectedMessageReply: (e) =>
       @childViews[@selectedPosition].selectedMessageReply()
-
       e?.preventDefault()
       e?.stopPropagation()
 
     _selectedMessageQuote: (e) =>
       @childViews[@selectedPosition].selectedMessageQuote()
-
       e?.preventDefault()
       e?.stopPropagation()
 
     _selectedMessagePM: (e) =>
       @childViews[@selectedPosition].selectedMessagePM()
-
       e?.preventDefault()
       e?.stopPropagation()
       
     _addPaneView: (paneModel) =>
-      # TODO: this still causes scroll issues, even with caching/restoring on width changes
+      # TODO: this still causes scroll issues
       @$('.no-panes').remove()
 
       paneView = new com.roost.MessagePaneView
@@ -207,7 +247,7 @@ do ->
       @_moveSelection(-1 * @childViews.length)
 
     _removePaneView: (model) =>
-      # TODO: this still causes scroll issues, even with caching/restoring on width changes
+      # TODO: this still causes scroll issues
       for view in @childViews
         if view.model.cid == model.cid
           toDelete = view
@@ -215,7 +255,7 @@ do ->
       @childViews = _.reject(@childViews, ((view) => view.cid == toDelete.cid))
       @_recalculateWidth()
 
-      # Turn off the model
+      # Stop anything listening to this model
       model.off()
 
       # Move the selection off this model
@@ -227,7 +267,9 @@ do ->
         @$el.append($('<div class="no-panes">').text('Click "New Pane" above to start browsing your messages.'))
 
     _recalculateWidth: =>
-      # Tell all the child views to recalculate their width
+      # Tell all the child views to recalculate their width.
+      # This will also move filter/compose bars to the right spots, since the layout for
+      # the pane is actually quite dirty.
       if @$el.width() < MIN_MESSAGE_WIDTH
         percentageLimit = 100
       else
@@ -238,10 +280,15 @@ do ->
         view.recalculateWidth index, width
         index += 1
 
+    # Normally you might put a bit more effort into displaying this, especially since we
+    # have to crummily shove it into the body from within this message pane. However,
+    # it's so simple that I've chosen to just inject it into the body from here.
+    # If this view gets more complex, please please please give it its own view class.
     _showHelp: =>
-      if @$('.modal-overlay').length == 0
-        @$el.append com.roost.templates['HotkeyHelp']({})
+      if $('.modal-overlay').length == 0
+        $('body').append com.roost.templates['HotkeyHelp']({})
+        $('.close-help').click(@_hideHelp)
 
     _hideHelp: =>
-      @$('.modal-overlay').remove()
-      @$('.modal').remove()
+      $('.modal-overlay').remove()
+      $('.modal').remove()

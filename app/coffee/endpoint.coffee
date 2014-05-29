@@ -1,13 +1,17 @@
 $('document').ready( =>
   # Create the session
   session = new com.roost.RoostSession()
+  checkSettings(session)
 
-  # Oh lawd this is so dirty but at least you can login on mobile this way
-  $('body').append('<div class="login-cont"><button class="btn mobile-login">Login</button></div>')
-  $('.mobile-login').click(() =>
-    session.userInfo.trigger('login')
-  )
-  session.userInfo.once 'change', (=> $('.login-cont').hide())
+  # Make all our concessions for mobile in this area
+  if $('body').width() <= 500
+    # Oh lawd this is so dirty but at least you can login on mobile this way
+    $('body').append('<div class="login-cont"><button class="btn mobile-login">Login</button></div>')
+
+    $('.mobile-login').click(() =>
+      session.userInfo.trigger('login')
+    )
+    session.userInfo.once 'change', (=> $('.login-cont').hide())
 
   # Create the sub controller
   subController = new com.roost.SubscriptionController
@@ -38,4 +42,20 @@ $('document').ready( =>
   # Add the first pane if the user is logged in
   if session.userInfo.get('username')?
     session.addPane {}
+
+
+  $(window).resize((-> checkSettings(session)))
 )
+
+checkSettings = (session) ->
+  settingsModel = session.settingsModel
+  if $('body').width() < 500
+    settingsModel.set 
+      panes: false
+      keyboard: false
+      showNavbar: false
+  else
+    settingsModel.set 
+      panes: true
+      keyboard: true
+      showNavbar: true
