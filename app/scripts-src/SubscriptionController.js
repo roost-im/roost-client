@@ -19,7 +19,8 @@
       SubscriptionController.prototype.fetchSubscriptions = function() {
         return this.api.get("/v1/subscriptions").then(((function(_this) {
           return function(subs) {
-            return _this.subscriptions.reset(subs);
+            _this.subscriptions.reset(subs);
+            return _this.subscriptions.sort();
           };
         })(this)), ((function(_this) {
           return function(err) {

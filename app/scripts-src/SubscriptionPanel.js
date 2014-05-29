@@ -33,7 +33,7 @@
         this.subscriptions = options.subscriptions;
         this.settings = options.settings;
         this.session = options.session;
-        this.listenTo(this.subscriptions, 'add remove reset', this.render);
+        this.listenTo(this.subscriptions, 'add remove reset sort', this.render);
         this.listenTo(this.settings, 'change:showSubs', this._toggleDisplay);
         return this.listenTo(this.settings, 'change:showNavbar', this._hide);
       };
@@ -91,7 +91,8 @@
         if (opts.recipient !== '') {
           sub.recipient = opts.recipient;
         }
-        return this.subscriptions.add(sub);
+        this.subscriptions.add(sub);
+        return console.log(this.subscriptions.models);
       };
 
       SubscriptionPanel.prototype._removeSubscription = function(evt) {

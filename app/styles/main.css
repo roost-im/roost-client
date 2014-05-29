@@ -569,11 +569,15 @@
     border-bottom: 1px solid #BBB; }
     .subscription-panel .table-container .subs-table {
       padding-left: 5px;
-      padding-right: 5px; }
+      padding-right: 5px;
+      width: 100%; }
       .subscription-panel .table-container .subs-table .close-td {
         font-size: 28px;
         text-align: center;
-        cursor: pointer; }
+        cursor: pointer;
+        min-width: 30px;
+        max-width: 30px;
+        width: 30px; }
         .subscription-panel .table-container .subs-table .close-td:hover {
           color: #ff3333; }
       .subscription-panel .table-container .subs-table .class-td {
@@ -581,11 +585,15 @@
         .subscription-panel .table-container .subs-table .class-td:hover {
           text-decoration: underline; }
       .subscription-panel .table-container .subs-table td {
-        width: 90px;
+        min-width: 97px;
+        max-width: 97px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
-        border-bottom: 1px solid #BBB; }
+        border-bottom: 1px solid #BBB;
+        box-sizing: border-box;
+        padding-left: 2px;
+        padding-right: 2px; }
 
 html, body {
   width: 100%;

@@ -12,6 +12,11 @@
         });
         this.subscriptions = new Backbone.Collection();
         this.subscriptions.model = com.roost.SubscriptionModel;
+        this.subscriptions.comparator = ((function(_this) {
+          return function(a) {
+            return baseString(a.get('class'));
+          };
+        })(this));
         this.messageLists = new Backbone.Collection();
         this.messageControllers = {};
         this.composeControllers = {};

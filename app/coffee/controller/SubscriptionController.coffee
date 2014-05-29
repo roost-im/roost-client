@@ -19,6 +19,7 @@ do ->
     fetchSubscriptions: =>
       @api.get("/v1/subscriptions").then(((subs) =>
         @subscriptions.reset subs
+        @subscriptions.sort()
       ), ((err) =>
         console.log "Failed to get subscriptions: " + err
         throw err

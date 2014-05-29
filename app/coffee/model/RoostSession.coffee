@@ -15,6 +15,7 @@ do ->
       # User's subscriptions
       @subscriptions = new Backbone.Collection()
       @subscriptions.model = com.roost.SubscriptionModel
+      @subscriptions.comparator = ((a) => return baseString(a.get('class')))
 
       # Collection of Message List Models
       @messageLists = new Backbone.Collection()

@@ -15,7 +15,7 @@ do ->
       @settings = options.settings
       @session = options.session
 
-      @listenTo @subscriptions, 'add remove reset', @render
+      @listenTo @subscriptions, 'add remove reset sort', @render
       @listenTo @settings, 'change:showSubs', @_toggleDisplay
       @listenTo @settings, 'change:showNavbar', @_hide
 
@@ -64,6 +64,7 @@ do ->
         sub.recipient = opts.recipient
 
       @subscriptions.add sub
+      console.log @subscriptions.models
 
     _removeSubscription: (evt) =>
       @subscriptions.remove($(evt.target).data().cid)
