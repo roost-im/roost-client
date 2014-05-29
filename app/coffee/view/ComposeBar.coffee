@@ -68,8 +68,8 @@ do ->
         content: ''
       filters = @paneModel.get('filters')
 
-      if filters.class_key?
-        filteredFields.class = filters.class_key
+      if filters.class_key? or filters.class_key_base
+        filteredFields.class = if filters.class_key? then filters.class_key else filters.class_key_base
         if filters.instance_key?
           filteredFields.instance = filters.instance_key
 

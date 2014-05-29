@@ -343,7 +343,7 @@
           this._moveSelection(1);
         }
         if (this.messageLists.length === 0) {
-          return this.$el.append($('<div class="no-panes">').text('Click "New Pane" above to start browsing your messages.'));
+          return this.$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'));
         }
       };
 

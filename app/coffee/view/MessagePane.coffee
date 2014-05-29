@@ -264,7 +264,7 @@ do ->
 
       # Show a no-panes message if there are no panes
       if @messageLists.length == 0
-        @$el.append($('<div class="no-panes">').text('Click "New Pane" above to start browsing your messages.'))
+        @$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'))
 
     _recalculateWidth: =>
       # Tell all the child views to recalculate their width.

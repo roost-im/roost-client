@@ -86,8 +86,8 @@
           content: ''
         };
         filters = this.paneModel.get('filters');
-        if (filters.class_key != null) {
-          filteredFields["class"] = filters.class_key;
+        if ((filters.class_key != null) || filters.class_key_base) {
+          filteredFields["class"] = filters.class_key != null ? filters.class_key : filters.class_key_base;
           if (filters.instance_key != null) {
             filteredFields.instance = filters.instance_key;
           }

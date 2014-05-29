@@ -1,7 +1,7 @@
 do ->
 
   # Arbitrarily chosen. Modify if interested in performance issues.
-  # Cache -> Backbone Collection in Pane Model
+  # Cache = Backbone Collection in Pane Model
   com.roost.STARTING_SIZE = 40
   com.roost.EXPANSION_SIZE = 10
   com.roost.CACHE_SIZE = 200
@@ -163,7 +163,8 @@ do ->
       # If we are at our cache size, reduce the size of our cache
       # by as many messages as we just received.
       if messages.length >= com.roost.CACHE_SIZE
-        # If this is a live message, we really don't want to add it to our list.
+        # If this is a live message, we really don't want to add it to our list when the cache
+        # is full. This will give us a jump in time in our messages in the cache.
         if live
           return
         else
