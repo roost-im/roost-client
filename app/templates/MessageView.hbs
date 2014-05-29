@@ -12,7 +12,10 @@
 <div class="content {{#if isSentByUser}}outgoing{{/if}}">
   <div class="sender">
     <img class="gravatar" src="{{gravatar}}"><br>
-    {{shortSender}}
+    <span>{{shortSender}}</span>
+    {{#unless auth}}
+      <br><span class="not-verified">Not Verified</span>
+    {{/unless}}
   </div>
   <div class="message-block">
     <pre class="message">

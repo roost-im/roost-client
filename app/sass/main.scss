@@ -61,8 +61,10 @@ html, body {
   .message-pane {
     top: 0px !important;
 
-    .message-view .signature {
-      width: 200px !important;
+    .message-view {
+      .signature {
+        width: 200px !important;
+      }
     }
   }
 
@@ -83,10 +85,6 @@ html, body {
   .compose-bar {
     .single-bar, .top-bar { 
       padding: 0px 10px 0px 10px;
-    }
-
-    span {
-      display: none !important;
     }
   }
 

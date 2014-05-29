@@ -119,6 +119,12 @@
         width: 40px;
         height: 40px;
       }
+
+      .not-verified {
+        text-transform: uppercase;
+        color: red;
+        font-size: 9px;
+      }
     }
 
     .message-block {

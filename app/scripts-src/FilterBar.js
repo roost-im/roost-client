@@ -56,7 +56,6 @@
 
       FilterBar.prototype._updateColors = function() {
         var color, lighterColor, string;
-        console.log(this.paneModel.get('filters'));
         string = this.paneModel.get('filters').class_key != null ? this.paneModel.get('filters').class_key : this.paneModel.get('filters').class_key_base;
         color = shadeColor(stringToColor(string), 0.5);
         lighterColor = shadeColor(color, 0.4);

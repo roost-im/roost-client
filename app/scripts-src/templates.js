@@ -189,6 +189,12 @@ function program5(depth0,data) {
   return "outgoing";
   }
 
+function program7(depth0,data) {
+  
+  
+  return "\n      <br><span class=\"not-verified\">Not Verified</span>\n    ";
+  }
+
   buffer += "<div class=\"header\">\n  ";
   stack1 = helpers['if'].call(depth0, (depth0 && depth0.isPersonal), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
@@ -207,11 +213,14 @@ function program5(depth0,data) {
   if (helper = helpers.gravatar) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.gravatar); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\"><br>\n    ";
+    + "\"><br>\n    <span>";
   if (helper = helpers.shortSender) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.shortSender); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
-    + "\n  </div>\n  <div class=\"message-block\">\n    <pre class=\"message\">\n      ";
+    + "</span>\n    ";
+  stack1 = helpers.unless.call(depth0, (depth0 && depth0.auth), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </div>\n  <div class=\"message-block\">\n    <pre class=\"message\">\n      ";
   if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
   else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
   buffer += escapeExpression(stack1)
