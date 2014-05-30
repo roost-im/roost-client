@@ -3,7 +3,6 @@ do ->
     className: 'navbar'
 
     events:
-      'click .login': '_handleLogin'
       'click .logout': '_handleLogout'
       'click .add-pane': '_addPane'
       'click .personal-message': '_addPersonalMessagePane'
@@ -35,10 +34,6 @@ do ->
         @$el.removeClass('hidden')
 
       @$el.append template(_.defaults({loggedIn: @userInfo.get('username')?, gravatar: gravatar}, @userInfo.attributes, @settings.attributes))
-
-    _handleLogin: =>
-      # Trigger the model, AuthenticationController will handle it
-      @userInfo.trigger 'login'
 
     _handleLogout: =>
       # Trigger the model, AuthenticationController will handle it

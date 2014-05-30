@@ -1,6 +1,7 @@
 @import "fonts";
 @import "theme";
 @import "components";
+@import "login";
 @import "navbar";
 @import "messagePane";
 @import "message";
@@ -90,6 +91,14 @@ html, body {
 
   .no-panes {
     font-size: 16px !important;
+  }
+
+  .login-view {
+    top: 10px !important;
+
+    h1 {
+      font-size: 30px !important;
+    }
   }
 }
 

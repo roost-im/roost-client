@@ -53,6 +53,35 @@
     opacity: 0.4;
     box-shadow: none; }
 
+.login-view {
+  position: absolute;
+  max-width: 500px;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 10%;
+  text-align: justify;
+  z-index: 5;
+  padding: 20px; }
+  .login-view h1 {
+    font-size: 37px;
+    margin: 0px; }
+  .login-view .btn-container {
+    text-align: center; }
+    .login-view .btn-container .btn {
+      color: #eeeeee;
+      background-color: #3178d3;
+      border-color: transparent; }
+      .login-view .btn-container .btn:hover, .login-view .btn-container .btn:focus, .login-view .btn-container .btn:active, .login-view .btn-container .btn.active {
+        color: #eeeeee;
+        background-color: #2765b5; }
+      .open .login-view .btn-container .btn.dropdown-toggle {
+        color: #eeeeee;
+        background-color: #2765b5;
+        background-image: none; }
+      .login-view .btn-container .btn.disabled, .login-view .btn-container .btn.disabled:hover, .login-view .btn-container .btn.disabled:focus, .login-view .btn-container .btn.disabled:active, .login-view .btn-container .btn.disabled.active, .login-view .btn-container .btn[disabled], .login-view .btn-container .btn[disabled]:hover, .login-view .btn-container .btn[disabled]:focus, .login-view .btn-container .btn[disabled]:active, .login-view .btn-container .btn[disabled].active, fieldset[disabled] .login-view .btn-container .btn, fieldset[disabled] .login-view .btn-container .btn:hover, fieldset[disabled] .login-view .btn-container .btn:focus, fieldset[disabled] .login-view .btn-container .btn:active, fieldset[disabled] .login-view .btn-container .btn.active {
+        background-color: #3178d3 !important; }
+
 .navbar {
   color: #EEE;
   position: fixed;
@@ -659,7 +688,12 @@ html, body {
     padding: 0px 10px 0px 10px; }
 
   .no-panes {
-    font-size: 16px !important; } }
+    font-size: 16px !important; }
+
+  .login-view {
+    top: 10px !important; }
+    .login-view h1 {
+      font-size: 30px !important; } }
 @media only screen and (max-width: 720px) {
   .navbar .user-info span {
     display: none !important; }

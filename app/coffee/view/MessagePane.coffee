@@ -19,6 +19,8 @@ do ->
       @listenTo @messageLists, 'add', @_addPaneView
       @listenTo @messageLists, 'remove', @_removePaneView
 
+      @listenTo @session.userInfo, 'change', @_toggleVisibility
+
       # Since we handle panes, pane selection, and keyboard shortcuts,
       # listen for any settings changes and act accordingly
       @listenTo @settingsModel, 'change:keyboard', @_toggleKeyboard
@@ -108,6 +110,12 @@ do ->
       else
         @$el.removeClass('expanded')
 
+    _toggleVisibility: =>
+      if @session.userInfo.get('username')?
+        @$el.show()
+      else
+        @$el.hide()
+
     _setSelectionOnClick: (evt) =>
       # Set the selection to a pane if that pane has received a click event
       @selectedPosition = @$('.message-pane-view').index(evt.currentTarget)
@@ -146,7 +154,7 @@ do ->
           @$el.scrollLeft(@$el.scrollLeft() + (offset + width - @$el.width()))
 
     _shiftSelection: (diff, e) =>
-      # No point in doing this if we will overshoot the ends
+      # No point in doing this if we will overshoot the ends.
       if (@selectedPosition + diff) <= @childViews.length - 1 and (@selectedPosition + diff) >= 0
         currentSelected = @childViews[@selectedPosition]
         jumpTarget = @childViews[@selectedPosition + diff]

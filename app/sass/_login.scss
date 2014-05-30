@@ -1,0 +1,24 @@
+.login-view {
+  position: absolute;
+  max-width: 500px;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 10%;
+  text-align: justify;
+  z-index: 5;
+  padding: 20px;
+
+  h1 {
+    font-size: 37px;
+    margin: 0px;
+  }
+
+  .btn-container {
+    text-align: center;
+
+    .btn {
+      @include button-variant($primary-btn-color, $primary-btn-bg);
+    }
+  }
+}

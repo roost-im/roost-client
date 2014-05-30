@@ -87,3 +87,11 @@ do ->
       @messageLists.remove(cid)
       delete @messageControllers[cid]
       delete @composeControllers[cid]
+
+    removeAllPanes: =>
+      cids = []
+      for model in @messageLists.models
+        cids.push(model.cid)
+
+      for cid in cids
+        @removePane(cid)

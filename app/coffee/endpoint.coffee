@@ -3,16 +3,6 @@ $('document').ready( =>
   session = new com.roost.RoostSession()
   checkSettings(session)
 
-  # Make all our concessions for mobile in this area
-  if $('body').width() <= 500
-    # Oh lawd this is so dirty but at least you can login on mobile this way
-    $('body').append('<div class="login-cont"><button class="btn mobile-login">Login</button></div>')
-
-    $('.mobile-login').click(() =>
-      session.userInfo.trigger('login')
-    )
-    session.userInfo.once 'change', (=> $('.login-cont').hide())
-
   # Create the sub controller
   subController = new com.roost.SubscriptionController
     api: session.api
@@ -32,6 +22,12 @@ $('document').ready( =>
   navbar.render()
   $('body').append(navbar.$el)
 
+  # Create the login view and add it to the DOM
+  loginView = new com.roost.LoginView
+    userInfo: session.userInfo
+  loginView.render()
+  $('body').append(loginView.$el)
+
   # Create the message pane view and add it to the DOM
   messagePane = new com.roost.MessagePane
     session: session
@@ -43,7 +39,7 @@ $('document').ready( =>
   if session.userInfo.get('username')?
     session.addPane {}
 
-
+  # Check to change various settings when screen size changes
   $(window).resize((-> checkSettings(session)))
 )
 

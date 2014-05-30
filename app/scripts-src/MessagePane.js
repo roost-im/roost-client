@@ -31,6 +31,7 @@
         this._setSelection = __bind(this._setSelection, this);
         this._moveSelection = __bind(this._moveSelection, this);
         this._setSelectionOnClick = __bind(this._setSelectionOnClick, this);
+        this._toggleVisibility = __bind(this._toggleVisibility, this);
         this._toggleNavbar = __bind(this._toggleNavbar, this);
         this._togglePanes = __bind(this._togglePanes, this);
         this._toggleKeyboard = __bind(this._toggleKeyboard, this);
@@ -52,6 +53,7 @@
         this.settingsModel = this.session.settingsModel;
         this.listenTo(this.messageLists, 'add', this._addPaneView);
         this.listenTo(this.messageLists, 'remove', this._removePaneView);
+        this.listenTo(this.session.userInfo, 'change', this._toggleVisibility);
         this.listenTo(this.settingsModel, 'change:keyboard', this._toggleKeyboard);
         this.listenTo(this.settingsModel, 'change:panes', this._togglePanes);
         this.listenTo(this.settingsModel, 'change:showNavbar', this._toggleNavbar);
@@ -163,6 +165,14 @@
           return this.$el.addClass('expanded');
         } else {
           return this.$el.removeClass('expanded');
+        }
+      };
+
+      MessagePane.prototype._toggleVisibility = function() {
+        if (this.session.userInfo.get('username') != null) {
+          return this.$el.show();
+        } else {
+          return this.$el.hide();
         }
       };
 

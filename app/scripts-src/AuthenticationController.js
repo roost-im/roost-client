@@ -41,10 +41,11 @@
 
       AuthenticationController.prototype.removeAuthentication = function() {
         this.ticketManager.expireTickets();
-        return this.userInfo.set({
+        this.userInfo.set({
           username: null,
           realm: null
         });
+        return this.session.removeAllPanes();
       };
 
       AuthenticationController.prototype.handleAuth = function(sessions) {

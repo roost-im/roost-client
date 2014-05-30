@@ -34,7 +34,7 @@ do ->
           username: null
           realm: null
 
-      #TODO: clear messageLists in session
+      @session.removeAllPanes()
 
     handleAuth: (sessions) =>
       # Updates user info model

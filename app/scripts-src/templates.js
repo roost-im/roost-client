@@ -152,6 +152,15 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<div class=\"modal-overlay\"/>\n<div class=\"modal\">\n  <div class=\"header\">\n    <div class=\"title\">\n      Roost Hotkeys\n    </div>\n    <div class=\"close-help\">\n      &times;\n    </div>\n  </div>\n  <table class=\"content\" cellspacing=\"0\">\n    <tr>\n      <th> Hotkey </th>\n      <th> Function </th>\n    </tr>\n    <tr>\n      <td> Alt+h </td>\n      <td> Toggle top bar </td>\n    </tr>\n    <tr>\n      <td> Alt+s </td>\n      <td> Toggle subscription panel </td>\n    </tr>\n    <tr>\n      <td> Alt+n </td>\n      <td> Open new pane </td>\n    </tr>\n    <tr>\n      <td> Alt+p </td>\n      <td> Open PM pane </td>\n    </tr>\n    <tr>\n      <td> Alt+x </td>\n      <td> Close selected pane </td>\n    </tr>\n    <tr>\n      <td> Left/Right </td>\n      <td> Move pane selection </td>\n    </tr>\n    <tr>\n      <td> Shift+Left/Right </td>\n      <td> Move selected pane </td>\n    </tr>\n    <tr>\n      <td> &gt; </td>\n      <td> Go to bottom </td>\n    </tr>\n    <tr>\n      <td> &lt; </td>\n      <td> Go to top </td>\n    </tr>\n    <tr>\n      <td> Shift+v </td>\n      <td> Clear filters </td>\n    </tr>\n    <tr>\n      <td> Shift+f </td>\n      <td> Show fitlers </td>\n    </tr>\n    <tr>\n      <td> z </td>\n      <td> Show composer </td>\n    </tr>\n    <tr>\n      <td> Up/Down </td>\n      <td> Move message selection </td>\n    </tr>\n    <tr>\n      <td> r </td>\n      <td> Reply to selected message </td>\n    </tr>\n    <tr>\n      <td> q </td>\n      <td> Quote selected message </td>\n    </tr>\n    <tr>\n      <td> p </td>\n      <td> PM selected message sender </td>\n    </tr>\n    <tr>\n      <td> ? </td>\n      <td> Show this box </td>\n    </tr>\n    <tr>\n      <td> Esc </td>\n      <td> Hide this box </td>\n    </tr>\n  </table>\n</div>";
   });
 
+this["com"]["roost"]["templates"]["LoginView"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<h1>Welcome to <i>Roost</i></h1>\n<div>\n  Roost is a web client for reading Zephyr messages, sending Zephyr messages, and managing Zephyr subscriptions. In order to use <i>Roost</i>, you will need to log in using your MIT account and Webathena.\n  <br>\n  <br>\n  The button below will open a new tab for entering your username and password. After entering your information, choose to give <i>Roost</i> access to the information required, and you will be redirected back to this tab to begin browsing your messages.\n  <br>\n  <br>\n</div>\n<div class=\"btn-container\">\n  <button class=\"btn login\">Login with Webathena</button>\n</div>";
+  });
+
 this["com"]["roost"]["templates"]["MessageView"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
@@ -269,14 +278,8 @@ function program4(depth0,data) {
   return "\n      <i class=\"fa fa-square-o\"></i>\n    ";
   }
 
-function program6(depth0,data) {
-  
-  
-  return "\n  <div class=\"btn login\">Login</div>\n";
-  }
-
   buffer += "<div class=\"title-logo\">\n  <img class=\"logo\" src=\"img/roost-logo_57x57.png\">\n  <div class=\"title\"> Roost </div>\n</div>\n\n";
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.username), {hash:{},inverse:self.program(6, program6, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.username), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   return buffer;
   });

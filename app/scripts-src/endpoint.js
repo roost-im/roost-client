@@ -3,18 +3,9 @@
 
   $('document').ready((function(_this) {
     return function() {
-      var authController, messagePane, navbar, session, subController;
+      var authController, loginView, messagePane, navbar, session, subController;
       session = new com.roost.RoostSession();
       checkSettings(session);
-      if ($('body').width() <= 500) {
-        $('body').append('<div class="login-cont"><button class="btn mobile-login">Login</button></div>');
-        $('.mobile-login').click(function() {
-          return session.userInfo.trigger('login');
-        });
-        session.userInfo.once('change', (function() {
-          return $('.login-cont').hide();
-        }));
-      }
       subController = new com.roost.SubscriptionController({
         api: session.api,
         userInfo: session.userInfo,
@@ -30,6 +21,11 @@
       });
       navbar.render();
       $('body').append(navbar.$el);
+      loginView = new com.roost.LoginView({
+        userInfo: session.userInfo
+      });
+      loginView.render();
+      $('body').append(loginView.$el);
       messagePane = new com.roost.MessagePane({
         session: session,
         messageLists: session.messageLists

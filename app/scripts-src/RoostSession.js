@@ -4,6 +4,7 @@
   (function() {
     return com.roost.RoostSession = (function() {
       function RoostSession() {
+        this.removeAllPanes = __bind(this.removeAllPanes, this);
         this.removePane = __bind(this.removePane, this);
         this.addPane = __bind(this.addPane, this);
         this.userInfo = new Backbone.Model({
@@ -74,6 +75,22 @@
         this.messageLists.remove(cid);
         delete this.messageControllers[cid];
         return delete this.composeControllers[cid];
+      };
+
+      RoostSession.prototype.removeAllPanes = function() {
+        var cid, cids, model, _i, _j, _len, _len1, _ref, _results;
+        cids = [];
+        _ref = this.messageLists.models;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          model = _ref[_i];
+          cids.push(model.cid);
+        }
+        _results = [];
+        for (_j = 0, _len1 = cids.length; _j < _len1; _j++) {
+          cid = cids[_j];
+          _results.push(this.removePane(cid));
+        }
+        return _results;
       };
 
       return RoostSession;
