@@ -146,13 +146,14 @@ do ->
           @$el.scrollLeft(@$el.scrollLeft() + (offset + width - @$el.width()))
 
     _shiftSelection: (diff, e) =>
-      # TODO: this causes scroll issues but I'll be damned if there's a way out of it
-      # Operates under the assumption that diff is -1 or 1.
-
-      # No point in doing this if we're at the ends.
+      # No point in doing this if we will overshoot the ends
       if (@selectedPosition + diff) <= @childViews.length - 1 and (@selectedPosition + diff) >= 0
         currentSelected = @childViews[@selectedPosition]
         jumpTarget = @childViews[@selectedPosition + diff]
+
+        # We want to save off where the moving view is scrolled.
+        # After the move, we have to restore it.
+        oldScroll = currentSelected.$el.scrollTop()
 
         # Jump before or after target, depending on diff
         if diff < 0
@@ -167,6 +168,9 @@ do ->
         # Update our selected position
         @selectedPosition = @selectedPosition + diff
         @_setSelection()
+
+        # Restore the scroll position
+        currentSelected.$el.scrollTop(oldScroll)
 
         # This seems awkward to do here, but is necessary since recalcWidth also gets the fitler/
         # compose bars into the right spots.
@@ -232,22 +236,24 @@ do ->
       e?.stopPropagation()
       
     _addPaneView: (paneModel) =>
-      # TODO: this still causes scroll issues
+      # Well, we have a pane now.
       @$('.no-panes').remove()
 
+      # Create the pane, save it off
       paneView = new com.roost.MessagePaneView
         session: @session
         model: paneModel
       @childViews.push(paneView)
 
+      # Render, stick it in our $el, and tell everyone to redo their widths
       paneView.render()
       @$el.append(paneView.$el)
       @_recalculateWidth()
 
+      # Select the newly added pane
       @_moveSelection(-1 * @childViews.length)
 
     _removePaneView: (model) =>
-      # TODO: this still causes scroll issues
       for view in @childViews
         if view.model.cid == model.cid
           toDelete = view

@@ -40,7 +40,6 @@
             return _this.addPane({
               filters: {
                 class_key: 'message',
-                instance_key: 'personal',
                 is_personal: true
               }
             });

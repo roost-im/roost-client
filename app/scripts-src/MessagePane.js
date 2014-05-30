@@ -205,10 +205,11 @@
       };
 
       MessagePane.prototype._shiftSelection = function(diff, e) {
-        var currentSelected, jumpTarget;
+        var currentSelected, jumpTarget, oldScroll;
         if ((this.selectedPosition + diff) <= this.childViews.length - 1 && (this.selectedPosition + diff) >= 0) {
           currentSelected = this.childViews[this.selectedPosition];
           jumpTarget = this.childViews[this.selectedPosition + diff];
+          oldScroll = currentSelected.$el.scrollTop();
           if (diff < 0) {
             jumpTarget.$el.before(currentSelected.$el);
           } else {
@@ -218,6 +219,7 @@
           this.childViews[this.selectedPosition + diff] = currentSelected;
           this.selectedPosition = this.selectedPosition + diff;
           this._setSelection();
+          currentSelected.$el.scrollTop(oldScroll);
           this._recalculateWidth();
         }
         if (e != null) {

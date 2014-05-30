@@ -74,7 +74,6 @@
         return this.session.addPane({
           filters: {
             class_key: 'message',
-            instance_key: 'personal',
             is_personal: true
           }
         });
