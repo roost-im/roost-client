@@ -48,7 +48,7 @@
       };
 
       MessageView.prototype.render = function() {
-        var convoPartner, gravatar, isSentByUser, name, realm, template;
+        var convoPartner, gravatar, isSentByUser, name, realm, signature, template;
         this.$el.empty();
         template = com.roost.templates['MessageView'];
         name = shortZuser(this.message.get('sender'));
@@ -56,10 +56,16 @@
         gravatar = getGravatarFromName(name, realm, 80);
         isSentByUser = this.message.get('sender') === this.session.userInfo.get('username') + '@' + this.session.userInfo.get('realm');
         isSentByUser = this.message.get('isOutgoing') || isSentByUser;
+        signature = this.message.get('signature');
+        if (/^[^(]*\).*\([^)]*$/.test(signature)) {
+          signature = "(" + signature + ")";
+        }
         if (this.message.get('isPersonal')) {
           convoPartner = shortZuser(this.message.get('conversation'));
         }
-        this.$el.append(template(_.defaults({}, this.message.attributes, {
+        this.$el.append(template(_.defaults({
+          signature: signature
+        }, this.message.attributes, {
           absoluteTime: this.message.get('time').format(TIME_FORMAT),
           shortSender: name,
           gravatar: gravatar,

@@ -40,12 +40,18 @@ do ->
       isSentByUser = @message.get('sender') == @session.userInfo.get('username') + '@' + @session.userInfo.get('realm')
       isSentByUser = @message.get('isOutgoing') or isSentByUser
 
+      # Some people have signatures like ") (foo" which assumes the zsig is
+      # surrounded in parentheses.
+      signature = @message.get('signature')
+      if (/^[^(]*\).*\([^)]*$/.test(signature))
+        signature = "(" + signature + ")"
+
       # Check if this is a personal message, and if so, save the convo partner
       if @message.get('isPersonal')
         convoPartner = shortZuser(@message.get('conversation'))
 
       # TODO: move some of this to handlebars helpers
-      @$el.append template(_.defaults({}, @message.attributes, 
+      @$el.append template(_.defaults(signature: signature, @message.attributes,
           absoluteTime: @message.get('time').format(TIME_FORMAT)
           shortSender: name
           gravatar: gravatar
