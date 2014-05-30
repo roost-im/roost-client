@@ -77,7 +77,12 @@
       };
 
       FilterBar.prototype._toggleFilters = function() {
-        return this.paneModel.set('showFilters', !this.paneModel.get('showFilters'));
+        this.paneModel.set('showFilters', !this.paneModel.get('showFilters'));
+        if (this.session.settingsModel.get('onMobile') && this.paneModel.get('showFilters')) {
+          return this.session.settingsModel.set('showNavbar', false);
+        } else {
+          return this.session.settingsModel.set('showNavbar', true);
+        }
       };
 
       FilterBar.prototype._removeFilters = function() {

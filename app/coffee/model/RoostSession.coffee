@@ -33,13 +33,14 @@ do ->
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
-      # UI settings
+      # UI settings - defaults are PC mode.
       # TODO: break out to a respectable class
       @settingsModel = new Backbone.Model
         keyboard: true
         panes: true
         showNavbar: true
         showSubs: false
+        onMobile: true
 
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.

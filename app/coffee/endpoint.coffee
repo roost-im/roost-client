@@ -44,14 +44,12 @@ $('document').ready( =>
 )
 
 checkSettings = (session) ->
+  # Let's not toggle the pane/navbar settings for now, just to allow
+  # panes in mobile.
   settingsModel = session.settingsModel
   if $('body').width() < 500
     settingsModel.set 
-      panes: false
-      keyboard: false
-      showNavbar: false
+      onMobile: true
   else
     settingsModel.set 
-      panes: true
-      keyboard: true
-      showNavbar: true
+      onMobile: false

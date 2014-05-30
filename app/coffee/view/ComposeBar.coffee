@@ -13,6 +13,7 @@ do ->
 
     initialize: (options) =>
       @paneModel = options.paneModel
+      @settings = options.settings
 
       # Re-render, either to show the composer, update fields, or update that this pane
       # is selected.
@@ -48,11 +49,17 @@ do ->
       # Update model (triggers rerender)
       @paneModel.set('showCompose', true)
 
+      if @settings.get('onMobile')
+        @settings.set('showNavbar', false)
+
     _hideCompose: =>
       # Update model and clear fields (triggers rerender)
       @paneModel.set
         showCompose: false
         composeFields: {}
+
+      # In case we hid it last time for mobile
+      @settings.set('showNavbar', true)
 
     _jumpToBottom: =>
       # Treat as a complete reset, clearing position and reloading

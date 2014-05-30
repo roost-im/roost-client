@@ -83,7 +83,7 @@
 
       MessageView.prototype.updateColors = function() {
         var color, lighterColor, string;
-        string = this.message.get('class');
+        string = this.message.get('classKey');
         color = shadeColor(stringToColor(string), 0.5);
         lighterColor = shadeColor(color, 0.4);
         this.$('.header').css({

@@ -27,11 +27,14 @@
         this._sendPaneToBottom = __bind(this._sendPaneToBottom, this);
         this._toggleSubSetting = __bind(this._toggleSubSetting, this);
         this._toggleNavbarSetting = __bind(this._toggleNavbarSetting, this);
+        this._handleSwipeRight = __bind(this._handleSwipeRight, this);
+        this._handleSwipeLeft = __bind(this._handleSwipeLeft, this);
         this._shiftSelection = __bind(this._shiftSelection, this);
         this._setSelection = __bind(this._setSelection, this);
         this._moveSelection = __bind(this._moveSelection, this);
         this._setSelectionOnClick = __bind(this._setSelectionOnClick, this);
         this._toggleVisibility = __bind(this._toggleVisibility, this);
+        this._toggleSwiping = __bind(this._toggleSwiping, this);
         this._toggleNavbar = __bind(this._toggleNavbar, this);
         this._togglePanes = __bind(this._togglePanes, this);
         this._toggleKeyboard = __bind(this._toggleKeyboard, this);
@@ -57,6 +60,7 @@
         this.listenTo(this.settingsModel, 'change:keyboard', this._toggleKeyboard);
         this.listenTo(this.settingsModel, 'change:panes', this._togglePanes);
         this.listenTo(this.settingsModel, 'change:showNavbar', this._toggleNavbar);
+        this.listenTo(this.settingsModel, 'change:onMobile', this._toggleSwiping);
         Mousetrap.bind('left', ((function(_this) {
           return function(e) {
             return _this._moveSelection(1, e);
@@ -100,6 +104,18 @@
         Mousetrap.bind('esc', this._hideHelp);
         Mousetrap.bind('alt+h', this._toggleNavbarSetting);
         Mousetrap.bind('alt+s', this._toggleSubSetting);
+        this.$el.swipe({
+          swipeLeft: (function(_this) {
+            return function() {
+              return _this._moveSelection(-1);
+            };
+          })(this),
+          swipeRight: (function(_this) {
+            return function() {
+              return _this._moveSelection(1);
+            };
+          })(this)
+        });
         return $(window).resize(this._recalculateWidth);
       };
 
@@ -129,7 +145,8 @@
       MessagePane.prototype._checkSettings = function() {
         this._toggleKeyboard();
         this._togglePanes();
-        return this._toggleNavbar();
+        this._toggleNavbar();
+        return this._toggleSwiping();
       };
 
       MessagePane.prototype._toggleKeyboard = function() {
@@ -168,6 +185,16 @@
         }
       };
 
+      MessagePane.prototype._toggleSwiping = function() {
+        if (this.settingsModel.get('onMobile')) {
+          this.$el.swipe('enable');
+          return this.undelegateEvents();
+        } else {
+          this.$el.swipe('disable');
+          return this.delegateEvents();
+        }
+      };
+
       MessagePane.prototype._toggleVisibility = function() {
         if (this.session.userInfo.get('username') != null) {
           return this.$el.show();
@@ -182,6 +209,7 @@
       };
 
       MessagePane.prototype._moveSelection = function(diff, e) {
+        console.log(diff);
         this.selectedPosition = this.selectedPosition - diff;
         this.selectedPosition = Math.min(this.selectedPosition, this.childViews.length - 1);
         this.selectedPosition = Math.max(this.selectedPosition, 0);
@@ -236,6 +264,14 @@
           e.preventDefault();
         }
         return e != null ? e.stopPropagation() : void 0;
+      };
+
+      MessagePane.prototype._handleSwipeLeft = function(e) {
+        return this._moveSelection(-1, e);
+      };
+
+      MessagePane.prototype._handleSwipeRight = function(e) {
+        return this._moveSelection(1, e);
       };
 
       MessagePane.prototype._toggleNavbarSetting = function(e) {
@@ -355,7 +391,8 @@
           this._moveSelection(1);
         }
         if (this.messageLists.length === 0) {
-          return this.$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'));
+          this.$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'));
+          return this.session.settingsModel.set('showNavbar', true);
         }
       };
 

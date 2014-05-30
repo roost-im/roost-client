@@ -29,7 +29,8 @@
           keyboard: true,
           panes: true,
           showNavbar: true,
-          showSubs: false
+          showSubs: false,
+          onMobile: true
         });
         Mousetrap.bind('alt+n', ((function(_this) {
           return function() {

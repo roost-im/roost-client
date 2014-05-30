@@ -46,15 +46,11 @@
     settingsModel = session.settingsModel;
     if ($('body').width() < 500) {
       return settingsModel.set({
-        panes: false,
-        keyboard: false,
-        showNavbar: false
+        onMobile: true
       });
     } else {
       return settingsModel.set({
-        panes: true,
-        keyboard: true,
-        showNavbar: true
+        onMobile: false
       });
     }
   };

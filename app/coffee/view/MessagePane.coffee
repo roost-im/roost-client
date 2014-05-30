@@ -26,6 +26,7 @@ do ->
       @listenTo @settingsModel, 'change:keyboard', @_toggleKeyboard
       @listenTo @settingsModel, 'change:panes', @_togglePanes
       @listenTo @settingsModel, 'change:showNavbar', @_toggleNavbar
+      @listenTo @settingsModel, 'change:onMobile', @_toggleSwiping
 
       # Hotkeys related to the selected pane.
       # Feel free to add more, just be sure to add any new hotkeys
@@ -59,6 +60,12 @@ do ->
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
       Mousetrap.bind('alt+s', @_toggleSubSetting)
 
+      # Set up swiping
+      @$el.swipe(
+        swipeLeft: => @_moveSelection(-1)
+        swipeRight: => @_moveSelection(1)
+      )
+
       $(window).resize(@_recalculateWidth)
 
     render: =>
@@ -85,6 +92,7 @@ do ->
       @_toggleKeyboard()
       @_togglePanes()
       @_toggleNavbar()
+      @_toggleSwiping()
 
     _toggleKeyboard: =>
       # Pause or unpause hotkeys.
@@ -110,6 +118,14 @@ do ->
       else
         @$el.removeClass('expanded')
 
+    _toggleSwiping: =>
+      if @settingsModel.get('onMobile')
+        @$el.swipe('enable')
+        @undelegateEvents()
+      else
+        @$el.swipe('disable')
+        @delegateEvents()
+
     _toggleVisibility: =>
       if @session.userInfo.get('username')?
         @$el.show()
@@ -122,6 +138,7 @@ do ->
       @_setSelection()
 
     _moveSelection: (diff, e) =>
+      console.log diff
       # Keep our selected position within proper bounds.
       @selectedPosition = @selectedPosition - diff
       @selectedPosition = Math.min(@selectedPosition, @childViews.length - 1)
@@ -186,6 +203,12 @@ do ->
 
       e?.preventDefault()
       e?.stopPropagation()
+
+    _handleSwipeLeft: (e) =>
+      @_moveSelection(-1, e)
+
+    _handleSwipeRight: (e) =>
+      @_moveSelection(1, e)
 
     _toggleNavbarSetting: (e)=>
       @settingsModel.set 'showNavbar', !@settingsModel.get('showNavbar')
@@ -276,9 +299,11 @@ do ->
       if model.get('selected')
         @_moveSelection(1)
 
-      # Show a no-panes message if there are no panes
+      # Show a no-panes message if there are no panes.
+      # Also make sure the navbar is out and we can see it.
       if @messageLists.length == 0
         @$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'))
+        @session.settingsModel.set('showNavbar', true)
 
     _recalculateWidth: =>
       # Tell all the child views to recalculate their width.

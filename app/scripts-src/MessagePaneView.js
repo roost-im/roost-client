@@ -89,7 +89,8 @@
         this.currentTop = 0;
         this.currentBottom = this.model.get('messages').length + 2;
         this.composeView = new com.roost.ComposeBar({
-          paneModel: this.model
+          paneModel: this.model,
+          settings: this.session.settingsModel
         });
         this.composeView.render();
         this.$el.append(this.composeView.$el);

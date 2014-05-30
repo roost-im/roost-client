@@ -76,7 +76,7 @@ do ->
       @$('.time.from-now').text(@message.get('time').fromNow())
 
     updateColors: =>
-      string = @message.get('class')
+      string = @message.get('classKey')
       color = shadeColor(stringToColor(string), 0.5)
       lighterColor = shadeColor(color, 0.4)
 

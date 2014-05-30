@@ -33,6 +33,7 @@
 
       ComposeBar.prototype.initialize = function(options) {
         this.paneModel = options.paneModel;
+        this.settings = options.settings;
         this.listenTo(this.paneModel, 'change:showCompose change:composeFields change:selected change:filters', this.render);
         return this.listenTo(this.paneModel, 'change:sending', this._updateButton);
       };
@@ -60,14 +61,18 @@
       };
 
       ComposeBar.prototype._showCompose = function() {
-        return this.paneModel.set('showCompose', true);
+        this.paneModel.set('showCompose', true);
+        if (this.settings.get('onMobile')) {
+          return this.settings.set('showNavbar', false);
+        }
       };
 
       ComposeBar.prototype._hideCompose = function() {
-        return this.paneModel.set({
+        this.paneModel.set({
           showCompose: false,
           composeFields: {}
         });
+        return this.settings.set('showNavbar', true);
       };
 
       ComposeBar.prototype._jumpToBottom = function() {

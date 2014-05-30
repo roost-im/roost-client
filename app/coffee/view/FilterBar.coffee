@@ -61,6 +61,11 @@ do ->
       # Show or hide input boxes
       @paneModel.set('showFilters', !@paneModel.get('showFilters'))
 
+      if @session.settingsModel.get('onMobile') and @paneModel.get('showFilters')
+        @session.settingsModel.set('showNavbar', false)
+      else
+        @session.settingsModel.set('showNavbar', true)
+
     _removeFilters: =>
       # Clears filters, prompting a reload.  Doesn't reset position
       @paneModel.set

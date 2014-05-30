@@ -82,6 +82,7 @@ do ->
       # Create the message composing view
       @composeView = new com.roost.ComposeBar
         paneModel: @model
+        settings: @session.settingsModel
       @composeView.render()
       @$el.append @composeView.$el
 

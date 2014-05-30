@@ -48,9 +48,11 @@ html, body {
 
 @media only screen and (max-width: 500px) {
   .navbar {
-    height: 0px !important;
+    .title {
+      display: none !important;
+    }
 
-    * {
+    .user-info {
       display: none !important;
     }
   }
@@ -60,7 +62,7 @@ html, body {
   }
 
   .message-pane {
-    top: 0px !important;
+    overflow-x: hidden;
 
     .message-view {
       .signature {
@@ -74,12 +76,16 @@ html, body {
       padding: 0px 10px 0px 10px;
     }
 
-    span, .remove {
+    span {
       display: none !important;
     }
 
+    .remove {
+      margin-right: 13px !important;
+    }
+
     .filters {
-      margin-right: 0px !important;
+      margin-right: 25px !important;
     }
   }
 
