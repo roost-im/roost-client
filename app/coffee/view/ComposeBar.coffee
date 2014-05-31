@@ -2,14 +2,15 @@ do ->
   class com.roost.ComposeBar extends Backbone.View
     className: 'compose-bar'
 
-    events:
-      'click .compose': '_showCompose'
-      'click .close': '_hideCompose'
-      'click .to-bottom': '_jumpToBottom'
-      'click .send': '_sendMessage'
-
-      'keydown input': '_handleInputsKey'
-      'keydown textarea': '_handleInputsKey'
+    events: ->
+      eventsHash = {}
+      eventsHash["#{com.roost.CLICK_EVENT} .compose"] = '_showCompose'
+      eventsHash["#{com.roost.CLICK_EVENT} .close"] = '_hideCompose'
+      eventsHash["#{com.roost.CLICK_EVENT} .to-bottom"] = '_jumpToBottom'
+      eventsHash["#{com.roost.CLICK_EVENT} .send"] = '_sendMessage'
+      eventsHash['keydown input'] = '_handleInputsKey'
+      eventsHash['keydown textarea'] = '_handleInputsKey'
+      return eventsHash
 
     initialize: (options) =>
       @paneModel = options.paneModel
@@ -29,7 +30,7 @@ do ->
       composeFields = _.defaults({}, @paneModel.get('composeFields'), defaultFields)
 
       template = com.roost.templates['ComposeBar']
-      @$el.append template(_.defaults({composeFields: composeFields}, @paneModel.attributes))
+      @$el.append template(_.defaults({composeFields: composeFields}, @paneModel.attributes, @settings.attributes))
 
       # Set full opacity class if this pane is selected
       if @paneModel.get('selected')

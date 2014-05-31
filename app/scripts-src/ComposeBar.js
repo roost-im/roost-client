@@ -23,13 +23,16 @@
 
       ComposeBar.prototype.className = 'compose-bar';
 
-      ComposeBar.prototype.events = {
-        'click .compose': '_showCompose',
-        'click .close': '_hideCompose',
-        'click .to-bottom': '_jumpToBottom',
-        'click .send': '_sendMessage',
-        'keydown input': '_handleInputsKey',
-        'keydown textarea': '_handleInputsKey'
+      ComposeBar.prototype.events = function() {
+        var eventsHash;
+        eventsHash = {};
+        eventsHash["" + com.roost.CLICK_EVENT + " .compose"] = '_showCompose';
+        eventsHash["" + com.roost.CLICK_EVENT + " .close"] = '_hideCompose';
+        eventsHash["" + com.roost.CLICK_EVENT + " .to-bottom"] = '_jumpToBottom';
+        eventsHash["" + com.roost.CLICK_EVENT + " .send"] = '_sendMessage';
+        eventsHash['keydown input'] = '_handleInputsKey';
+        eventsHash['keydown textarea'] = '_handleInputsKey';
+        return eventsHash;
       };
 
       ComposeBar.prototype.initialize = function(options) {
@@ -47,7 +50,7 @@
         template = com.roost.templates['ComposeBar'];
         this.$el.append(template(_.defaults({
           composeFields: composeFields
-        }, this.paneModel.attributes)));
+        }, this.paneModel.attributes, this.settings.attributes)));
         if (this.paneModel.get('selected')) {
           this.$el.addClass('selected');
         } else {

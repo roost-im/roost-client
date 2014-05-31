@@ -16,8 +16,11 @@
 
       LoginView.prototype.className = 'login-view';
 
-      LoginView.prototype.events = {
-        'click .login': '_handleLogin'
+      LoginView.prototype.events = function() {
+        var eventsHash;
+        eventsHash = {};
+        eventsHash["" + com.roost.CLICK_EVENT + " .login"] = '_handleLogin';
+        return eventsHash;
       };
 
       LoginView.prototype.initialize = function(options) {

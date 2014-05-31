@@ -29,13 +29,16 @@
 
       MessageView.prototype.className = 'message-view';
 
-      MessageView.prototype.events = {
-        'click .reply': 'openReplyBox',
-        'click .pm': 'openMessageBox',
-        'click .quote': 'openQuoteBox',
-        'click .msg-class': '_filterClass',
-        'click .msg-instance': '_filterInstance',
-        'click .chat-header': '_filterConversation'
+      MessageView.prototype.events = function() {
+        var eventsHash;
+        eventsHash = {};
+        eventsHash["" + com.roost.CLICK_EVENT + " .reply"] = 'openReplyBox';
+        eventsHash["" + com.roost.CLICK_EVENT + " .pm"] = 'openMessageBox';
+        eventsHash["" + com.roost.CLICK_EVENT + " .quote"] = 'openQuoteBox';
+        eventsHash["" + com.roost.CLICK_EVENT + " .msg-class"] = '_filterClass';
+        eventsHash["" + com.roost.CLICK_EVENT + " .msg-instance"] = '_filterInstance';
+        eventsHash["" + com.roost.CLICK_EVENT + " .chat-header"] = '_filterConversation';
+        return eventsHash;
       };
 
       MessageView.prototype.initialize = function(options) {
@@ -107,7 +110,7 @@
       MessageView.prototype.openReplyBox = function() {
         var recip;
         recip = this.message.get('isPersonal') ? this.message.get('conversation') : '';
-        return this.paneModel.set({
+        this.paneModel.set({
           composeFields: {
             "class": this.message.get('class'),
             instance: this.message.get('instance'),
@@ -116,12 +119,15 @@
           },
           showCompose: true
         });
+        if (this.session.settingsModel.get('onMobile')) {
+          return this.session.settingsModel.set('showNavbar', false);
+        }
       };
 
       MessageView.prototype.openMessageBox = function() {
         var recip;
         recip = this.message.get('isPersonal') ? this.message.get('conversation') : this.message.get('sender');
-        return this.paneModel.set({
+        this.paneModel.set({
           composeFields: {
             "class": 'message',
             instance: 'personal',
@@ -130,12 +136,15 @@
           },
           showCompose: true
         });
+        if (this.session.settingsModel.get('onMobile')) {
+          return this.session.settingsModel.set('showNavbar', false);
+        }
       };
 
       MessageView.prototype.openQuoteBox = function() {
         var quoted;
         quoted = QUOTE_LINE_PREFIX + this.message.get('message').replace(/\n/g, "\n" + QUOTE_LINE_PREFIX) + '\n\n';
-        return this.paneModel.set({
+        this.paneModel.set({
           composeFields: {
             "class": this.message.get('class'),
             instance: this.message.get('instance'),
@@ -144,6 +153,9 @@
           },
           showCompose: true
         });
+        if (this.session.settingsModel.get('onMobile')) {
+          return this.session.settingsModel.set('showNavbar', false);
+        }
       };
 
       MessageView.prototype._applyFilter = function(evt, options) {

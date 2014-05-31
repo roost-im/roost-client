@@ -1,3 +1,5 @@
+com.roost.CLICK_EVENT = 'click'
+
 $('document').ready( =>
   # Create the session
   session = new com.roost.RoostSession()
@@ -38,16 +40,14 @@ $('document').ready( =>
   # Add the first pane if the user is logged in
   if session.userInfo.get('username')?
     session.addPane {}
-
-  # Check to change various settings when screen size changes
-  $(window).resize((-> checkSettings(session)))
 )
 
 checkSettings = (session) ->
   # Let's not toggle the pane/navbar settings for now, just to allow
   # panes in mobile.
   settingsModel = session.settingsModel
-  if $('body').width() < 500
+  if window.mobilecheck()
+    com.roost.CLICK_EVENT = 'touchend'
     settingsModel.set 
       onMobile: true
   else

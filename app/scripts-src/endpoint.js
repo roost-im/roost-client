@@ -1,6 +1,8 @@
 (function() {
   var checkSettings;
 
+  com.roost.CLICK_EVENT = 'click';
+
   $('document').ready((function(_this) {
     return function() {
       var authController, loginView, messagePane, navbar, session, subController;
@@ -33,18 +35,16 @@
       messagePane.render();
       $('body').append(messagePane.$el);
       if (session.userInfo.get('username') != null) {
-        session.addPane({});
+        return session.addPane({});
       }
-      return $(window).resize((function() {
-        return checkSettings(session);
-      }));
     };
   })(this));
 
   checkSettings = function(session) {
     var settingsModel;
     settingsModel = session.settingsModel;
-    if ($('body').width() < 500) {
+    if (window.mobilecheck()) {
+      com.roost.CLICK_EVENT = 'touchend';
       return settingsModel.set({
         onMobile: true
       });

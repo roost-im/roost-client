@@ -13,6 +13,10 @@
     top: 0px;
   }
 
+  &.mobile {
+    overflow-x: hidden;
+  }
+
   .message-pane-view {
     height: 100%;
     overflow-y: scroll;

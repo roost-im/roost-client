@@ -163,6 +163,8 @@
   transition: top 0.2s ease-out; }
   .message-pane.expanded {
     top: 0px; }
+  .message-pane.mobile {
+    overflow-x: hidden; }
   .message-pane .message-pane-view {
     height: 100%;
     overflow-y: scroll;
@@ -679,10 +681,8 @@ html, body {
   .mobile-login {
     display: inline-block !important; }
 
-  .message-pane {
-    overflow-x: hidden; }
-    .message-pane .message-view .signature {
-      width: 200px !important; }
+  .message-pane .message-view .signature {
+    width: 200px !important; }
 
   .filter-bar .top-bar {
     padding: 0px 10px 0px 10px; }
@@ -695,14 +695,15 @@ html, body {
 
   .compose-bar .single-bar, .compose-bar .top-bar {
     padding: 0px 10px 0px 10px; }
+  .compose-bar .composer {
+    margin-top: 5px !important;
+    height: 180px !important; }
 
   .no-panes {
     font-size: 16px !important; }
 
-  .login-view {
-    top: 10px !important; }
-    .login-view h1 {
-      font-size: 30px !important; } }
+  .login-view h1 {
+    font-size: 30px !important; } }
 @media only screen and (max-width: 720px) {
   .navbar .user-info span {
     display: none !important; }

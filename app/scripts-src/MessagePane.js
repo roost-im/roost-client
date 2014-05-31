@@ -46,8 +46,11 @@
 
       MessagePane.prototype.className = 'message-pane';
 
-      MessagePane.prototype.events = {
-        'click .message-pane-view': '_setSelectionOnClick'
+      MessagePane.prototype.events = function() {
+        var eventsHash;
+        eventsHash = {};
+        eventsHash["" + com.roost.CLICK_EVENT + " .message-pane-view"] = '_setSelectionOnClick';
+        return eventsHash;
       };
 
       MessagePane.prototype.initialize = function(options) {
@@ -132,6 +135,9 @@
         if (this.childViews.length > 0) {
           this._setSelection();
         }
+        if (this.settingsModel.get('onMobile')) {
+          this.$el.addClass('mobile');
+        }
         this.subView = new com.roost.SubscriptionPanel({
           settings: this.settingsModel,
           subscriptions: this.session.subscriptions,
@@ -190,8 +196,7 @@
           this.$el.swipe('enable');
           return this.undelegateEvents();
         } else {
-          this.$el.swipe('disable');
-          return this.delegateEvents();
+          return this.$el.swipe('disable');
         }
       };
 

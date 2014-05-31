@@ -21,12 +21,15 @@
 
       FilterBar.prototype.className = 'filter-bar';
 
-      FilterBar.prototype.events = {
-        'click .filters': '_toggleFilters',
-        'click .clear-filters': '_removeFilters',
-        'click .remove': '_removePane',
-        'click .set-filters': '_setFilters',
-        'keyup input': '_handleInputKey'
+      FilterBar.prototype.events = function() {
+        var eventsHash;
+        eventsHash = {};
+        eventsHash["" + com.roost.CLICK_EVENT + " .filters"] = '_toggleFilters';
+        eventsHash["" + com.roost.CLICK_EVENT + " .clear-filters"] = '_removeFilters';
+        eventsHash["" + com.roost.CLICK_EVENT + " .remove"] = '_removePane';
+        eventsHash["" + com.roost.CLICK_EVENT + " .set-filters"] = '_setFilters';
+        eventsHash['keydown input'] = '_handleInputKey';
+        return eventsHash;
       };
 
       FilterBar.prototype.initialize = function(options) {

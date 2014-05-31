@@ -62,8 +62,6 @@ html, body {
   }
 
   .message-pane {
-    overflow-x: hidden;
-
     .message-view {
       .signature {
         width: 200px !important;
@@ -93,6 +91,11 @@ html, body {
     .single-bar, .top-bar { 
       padding: 0px 10px 0px 10px;
     }
+
+    .composer {
+      margin-top: 5px !important;
+      height: 180px !important;
+    }
   }
 
   .no-panes {
@@ -100,8 +103,6 @@ html, body {
   }
 
   .login-view {
-    top: 10px !important;
-
     h1 {
       font-size: 30px !important;
     }

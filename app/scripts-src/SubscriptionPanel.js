@@ -21,12 +21,15 @@
 
       SubscriptionPanel.prototype.className = 'subscription-panel';
 
-      SubscriptionPanel.prototype.events = {
-        'click .subscribe': '_addSubscription',
-        'click .close-td': '_removeSubscription',
-        'click .class-td': '_addClassPane',
-        'click .remove': '_hide',
-        'keyup input': '_handleInputKey'
+      SubscriptionPanel.prototype.events = function() {
+        var eventsHash;
+        eventsHash = {};
+        eventsHash["" + com.roost.CLICK_EVENT + " .subscribe"] = '_addSubscription';
+        eventsHash["" + com.roost.CLICK_EVENT + " .close-td"] = '_removeSubscription';
+        eventsHash["" + com.roost.CLICK_EVENT + " .class-td"] = '_addClassPane';
+        eventsHash["" + com.roost.CLICK_EVENT + " .remove"] = '_hide';
+        eventsHash['keyup input'] = '_handleInputKey';
+        return eventsHash;
       };
 
       SubscriptionPanel.prototype.initialize = function(options) {

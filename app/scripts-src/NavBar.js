@@ -23,14 +23,17 @@
 
       NavBar.prototype.className = 'navbar';
 
-      NavBar.prototype.events = {
-        'click .logout': '_handleLogout',
-        'click .add-pane': '_addPane',
-        'click .personal-message': '_addPersonalMessagePane',
-        'click .user-info': '_toggleSubs',
-        'click .help': '_openHelp',
-        'click .toggle-panes': '_togglePanes',
-        'click .toggle-keyboard': '_toggleKeyboard'
+      NavBar.prototype.events = function() {
+        var eventsHash;
+        eventsHash = {};
+        eventsHash["" + com.roost.CLICK_EVENT + " .logout"] = '_handleLogout';
+        eventsHash["" + com.roost.CLICK_EVENT + " .add-pane"] = '_addPane';
+        eventsHash["" + com.roost.CLICK_EVENT + " .personal-message"] = '_addPersonalMessagePane';
+        eventsHash["" + com.roost.CLICK_EVENT + " .user-info"] = '_toggleSubs';
+        eventsHash["" + com.roost.CLICK_EVENT + " .help"] = '_openHelp';
+        eventsHash["" + com.roost.CLICK_EVENT + " .toggle-panes"] = '_togglePanes';
+        eventsHash["" + com.roost.CLICK_EVENT + " .toggle-keyboard"] = '_toggleKeyboard';
+        return eventsHash;
       };
 
       NavBar.prototype.initialize = function(options) {

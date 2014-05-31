@@ -16,19 +16,33 @@ function program1(depth0,data) {
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.composeFields)),stack1 == null || stack1 === false ? stack1 : stack1.instance)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "\"></input>\n    <input class=\"recipient-input\" type=\"text\" placeholder=\"Recipient\" value=\""
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.composeFields)),stack1 == null || stack1 === false ? stack1 : stack1.recipient)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
-    + "\"></input>\n    <textarea class=\"content-input\" rows=\"6\" placeholder=\"Type your message here\">"
+    + "\"></input>\n    <textarea class=\"content-input\" rows=\"";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.onMobile), {hash:{},inverse:self.program(4, program4, data),fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\" placeholder=\"Type your message here\">"
     + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.composeFields)),stack1 == null || stack1 === false ? stack1 : stack1.content)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
     + "</textarea>\n    <button class=\"btn send\">Send</button>\n  </div>\n";
   return buffer;
   }
+function program2(depth0,data) {
+  
+  
+  return "2";
+  }
 
-function program3(depth0,data) {
+function program4(depth0,data) {
+  
+  
+  return "6";
+  }
+
+function program6(depth0,data) {
   
   
   return "\n  <div class=\"single-bar\">\n    <div class=\"compose\">\n      <i class=\"fa fa-send\"></i><span>&nbsp;&nbsp;Compose Message</span>\n    </div>\n    <div class=\"to-bottom\">\n      <i class=\"fa fa-chevron-down\"></i><span>&nbsp;&nbsp;Bottom</span>\n    </div>\n  </div>\n";
   }
 
-  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showCompose), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.showCompose), {hash:{},inverse:self.program(6, program6, data),fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { return stack1; }
   else { return ''; }
   });

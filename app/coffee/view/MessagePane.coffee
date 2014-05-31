@@ -6,8 +6,10 @@ do ->
   class com.roost.MessagePane extends Backbone.View
     className: 'message-pane'
 
-    events:
-      'click .message-pane-view': '_setSelectionOnClick'
+    events: ->
+      eventsHash = {}
+      eventsHash["#{com.roost.CLICK_EVENT} .message-pane-view"] = '_setSelectionOnClick'
+      return eventsHash
 
     initialize: (options) =>
       @session = options.session
@@ -79,6 +81,10 @@ do ->
       if @childViews.length > 0
         @_setSelection()
 
+      # Prevent scrolling in X, rely on swiping
+      if @settingsModel.get('onMobile')
+        @$el.addClass('mobile')
+
       @subView = new com.roost.SubscriptionPanel
         settings: @settingsModel
         subscriptions: @session.subscriptions
@@ -124,7 +130,6 @@ do ->
         @undelegateEvents()
       else
         @$el.swipe('disable')
-        @delegateEvents()
 
     _toggleVisibility: =>
       if @session.userInfo.get('username')?

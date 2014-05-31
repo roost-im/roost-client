@@ -5,14 +5,15 @@ do ->
   class com.roost.MessageView extends Backbone.View
     className: 'message-view'
 
-    events:
-      'click .reply': 'openReplyBox'
-      'click .pm': 'openMessageBox'
-      'click .quote': 'openQuoteBox'
-
-      'click .msg-class': '_filterClass'
-      'click .msg-instance': '_filterInstance'
-      'click .chat-header': '_filterConversation'
+    events: ->
+      eventsHash = {}
+      eventsHash["#{com.roost.CLICK_EVENT} .reply"] = 'openReplyBox'
+      eventsHash["#{com.roost.CLICK_EVENT} .pm"] = 'openMessageBox'
+      eventsHash["#{com.roost.CLICK_EVENT} .quote"] = 'openQuoteBox'
+      eventsHash["#{com.roost.CLICK_EVENT} .msg-class"] = '_filterClass'
+      eventsHash["#{com.roost.CLICK_EVENT} .msg-instance"] = '_filterInstance'
+      eventsHash["#{com.roost.CLICK_EVENT} .chat-header"] = '_filterConversation'
+      return eventsHash
 
     initialize: (options) =>
       @message = options.message
@@ -109,6 +110,9 @@ do ->
           content: ''
         showCompose: true
 
+      if @session.settingsModel.get('onMobile')
+        @session.settingsModel.set('showNavbar', false)
+
     openMessageBox: =>
       recip = if @message.get('isPersonal') then @message.get('conversation') else @message.get('sender')
 
@@ -120,6 +124,9 @@ do ->
           recipient: recip
           content: ''
         showCompose: true
+
+      if @session.settingsModel.get('onMobile')
+        @session.settingsModel.set('showNavbar', false)
 
     openQuoteBox: =>
       # Build the quoted message string using the prefix defined above
@@ -133,6 +140,9 @@ do ->
           recipient: ''
           content: quoted
         showCompose: true
+
+      if @session.settingsModel.get('onMobile')
+        @session.settingsModel.set('showNavbar', false)
 
     _applyFilter: (evt, options) =>
       # If holding alt, create a new pane and kill the event.

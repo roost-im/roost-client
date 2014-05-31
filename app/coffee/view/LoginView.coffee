@@ -2,8 +2,10 @@ do ->
   class com.roost.LoginView extends Backbone.View
     className: 'login-view'
 
-    events:
-      'click .login': '_handleLogin'
+    events: ->
+      eventsHash = {}
+      eventsHash["#{com.roost.CLICK_EVENT} .login"] = '_handleLogin'
+      return eventsHash
 
     initialize: (options) =>
       @userInfo = options.userInfo
