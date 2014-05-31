@@ -1,3 +1,10 @@
+Handlebars.registerHelper('ztext', (text) ->
+  # ztextToDOM returns a fragment and we need to get it as a string to avoid
+  # Handlebars escaping it for us.
+  div = document.createElement('div')
+  div.appendChild(ztextToDOM(parseZtext(text)))
+  return new Handlebars.SafeString(div.innerHTML))
+
 do ->
   TIME_FORMAT = 'MMMM Do YYYY, h:mm:ss a'
   QUOTE_LINE_PREFIX = '> '
@@ -111,7 +118,7 @@ do ->
 
     openReplyBox: =>
       # Fill in proper fields and open the compose box
-      recip = if @message.get('isPersonal') then @message.get('conversation') else '' 
+      recip = if @message.get('isPersonal') then @message.get('conversation') else ''
 
       @paneModel.set
         composeFields:
@@ -166,16 +173,16 @@ do ->
         @paneModel.set options
 
     _filterClass: (evt) =>
-      options = 
-        filters: 
+      options =
+        filters:
           class_key_base: @message.get('classKeyBase')
         position: @message.get('id')
         posScroll: @$el.offset().top
       @_applyFilter(evt, options)
 
     _filterInstance: (evt) =>
-      options = 
-        filters: 
+      options =
+        filters:
           class_key_base: @message.get('classKeyBase')
           instance_key_base: @message.get('instanceKeyBase')
         position: @message.get('id')
@@ -185,7 +192,7 @@ do ->
     _filterConversation: (evt) =>
       # Include class and instance so the filter bar coloring code doesn't
       # get yet another control flow change.
-      options = 
+      options =
         filters:
           class_key_base: @message.get('classKeyBase')
           instance_key_base: @message.get('instanceKeyBase')
@@ -193,4 +200,3 @@ do ->
         position: @message.get('id')
         posScroll: @$el.offset().top
       @_applyFilter(evt, options)
-

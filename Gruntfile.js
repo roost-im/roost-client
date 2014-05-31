@@ -52,7 +52,7 @@ module.exports = function (grunt) {
     // .htaccess and in the dev server.
     var websocketHost = appConfig.server.replace(/^http/, 'ws');
     var csp = "default-src 'self' https://themes.googleusercontent.com; object-src 'none'; img-src 'self' https://secure.gravatar.com; connect-src " +
-        appConfig.server + ' ' + websocketHost;
+        appConfig.server + ' ' + websocketHost + "; style-src 'self' 'unsafe-inline'";
 
     var headers = {
         // Standard header; Chrome 25+

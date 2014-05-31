@@ -193,7 +193,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 this["com"]["roost"]["templates"]["MessageView"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+  var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
 
 function program1(depth0,data) {
   
@@ -258,15 +258,11 @@ function program7(depth0,data) {
     + "</span>\n    ";
   stack1 = helpers.unless.call(depth0, (depth0 && depth0.auth), {hash:{},inverse:self.noop,fn:self.program(7, program7, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
-  buffer += "\n  </div>\n  <div class=\"message-block\">\n    <pre class=\"message\">\n      ";
-  if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n    </pre>\n    <div class=\"bottom-row\">\n      <div class=\"signature\">\n        ";
-  if (helper = helpers.signature) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-  else { helper = (depth0 && depth0.signature); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-  buffer += escapeExpression(stack1)
-    + "\n      </div>\n      <div class=\"controls\">\n        <i class=\"fa fa-quote-right quote\"></i>\n        <i class=\"fa fa-reply reply\"></i>\n        <i class=\"fa fa-envelope pm\"></i>\n      </div>\n    </div>\n  </div>\n</div>";
+  buffer += "\n  </div>\n  <div class=\"message-block\">\n    <pre class=\"message\">\n      "
+    + escapeExpression((helper = helpers.ztext || (depth0 && depth0.ztext),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.message), options) : helperMissing.call(depth0, "ztext", (depth0 && depth0.message), options)))
+    + "\n    </pre>\n    <div class=\"bottom-row\">\n      <div class=\"signature\">\n        "
+    + escapeExpression((helper = helpers.ztext || (depth0 && depth0.ztext),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.signature), options) : helperMissing.call(depth0, "ztext", (depth0 && depth0.signature), options)))
+    + "\n      </div>\n      <div class=\"controls\">\n        <i class=\"fa fa-quote-right quote\"></i>\n        <i class=\"fa fa-reply reply\"></i>\n        <i class=\"fa fa-envelope pm\"></i>\n      </div>\n    </div>\n  </div>\n</div>\n";
   return buffer;
   });
 
