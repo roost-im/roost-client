@@ -220,10 +220,11 @@
     border: 2px solid black; }
   .message-view .header {
     box-sizing: border-box;
-    height: 25px;
-    line-height: 24px;
+    height: 20px;
+    line-height: 19px;
     background-color: #CCC;
-    position: relative; }
+    position: relative;
+    font-size: 14px; }
     .message-view .header:hover .time.from-now {
       opacity: 0; }
     .message-view .header:hover .time.absolute {
@@ -260,7 +261,7 @@
     .message-view .header .divider {
       display: inline-block;
       border-left: 5px solid #BBB;
-      border-bottom: 25px solid transparent;
+      border-bottom: 20px solid transparent;
       width: 0;
       height: 0;
       float: left; }
@@ -291,8 +292,8 @@
       font-weight: 700; }
       .message-view .content .sender .gravatar {
         border: 1px solid #BBB;
-        width: 40px;
-        height: 40px; }
+        width: 32px;
+        height: 32px; }
       .message-view .content .sender .not-verified {
         text-transform: uppercase;
         color: red;
@@ -302,7 +303,7 @@
       width: 100%; }
       .message-view .content .message-block .message {
         padding: 3px;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
         word-break: break-all;
         word-wrap: break-word;
         margin-top: 0px;
