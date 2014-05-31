@@ -47,7 +47,7 @@ do ->
       # Create a new pane with personal message filtering
       @session.addPane 
         filters:
-          class_key: 'message'
+          class_key_base: 'message'
           is_personal: true
 
     _togglePanes: =>
