@@ -2,7 +2,7 @@ Handlebars.registerHelper('ztext', (text) ->
   # ztextToDOM returns a fragment and we need to get it as a string to avoid
   # Handlebars escaping it for us.
   div = document.createElement('div')
-  div.appendChild(ztextToDOM(parseZtext(text)))
+  div.appendChild(com.roost.ztext.ztextToDOM(com.roost.ztext.parseZtext(text)))
   return new Handlebars.SafeString(div.innerHTML))
 
 do ->
