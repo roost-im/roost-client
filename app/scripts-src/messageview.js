@@ -67,6 +67,10 @@
           convoPartner: convoPartner
         })));
         this.$('.message').linkify();
+        this.$('a').attr({
+          target: '_blank',
+          tabindex: -1
+        });
         this.updatePosition();
         this.updateTime();
         return this.updateColors();

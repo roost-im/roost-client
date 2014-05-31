@@ -128,8 +128,9 @@
             content: wrapText(this.$('.content-input').val())
           });
           this.paneModel.set('sending', true);
-          return this.paneModel.trigger('sendMessage');
+          this.paneModel.trigger('sendMessage');
         }
+        return this._hideCompose();
       };
 
       ComposeBar.prototype._updateButton = function() {

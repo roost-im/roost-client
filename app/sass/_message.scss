@@ -138,7 +138,8 @@
         word-break: break-all;
         word-wrap: break-word;
         margin-top: 0px;
-        white-space: pre-line;
+        white-space: pre-wrap;
+        text-indent: -42px;
         font-size: 14px;
         font-family: $monospace-font;
 

@@ -113,6 +113,8 @@ do ->
         @paneModel.set('sending', true)
         @paneModel.trigger 'sendMessage'
 
+      @_hideCompose()
+
     _updateButton: =>
       # Disable send button if we are sending
       if @paneModel.get('sending')

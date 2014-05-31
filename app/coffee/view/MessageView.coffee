@@ -61,6 +61,11 @@ do ->
       # ztextToDOM(@message.get('message'), @$('.message')[0])
       @$('.message').linkify()
 
+      # jQuery linkify was supposed to do this but for some reason is failing.
+      @$('a').attr
+        target: '_blank'
+        tabindex: -1
+
       # Various updates to make sure the view is decorated properly.
       # Done separate from handlebars since these things have a habit of changing.
       @updatePosition()
