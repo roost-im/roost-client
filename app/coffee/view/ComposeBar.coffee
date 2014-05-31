@@ -37,11 +37,25 @@ do ->
       else
         @$el.removeClass('selected')
 
-      # Bring focus to class box OR message box in case stuff filled already
-      if composeFields.class != ''
+      @_focusProperInitialField(composeFields)
+
+    _focusProperInitialField: (composeFields) =>
+      if composeFields.class != '' and composeFields.instance != '' and composeFields.recipient != ''
         # Hack to get the cursor to the end of the input
         oldVal = @$('.content-input').val()
         @$('.content-input').focus().val("").val(oldVal)
+      # If it's a personal message filter but NO RECIPIENT yet, focus recipient
+      else if @paneModel.get('filters').is_personal and composeFields.recipient == ''
+        @$('.recipient-input').focus()
+      # If we have a class and an instance, focus on the content at the end
+      else if composeFields.class != '' and composeFields.instance != ''
+        # Hack to get the cursor to the end of the input
+        oldVal = @$('.content-input').val()
+        @$('.content-input').focus().val("").val(oldVal)
+      # ...if we have a class and no instance, focus on the instance
+      else if composeFields.class != '' and composeFields.instance == ''
+        @$('.instance-input').focus()
+      # Finally, if we have nothing, just focus the class input
       else
         @$('.class-input').focus()
 
@@ -75,10 +89,13 @@ do ->
         content: ''
       filters = @paneModel.get('filters')
 
-      if filters.class_key? or filters.class_key_base
-        filteredFields.class = if filters.class_key? then filters.class_key else filters.class_key_base
-        if filters.instance_key?
-          filteredFields.instance = filters.instance_key
+      if filters.is_personal
+        filteredFields.class = 'message'
+        filteredFields.instance = 'personal'
+      else if filters.class_key_base
+        filteredFields.class = filters.class_key_base
+        if filters.instance_key_base?
+          filteredFields.instance = filters.instance_key_base
 
       return filteredFields
 

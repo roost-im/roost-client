@@ -15,6 +15,7 @@
         this._jumpToBottom = __bind(this._jumpToBottom, this);
         this._hideCompose = __bind(this._hideCompose, this);
         this._showCompose = __bind(this._showCompose, this);
+        this._focusProperInitialField = __bind(this._focusProperInitialField, this);
         this.render = __bind(this.render, this);
         this.initialize = __bind(this.initialize, this);
         return ComposeBar.__super__.constructor.apply(this, arguments);
@@ -39,7 +40,7 @@
       };
 
       ComposeBar.prototype.render = function() {
-        var composeFields, defaultFields, oldVal, template;
+        var composeFields, defaultFields, template;
         this.$el.empty();
         defaultFields = this._getDefaultFields();
         composeFields = _.defaults({}, this.paneModel.get('composeFields'), defaultFields);
@@ -52,9 +53,21 @@
         } else {
           this.$el.removeClass('selected');
         }
-        if (composeFields["class"] !== '') {
+        return this._focusProperInitialField(composeFields);
+      };
+
+      ComposeBar.prototype._focusProperInitialField = function(composeFields) {
+        var oldVal;
+        if (composeFields["class"] !== '' && composeFields.instance !== '' && composeFields.recipient !== '') {
           oldVal = this.$('.content-input').val();
           return this.$('.content-input').focus().val("").val(oldVal);
+        } else if (this.paneModel.get('filters').is_personal && composeFields.recipient === '') {
+          return this.$('.recipient-input').focus();
+        } else if (composeFields["class"] !== '' && composeFields.instance !== '') {
+          oldVal = this.$('.content-input').val();
+          return this.$('.content-input').focus().val("").val(oldVal);
+        } else if (composeFields["class"] !== '' && composeFields.instance === '') {
+          return this.$('.instance-input').focus();
         } else {
           return this.$('.class-input').focus();
         }
@@ -91,10 +104,13 @@
           content: ''
         };
         filters = this.paneModel.get('filters');
-        if ((filters.class_key != null) || filters.class_key_base) {
-          filteredFields["class"] = filters.class_key != null ? filters.class_key : filters.class_key_base;
-          if (filters.instance_key != null) {
-            filteredFields.instance = filters.instance_key;
+        if (filters.is_personal) {
+          filteredFields["class"] = 'message';
+          filteredFields.instance = 'personal';
+        } else if (filters.class_key_base) {
+          filteredFields["class"] = filters.class_key_base;
+          if (filters.instance_key_base != null) {
+            filteredFields.instance = filters.instance_key_base;
           }
         }
         return filteredFields;

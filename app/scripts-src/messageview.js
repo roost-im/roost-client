@@ -160,7 +160,7 @@
         var options;
         options = {
           filters: {
-            class_key: this.message.get('classKey')
+            class_key_base: this.message.get('classKeyBase')
           },
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
@@ -173,7 +173,7 @@
         options = {
           filters: {
             class_key_base: this.message.get('classKeyBase'),
-            instance_key: this.message.get('instanceKey')
+            instance_key_base: this.message.get('instanceKeyBase')
           },
           position: this.message.get('id'),
           posScroll: this.$el.offset().top
@@ -186,7 +186,7 @@
         options = {
           filters: {
             class_key_base: this.message.get('classKeyBase'),
-            instance_key: this.message.get('instanceKey'),
+            instance_key_base: this.message.get('instanceKeyBase'),
             conversation: this.message.get('conversation')
           },
           position: this.message.get('id'),

@@ -138,7 +138,6 @@ do ->
       @_setSelection()
 
     _moveSelection: (diff, e) =>
-      console.log diff
       # Keep our selected position within proper bounds.
       @selectedPosition = @selectedPosition - diff
       @selectedPosition = Math.min(@selectedPosition, @childViews.length - 1)
@@ -323,6 +322,7 @@ do ->
     # have to crummily shove it into the body from within this message pane. However,
     # it's so simple that I've chosen to just inject it into the body from here.
     # If this view gets more complex, please please please give it its own view class.
+    # Currently duplicated in the Navbar...
     _showHelp: =>
       if $('.modal-overlay').length == 0
         $('body').append com.roost.templates['HotkeyHelp']({})

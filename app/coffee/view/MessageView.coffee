@@ -147,7 +147,7 @@ do ->
     _filterClass: (evt) =>
       options = 
         filters: 
-          class_key: @message.get('classKey')
+          class_key_base: @message.get('classKeyBase')
         position: @message.get('id')
         posScroll: @$el.offset().top
       @_applyFilter(evt, options)
@@ -156,7 +156,7 @@ do ->
       options = 
         filters: 
           class_key_base: @message.get('classKeyBase')
-          instance_key: @message.get('instanceKey')
+          instance_key_base: @message.get('instanceKeyBase')
         position: @message.get('id')
         posScroll: @$el.offset().top
       @_applyFilter(evt, options)
@@ -167,7 +167,7 @@ do ->
       options = 
         filters:
           class_key_base: @message.get('classKeyBase')
-          instance_key: @message.get('instanceKey')
+          instance_key_base: @message.get('instanceKeyBase')
           conversation: @message.get('conversation')
         position: @message.get('id')
         posScroll: @$el.offset().top

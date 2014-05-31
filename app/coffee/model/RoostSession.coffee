@@ -47,7 +47,7 @@ do ->
       Mousetrap.bind('alt+n', (=> @addPane {}))
       Mousetrap.bind('alt+p', (=> @addPane 
         filters:
-          class_key: 'message'
+          class_key_base: 'message'
           is_personal: true
         )
       )

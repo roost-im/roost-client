@@ -209,7 +209,6 @@
       };
 
       MessagePane.prototype._moveSelection = function(diff, e) {
-        console.log(diff);
         this.selectedPosition = this.selectedPosition - diff;
         this.selectedPosition = Math.min(this.selectedPosition, this.childViews.length - 1);
         this.selectedPosition = Math.max(this.selectedPosition, 0);

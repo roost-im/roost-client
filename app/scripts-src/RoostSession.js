@@ -41,7 +41,7 @@
           return function() {
             return _this.addPane({
               filters: {
-                class_key: 'message',
+                class_key_base: 'message',
                 is_personal: true
               }
             });

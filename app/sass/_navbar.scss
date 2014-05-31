@@ -57,7 +57,11 @@
     }
   }
 
-  .personal-message, .add-pane, .toggle-keyboard, .toggle-panes {
+  .help {
+    font-size: 25px;
+  }
+
+  .personal-message, .add-pane, .toggle-keyboard, .toggle-panes, .help {
     float: right;
     cursor: pointer;
     margin-right: 25px;

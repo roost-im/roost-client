@@ -8,6 +8,8 @@
       __extends(NavBar, _super);
 
       function NavBar() {
+        this._hideHelp = __bind(this._hideHelp, this);
+        this._openHelp = __bind(this._openHelp, this);
         this._toggleSubs = __bind(this._toggleSubs, this);
         this._toggleKeyboard = __bind(this._toggleKeyboard, this);
         this._togglePanes = __bind(this._togglePanes, this);
@@ -26,6 +28,7 @@
         'click .add-pane': '_addPane',
         'click .personal-message': '_addPersonalMessagePane',
         'click .user-info': '_toggleSubs',
+        'click .help': '_openHelp',
         'click .toggle-panes': '_togglePanes',
         'click .toggle-keyboard': '_toggleKeyboard'
       };
@@ -83,6 +86,18 @@
 
       NavBar.prototype._toggleSubs = function() {
         return this.settings.set('showSubs', !this.settings.get('showSubs'));
+      };
+
+      NavBar.prototype._openHelp = function() {
+        if ($('.modal-overlay').length === 0) {
+          $('body').append(com.roost.templates['HotkeyHelp']({}));
+          return $('.close-help').click(this._hideHelp);
+        }
+      };
+
+      NavBar.prototype._hideHelp = function() {
+        $('.modal-overlay').remove();
+        return $('.modal').remove();
       };
 
       return NavBar;

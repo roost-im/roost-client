@@ -7,6 +7,7 @@ do ->
       'click .add-pane': '_addPane'
       'click .personal-message': '_addPersonalMessagePane'
       'click .user-info': '_toggleSubs'
+      'click .help': '_openHelp'
 
       'click .toggle-panes': '_togglePanes'
       'click .toggle-keyboard': '_toggleKeyboard'
@@ -60,3 +61,13 @@ do ->
     _toggleSubs: =>
       # Flip on/off showing subscriptions
       @settings.set 'showSubs', !@settings.get('showSubs')
+
+    # Help logic is duplicated between here and the MessagePane...
+    _openHelp: =>
+      if $('.modal-overlay').length == 0
+        $('body').append com.roost.templates['HotkeyHelp']({})
+        $('.close-help').click(@_hideHelp)
+
+    _hideHelp: =>
+      $('.modal-overlay').remove()
+      $('.modal').remove()

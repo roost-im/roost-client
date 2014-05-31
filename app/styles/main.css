@@ -124,7 +124,9 @@
       border-radius: 20px; }
     .navbar .user-info span {
       float: right; }
-  .navbar .personal-message, .navbar .add-pane, .navbar .toggle-keyboard, .navbar .toggle-panes {
+  .navbar .help {
+    font-size: 25px; }
+  .navbar .personal-message, .navbar .add-pane, .navbar .toggle-keyboard, .navbar .toggle-panes, .navbar .help {
     float: right;
     cursor: pointer;
     margin-right: 25px; }
@@ -707,6 +709,8 @@ html, body {
     display: none; }
   .navbar .personal-message span {
     display: none; }
+  .navbar .help {
+    display: none !important; }
 
   .no-panes {
     font-size: 16px !important; } }
