@@ -4,10 +4,12 @@
     {{#if filters.conversation}}
       Chat with {{filters.conversation}}
     {{else}}
-      {{#if filters.instance_key}}
-        <div class="msg-class">{{class}}</div>
-        <div class="divider"></div>
-        <div class="msg-instance">{{filters.instance_key}}</div>
+      {{#if filters.instance_key_base}}
+        {{#unless noClass}}
+          <div class="msg-class">{{class}}</div>
+          <div class="divider"></div>
+        {{/unless}}
+        <div class="msg-instance">{{filters.instance_key_base}}</div>
       {{else}}
         {{#if class}}
           {{class}}
@@ -33,8 +35,8 @@
 </div>
 {{#if showFilters}}
   <div class="filter-editor">
-    <input class="class-input" type="text" placeholder="Class" value="{{class}}"></input>
-    <input class="instance-input" type="text" placeholder="Instance" value="{{filters.instance_key}}"></input>
+    <input class="class-input" type="text" placeholder="Class" value="{{#unless noClass}}{{class}}{{/unless}}"></input>
+    <input class="instance-input" type="text" placeholder="Instance" value="{{filters.instance_key_base}}"></input>
     <input class="recipient-input" type="text" placeholder="Recipient" value="{{filters.recipient}}"></input>
     <button class="btn set-filters">Set Filters</button>
   </div>

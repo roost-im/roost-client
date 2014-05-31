@@ -21,8 +21,13 @@ do ->
       @$el.empty()
       template = com.roost.templates['FilterBar']
 
-      fclass = if @paneModel.get('filters').class_key? then @paneModel.get('filters').class_key else @paneModel.get('filters').class_key_base
-      @$el.append template(_.defaults({}, @paneModel.attributes, {class: fclass}))
+      fclass = @paneModel.get('filters').class_key_base
+      # If we're only an instance filter, flag it and set fclass to the instance for coloring
+      # (Hacky, I'm sorry.)
+      if !fclass? and @paneModel.get('filters').instance_key_base
+        noClass = true
+        fclass = @paneModel.get('filters').instance_key_base
+      @$el.append template(_.defaults({}, @paneModel.attributes, {class: fclass, noClass: noClass}))
 
       # Set full opacity class if this pane is selected
       if @paneModel.get('selected')
@@ -35,16 +40,15 @@ do ->
 
       # Make our header colored if filtering
       if fclass?
-        @_updateColors()
+        @_updateColors(fclass)
 
-    _updateColors: =>
+    _updateColors: (string)=>
       # TODO: make this work through a Handlebars helper 
-      string = if @paneModel.get('filters').class_key? then @paneModel.get('filters').class_key else @paneModel.get('filters').class_key_base
       color = shadeColor(stringToColor(string), 0.5)
       lighterColor = shadeColor(color, 0.4)
 
       # Get fancy if we have a class-instance filter
-      if @paneModel.get('filters').instance_key
+      if @paneModel.get('filters').instance_key_base
         @$('.top-bar').css
           color: 'black'
           background: lighterColor
@@ -85,9 +89,9 @@ do ->
       # Only add the fields we actually have
       filters = {}
       if opts.class_key != ''
-        filters.class_key = opts.class_key
+        filters.class_key_base = opts.class_key
       if opts.instance_key != ''
-        filters.instance_key = opts.instance_key
+        filters.instance_key_base = opts.instance_key
       if opts.recipient != ''
         filters.recipient = opts.recipient
 

@@ -36,12 +36,17 @@
       };
 
       FilterBar.prototype.render = function() {
-        var fclass, template;
+        var fclass, noClass, template;
         this.$el.empty();
         template = com.roost.templates['FilterBar'];
-        fclass = this.paneModel.get('filters').class_key != null ? this.paneModel.get('filters').class_key : this.paneModel.get('filters').class_key_base;
+        fclass = this.paneModel.get('filters').class_key_base;
+        if ((fclass == null) && this.paneModel.get('filters').instance_key_base) {
+          noClass = true;
+          fclass = this.paneModel.get('filters').instance_key_base;
+        }
         this.$el.append(template(_.defaults({}, this.paneModel.attributes, {
-          "class": fclass
+          "class": fclass,
+          noClass: noClass
         })));
         if (this.paneModel.get('selected')) {
           this.$el.addClass('selected');
@@ -50,16 +55,15 @@
         }
         this.$('.class-input').focus();
         if (fclass != null) {
-          return this._updateColors();
+          return this._updateColors(fclass);
         }
       };
 
-      FilterBar.prototype._updateColors = function() {
-        var color, lighterColor, string;
-        string = this.paneModel.get('filters').class_key != null ? this.paneModel.get('filters').class_key : this.paneModel.get('filters').class_key_base;
+      FilterBar.prototype._updateColors = function(string) {
+        var color, lighterColor;
         color = shadeColor(stringToColor(string), 0.5);
         lighterColor = shadeColor(color, 0.4);
-        if (this.paneModel.get('filters').instance_key) {
+        if (this.paneModel.get('filters').instance_key_base) {
           this.$('.top-bar').css({
             color: 'black',
             background: lighterColor
@@ -106,10 +110,10 @@
         };
         filters = {};
         if (opts.class_key !== '') {
-          filters.class_key = opts.class_key;
+          filters.class_key_base = opts.class_key;
         }
         if (opts.instance_key !== '') {
-          filters.instance_key = opts.instance_key;
+          filters.instance_key_base = opts.instance_key;
         }
         if (opts.recipient !== '') {
           filters.recipient = opts.recipient;
