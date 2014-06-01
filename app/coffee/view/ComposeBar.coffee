@@ -14,7 +14,7 @@ do ->
 
     initialize: (options) =>
       @paneModel = options.paneModel
-      @settings = options.settings
+      @uiState = options.uiState
 
       # Re-render, either to show the composer, update fields, or update that this pane
       # is selected.
@@ -30,7 +30,8 @@ do ->
       composeFields = _.defaults({}, @paneModel.get('composeFields'), defaultFields)
 
       template = com.roost.templates['ComposeBar']
-      @$el.append template(_.defaults({composeFields: composeFields}, @paneModel.attributes, @settings.attributes))
+      @$el.append template(_.defaults({composeFields: composeFields},
+        @paneModel.attributes, @uiState.attributes))
 
       # Set full opacity class if this pane is selected
       if @paneModel.get('selected')
@@ -65,7 +66,7 @@ do ->
       @paneModel.set('showCompose', true)
 
       if com.roost.ON_MOBILE
-        @settings.set('showNavbar', false)
+        @uiState.set('showNavbar', false)
 
     _hideCompose: =>
       # Update model and clear fields (triggers rerender)
@@ -74,7 +75,7 @@ do ->
         composeFields: {}
 
       # In case we hid it last time for mobile
-      @settings.set('showNavbar', true)
+      @uiState.set('showNavbar', true)
 
     _jumpToBottom: =>
       # Treat as a complete reset, clearing position and reloading
@@ -83,7 +84,7 @@ do ->
       @paneModel.trigger 'reload'
 
     _getDefaultFields: =>
-      filteredFields = 
+      filteredFields =
         class: ''
         instance: ''
         recipient: ''

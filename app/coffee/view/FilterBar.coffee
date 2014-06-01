@@ -43,7 +43,7 @@ do ->
         @_updateColors(fclass)
 
     _updateColors: (string)=>
-      # TODO: make this work through a Handlebars helper 
+      # TODO: make this work through a Handlebars helper
       color = shadeColor(stringToColor(string), 0.5)
       lighterColor = shadeColor(color, 0.4)
 
@@ -66,9 +66,9 @@ do ->
       @paneModel.set('showFilters', !@paneModel.get('showFilters'))
 
       if com.roost.ON_MOBILE and @paneModel.get('showFilters')
-        @session.settingsModel.set('showNavbar', false)
+        @session.uiStateModel.set('showNavbar', false)
       else
-        @session.settingsModel.set('showNavbar', true)
+        @session.uiStateModel.set('showNavbar', true)
 
     _removeFilters: =>
       # Clears filters, prompting a reload.  Doesn't reset position
@@ -81,7 +81,7 @@ do ->
       @session.removePane(@paneModel.cid)
 
     _setFilters: =>
-      opts = 
+      opts =
         class_key: @$('.class-input').val()
         instance_key: @$('.instance-input').val()
         recipient: @$('.recipient-input').val()

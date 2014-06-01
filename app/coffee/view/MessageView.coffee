@@ -129,7 +129,7 @@ do ->
         showCompose: true
 
       if com.roost.ON_MOBILE
-        @session.settingsModel.set('showNavbar', false)
+        @session.uiStateModel.set('showNavbar', false)
 
     openMessageBox: =>
       recip = if @message.get('isPersonal') then @message.get('conversation') else @message.get('sender')
@@ -144,7 +144,7 @@ do ->
         showCompose: true
 
       if com.roost.ON_MOBILE
-        @session.settingsModel.set('showNavbar', false)
+        @session.uiStateModel.set('showNavbar', false)
 
     openQuoteBox: =>
       # Build the quoted message string using the prefix defined above
@@ -160,12 +160,12 @@ do ->
         showCompose: true
 
       if com.roost.ON_MOBILE
-        @session.settingsModel.set('showNavbar', false)
+        @session.uiStateModel.set('showNavbar', false)
 
     _applyFilter: (evt, options) =>
       # If holding alt, create a new pane and kill the event.
       # We don't want the event bubbling up to selecting this pane.
-      if evt.altKey and !@session.settingsModel.get('limitReached')
+      if evt.altKey and !@session.uiStateModel.get('limitReached')
         @session.addPane options
         evt.preventDefault()
         evt.stopPropagation()

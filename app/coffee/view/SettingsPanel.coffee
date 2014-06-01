@@ -13,12 +13,12 @@ do ->
 
     initialize: (options) =>
       @subscriptions = options.subscriptions
-      @settings = options.settings
+      @uiState = options.uiState
       @session = options.session
 
       @listenTo @subscriptions, 'add remove reset sort', @render
-      @listenTo @settings, 'change:showSubs', @_toggleDisplay
-      @listenTo @settings, 'change:showNavbar', @_hide
+      @listenTo @uiState, 'change:showSubs', @_toggleDisplay
+      @listenTo @uiState, 'change:showNavbar', @_hide
 
     render: =>
       @$el.empty()
@@ -28,7 +28,7 @@ do ->
       @_toggleDisplay()
 
     _toggleDisplay: =>
-      if @settings.get('showSubs')
+      if @uiState.get('showSubs')
         @$el.addClass('expanded')
         @$('.class-input').focus()
       else
@@ -39,7 +39,7 @@ do ->
         @$('.recipient-input').val('')
 
     _hide: =>
-      @settings.set('showSubs', false)
+      @uiState.set('showSubs', false)
 
     _addClassPane: (evt) =>
       klass = $(evt.target).data().class
@@ -74,4 +74,4 @@ do ->
       if evt.keyCode == 13
         @_addSubscription()
       else if evt.keyCode == 27
-        @settings.set 'showSubs', false
+        @uiState.set 'showSubs', false

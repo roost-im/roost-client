@@ -33,8 +33,8 @@ do ->
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
-      # UI settings - defaults are PC mode.
-      @settingsModel = new Backbone.Model
+      # UI state - defaults are PC mode.
+      @uiStateModel = new Backbone.Model
         showNavbar: true
         showSubs: false
         limitReached: false
@@ -42,7 +42,7 @@ do ->
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.
       Mousetrap.bind('alt+n', (=> @addPane {}))
-      Mousetrap.bind('alt+p', (=> @addPane 
+      Mousetrap.bind('alt+p', (=> @addPane
         filters:
           class_key_base: 'message'
           is_personal: true
@@ -72,7 +72,7 @@ do ->
       @composeControllers[paneModel.cid] = composeController
 
       if @messageLists.length >= com.roost.PANE_LIMIT
-        @settingsModel.set('limitReached', true)
+        @uiStateModel.set('limitReached', true)
 
     removePane: (cid) =>
       # Stop the controllers from listening to the model
@@ -84,7 +84,7 @@ do ->
       delete @messageControllers[cid]
       delete @composeControllers[cid]
 
-      @settingsModel.set('limitReached', false)
+      @uiStateModel.set('limitReached', false)
 
     removeAllPanes: =>
       cids = []

@@ -54,7 +54,7 @@ do ->
         view.render()
         @$el.append(view.$el)
         @childViews.push(view)
-      
+
       # Filler view to pad the bottom
       @$el.append('<div class="filler-view">')
 
@@ -82,7 +82,7 @@ do ->
       # Create the message composing view
       @composeView = new com.roost.ComposeBar
         paneModel: @model
-        settings: @session.settingsModel
+        uiState: @session.uiStateModel
       @composeView.render()
       @$el.append @composeView.$el
 
@@ -191,7 +191,7 @@ do ->
       # in view and completely readable.
       $view = selectedView.$el
       bottomPoint = $view.offset().top + $view.height()
-      topPoint = $view.offset().top - 80  # correct for top 
+      topPoint = $view.offset().top - 80  # correct for top
 
       if topPoint < 0
         scrollDiff = 100 - topPoint
@@ -199,7 +199,7 @@ do ->
         scrollDiff = (@$el.height() - 100) - bottomPoint
       else
         return
-      
+
       @$el.scrollTop(@$el.scrollTop() - scrollDiff)
 
     selectedMessageReply: =>
@@ -332,7 +332,7 @@ do ->
       @_restoreScrollHeight()
 
     _removeBottomMessage: =>
-      view = @childViews.pop()      
+      view = @childViews.pop()
       view.remove()
       @currentBottom = @currentTop + @childViews.length
 
