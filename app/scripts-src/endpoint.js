@@ -1,13 +1,19 @@
 (function() {
-  var checkSettings;
-
   com.roost.CLICK_EVENT = 'click';
+
+  com.roost.PANE_LIMIT = 10;
+
+  com.roost.ON_MOBILE = false;
 
   $('document').ready((function(_this) {
     return function() {
       var authController, loginView, messagePane, navbar, session, subController;
       session = new com.roost.RoostSession();
-      checkSettings(session);
+      if (window.mobilecheck()) {
+        com.roost.CLICK_EVENT = 'touchend';
+        com.roost.PANE_LIMIT = 6;
+        com.roost.ON_MOBILE = true;
+      }
       subController = new com.roost.SubscriptionController({
         api: session.api,
         userInfo: session.userInfo,
@@ -39,20 +45,5 @@
       }
     };
   })(this));
-
-  checkSettings = function(session) {
-    var settingsModel;
-    settingsModel = session.settingsModel;
-    if (window.mobilecheck()) {
-      com.roost.CLICK_EVENT = 'touchend';
-      return settingsModel.set({
-        onMobile: true
-      });
-    } else {
-      return settingsModel.set({
-        onMobile: false
-      });
-    }
-  };
 
 }).call(this);

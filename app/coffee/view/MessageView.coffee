@@ -128,7 +128,7 @@ do ->
           content: ''
         showCompose: true
 
-      if @session.settingsModel.get('onMobile')
+      if com.roost.ON_MOBILE
         @session.settingsModel.set('showNavbar', false)
 
     openMessageBox: =>
@@ -143,7 +143,7 @@ do ->
           content: ''
         showCompose: true
 
-      if @session.settingsModel.get('onMobile')
+      if com.roost.ON_MOBILE
         @session.settingsModel.set('showNavbar', false)
 
     openQuoteBox: =>
@@ -159,13 +159,13 @@ do ->
           content: quoted
         showCompose: true
 
-      if @session.settingsModel.get('onMobile')
+      if com.roost.ON_MOBILE
         @session.settingsModel.set('showNavbar', false)
 
     _applyFilter: (evt, options) =>
       # If holding alt, create a new pane and kill the event.
       # We don't want the event bubbling up to selecting this pane.
-      if evt.altKey
+      if evt.altKey and !@session.settingsModel.get('limitReached')
         @session.addPane options
         evt.preventDefault()
         evt.stopPropagation()

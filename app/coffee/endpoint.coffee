@@ -1,9 +1,16 @@
 com.roost.CLICK_EVENT = 'click'
+com.roost.PANE_LIMIT = 10
+com.roost.ON_MOBILE = false
 
 $('document').ready( =>
   # Create the session
   session = new com.roost.RoostSession()
-  checkSettings(session)
+
+  # Set 'constants' for mobile
+  if window.mobilecheck()
+    com.roost.CLICK_EVENT = 'touchend'
+    com.roost.PANE_LIMIT = 6
+    com.roost.ON_MOBILE = true
 
   # Create the sub controller
   subController = new com.roost.SubscriptionController
@@ -41,15 +48,3 @@ $('document').ready( =>
   if session.userInfo.get('username')?
     session.addPane {}
 )
-
-checkSettings = (session) ->
-  # Let's not toggle the pane/navbar settings for now, just to allow
-  # panes in mobile.
-  settingsModel = session.settingsModel
-  if window.mobilecheck()
-    com.roost.CLICK_EVENT = 'touchend'
-    settingsModel.set 
-      onMobile: true
-  else
-    settingsModel.set 
-      onMobile: false

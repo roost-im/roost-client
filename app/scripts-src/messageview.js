@@ -6,7 +6,7 @@
   Handlebars.registerHelper('ztext', function(text) {
     var div;
     div = document.createElement('div');
-    div.appendChild(ztextToDOM(parseZtext(text)));
+    div.appendChild(com.roost.ztext.ztextToDOM(com.roost.ztext.parseZtext(text)));
     return new Handlebars.SafeString(div.innerHTML);
   });
 
@@ -136,7 +136,7 @@
           },
           showCompose: true
         });
-        if (this.session.settingsModel.get('onMobile')) {
+        if (com.roost.ON_MOBILE) {
           return this.session.settingsModel.set('showNavbar', false);
         }
       };
@@ -153,7 +153,7 @@
           },
           showCompose: true
         });
-        if (this.session.settingsModel.get('onMobile')) {
+        if (com.roost.ON_MOBILE) {
           return this.session.settingsModel.set('showNavbar', false);
         }
       };
@@ -170,13 +170,13 @@
           },
           showCompose: true
         });
-        if (this.session.settingsModel.get('onMobile')) {
+        if (com.roost.ON_MOBILE) {
           return this.session.settingsModel.set('showNavbar', false);
         }
       };
 
       MessageView.prototype._applyFilter = function(evt, options) {
-        if (evt.altKey) {
+        if (evt.altKey && !this.session.settingsModel.get('limitReached')) {
           this.session.addPane(options);
           evt.preventDefault();
           return evt.stopPropagation();

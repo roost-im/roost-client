@@ -9,8 +9,6 @@ do ->
       eventsHash["#{com.roost.CLICK_EVENT} .personal-message"] = '_addPersonalMessagePane'
       eventsHash["#{com.roost.CLICK_EVENT} .user-info"] = '_toggleSubs'
       eventsHash["#{com.roost.CLICK_EVENT} .help"] = '_openHelp'
-      eventsHash["#{com.roost.CLICK_EVENT} .toggle-panes"] = '_togglePanes'
-      eventsHash["#{com.roost.CLICK_EVENT} .toggle-keyboard"] = '_toggleKeyboard'
       return eventsHash
 
     initialize: (options) =>
@@ -20,7 +18,7 @@ do ->
 
       # Re-render on login/logout or settings changes.
       @listenTo @userInfo, 'change', @render
-      @listenTo @settings, 'change:showNavbar', @render
+      @listenTo @settings, 'change:showNavbar change:limitReached', @render
 
     render: =>
       @$el.empty()
@@ -42,22 +40,16 @@ do ->
       @userInfo.trigger 'logout'
 
     _addPane: =>
-      @session.addPane {}
+      if !@settings.get('limitReached')
+        @session.addPane {}
 
     _addPersonalMessagePane: =>
       # Create a new pane with personal message filtering
-      @session.addPane 
-        filters:
-          class_key_base: 'message'
-          is_personal: true
-
-    _togglePanes: =>
-      # Flip on/off showing multiple panes
-      @settings.set 'panes', !@settings.get('panes')
-
-    _toggleKeyboard: =>
-      # Flip on/off using keyboard shortcuts
-      @settings.set 'keyboard', !@settings.get('keyboard')
+      if !@settings.get('limitReached')
+        @session.addPane 
+          filters:
+            class_key_base: 'message'
+            is_personal: true
 
     _toggleSubs: =>
       # Flip on/off showing subscriptions

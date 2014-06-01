@@ -11,26 +11,10 @@
   <div class="user-info">
       <span>{{username}}</span> <img class="gravatar" src="{{gravatar}}">
   </div>
-  <div class="add-pane">
+  <div class="add-pane {{#if limitReached}}disabled{{/if}}">
     <i class="fa fa-plus"></i><span>&nbsp;&nbsp;New Pane</span>
   </div>
-  <div class="personal-message">
+  <div class="personal-message {{#if limitReached}}disabled{{/if}}">
     <i class="fa fa-envelope-o"></i><span>&nbsp;&nbsp;Personal Messages</span>
-  </div>
-  <div class="toggle-keyboard">
-    {{#if keyboard}}
-      <i class="fa fa-check-square-o"></i>
-    {{else}}
-      <i class="fa fa-square-o"></i>
-    {{/if}}
-    &nbsp;&nbsp;Keyboard
-  </div>
-  <div class="toggle-panes">
-    {{#if panes}}
-      <i class="fa fa-check-square-o"></i>
-    {{else}}
-      <i class="fa fa-square-o"></i>
-    {{/if}}
-    &nbsp;&nbsp;Panes
   </div>
 {{/if}}

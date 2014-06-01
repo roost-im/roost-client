@@ -34,13 +34,10 @@ do ->
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
       # UI settings - defaults are PC mode.
-      # TODO: break out to a respectable class
       @settingsModel = new Backbone.Model
-        keyboard: true
-        panes: true
         showNavbar: true
         showSubs: false
-        onMobile: true
+        limitReached: false
 
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.
@@ -55,29 +52,27 @@ do ->
     addPane: (options) =>
       # Add a pane to our list if we have the multi-pane setting enabled,
       # or if we don't have any panes at all.
-      if @settingsModel.get('panes') or @messageLists.length == 0
-        # Add a new model
-        paneModel = new com.roost.MessagePaneModel(options)
+      # Add a new model
+      paneModel = new com.roost.MessagePaneModel(options)
 
-        # Add a new controller and fetch data
-        paneController = new com.roost.MessagePaneController
-          model: paneModel
-          api: @api
-        paneController.fetchFromPosition()
+      # Add a new controller and fetch data
+      paneController = new com.roost.MessagePaneController
+        model: paneModel
+        api: @api
+      paneController.fetchFromPosition()
 
-        # Add compose controller for sending messages
-        composeController = new com.roost.ComposeController
-          model: paneModel
-          api: @api
+      # Add compose controller for sending messages
+      composeController = new com.roost.ComposeController
+        model: paneModel
+        api: @api
 
-        # Save references to the controllers and model
-        @messageLists.push paneModel
-        @messageControllers[paneModel.cid] = paneController
-        @composeControllers[paneModel.cid] = composeController
+      # Save references to the controllers and model
+      @messageLists.push paneModel
+      @messageControllers[paneModel.cid] = paneController
+      @composeControllers[paneModel.cid] = composeController
 
-      # If we don't want multiple panes, just update this one.
-      else
-        @messageLists.at(0).set options
+      if @messageLists.length >= com.roost.PANE_LIMIT
+        @settingsModel.set('limitReached', true)
 
     removePane: (cid) =>
       # Stop the controllers from listening to the model
@@ -88,6 +83,8 @@ do ->
       @messageLists.remove(cid)
       delete @messageControllers[cid]
       delete @composeControllers[cid]
+
+      @settingsModel.set('limitReached', false)
 
     removeAllPanes: =>
       cids = []

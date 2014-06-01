@@ -8,7 +8,8 @@ do ->
 
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .message-pane-view"] = '_setSelectionOnClick'
+      if !com.roost.ON_MOBILE
+        eventsHash["#{com.roost.CLICK_EVENT} .message-pane-view"] = '_setSelectionOnClick'
       return eventsHash
 
     initialize: (options) =>
@@ -25,10 +26,7 @@ do ->
 
       # Since we handle panes, pane selection, and keyboard shortcuts,
       # listen for any settings changes and act accordingly
-      @listenTo @settingsModel, 'change:keyboard', @_toggleKeyboard
-      @listenTo @settingsModel, 'change:panes', @_togglePanes
       @listenTo @settingsModel, 'change:showNavbar', @_toggleNavbar
-      @listenTo @settingsModel, 'change:onMobile', @_toggleSwiping
 
       # Hotkeys related to the selected pane.
       # Feel free to add more, just be sure to add any new hotkeys
@@ -62,11 +60,12 @@ do ->
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
       Mousetrap.bind('alt+s', @_toggleSubSetting)
 
-      # Set up swiping
-      @$el.swipe(
-        swipeLeft: => @_moveSelection(-1)
-        swipeRight: => @_moveSelection(1)
-      )
+      # Set up swiping if on mobile
+      if com.roost.ON_MOBILE
+        @$el.swipe(
+          swipeLeft: => @_moveSelection(-1)
+          swipeRight: => @_moveSelection(1)
+        )
 
       $(window).resize(@_recalculateWidth)
 
@@ -82,7 +81,7 @@ do ->
         @_setSelection()
 
       # Prevent scrolling in X, rely on swiping
-      if @settingsModel.get('onMobile')
+      if com.roost.ON_MOBILE
         @$el.addClass('mobile')
 
       @subView = new com.roost.SubscriptionPanel
@@ -95,41 +94,13 @@ do ->
       @_checkSettings()
 
     _checkSettings: =>
-      @_toggleKeyboard()
-      @_togglePanes()
       @_toggleNavbar()
-      @_toggleSwiping()
-
-    _toggleKeyboard: =>
-      # Pause or unpause hotkeys.
-      # Requires moving the selection around since the pane selection concept
-      # goes away when the keyboard shortcuts are turned off.
-      if @settingsModel.get('keyboard')
-        Mousetrap.unpause()
-        @_setSelection()
-      else
-        Mousetrap.pause()
-        for view in @childViews
-          view.model.set('selected', true)
-
-    _togglePanes: =>
-      # This is a pretty ass-backwards way of doing this.
-      if !@settingsModel.get('panes') and @childViews.length > 1
-        for i in [@childViews.length-1..1]
-          @session.removePane(@childViews[i].model.cid)
 
     _toggleNavbar: =>
       if not @settingsModel.get('showNavbar')
         @$el.addClass('expanded')
       else
         @$el.removeClass('expanded')
-
-    _toggleSwiping: =>
-      if @settingsModel.get('onMobile')
-        @$el.swipe('enable')
-        @undelegateEvents()
-      else
-        @$el.swipe('disable')
 
     _toggleVisibility: =>
       if @session.userInfo.get('username')?

@@ -61,10 +61,15 @@
     font-size: 25px;
   }
 
-  .personal-message, .add-pane, .toggle-keyboard, .toggle-panes, .help {
+  .personal-message, .add-pane, .help {
     float: right;
     cursor: pointer;
     margin-right: 25px;
+
+    &.disabled {
+      color: #AAA;
+      cursor: auto;
+    }
   }
 
   .btn {

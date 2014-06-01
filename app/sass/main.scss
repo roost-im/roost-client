@@ -41,7 +41,7 @@ html, body {
 
 // Hide extra testing stuff that might be useful later.
 .navbar {
-  .logout, .toggle-keyboard, .toggle-panes {
+  .logout {
     display: none !important;
   }
 }

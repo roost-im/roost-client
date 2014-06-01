@@ -64,7 +64,7 @@ do ->
       # Update model (triggers rerender)
       @paneModel.set('showCompose', true)
 
-      if @settings.get('onMobile')
+      if com.roost.ON_MOBILE
         @settings.set('showNavbar', false)
 
     _hideCompose: =>
@@ -113,14 +113,13 @@ do ->
         @paneModel.set('sending', true)
         @paneModel.trigger 'sendMessage'
 
-      @_hideCompose()
-
     _updateButton: =>
       # Disable send button if we are sending
       if @paneModel.get('sending')
         @$('.send').addClass('disabled').text('Sending...')
       else
         @$('.send').removeClass('disabled').text('Send')
+        @_hideCompose()
 
     _handleInputsKey: (evt) =>
       # Handle escape key (should work in ANY input box)

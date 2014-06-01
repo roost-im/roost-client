@@ -65,7 +65,7 @@ do ->
       # Show or hide input boxes
       @paneModel.set('showFilters', !@paneModel.get('showFilters'))
 
-      if @session.settingsModel.get('onMobile') and @paneModel.get('showFilters')
+      if com.roost.ON_MOBILE and @paneModel.get('showFilters')
         @session.settingsModel.set('showNavbar', false)
       else
         @session.settingsModel.set('showNavbar', true)
