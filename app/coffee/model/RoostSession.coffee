@@ -33,7 +33,7 @@ do ->
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
 
-      # UI settings - defaults are PC mode.
+      # UI settings - manage what is showing on overall UI/what can be done
       @settingsModel = new Backbone.Model
         showNavbar: true
         showSubs: false
@@ -41,13 +41,17 @@ do ->
 
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.
-      Mousetrap.bind('alt+n', (=> @addPane {}))
-      Mousetrap.bind('alt+p', (=> @addPane 
-        filters:
-          class_key_base: 'message'
-          is_personal: true
-        )
-      )
+      Mousetrap.bind('alt+n', (=> 
+        if !@settingsModel.get('limitReached')
+          @addPane {}
+      ))
+      Mousetrap.bind('alt+p', (=>
+        if !@settingsModel.get('limitReached')
+          @addPane 
+            filters:
+              class_key_base: 'message'
+              is_personal: true
+      ))
 
     addPane: (options) =>
       # Add a pane to our list if we have the multi-pane setting enabled,

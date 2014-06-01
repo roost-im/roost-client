@@ -134,7 +134,7 @@
 
       .message {
         padding: 3px;
-        margin-bottom: 30px;
+        margin-bottom: 16px;
         word-break: break-all;
         word-wrap: break-word;
         margin-top: 0px;
@@ -142,6 +142,11 @@
         text-indent: -42px;
         font-size: 14px;
         font-family: $monospace-font;
+
+        // Otherwise our scroll handler has a bad time getting past big messages.
+        // TODO: make this less awkward.
+        max-height: 2000px;
+        overflow-y: scroll;
 
         a {
           text-decoration: none;
@@ -166,6 +171,7 @@
           position: absolute;
           bottom: 5px;
           right: 5px;
+          @include user-select(none);
 
           i.fa {
             line-height: 15px;

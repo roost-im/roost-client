@@ -20,6 +20,7 @@
     height: $compose-filter-bar-height;
     line-height: $compose-filter-bar-height;
     padding: 0px 25px 0px 10px;
+    @include user-select(none);
 
     .compose {
       float: right;
@@ -37,6 +38,7 @@
     line-height: $compose-filter-bar-height;
     padding: 0px 25px 0px 10px;
     background-color: #444;
+    @include user-select(none);
 
     .title {
       float: left;

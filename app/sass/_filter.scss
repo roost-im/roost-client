@@ -55,18 +55,21 @@
       float: right;
       cursor: pointer;
       margin-right: 35px;
+      @include user-select(none);
     }
 
     .clear-filters {
       float: right;
       cursor: pointer;
       margin-right: 15px;
+      @include user-select(none);
     }
 
     .remove {
       float: right;
       cursor: pointer;
       font-size: $compose-filter-bar-height;
+      @include user-select(none);
 
       &:hover {
         color: lighten(red, 10%);
