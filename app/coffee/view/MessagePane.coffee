@@ -30,7 +30,7 @@ do ->
 
       # Hotkeys related to the selected pane.
       # Feel free to add more, just be sure to add any new hotkeys
-      # to the HotkeyHelp modal. 
+      # to the HotkeyHelp modal.
       Mousetrap.bind('left', ((e) => @_moveSelection(1, e)))
       Mousetrap.bind('shift+left', ((e) => @_shiftSelection(-1, e)))
       Mousetrap.bind('right', ((e) => @_moveSelection(-1, e)))
@@ -56,7 +56,7 @@ do ->
       Mousetrap.bind('?', @_showHelp)
       Mousetrap.bind('esc', @_hideHelp)
 
-      # Hotkeys for toggling settings      
+      # Hotkeys for toggling settings
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
       Mousetrap.bind('alt+s', @_toggleSubSetting)
 
@@ -84,7 +84,7 @@ do ->
       if com.roost.ON_MOBILE
         @$el.addClass('mobile')
 
-      @subView = new com.roost.SubscriptionPanel
+      @subView = new com.roost.SettingsPanel
         settings: @settingsModel
         subscriptions: @session.subscriptions
         session: @session
@@ -240,7 +240,7 @@ do ->
       @childViews[@selectedPosition].selectedMessagePM()
       e?.preventDefault()
       e?.stopPropagation()
-      
+
     _addPaneView: (paneModel) =>
       # Well, we have a pane now.
       @$('.no-panes').remove()

@@ -1,6 +1,6 @@
 do ->
-  class com.roost.SubscriptionPanel extends Backbone.View
-    className: 'subscription-panel'
+  class com.roost.SettingsPanel extends Backbone.View
+    className: 'settings-panel'
 
     events: ->
       eventsHash = {}
@@ -22,7 +22,7 @@ do ->
 
     render: =>
       @$el.empty()
-      template = com.roost.templates['SubscriptionPanel']
+      template = com.roost.templates['SettingsPanel']
       @$el.append template(@subscriptions)
 
       @_toggleDisplay()
@@ -43,14 +43,14 @@ do ->
 
     _addClassPane: (evt) =>
       klass = $(evt.target).data().class
-      options = 
-        filters: 
+      options =
+        filters:
           class_key: klass.toLowerCase()
 
       @session.addPane options
 
     _addSubscription: =>
-      opts = 
+      opts =
         class: @$('.class-input').val()
         instance: @$('.instance-input').val()
         recipient: @$('.recipient-input').val()
