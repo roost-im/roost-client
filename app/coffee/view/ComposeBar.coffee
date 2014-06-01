@@ -30,7 +30,7 @@ do ->
       composeFields = _.defaults({}, @paneModel.get('composeFields'), defaultFields)
 
       template = com.roost.templates['ComposeBar']
-      @$el.append template(_.defaults({composeFields: composeFields}, @paneModel.attributes, @settings.attributes))
+      @$el.append template(_.defaults({composeFields: composeFields, onMobile: com.roost.ON_MOBILE}, @paneModel.attributes))
 
       # Set full opacity class if this pane is selected
       if @paneModel.get('selected')
