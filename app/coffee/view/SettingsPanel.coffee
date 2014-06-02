@@ -15,17 +15,26 @@ do ->
       @subscriptions = options.subscriptions
       @uiState = options.uiState
       @session = options.session
+      @userInfo = @session.api.userInfo()
 
       @listenTo @subscriptions, 'add remove reset sort', @render
       @listenTo @uiState, 'change:showSubs', @_toggleDisplay
       @listenTo @uiState, 'change:showNavbar', @_hide
 
     render: =>
-      @$el.empty()
-      template = com.roost.templates['SettingsPanel']
-      @$el.append template(@subscriptions)
+      @userInfo.ready().then(=>
+        @$el.empty()
+        template = com.roost.templates['SettingsPanel']
+        # Older versions of Roost store the zsig in 'zsig'. Check both.
+        zsigs = @userInfo.get('zsigs') ? @userInfo.get('zsig')
+        if !zsigs?
+          zsigs = ["Sent from roost"]
+        if typeof zsigs == "string"
+          zsigs = [zsigs]
+        @$el.append template(
+          subscriptions: @subscriptions, zsigs: zsigs)
 
-      @_toggleDisplay()
+        @_toggleDisplay())
 
     _toggleDisplay: =>
       if @uiState.get('showSubs')

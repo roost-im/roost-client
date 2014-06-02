@@ -1,6 +1,7 @@
 .settings-panel {
   transition: width 0.4s;
   background: #EEE;
+  overflow-y: scroll;
 
   position: fixed;
   z-index: 15;
@@ -38,18 +39,26 @@
     }
   }
 
-  .sub-form {
+  form {
     padding: 5px;
     margin-top: 5px;
 
-    input {
-      width: 32.5%;
+    input, textarea {
       font-size: 16px;
       padding: 3px 5px;
       box-sizing: border-box;
       border: 1px solid #BBB;
       outline: none;
       font-family: $monospace-font;
+    }
+
+    textarea {
+      width: 100%;
+      display: block;
+    }
+
+    &.subs-form input {
+      width: 32.5%;
     }
 
     .btn {
@@ -59,15 +68,24 @@
     }
   }
 
-  .subs-label {
+  .zsigs {
+      .remove-zsig {
+          display: inline-block;
+          float: right;
+      }
+  }
+
+  label {
     padding-left: 10px;
     margin-top: 10px;
     font-size: 16px;
     margin-bottom: 5px;
+    display: block;
   }
 
-  .table-container {
+  .subs-table-container {
     height: 60%;
+    max-height: 500px;
     overflow-y: scroll;
     border-top: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
