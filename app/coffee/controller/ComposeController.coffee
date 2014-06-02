@@ -14,6 +14,9 @@ do ->
         if !zsig?
           zsig = "Sent from Roost"
         msg = @model.get('composeFields')
+        if msg.class == msg.instance == ""
+          msg.class = "message"
+          msg.instance = "personal"
         return {
           message:
             class: msg.class
