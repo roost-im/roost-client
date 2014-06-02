@@ -61,6 +61,11 @@
       width: 32.5%;
     }
 
+    &.zsig-form input#new-zsig {
+      width: 100%;
+      display: block;
+    }
+
     .btn {
       @include button-variant($primary-btn-color, $primary-btn-bg);
       width: 100%;
