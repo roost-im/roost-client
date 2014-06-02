@@ -10,9 +10,11 @@ do ->
 
     _sendMessage: =>
       data = @api.userInfo().ready().then( =>
-        zsig = @api.userInfo().get('zsig')
-        if !zsig?
-          zsig = "Sent from Roost"
+        # First try loading from 'zsigs', then 'zsig', then the default.
+        zsigs = @api.userInfo().get('zsigs')
+        legacy = @api.userInfo().get('zsig') ? "Sent from Roost"
+        zsigs = zsigs ? [legacy]
+        zsig = _.sample(zsigs)
         msg = @model.get('composeFields')
         return {
           message:
