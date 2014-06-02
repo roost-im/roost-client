@@ -6,6 +6,8 @@ do ->
       eventsHash = {}
       eventsHash["#{com.roost.CLICK_EVENT} .subscribe"] = '_addSubscription'
       eventsHash["#{com.roost.CLICK_EVENT} .close-td"] = '_removeSubscription'
+      eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"] = '_addZsig'
+      eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
       eventsHash["#{com.roost.CLICK_EVENT} .class-td"] = '_addClassPane'
       eventsHash["#{com.roost.CLICK_EVENT} .remove"] = '_hide'
       eventsHash['keyup input'] = '_handleInputKey'
@@ -25,14 +27,8 @@ do ->
       @userInfo.ready().then(=>
         @$el.empty()
         template = com.roost.templates['SettingsPanel']
-        # Older versions of Roost store the zsig in 'zsig'. Check both.
-        zsigs = @userInfo.get('zsigs') ? @userInfo.get('zsig')
-        if !zsigs?
-          zsigs = ["Sent from roost"]
-        if typeof zsigs == "string"
-          zsigs = [zsigs]
         @$el.append template(
-          subscriptions: @subscriptions, zsigs: zsigs)
+          subscriptions: @subscriptions, zsigs: @_getZsigs())
 
         @_toggleDisplay())
 
@@ -78,9 +74,33 @@ do ->
     _removeSubscription: (evt) =>
       @subscriptions.remove($(evt.target).data().cid)
 
+    _addZsig: =>
+      zsig = @$('#new-zsig').val()
+      oldZsigs = @_getZsigs()
+      @userInfo.set("zsigs", oldZsigs.concat([zsig]))
+      @render()
+
+    _removeZsig: (evt) =>
+      zsigs = @_getZsigs()
+      index = zsigs.indexOf($(evt.target).data().zsig)
+      if index > -1 then zsigs.splice(index, 1)
+      @userInfo.set("zsigs", zsigs)
+      @render()
+
     _handleInputKey: (evt) =>
       # Enter and escape key handling in the input boxes
       if evt.keyCode == 13
         @_addSubscription()
       else if evt.keyCode == 27
         @uiState.set 'showSubs', false
+
+
+    _getZsigs: =>
+      # Older versions of Roost store the zsig in 'zsig'. Check both.
+      zsigs = @userInfo.get('zsigs') ? @userInfo.get('zsig')
+      if !zsigs?
+        zsigs = ["Sent from roost"]
+      if typeof zsigs == "string"
+        zsigs = [zsigs]
+      # Defensive object copy so that @userInfo.set will always DTRT.
+      return _.clone(zsigs)

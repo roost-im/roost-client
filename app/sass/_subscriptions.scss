@@ -39,7 +39,7 @@
     }
   }
 
-  form {
+  div.settings-form {
     padding: 5px;
     margin-top: 5px;
 
@@ -83,6 +83,19 @@
     display: block;
   }
 
+  .remove-button {
+      font-size: 28px;
+      text-align: center;
+      cursor: pointer;
+      min-width: 30px;
+      max-width: 30px;
+      width: 30px;
+
+      &:hover {
+          color: lighten(red, 10%);
+      }
+  }
+
   .subs-table-container {
     height: 60%;
     max-height: 500px;
@@ -95,18 +108,7 @@
       padding-right: 5px;
       width: 100%;
 
-      .close-td {
-        font-size: 28px;
-        text-align: center;
-        cursor: pointer;
-        min-width: 30px;
-        max-width: 30px;
-        width: 30px;
-
-        &:hover {
-          color: lighten(red, 10%);
-        }
-      }
+      .close-td
 
       .class-td {
         cursor: pointer;

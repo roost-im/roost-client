@@ -1,9 +1,9 @@
 <div class="header">
   Signatures
 </div>
-<form class="zsig-form">
-  <textarea></textarea>
-  <button class="btn">Add signature</button>
+<div class="settings-form zsig-form">
+  <textarea id="new-zsig"></textarea>
+  <button class="btn add-zsig">Add signature</button>
   <label>
     Current Signatures
   </label>
@@ -11,9 +11,10 @@
     {{#each zsigs}}
       <div class="zsig">
         {{this}}
-        <div class="remove-zsig" data-zsig="{{this}}">
+        <div class="remove-button remove-zsig" data-zsig="{{this}}">
           &times;
         </div>
+        <div style="clear:both"></div>
       </div>
     {{/each}}
   </div>
@@ -22,7 +23,7 @@
   Manage Subscriptions
   <div class="remove">&times;</div>
 </div>
-<form class="subs-form">
+<form class="settings-form subs-form">
   <input class="class-input" type="text" placeholder="Class"></input>
   <input class="instance-input" type="text" placeholder="Instance" value="*"></input>
   <input class="recipient-input" type="text" placeholder="Recipient"></input>
@@ -38,7 +39,7 @@
           <td class="class-td" data-class="{{attributes.class}}">{{attributes.class}}</td>
           <td>{{attributes.instance}}</td>
           <td>{{attributes.recipient}}</td>
-          <td class="close-td" data-cid="{{cid}}">&times;</td>
+          <td class="remove-button" data-cid="{{cid}}">&times;</td>
         </tr>
       {{/each}}
     </table>

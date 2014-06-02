@@ -216,9 +216,9 @@ UserInfo.prototype.doUpdate_ = function() {
   }, this.pending_.scrollStates).add;
 
   var newVersion = this.baseVersion_ + 1;
-  var newInfoStr = angular.toJson(newInfo);
+  var newInfoStr = JSON.stringify(newInfo);
 
-  var oldInfoStr = angular.toJson(this.base_);
+  var oldInfoStr = JSON.stringify(this.base_);
   if (oldInfoStr === newInfoStr) {
     // Nothing changed. Don't bother.
     this.pending_ = null;
@@ -248,5 +248,5 @@ UserInfo.prototype.doUpdate_ = function() {
     // sure this goes somewhere.
     throw err;
   }.bind(this));
-    
+
 };
