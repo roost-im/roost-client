@@ -82,8 +82,8 @@ do ->
 
     _removeZsig: (evt) =>
       zsigs = @_getZsigs()
-      index = zsigs.indexOf($(evt.target).data().zsig)
-      if index > -1 then zsigs.splice(index, 1)
+      debugger
+      zsigs.splice($(evt.target).data().zsigIndex, 1)
       @userInfo.set("zsigs", zsigs)
       @render()
 
