@@ -194,9 +194,9 @@ do ->
       topPoint = $view.offset().top - 80  # correct for top 
 
       if topPoint < 0
-        scrollDiff = 100 - topPoint
+        scrollDiff = 70 - topPoint
       else if bottomPoint > @$el.height()
-        scrollDiff = (@$el.height() - 100) - bottomPoint
+        scrollDiff = (@$el.height() - 70) - bottomPoint
       else
         return
       
