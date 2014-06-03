@@ -73,11 +73,22 @@
     }
   }
 
-  .zsigs {
-      .remove-zsig {
-          display: inline-block;
-          float: right;
-      }
+  .zsig-line {
+    /* This table stuff is necessary to vertically center the zsig. */
+    display: table;
+    width: 100%;
+    div.zsig, div.remove-zsig {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    div.zsig {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 303px;
+      min-width: 303px;
+      max-width: 303px;
+    }
   }
 
   label {
@@ -92,13 +103,18 @@
       font-size: 28px;
       text-align: center;
       cursor: pointer;
-      min-width: 30px;
-      max-width: 30px;
-      width: 30px;
+      min-width: 97px;
+      max-width: 97px;
 
       &:hover {
           color: lighten(red, 10%);
       }
+  }
+
+  .item-list {
+    padding-left: 5px;
+    padding-right: 5px;
+    width: 100%;
   }
 
   .subs-table-container {
@@ -109,12 +125,6 @@
     border-bottom: 1px solid #BBB;
 
     .subs-table {
-      padding-left: 5px;
-      padding-right: 5px;
-      width: 100%;
-
-      .close-td
-
       .class-td {
         cursor: pointer;
 
@@ -128,12 +138,15 @@
         max-width: 97px;
         overflow: hidden;
         white-space: nowrap;
-        text-overflow: ellipsis;
-        border-bottom: 1px solid #BBB;
         box-sizing: border-box;
-        padding-left: 2px;
-        padding-right: 2px;
       }
     }
+  }
+
+  .zsig-line, .subs-table-container td {
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #BBB;
+    padding-left: 2px;
+    padding-right: 2px;
   }
 }

@@ -7,12 +7,16 @@
   <label>
     Current Signatures
   </label>
-  <div class="zsigs">
+  <div class="zsigs item-list">
     {{#each zsigs}}
-      <div class="zsig">
-        {{this}}
-        <div class="remove-button remove-zsig" data-zsig-index="{{@index}}">
-          &times;
+      <div class="zsig-line">
+        <div class="zsig">
+          {{this}}
+        </div>
+        <div style="float: right">
+          <div class="remove-button remove-zsig" data-zsig-index="{{@index}}">
+            &times;
+          </div>
         </div>
         <div style="clear:both"></div>
       </div>
@@ -33,7 +37,7 @@
     Current Subscriptions
   </label>
   <div class="subs-table-container">
-    <table cellspacing="0" class="subs-table">
+    <table cellspacing="0" class="subs-table item-list">
       {{#each subscriptions.models}}
         <tr>
           <td class="class-td" data-class="{{attributes.class}}">{{attributes.class}}</td>
