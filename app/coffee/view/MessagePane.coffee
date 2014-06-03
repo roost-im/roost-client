@@ -1,7 +1,7 @@
 do ->
   # We have to enforce this here, because just doing CSS on the messages
   # neglects the filter/compose bars, which are also jankily placed.
-  MIN_MESSAGE_WIDTH = 580
+  MIN_MESSAGE_WIDTH = 600
 
   class com.roost.MessagePane extends Backbone.View
     className: 'message-pane'

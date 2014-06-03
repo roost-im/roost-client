@@ -1,25 +1,10 @@
 <div class="top-bar">
   <div class="title">
-    {{!-- This is getting out of hand. --}}
-    {{#if filters.conversation}}
-      Chat with {{filters.conversation}}
-    {{else}}
-      {{#if filters.instance_key_base}}
-        {{#unless noClass}}
-          <div class="msg-class">{{class}}</div>
-          <div class="divider"></div>
-        {{/unless}}
-        <div class="msg-instance">{{filters.instance_key_base}}</div>
-      {{else}}
-        {{#if class}}
-          {{class}}
-        {{else}}
-          All Messages
-        {{/if}}
-      {{/if}}
-    {{/if}}
+    {{filterHeader filters}}
   </div>
-  <div class="remove">&times;</div>
+  {{#unless showFilters}}
+    <div class="remove">&times;</div>
+  {{/unless}}
   <div class="filters">
     {{#if showFilters}}
       <i class="fa fa-filter"></i><span>&nbsp;&nbsp;Hide Filters</span>

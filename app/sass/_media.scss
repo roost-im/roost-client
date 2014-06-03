@@ -1,0 +1,86 @@
+@media only screen and (max-width: 500px) {
+  .navbar {
+    .title {
+      display: none !important;
+    }
+
+    .user-info {
+      display: none !important;
+    }
+  }
+
+  .mobile-login {
+    display: inline-block !important;
+  }
+
+  .message-pane {
+    .message-view {
+      .signature {
+        width: 200px !important;
+      }
+    }
+  }
+
+  .filter-bar {
+    .top-bar {
+      padding: 0px 10px 0px 10px;
+    }
+
+    span {
+      display: none !important;
+    }
+
+    .remove {
+      margin-right: 13px !important;
+    }
+
+    .filters {
+      margin-right: 25px !important;
+    }
+  }
+
+  .compose-bar {
+    .single-bar, .top-bar { 
+      padding: 0px 10px 0px 10px;
+    }
+
+    .composer {
+      margin-top: 5px !important;
+      height: 180px !important;
+    }
+  }
+
+  .no-panes {
+    font-size: 16px !important;
+  }
+
+  .login-view {
+    h1 {
+      font-size: 30px !important;
+    }
+  }
+}
+
+@media only screen and (max-width: 720px) {
+  .navbar {
+    .user-info span {
+      display: none !important;
+    }
+
+    .add-pane span {
+      display: none;
+    }
+
+    .personal-message span {
+      display: none;
+    }
+
+    .help {
+      display: none !important;
+    }
+  }
+
+  .no-panes {
+    font-size: 16px !important;
+  }
+}

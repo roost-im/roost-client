@@ -1,18 +1,18 @@
-<div class="header">
+<div class="header" style="background-color:{{lightClassColor classKeyBase}}">
   {{#if isPersonal}}
-    <div class="chat-header">Chat with {{convoPartner}}</div>
+    <div class="chat-header">{{messageConvoHeader conversation instance}}</div>
   {{else}}
-    <div class="msg-class">{{class}}</div>
-    <div class="divider"></div>
+    <div class="msg-class" style="background-color:{{classColor classKeyBase}}">{{class}}</div>
+    <div class="divider" style="border-left: 5px solid {{classColor classKeyBase}}"></div>
     <div class="msg-instance">{{instance}}</div>
   {{/if}}
   <span class="time from-now">{{prettyTime}}</span>
-  <span class="time absolute">{{absoluteTime}}</span>
+  <span class="time absolute">{{absoluteTime time}}</span>
 </div>
 <div class="content {{#if isSentByUser}}outgoing{{/if}}">
   <div class="sender">
-    <img class="gravatar" src="{{gravatar}}"><br>
-    <span>{{shortSender}}</span>
+    <img class="gravatar" src="{{gravatar sender}}"><br>
+    <span>{{shortZuser sender}}</span>
     {{#unless auth}}
       <br><span class="not-verified">Not Verified</span>
     {{/unless}}

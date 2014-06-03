@@ -144,9 +144,9 @@
         font-family: $monospace-font;
 
         // Otherwise our scroll handler has a bad time getting past big messages.
-        // TODO: make this less awkward.
-        max-height: 2000px;
-        overflow-y: scroll;
+        // If your message is this big, well, shit.
+        max-height: 4000px;
+        overflow-y: hidden;
 
         a {
           text-decoration: none;

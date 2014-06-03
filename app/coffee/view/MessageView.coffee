@@ -1,12 +1,4 @@
-Handlebars.registerHelper('ztext', (text) ->
-  # ztextToDOM returns a fragment and we need to get it as a string to avoid
-  # Handlebars escaping it for us.
-  div = document.createElement('div')
-  div.appendChild(com.roost.ztext.ztextToDOM(com.roost.ztext.parseZtext(text)))
-  return new Handlebars.SafeString(div.innerHTML))
-
 do ->
-  TIME_FORMAT = 'MMMM Do YYYY, h:mm:ss a'
   QUOTE_LINE_PREFIX = '> '
 
   class com.roost.MessageView extends Backbone.View
@@ -37,12 +29,6 @@ do ->
     render: =>
       @$el.empty()
       template = com.roost.templates['MessageView']
-
-      # Get the gravatar for the user
-      name = shortZuser(@message.get('sender'))
-      realm = zuserRealm(@message.get('sender'))
-      gravatar = getGravatarFromName(name, realm, 80)
-
       # Check if the user sent it
       isSentByUser = @message.get('sender') == @session.userInfo.get('username') + '@' + @session.userInfo.get('realm')
       isSentByUser = @message.get('isOutgoing') or isSentByUser
@@ -53,25 +39,12 @@ do ->
       if (/^[^(]*\).*\([^)]*$/.test(signature))
         signature = "(" + signature + ")"
 
-      # Check if this is a personal message, and if so, save the convo partner
-      if @message.get('isPersonal')
-        convoPartner = shortZuser(@message.get('conversation'))
-
-      # TODO: move some of this to handlebars helpers
       @$el.append template(_.defaults(signature: signature, @message.attributes,
-          absoluteTime: @message.get('time').format(TIME_FORMAT)
-          shortSender: name
-          gravatar: gravatar
           isSentByUser: isSentByUser
-          convoPartner: convoPartner
         )
       )
 
-      # TODO: figure out why ztext parsing isn't working
-      # Chosen to use linkify library and get links, since at least that should work.
-      # Ztext parsing doesn't seem to get that even.
-      # @$('.message').empty()
-      # ztextToDOM(@message.get('message'), @$('.message')[0])
+      # Chosen to use linkify library and get links
       @$('.message').linkify()
 
       # jQuery linkify was supposed to do this but for some reason is failing.
@@ -83,7 +56,6 @@ do ->
       # Done separate from handlebars since these things have a habit of changing.
       @updatePosition()
       @updateTime()
-      @updateColors()
 
     updatePosition: =>
       if @paneModel.get('position') == @message.get('id')
@@ -93,19 +65,6 @@ do ->
 
     updateTime: =>
       @$('.time.from-now').text(@message.get('time').fromNow())
-
-    updateColors: =>
-      string = @message.get('classKey')
-      color = shadeColor(stringToColor(string), 0.5)
-      lighterColor = shadeColor(color, 0.4)
-
-      @$('.header').css
-        background: lighterColor
-
-      @$('.msg-class').css
-        background: color
-
-      @$('.divider').css("border-left", "5px solid #{color}")
 
     remove: =>
       @undelegateEvents()

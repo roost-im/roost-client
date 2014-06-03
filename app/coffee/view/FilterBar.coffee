@@ -57,6 +57,9 @@ do ->
         @$('.divider').css("border-left", "5px solid #{color}")
       # Keep it simple otherwise
       else
+        @$('.msg-class').css
+          color: 'black'
+          background: color
         @$('.top-bar').css
           color: 'black'
           background: color
@@ -82,16 +85,16 @@ do ->
 
     _setFilters: =>
       opts = 
-        class_key: @$('.class-input').val()
-        instance_key: @$('.instance-input').val()
+        class_key_base: baseString(@$('.class-input').val().toLowerCase())
+        instance_key_base: baseString(@$('.instance-input').val().toLowerCase())
         recipient: @$('.recipient-input').val()
 
       # Only add the fields we actually have
       filters = {}
-      if opts.class_key != ''
-        filters.class_key_base = opts.class_key
-      if opts.instance_key != ''
-        filters.instance_key_base = opts.instance_key
+      if opts.class_key_base != ''
+        filters.class_key_base = opts.class_key_base
+      if opts.instance_key_base != ''
+        filters.instance_key_base = opts.instance_key_base
       if opts.recipient != ''
         filters.recipient = opts.recipient
 

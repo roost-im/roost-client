@@ -41,7 +41,7 @@ do ->
 
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.
-      Mousetrap.bind('alt+n', (=> 
+      Mousetrap.bind('alt+t', (=> 
         if !@settingsModel.get('limitReached')
           @addPane {}
       ))

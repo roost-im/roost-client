@@ -1,6 +1,9 @@
 do ->
   # childViews goes from top to bottom
   # DOM goes from top to bottom
+
+  RUNWAY = 1000
+
   class com.roost.MessagePaneView extends Backbone.View
     className: 'message-pane-view'
 
@@ -228,6 +231,9 @@ do ->
       for view in @childViews
         view.updatePosition()
 
+      # Check and make sure we get more messages available
+      @_scrollHandle()
+
     _updateMessageTimes: =>
       for view in @childViews
         view.updateTime()
@@ -235,8 +241,14 @@ do ->
     _scrollHandle: =>
       messages = @model.get('messages').models
 
+      bottomView = @childViews[@childViews.length - 1]
+      bottomPoint = bottomView.$el.offset().top + bottomView.$el.height()
+
+      topView = @childViews[0]
+      topPoint = topView.$el.offset().top
+
       # Arbitrarily chosen scroll limits, as %age of message content height.
-      if @$el.scrollTop() < @$el[0].scrollHeight * 0.15
+      if topPoint * -1 < RUNWAY
         # Check if we have any more messages in our cache
         if @currentTop > 0
           limit = Math.max(@currentTop - com.roost.EXPANSION_SIZE, 0)
@@ -247,7 +259,8 @@ do ->
         # loading more messages at the top.
         else if @currentTop <= 0 and !@model.get('isTopDone') and !@model.get('topLoading')
           @model.trigger 'scrollUp'
-      else if @$el.scrollTop() + @$el.height() > @$el[0].scrollHeight * 0.90 - @$('.filler-view').height()
+      
+      if bottomPoint < RUNWAY
         # Check if we have any more messages in our cache
         if @currentBottom < messages.length
           limit = Math.min(@currentBottom + com.roost.EXPANSION_SIZE, messages.length)

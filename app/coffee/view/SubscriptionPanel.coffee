@@ -42,10 +42,10 @@ do ->
       @settings.set('showSubs', false)
 
     _addClassPane: (evt) =>
-      klass = $(evt.target).data().class
+      classKey = $(evt.target).data().class
       options = 
         filters: 
-          class_key: klass.toLowerCase()
+          class_key_base: baseString(classKey)
 
       @session.addPane options
 

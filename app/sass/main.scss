@@ -9,6 +9,7 @@
 @import "filter";
 @import "hotkeyHelp";
 @import "subscriptions";
+@import "media";
 
 html, body {
   width: 100%;
@@ -21,114 +22,9 @@ html, body {
   overflow-x: auto;
 }
 
-.login-cont {
-  text-align: center;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  width: 100px;
-  height: 100px;
-  z-index: 20;
-
-  .mobile-login {
-    @include button-variant($primary-btn-color, $primary-btn-bg);
-    display: none;
-  }
-}
-
 // Hide extra testing stuff that might be useful later.
 .navbar {
   .logout {
     display: none !important;
-  }
-}
-
-@media only screen and (max-width: 500px) {
-  .navbar {
-    .title {
-      display: none !important;
-    }
-
-    .user-info {
-      display: none !important;
-    }
-  }
-
-  .mobile-login {
-    display: inline-block !important;
-  }
-
-  .message-pane {
-    .message-view {
-      .signature {
-        width: 200px !important;
-      }
-    }
-  }
-
-  .filter-bar {
-    .top-bar {
-      padding: 0px 10px 0px 10px;
-    }
-
-    span {
-      display: none !important;
-    }
-
-    .remove {
-      margin-right: 13px !important;
-    }
-
-    .filters {
-      margin-right: 25px !important;
-    }
-  }
-
-  .compose-bar {
-    .single-bar, .top-bar { 
-      padding: 0px 10px 0px 10px;
-    }
-
-    .composer {
-      margin-top: 5px !important;
-      height: 180px !important;
-    }
-  }
-
-  .no-panes {
-    font-size: 16px !important;
-  }
-
-  .login-view {
-    h1 {
-      font-size: 30px !important;
-    }
-  }
-}
-
-@media only screen and (max-width: 720px) {
-  .navbar {
-    .user-info span {
-      display: none !important;
-    }
-
-    .add-pane span {
-      display: none;
-    }
-
-    .personal-message span {
-      display: none;
-    }
-
-    .help {
-      display: none !important;
-    }
-  }
-
-  .no-panes {
-    font-size: 16px !important;
   }
 }

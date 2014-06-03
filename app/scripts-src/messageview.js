@@ -3,16 +3,8 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Handlebars.registerHelper('ztext', function(text) {
-    var div;
-    div = document.createElement('div');
-    div.appendChild(com.roost.ztext.ztextToDOM(com.roost.ztext.parseZtext(text)));
-    return new Handlebars.SafeString(div.innerHTML);
-  });
-
   (function() {
-    var QUOTE_LINE_PREFIX, TIME_FORMAT;
-    TIME_FORMAT = 'MMMM Do YYYY, h:mm:ss a';
+    var QUOTE_LINE_PREFIX;
     QUOTE_LINE_PREFIX = '> ';
     return com.roost.MessageView = (function(_super) {
       __extends(MessageView, _super);
@@ -26,7 +18,6 @@
         this.openMessageBox = __bind(this.openMessageBox, this);
         this.openReplyBox = __bind(this.openReplyBox, this);
         this.remove = __bind(this.remove, this);
-        this.updateColors = __bind(this.updateColors, this);
         this.updateTime = __bind(this.updateTime, this);
         this.updatePosition = __bind(this.updatePosition, this);
         this.render = __bind(this.render, this);
@@ -55,29 +46,19 @@
       };
 
       MessageView.prototype.render = function() {
-        var convoPartner, gravatar, isSentByUser, name, realm, signature, template;
+        var isSentByUser, signature, template;
         this.$el.empty();
         template = com.roost.templates['MessageView'];
-        name = shortZuser(this.message.get('sender'));
-        realm = zuserRealm(this.message.get('sender'));
-        gravatar = getGravatarFromName(name, realm, 80);
         isSentByUser = this.message.get('sender') === this.session.userInfo.get('username') + '@' + this.session.userInfo.get('realm');
         isSentByUser = this.message.get('isOutgoing') || isSentByUser;
         signature = this.message.get('signature');
         if (/^[^(]*\).*\([^)]*$/.test(signature)) {
           signature = "(" + signature + ")";
         }
-        if (this.message.get('isPersonal')) {
-          convoPartner = shortZuser(this.message.get('conversation'));
-        }
         this.$el.append(template(_.defaults({
           signature: signature
         }, this.message.attributes, {
-          absoluteTime: this.message.get('time').format(TIME_FORMAT),
-          shortSender: name,
-          gravatar: gravatar,
-          isSentByUser: isSentByUser,
-          convoPartner: convoPartner
+          isSentByUser: isSentByUser
         })));
         this.$('.message').linkify();
         this.$('a').attr({
@@ -85,8 +66,7 @@
           tabindex: -1
         });
         this.updatePosition();
-        this.updateTime();
-        return this.updateColors();
+        return this.updateTime();
       };
 
       MessageView.prototype.updatePosition = function() {
@@ -99,20 +79,6 @@
 
       MessageView.prototype.updateTime = function() {
         return this.$('.time.from-now').text(this.message.get('time').fromNow());
-      };
-
-      MessageView.prototype.updateColors = function() {
-        var color, lighterColor, string;
-        string = this.message.get('classKey');
-        color = shadeColor(stringToColor(string), 0.5);
-        lighterColor = shadeColor(color, 0.4);
-        this.$('.header').css({
-          background: lighterColor
-        });
-        this.$('.msg-class').css({
-          background: color
-        });
-        return this.$('.divider').css("border-left", "5px solid " + color);
       };
 
       MessageView.prototype.remove = function() {
