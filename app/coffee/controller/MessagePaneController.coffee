@@ -128,9 +128,9 @@ do ->
           @forwardTail?.close()
           @forwardTail = @messageModel.newTail(msgs[msgs.length - 1].id, @model.get('filters'), @addMessagesToBottomOfList)
 
-        # Trigger this to expand the forward tail down and get live messages
-        # Unclear as to why this has to happen, but it does
-        @lastForwardStep += 1
+        # Trigger this to expand the forward tail downward a little ways, to give some
+        # messages on the bottom.
+        @lastForwardStep += 10
         @forwardTail.expandTo(@lastForwardStep)
       else
         # If we are at our cache size, reduce the size of our cache

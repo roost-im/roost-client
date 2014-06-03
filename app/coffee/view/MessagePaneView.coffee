@@ -367,10 +367,6 @@ do ->
       $notify = @$(".notify.#{which}")
       $notify.empty()
 
-      if !@model.get('loaded') or @model.get("#{which}Done")
-        return
-
-      if @model.get("#{which}Loading") or com.roost.ON_MOBILE
+      # If we're loaded and not done yet, just make this always say loading.
+      if @model.get('loaded') and not @model.get("#{which}Done")
         $notify.text('Loading...')
-      else
-        $notify.text('Scroll for more messages')
