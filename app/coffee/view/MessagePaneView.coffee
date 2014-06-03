@@ -26,6 +26,8 @@ do ->
       @listenTo @model, 'change:topLoading change:topDone', (=> @_updateNotify('top'))
       @listenTo @model, 'change:bottomLoading, change:bottomDone', (=> @_updateNotify('bottom'))
 
+      @listenTo @model, 'change:showCompose change:showFilters', @_setPersist
+
       # Redraw if our selected position changes
       @listenTo @model, 'change:position', @_updatePosition
 
@@ -372,3 +374,9 @@ do ->
       # If we're loaded and not done yet, just make this always say loading.
       if @model.get('loaded') and not @model.get("#{which}Done")
         $notify.text('Loading...')
+
+    _setPersist: =>
+      if @model.get('showCompose') or @model.get('showFilters')
+        @$el.addClass('persist')
+      else
+        @$el.removeClass('persist')
