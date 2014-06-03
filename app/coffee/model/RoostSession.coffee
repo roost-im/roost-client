@@ -69,11 +69,12 @@ do ->
         model: paneModel
         api: @api
 
+      # If this pane was added from a parent pane, set proper
+      # insertion index.
       if parent?
         index = @messageLists.indexOf(parent) + 1
       else
         index = @messageLists.length
-      console.log index
 
       # Save references to the controllers and model
       @messageLists.add paneModel, {at: index}
