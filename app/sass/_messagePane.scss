@@ -28,6 +28,10 @@
     white-space: normal;
     padding-top: $compose-filter-bar-height;
 
+    &.not-loaded {
+      opacity: 0.5;
+    }
+
     &:hover, &.persist {
       .filter-bar {
         opacity: 0.8;

@@ -241,7 +241,7 @@ do ->
       e?.preventDefault()
       e?.stopPropagation()
       
-    _addPaneView: (paneModel) =>
+    _addPaneView: (paneModel, collection, options) =>
       # Well, we have a pane now.
       @$('.no-panes').remove()
 
@@ -249,15 +249,23 @@ do ->
       paneView = new com.roost.MessagePaneView
         session: @session
         model: paneModel
-      @childViews.push(paneView)
 
-      # Render, stick it in our $el, and tell everyone to redo their widths
+      # Render and add to $el at right position
+      index = options.at
       paneView.render()
-      @$el.append(paneView.$el)
+      if @childViews.length > 0
+        @childViews.splice(index, 0, paneView)
+        @childViews[index - 1].$el.after(paneView.$el)
+      else
+        @childViews.push paneView
+        @$el.append(paneView.$el)
+
+      # Unfortunate width recalculation
       @_recalculateWidth()
 
       # Select the newly added pane
-      @_moveSelection(-1 * @childViews.length)
+      @selectedPosition = index
+      @_setSelection()
 
     _removePaneView: (model) =>
       for view in @childViews

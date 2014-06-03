@@ -23,8 +23,9 @@ do ->
       @listenTo @model.get('messages'), 'reset', @render
       @listenTo @model.get('messages'), 'add', @_addMessages
 
-      @listenTo @model, 'change:topLoading change:topDone', (=> @_updateNotify('top'))
-      @listenTo @model, 'change:bottomLoading, change:bottomDone', (=> @_updateNotify('bottom'))
+      @listenTo @model, 'change:topLoading change:topDone change:loaded', (=> @_updateNotify('top'))
+      @listenTo @model, 'change:bottomLoading, change:bottomDone change:loaded', (=> @_updateNotify('bottom'))
+      @listenTo @model, 'change:loaded', @_toggleLoaded
 
       @listenTo @model, 'change:showCompose change:showFilters', @_setPersist
 
@@ -246,18 +247,23 @@ do ->
       for view in @childViews
         view.updateTime()
 
-    _scrollHandle: =>
+    _scrollHandle: (evt) =>
       messages = @model.get('messages').models
-      if messages.length == 0
+
+      # Instead of dealing with race conditions regarding filter changes while someone keeps
+      # scrolling, block off further scrolling from happening while loading a new message set.
+      # Similarly, don't allow scrolling when there aren't any messages. It looks ugly.
+      if messages.length == 0 or !@model.get('loaded')
+        evt?.preventDefault()
+        evt?.stopPropagation()
         return
 
+      # Get the relevant points for scroll checking
       bottomView = @childViews[@childViews.length - 1]
       bottomPoint = bottomView.$el.offset().top + bottomView.$el.height()
+      topPoint = @childViews[0].$el.offset().top
 
-      topView = @childViews[0]
-      topPoint = topView.$el.offset().top
-
-      # Arbitrarily chosen scroll limits, as %age of message content height.
+      # Check if we need more messages above
       if topPoint * -1 < RUNWAY
         # Check if we have any more messages in our cache
         if @currentTop > 0
@@ -270,6 +276,7 @@ do ->
         else if @currentTop <= 0 and !@model.get('topDone') and !@model.get('topLoading')
           @model.trigger 'scrollUp'
       
+      # Check if we need more messages below
       if bottomPoint < RUNWAY
         # Check if we have any more messages in our cache
         if @currentBottom < messages.length
@@ -376,7 +383,14 @@ do ->
         $notify.text('Loading...')
 
     _setPersist: =>
+      # Don't let this pane fade completely if compose or fitlers are open
       if @model.get('showCompose') or @model.get('showFilters')
         @$el.addClass('persist')
       else
         @$el.removeClass('persist')
+
+    _toggleLoaded: =>
+      if !@model.get('loaded')
+        @$el.addClass('not-loaded')
+      else
+        @$el.removeClass('not-loaded')

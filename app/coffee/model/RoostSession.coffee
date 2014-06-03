@@ -52,7 +52,7 @@ do ->
               is_personal: true
       ))
 
-    addPane: (options) =>
+    addPane: (options, parent) =>
       # Add a pane to our list if we have the multi-pane setting enabled,
       # or if we don't have any panes at all.
       # Add a new model
@@ -69,8 +69,14 @@ do ->
         model: paneModel
         api: @api
 
+      if parent?
+        index = @messageLists.indexOf(parent) + 1
+      else
+        index = @messageLists.length
+      console.log index
+
       # Save references to the controllers and model
-      @messageLists.push paneModel
+      @messageLists.add paneModel, {at: index}
       @messageControllers[paneModel.cid] = paneController
       @composeControllers[paneModel.cid] = composeController
 

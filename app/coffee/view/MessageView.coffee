@@ -125,7 +125,7 @@ do ->
       # If holding alt, create a new pane and kill the event.
       # We don't want the event bubbling up to selecting this pane.
       if evt.altKey and !@session.settingsModel.get('limitReached')
-        @session.addPane options
+        @session.addPane options, @paneModel
         evt.preventDefault()
         evt.stopPropagation()
       else
