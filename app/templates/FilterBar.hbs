@@ -1,4 +1,4 @@
-<div class="top-bar">
+<div class="top-bar" style="background:{{filterBarBackgroundColor filters}};color:{{filterBarColor filters}}">
   <div class="title">
     {{filterHeader filters}}
   </div>
@@ -12,11 +12,11 @@
       <i class="fa fa-filter"></i><span>&nbsp;&nbsp;Show Filters</span>
     {{/if}}
   </div>
-  {{#if class}}
+  {{#ifNotEmpty filters}}
     <div class="clear-filters">
       <i class="fa fa-ban"></i><span>&nbsp;&nbsp;Clear</span>
     </div>
-  {{/if}}
+  {{/ifNotEmpty}}
 </div>
 {{#if showFilters}}
   <div class="filter-editor">

@@ -44,7 +44,6 @@ do ->
       if !@settings.get('limitReached')
         @session.addPane 
           filters:
-            class_key_base: 'message'
             is_personal: true
 
     _toggleSubs: =>

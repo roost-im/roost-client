@@ -24,10 +24,10 @@ do ->
       fclass = @paneModel.get('filters').class_key_base
       # If we're only an instance filter, flag it and set fclass to the instance for coloring
       # (Hacky, I'm sorry.)
-      if !fclass? and @paneModel.get('filters').instance_key_base
+      if !@paneModel.get('filters').class_key_base? and @paneModel.get('filters').instance_key_base
         noClass = true
         fclass = @paneModel.get('filters').instance_key_base
-      @$el.append template(_.defaults({}, @paneModel.attributes, {class: fclass, noClass: noClass}))
+      @$el.append template(_.defaults({}, @paneModel.attributes, {noClass: noClass}))
 
       # Set full opacity class if this pane is selected
       if @paneModel.get('selected')
@@ -49,18 +49,12 @@ do ->
 
       # Get fancy if we have a class-instance filter
       if @paneModel.get('filters').instance_key_base
-        @$('.top-bar').css
-          color: 'black'
-          background: lighterColor
         @$('.msg-class').css
           background: color
         @$('.divider').css("border-left", "5px solid #{color}")
       # Keep it simple otherwise
       else
         @$('.msg-class').css
-          color: 'black'
-          background: color
-        @$('.top-bar').css
           color: 'black'
           background: color
 

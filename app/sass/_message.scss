@@ -88,6 +88,24 @@
         text-decoration: underline;
       }
     }
+
+    .fancy {
+      border-left-width: 8px;
+      border-left-style: solid;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      opacity: 0.6;
+
+      &.up {
+        border-bottom: $msg-header-height solid transparent;
+      }
+
+      &.down {
+        border-top: $msg-header-height solid transparent;
+      }
+    }
   }
 
   .content {

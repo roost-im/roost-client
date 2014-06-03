@@ -49,7 +49,6 @@ do ->
         if !@settingsModel.get('limitReached')
           @addPane 
             filters:
-              class_key_base: 'message'
               is_personal: true
       ))
 
