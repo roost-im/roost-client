@@ -246,6 +246,8 @@ do ->
 
     _scrollHandle: =>
       messages = @model.get('messages').models
+      if messages.length == 0
+        return
 
       bottomView = @childViews[@childViews.length - 1]
       bottomPoint = bottomView.$el.offset().top + bottomView.$el.height()

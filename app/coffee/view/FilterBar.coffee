@@ -21,12 +21,8 @@ do ->
       @$el.empty()
       template = com.roost.templates['FilterBar']
 
-      fclass = @paneModel.get('filters').class_key_base
-      # If we're only an instance filter, flag it and set fclass to the instance for coloring
-      # (Hacky, I'm sorry.)
       if !@paneModel.get('filters').class_key_base? and @paneModel.get('filters').instance_key_base
         noClass = true
-        fclass = @paneModel.get('filters').instance_key_base
       @$el.append template(_.defaults({}, @paneModel.attributes, {noClass: noClass}))
 
       # Set full opacity class if this pane is selected
@@ -35,28 +31,22 @@ do ->
       else
         @$el.removeClass('selected')
 
+      # Autocomplete currently only works for browser - mobile click event issues
+      if not com.roost.ON_MOBILE
+        @$('.class-input').typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1
+        },
+        {
+          name: 'subs'
+          displayKey: 'value'
+          source: substringMatcher(@session.subscriptions.pluck('class'))
+        })
+        @$('.class-input').typeahead('val', @paneModel.get('filters').class_key_base)
+
       # Bring focus to first input box
       @$('.class-input').focus()
-
-      # Make our header colored if filtering
-      if fclass?
-        @_updateColors(fclass)
-
-    _updateColors: (string)=>
-      # TODO: make this work through a Handlebars helper 
-      color = shadeColor(stringToColor(string), 0.5)
-      lighterColor = shadeColor(color, 0.4)
-
-      # Get fancy if we have a class-instance filter
-      if @paneModel.get('filters').instance_key_base
-        @$('.msg-class').css
-          background: color
-        @$('.divider').css("border-left", "5px solid #{color}")
-      # Keep it simple otherwise
-      else
-        @$('.msg-class').css
-          color: 'black'
-          background: color
 
     _toggleFilters: =>
       # Show or hide input boxes
@@ -79,7 +69,7 @@ do ->
 
     _setFilters: =>
       opts = 
-        class_key_base: baseString(@$('.class-input').val().toLowerCase())
+        class_key_base: baseString(@$('.class-input:not(.tt-hint)').val().toLowerCase())
         instance_key_base: baseString(@$('.instance-input').val().toLowerCase())
         recipient: @$('.recipient-input').val()
 
@@ -99,6 +89,9 @@ do ->
         loaded: false
         showFilters: false
         position: null
+
+      # In case we hid it last time for mobile
+      @session.settingsModel.set('showNavbar', true)
 
     _handleInputKey: (evt) =>
       # Enter and escape key handling in the input boxes
