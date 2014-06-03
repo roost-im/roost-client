@@ -109,7 +109,7 @@ ztextToDOM = (ztext, parent) ->
         when "color"
           if chunk.children.length == 1 && typeof chunk.children[0] == "string"
             color = chunk.children[0]
-            if color in COLOR_MAP
+            if color of COLOR_MAP
               color = COLOR_MAP[color]
             elem = document.createElement("span")
             # Sanitize colors, in case future CSS allows for more
