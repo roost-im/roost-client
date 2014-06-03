@@ -63,6 +63,22 @@
     .filler-view {
       height: 70%;
     }
+
+    .notify {
+      max-width: $msg-max-width;
+      width: 100%;
+      margin: auto;
+      height: 40px;
+      line-height: 20px;
+      color: #BBB;
+      box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      padding: 10px;
+      font-style: italic;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
   }
 
   .no-panes {

@@ -17,8 +17,8 @@ do ->
 
         selected: false
 
-        isTopDone: false
-        isBottomDone: true
+        topDone: false
+        bottomDone: true
 
         loaded: false
         topLoading: false

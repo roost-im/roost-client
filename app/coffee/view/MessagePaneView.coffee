@@ -23,6 +23,9 @@ do ->
       @listenTo @model.get('messages'), 'reset', @render
       @listenTo @model.get('messages'), 'add', @_addMessages
 
+      @listenTo @model, 'change:topLoading change:topDone', (=> @_updateNotify('top'))
+      @listenTo @model, 'change:bottomLoading, change:bottomDone', (=> @_updateNotify('bottom'))
+
       # Redraw if our selected position changes
       @listenTo @model, 'change:position', @_updatePosition
 
@@ -58,7 +61,8 @@ do ->
         @$el.append(view.$el)
         @childViews.push(view)
       
-      # Filler view to pad the bottom
+      @$el.prepend('<div class="notify top">')
+      @$el.append('<div class="notify bottom">')
       @$el.append('<div class="filler-view">')
 
       # If we didn't get any messages this time around, then show something informative
@@ -97,6 +101,8 @@ do ->
       @$el.append @filterView.$el
 
       @recalculateWidth(@index, @width)
+      @_updateNotify('bottom')
+      @_updateNotify('top')
 
     recalculateWidth: (index, width) =>
       # HACK: store whatever we get to use again if rerendered
@@ -257,7 +263,7 @@ do ->
             @_removeBottomMessage()
         # Trigger the scrollup if we're at the top, the top isn't done, and we aren't currently
         # loading more messages at the top.
-        else if @currentTop <= 0 and !@model.get('isTopDone') and !@model.get('topLoading')
+        else if @currentTop <= 0 and !@model.get('topDone') and !@model.get('topLoading')
           @model.trigger 'scrollUp'
       
       if bottomPoint < RUNWAY
@@ -269,7 +275,7 @@ do ->
             @_removeTopMessage()
         # Trigger the scrolldown if we're at the bottom, the bottom isn't done, and we
         # aren't currently loading more messages at the bottom.
-        else if @currentBottom >= messages.length and !@model.get('isBottomDone') and !@model.get('bottomLoading')
+        else if @currentBottom >= messages.length and !@model.get('bottomDone') and !@model.get('bottomLoading')
           @model.trigger 'scrollDown'
 
     _addMessages: (message, collection, options) =>
@@ -301,7 +307,7 @@ do ->
         paneModel: @model
         session: @session
       view.render()
-      @$('.filler-view').before(view.$el)
+      @$('.notify.bottom').before(view.$el)
 
       # Store the view for update/cleanup later
       @childViews.push(view)
@@ -319,7 +325,7 @@ do ->
         paneModel: @model
         session: @session
       view.render()
-      @$el.prepend(view.$el)
+      @$('.notify.top').after(view.$el)
 
       # Store the view for update/cleanup later
       @childViews.unshift(view)
@@ -356,3 +362,15 @@ do ->
       newHeight = @$el[0].scrollHeight
       change = @cachedHeight - newHeight
       @$el.scrollTop(@$el.scrollTop() - change)
+
+    _updateNotify: (which) =>
+      $notify = @$(".notify.#{which}")
+      $notify.empty()
+
+      if !@model.get('loaded') or @model.get("#{which}Done")
+        return
+
+      if @model.get("#{which}Loading") or com.roost.ON_MOBILE
+        $notify.text('Loading...')
+      else
+        $notify.text('Scroll for more messages')

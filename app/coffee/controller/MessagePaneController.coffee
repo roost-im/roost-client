@@ -88,7 +88,7 @@ do ->
         topLoading: false
         loaded: false
         bottomLoading: true
-        isTopDone: true
+        topDone: true
 
       # Close the reverse tail
       @reverseTail?.close()
@@ -102,7 +102,7 @@ do ->
 
     addMessagesToTopOfList: (msgs, isDone) =>
       @model.set
-        isTopDone: isDone
+        topDone: isDone
         topLoading: false
       messages = @model.get 'messages'
 
@@ -121,7 +121,7 @@ do ->
         @lastForwardStep = 0
         if msgs.length == 0
           # Special case for handling when there are no messages to show: both top and bottom done
-          @model.set 'isBottomDone', true
+          @model.set 'bottomDone', true
           @forwardTail?.close()
           @forwardTail = @messageModel.newTail(null, @model.get('filters'), @addMessagesToBottomOfList)
         else
@@ -145,13 +145,13 @@ do ->
 
     addMessagesToBottomOfList: (msgs, isDone) =>
       # This means we have a live message
-      if @model.get('isBottomDone') and isDone
+      if @model.get('bottomDone') and isDone
         @lastForwardStep += 1
         @forwardTail.expandTo(@lastForwardStep)
         live = true
 
       @model.set 
-        isBottomDone: isDone
+        bottomDone: isDone
         bottomLoading: false
       messages = @model.get 'messages'
 
@@ -191,7 +191,7 @@ do ->
       # Bump down our upward tail to the new starting point and reset upward state
       @reverseTail?.close()
       @reverseTail = @messageModel.newReverseTail(messages.at(0).id, @model.get('filters'), @addMessagesToTopOfList)
-      @model.set 'isTopDone', false
+      @model.set 'topDone', false
       @lastReverseStep = 0
 
     _clearBottomOfCache: (length) =>
@@ -204,7 +204,7 @@ do ->
       # Bump up our downward tail to the latest message and reset downward state
       @forwardTail?.close()
       @forwardTail = @messageModel.newTail(messages.at(messages.length - 1).id, @model.get('filters'), @addMessagesToBottomOfList)
-      @model.set 'isBottomDone', false
+      @model.set 'bottomDone', false
       @lastForwardStep = 0
 
     _processMesssage: (message) =>
