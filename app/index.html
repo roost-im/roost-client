@@ -1,266 +1,89 @@
 <!DOCTYPE html>
-<html ng-app="roostApp" ng-csp ng-controller="RoostController">
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Roost</title>
-    <link rel="stylesheet" href="/styles/bootstrap.min.css">
-    <link rel="stylesheet" href="/styles/style.css">
+
+    <link rel="stylesheet" href="/styles/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/styles/main.css">
+
     <link rel="SHORTCUT ICON" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/roost-logo_57x57.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="/roost-logo_72x72.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="/roost-logo_114x114.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="/roost-logo_144x144.png">
+    <link rel="apple-touch-icon" href="/img/roost-logo_57x57.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/img/roost-logo_72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/img/roost-logo_114x114.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/img/roost-logo_144x144.png">
 
     <!-- build:js /scripts/q.min.js -->
     <script src="/bower_components/q/q.js"></script>
     <!-- endbuild -->
+
     <script src="/scripts/sockjs.min.js"></script>
+
     <!-- build:js /scripts/winchan.min.js -->
     <script src="/bower_components/winchan/winchan.js"></script>
     <!-- endbuild -->
 
     <script src="/scripts/jquery.min.js"></script>
-    <script src="/scripts/bootstrap.min.js"></script>
-    <script src="/scripts/angular.min.js"></script>
-
+    <script src="/scripts/jquery.linkify-1.0-min.js"></script>
+    <script src="/scripts/jquery.touchSwipe.min.js"></script>
     <script src="/scripts/cryptojs-md5.js"></script>
     <script src="/scripts/sjcl.js"></script>
-
     <script src="/scripts/webathena.js"></script>
+    <script src="/scripts/underscore.js"></script>
+    <script src="/scripts/backbone.js"></script>
+    <script src="/scripts/handlebars.js"></script>
+    <script src="/scripts/moment.min.js"></script>
+    <script src="/scripts/mousetrap.min.js"></script>
+    <script src="/scripts/mousetrap-pause.min.js"></script>
+    <script src="/scripts/weakmap.js"></script>
+
     <!-- build:js /scripts/gss.min.js -->
     <script src="/bower_components/webathena/dist/gss.js"></script>
     <!-- endbuild -->
 
     <!-- build:js /scripts/roost.min.js -->
+    <script src="/scripts-src/init.js"></script>
     <script src="/scripts-src/config.js"></script>
-    <script src="/bower_components/WeakMap/weakmap.js"></script>
-    <script src="/scripts-src/MutationObserver.js"></script>
+    <script src="/scripts-src/sequtil.js"></script>
     <script src="/scripts-src/polyfills.js"></script>
     <script src="/scripts-src/events.js"></script>
     <script src="/scripts-src/timespan.js"></script>
-    <script src="/scripts-src/sequtil.js"></script>
     <script src="/scripts-src/url.js"></script>
     <script src="/scripts-src/util.js"></script>
+    <script src="/scripts-src/filter.js"></script>
     <script src="/scripts-src/storage.js"></script>
     <script src="/scripts-src/tickets.js"></script>
-    <script src="/scripts-src/filter.js"></script>
     <script src="/scripts-src/userinfo.js"></script>
     <script src="/scripts-src/api.js"></script>
     <script src="/scripts-src/model.js"></script>
-    <script src="/scripts-src/colors.js"></script>
     <script src="/scripts-src/ztext.js"></script>
     <!-- endbuild -->
+
     <!-- build:js /scripts/app.min.js -->
-    <script src="/scripts-src/app.js"></script>
-    <script src="/scripts-src/messageview.js"></script>
+    <script src="/scripts-src/colors.js"></script>
+    <script src="/scripts-src/templates.js"></script>
+    <script src="/scripts-src/LoginView.js"></script>
+    <script src="/scripts-src/MessagePane.js"></script>
+    <script src="/scripts-src/MessagePaneView.js"></script>
+    <script src="/scripts-src/MessageView.js"></script>
+    <script src="/scripts-src/ComposeBar.js"></script>
+    <script src="/scripts-src/FilterBar.js"></script>
+    <script src="/scripts-src/SubscriptionPanel.js"></script>
+    <script src="/scripts-src/SubscriptionModel.js"></script>
+    <script src="/scripts-src/MessageModel.js"></script>
+    <script src="/scripts-src/MessagePaneModel.js"></script>
+    <script src="/scripts-src/MessagePaneController.js"></script>
+    <script src="/scripts-src/ComposeController.js"></script>
+    <script src="/scripts-src/AuthenticationController.js"></script>
+    <script src="/scripts-src/SubscriptionController.js"></script>
+    <script src="/scripts-src/NavBar.js"></script>
+    <script src="/scripts-src/RoostSession.js"></script>
+    <script src="/scripts-src/endpoint.js"></script>
     <!-- endbuild -->
+
   </head>
   <body>
-    <button id="reset-view" class="btn btn-default"
-            ng-click="resetView()">Reset view</button>
-    <div id="recent-states" class="btn-group">
-      <button class="btn btn-default dropdown-toggle"
-              data-toggle="dropdown">Recent positions <span class="caret"></span></button>
-      <ul class="dropdown-menu">
-        <li ng-repeat="state in scrollStates">
-          <a ng-click="setScrollState(state)"
-             bind-date="state.scroll.receiveTime"
-             date-format="yyyy-MM-dd HH:mm:ss"></a>
-        </li>
-      </ul>
-    </div>
-    <button id="compose-button" class="btn btn-default"
-            ng-click="compose()">Compose</button>
-
-    <message-view ng-cloak>
-      <div class="msgview-loading-above" ng-class="{'msgview-loading-above-at-end':atTop}">
-        <div class="msgview-loading-above-text">Loading...</div>
-      </div>
-      <div msgview-repeat-message="msg"
-           msgview-model="model"
-           msgview-selection="selection"
-           msgview-at-top="atTop"
-           msgview-at-bottom="atBottom"
-           msgview-empty-cache="emptyCache">
-        <div class="message"
-           ng-class="{
-'message-selected': selected,
-'message-personal': msg.isPersonal,
-'message-dark': msg.classKey == 'ztoys' && msg.instanceKey == 'art',
-'message-self-sent': selfSent
-}">
-          <div class="message-header clearfix"
-               random-color-key="{{msg.classKeyBase}}">
-            <a ng-click="smartNarrow(msg, false, true)"
-               ng-hide="msg.isPersonal && msg.classKey == 'message'">
-              <span ng-show="msg.recipient">{{msg.recipient|zuserRealm}} /</span>
-              {{msg.class}}</a>
-            <a ng-click="smartNarrow(msg, false, true)"
-               ng-show="msg.isPersonal && msg.classKey == 'message'"
-               >Chats with {{msg.conversation|shortZuser}}</a>
-            / <a ng-click="smartNarrow(msg, true, true)">{{msg.instance}}</a>
-            <span class="pull-right">
-              <a href="#msg-{{msg.id|urlencode}}"
-                 bind-date="msg.time" date-format="yyyy-MM-dd HH:mm:ss"></a>
-            </span>
-          </div>
-          <div class="message-table">
-            <div class="message-row">
-              <div class="message-sender-box" ng-hide="selfSent">
-                <img gravatar-src="msg.sender" gravatar-size="64" class="img-rounded"
-                     height="32" width="32" ng-show="msg.auth == 1">
-                <div class="message-sender">{{msg.sender|shortZuser}}</div>
-                <div class="message-unauth" ng-hide="msg.auth == 1"
-                     title="Roost could not verify the sender of this message."
-                     bootstrap-tooltip data-placement="bottom" data-container="body"
-                     >NOT VERIFIED</div>
-              </div>
-              <div class="message-area">
-                <pre bind-ztext="{{msg.message}}" class="message-body"></pre>
-                <div class="message-signature" ng-show="msg.signature"
-                     bind-ztext="{{msg.signature|zsigParens}}"></div>
-              </div>
-              <div class="message-sender-box" ng-show="selfSent">
-                <img gravatar-src="msg.sender" gravatar-size="64" class="img-rounded"
-                     height="32" width="32" ng-show="msg.auth == 1">
-                <div class="message-sender">{{msg.sender|shortZuser}}</div>
-<!--                <div class="message-unauth" ng-hide="msg.auth == 1"
-                     title="Roost could not verify the sender of this message."
-                     bootstrap-tooltip data-placement="bottom" data-container="body"
-                     >NOT VERIFIED</div> -->
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="msgview-loading-below" ng-class="{'msgview-loading-below-at-end':atBottom}">
-        <span ng-hide="emptyCache && !atTop">Loading...</span>
-      </div>
-    </message-view>
-
-    <div id="reply-box" ng-cloak ng-show="showReplyBox">
-      <form class="zwrite-form form-horizontal"
-            ng-submit="sendZwrite({
-                         class: (replyClass || 'message'),
-                         instance: (replyInstance || 'personal'),
-                         recipient: (replyRecipient|longZuser),
-                         message: replyMessage,
-                         wrapText: replyWrapText
-                       })"
-            on-keydown="replyBoxKeydown($event)">
-        <div class="form-group">
-          <label for="reply-form-class" class="col-xs-2 control-label">
-            Class
-          </label>
-          <div class="col-xs-10">
-            <input name="class" id="reply-form-class"
-                   class="form-control input-sm" placeholder="message"
-                   focus-on="showReplyBox; focusClass"
-                   ng-model="replyClass">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="reply-form-instance" class="col-xs-2 control-label">
-            Instance
-          </label>
-          <div class="col-xs-10">
-            <input name="instance" id="reply-form-instance"
-                   class="form-control input-sm" placeholder="personal"
-                   ng-model="replyInstance">
-          </div>
-        </div>
-        <div class="form-group">
-          <label for="reply-form-recipient" class="col-xs-2 control-label">
-            Recipient
-          </label>
-          <div class="col-xs-10">
-            <input name="recipient" id="reply-form-recipient"
-                   class="form-control input-sm"
-                   ng-model="replyRecipient">
-          </div>
-        </div>
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" ng-model="replyWrapText" tabIndex=1>
-            Wrap text to 70 columns.
-          </label>
-        </div>
-        <textarea name="message" class="form-control" rows=5
-                  focus-on="showReplyBox; focusMessage"
-                  tab-to="submitButton"
-                  ng-model="replyMessage"></textarea><br>
-        <div class="clearfix">
-          <button type="submit" class="btn btn-primary"
-                  ng-disabled="replySending"
-                  name="submitButton">
-            <span ng-hide="replySending">Send</span><span ng-show="replySending">Sending</span>
-          </button>
-          <button type="button" class="btn btn-default pull-right"
-                ng-click="hideReplyBox()">Cancel</button>
-        </div>
-      </form>
-    </div>
-
-    <div id="bottom-alerts" ng-cloak>
-      <div class="alert alert-warning"
-           ng-show="ticketNeeded && !ticketNeededModal && !ticketNeededDemon">
-        <p>
-          <strong>Your login is expiring soon.</strong> Use Webathena to
-          <a class="alert-link"
-             ng-click="refreshTicketsInteractive()">renew your login</a>.
-        </p>
-      </div>
-      <div class="alert alert-danger"
-           ng-show="ticketNeeded && !ticketNeededModal && ticketNeededDemon">
-        <p>
-          <strong>Zephyr credentials needed.</strong> Your zephyr
-          credentials on the server have expired. Please
-          <a class="alert-link"
-             ng-click="refreshTicketsInteractive()">renew your login</a> to
-          continue receiving personal messages.
-        </p>
-      </div>
-    </div>
-
-    <div class="modal fade" show-modal="ticketNeededModal"
-         data-backdrop="static" data-keyboard="false">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <ng-switch on="isLoggedIn">
-              <h4 class="modal-title" ng-switch-when="true">Your Login has Expired</h4>
-              <h4 class="modal-title" ng-switch-default>Welcome to Roost</h4>
-            </ng-switch>
-          </div>
-          <div class="modal-body">
-            <ng-switch on="isLoggedIn">
-              <div ng-switch-when="true">
-                <p>Please login again.</p>
-              </div>
-              <div ng-switch-default>
-                <p>WARNING: This is very experimental right now. No
-                  guarantees about it doing anything remotely reasonable at
-                  all. Talk to davidben if you want to know the state.</p>
-
-                <p>In particular, the UI is still basically
-                  non-existent. It's getting there though. Press z to
-                  send a message, r to reply. Narrowing works with the
-                  same keys as barnowl. Run <code>athrun roost
-                    import-subs</code> on Athena to import your zephyr
-                  subs.</p>
-
-                <p>Also, there isn't UI for subscribing yet, so you
-                    need <a href="/api-test.html">this other silly
-                    page</a></p>
-              </div>
-            </ng-switch>
-            <button class="btn btn-primary"
-                    ng-click="refreshTicketsInteractive()">Login with Webathena</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </body>
 </html>

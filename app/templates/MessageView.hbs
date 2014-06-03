@@ -1,0 +1,34 @@
+<div class="header">
+  {{#if isPersonal}}
+    <div class="chat-header">Chat with {{convoPartner}}</div>
+  {{else}}
+    <div class="msg-class">{{class}}</div>
+    <div class="divider"></div>
+    <div class="msg-instance">{{instance}}</div>
+  {{/if}}
+  <span class="time from-now">{{prettyTime}}</span>
+  <span class="time absolute">{{absoluteTime}}</span>
+</div>
+<div class="content {{#if isSentByUser}}outgoing{{/if}}">
+  <div class="sender">
+    <img class="gravatar" src="{{gravatar}}"><br>
+    <span>{{shortSender}}</span>
+    {{#unless auth}}
+      <br><span class="not-verified">Not Verified</span>
+    {{/unless}}
+  </div>
+  <div class="message-block">
+    <pre class="message">
+{{ztext message}}</pre>
+    <div class="bottom-row">
+      <div class="signature">
+        {{ztext signature}}
+      </div>
+      <div class="controls">
+        <i class="fa fa-quote-right quote"></i>
+        <i class="fa fa-reply reply"></i>
+        <i class="fa fa-envelope pm"></i>
+      </div>
+    </div>
+  </div>
+</div>

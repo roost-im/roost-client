@@ -28,47 +28,49 @@ if (!Function.prototype.bind) {
 
 (function () {
   describe('ztext parser', function() {
+    var ztext = com.roost.ztext;
     it('should parse strings as is', function() {
-      assert.deepEqual(parseZtext("foo{}"), ["foo{}"]);
+      assert.deepEqual(ztext.parseZtext("foo{}"), ["foo{}"]);
     });
 
     it('should parse a bolded string', function() {
-      assert.deepEqual(parseZtext("moo @bold{moo}"),
-                       ["moo ", new ZtextNode("bold", "{", "}", ["moo"])]);
+      assert.deepEqual(ztext.parseZtext("moo @bold{moo}"),
+                       ["moo ",
+                        new ztext.ZtextNode("bold", "{", "}", ["moo"])]);
     });
 
     it('should handle all types of delimiters', function() {
-      assert.deepEqual(parseZtext("@<moo @bold{moo} @asdf(parens)>"),
+      assert.deepEqual(ztext.parseZtext("@<moo @bold{moo} @asdf(parens)>"),
                        [
-                         new ZtextNode("", "<", ">", [
+                         new ztext.ZtextNode("", "<", ">", [
                            "moo ",
-                           new ZtextNode("bold", "{", "}", ["moo"]),
+                           new ztext.ZtextNode("bold", "{", "}", ["moo"]),
                            " ",
-                           new ZtextNode("asdf", "(", ")", ["parens"])
+                           new ztext.ZtextNode("asdf", "(", ")", ["parens"])
                          ])
                        ]);
     });
 
     it('should never insert empty strings', function() {
-      assert.deepEqual(parseZtext(""), []);
+      assert.deepEqual(ztext.parseZtext(""), []);
 
-      assert.deepEqual(parseZtext("@{}"),
-                       [new ZtextNode("", "{", "}", [])]);
+      assert.deepEqual(ztext.parseZtext("@{}"),
+                       [new ztext.ZtextNode("", "{", "}", [])]);
     });
 
     it('should parse escaped @ signs', function() {
-      assert.deepEqual(parseZtext("foo@@bar@@@@@@"),
+      assert.deepEqual(ztext.parseZtext("foo@@bar@@@@@@"),
                        ["foo@bar@@@"]);
     });
 
     it('should treat syntax errors as plain text', function() {
-      assert.deepEqual(parseZtext("foo@bar {}"),
+      assert.deepEqual(ztext.parseZtext("foo@bar {}"),
                        ["foo@bar {}"]);
     });
 
     it('should allow numbers and _ in tag names', function() {
-      assert.deepEqual(parseZtext("@aAzZ_09{moo}"),
-                       [new ZtextNode("aAzZ_09", "{", "}", ["moo"])]);
+      assert.deepEqual(ztext.parseZtext("@aAzZ_09{moo}"),
+                       [new ztext.ZtextNode("aAzZ_09", "{", "}", ["moo"])]);
     });
   })
 

@@ -2,6 +2,7 @@
 'use strict';
 var LIVERELOAD_PORT = 35729;
 var lrSnippet = require('connect-livereload')({port: LIVERELOAD_PORT});
+
 var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
 };
@@ -37,6 +38,7 @@ module.exports = function (grunt) {
         serverPrincipal: 'HTTP/roost-api.mit.edu',
         webathena: 'https://webathena.mit.edu'
     };
+
     if (grunt.option('realm'))
         appConfig.server = grunt.option('realm');
     if (grunt.option('server'))
@@ -49,8 +51,9 @@ module.exports = function (grunt) {
     // Declare non-HSTS headers here, so they can be emitted both to
     // .htaccess and in the dev server.
     var websocketHost = appConfig.server.replace(/^http/, 'ws');
-    var csp = "default-src 'self'; object-src 'none'; img-src https://secure.gravatar.com; connect-src " +
-        appConfig.server + ' ' + websocketHost
+    var csp = "default-src 'self' https://themes.googleusercontent.com; object-src 'none'; img-src 'self' https://secure.gravatar.com; connect-src " +
+        appConfig.server + ' ' + websocketHost + "; style-src 'self' 'unsafe-inline'";
+
     var headers = {
         // Standard header; Chrome 25+
         'Content-Security-Policy': csp,
@@ -78,6 +81,18 @@ module.exports = function (grunt) {
             options: {
                 nospawn: true
             },
+            coffee: {
+                files: '<%= yeoman.app %>/coffee/{,*/}*.coffee',
+                tasks: ['coffee'],
+            },
+            handlebars: {
+                files: ['<%= yeoman.app %>/templates/{,*/}*.hbs'],
+                tasks: ['handlebars']
+            },
+            sass: {
+                files: ['<%= yeoman.app %>/sass/{,*/}*.scss'],
+                tasks: ['sass']
+            },
             livereload: {
                 options: {
                     livereload: LIVERELOAD_PORT
@@ -94,7 +109,7 @@ module.exports = function (grunt) {
             options: {
                 port: 9000,
                 // change this to '0.0.0.0' to access the server from outside
-                hostname: 'localhost'
+                hostname: '0.0.0.0'
             },
             livereload: {
                 options: {
@@ -135,6 +150,36 @@ module.exports = function (grunt) {
         open: {
             server: {
                 path: 'http://localhost:<%= connect.options.port %>'
+            }
+        },
+        coffee: {
+            compile: {
+                expand: true,
+                flatten: true,
+                cwd: "<%= yeoman.app %>/coffee/",
+                src: ['{,*/}*.coffee'],
+                dest: '<%= yeoman.app %>/scripts-src/',
+                ext: '.js'
+            }
+        },
+        handlebars: {
+            options: {
+                namespace: 'com.roost.templates',
+                processName: function(filePath) {
+                    return filePath.replace(new RegExp("^" + yeomanConfig.app + "\/templates\/"), '').replace(/\.hbs$/, '');
+                }
+            },
+            all: {
+                files: {
+                    "<%= yeoman.app %>/scripts-src/templates.js": ["<%= yeoman.app %>/templates{,*/}*.hbs"]
+                }
+            }
+        },
+        sass: {
+            all: {
+                files: {
+                    '<%= yeoman.app %>/styles/main.css': '<%= yeoman.app %>/sass/main.scss',
+                }
             }
         },
         clean: {
@@ -197,6 +242,7 @@ module.exports = function (grunt) {
             html: ['<%= yeoman.dist %>/{,*/}*.html'],
             css: ['<%= yeoman.dist %>/styles/{,*/}*.css']
         },
+
         // Put files not handled in other tasks here
         copy: {
             dist: {
@@ -208,10 +254,12 @@ module.exports = function (grunt) {
                     src: [
                         '*.{ico,png,txt}',
                         '.htaccess',
-                        'images/{,*/}*.{webp,gif}',
-                        'images/{,*/}*.{png,jpg,jpeg}',
-                        'images/{,*/}*.svg',
+                        'img/{,*/}*.{webp,gif}',
+                        'img/{,*/}*.{png,jpg,jpeg}',
+                        'img/{,*/}*.svg',
                         'styles/{,*/}*.css',
+                        'styles/font-awesome/css/*.css',
+                        'styles/font-awesome/fonts/*.{eot,svg,ttf,woff,otf}',
 			// Anything to be compiled goes in scripts-src/. This
 			// directory is things that are already minified.
                         'scripts/{,*/}*.js',
@@ -254,6 +302,9 @@ module.exports = function (grunt) {
         grunt.task.run([
             'clean:server',
             'config',
+            'coffee',
+            'handlebars',
+            'sass',
             'connect:livereload',
             'open',
             'watch'
@@ -263,6 +314,9 @@ module.exports = function (grunt) {
     grunt.registerTask('test', [
         'clean:server',
         'config',
+        'coffee',
+        'handlebars',
+        'sass',
         'connect:test',
         'mocha'
     ]);
@@ -270,6 +324,9 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'config',
+        'coffee',
+        'handlebars',
+        'sass',
         'useminPrepare',
         'concat',
         'uglify',

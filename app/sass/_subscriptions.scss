@@ -1,0 +1,115 @@
+.subscription-panel {
+  transition: width 0.4s;
+  background: #EEE;
+
+  position: fixed;
+  z-index: 15;
+  top: $navbar-height;
+  bottom: 0;
+  right: 0;
+
+  width: 0px;
+  box-shadow: 0px 1px 10px black;
+
+  &.expanded {
+    width: 400px;
+
+    .remove {
+      display: inline-block !important;
+    }
+  }
+
+  .header {
+    height: $compose-filter-bar-height;
+    line-height: $compose-filter-bar-height;
+    background-color: #555;
+    padding: 0px 10px 0px 10px;
+    color: white;
+    @include user-select(none);
+
+    .remove {
+      float: right;
+      cursor: pointer;
+      display: none;
+      font-size: $compose-filter-bar-height;
+
+      &:hover {
+        color: lighten(red, 10%);
+      }
+    }
+  }
+
+  .sub-form {
+    padding: 5px;
+    margin-top: 5px;
+
+    input {
+      width: 32.5%;
+      font-size: 16px;
+      padding: 3px 5px;
+      box-sizing: border-box;
+      border: 1px solid #BBB;
+      outline: none;
+      font-family: $monospace-font;
+    }
+
+    .btn {
+      @include button-variant($primary-btn-color, $primary-btn-bg);
+      width: 100%;
+      margin-top: 10px;
+    }
+  }
+
+  .subs-label {
+    padding-left: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .table-container {
+    height: 60%;
+    overflow-y: scroll;
+    border-top: 1px solid #BBB;
+    border-bottom: 1px solid #BBB;
+
+    .subs-table {
+      padding-left: 5px;
+      padding-right: 5px;
+      width: 100%;
+
+      .close-td {
+        font-size: 28px;
+        text-align: center;
+        cursor: pointer;
+        min-width: 30px;
+        max-width: 30px;
+        width: 30px;
+
+        &:hover {
+          color: lighten(red, 10%);
+        }
+      }
+
+      .class-td {
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      td {
+        min-width: 97px;
+        max-width: 97px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border-bottom: 1px solid #BBB;
+        box-sizing: border-box;
+        padding-left: 2px;
+        padding-right: 2px;
+      }
+    }
+  }
+}

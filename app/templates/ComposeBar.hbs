@@ -1,0 +1,24 @@
+{{#if showCompose}}
+  <div class="top-bar">
+    <div class="title">
+      Compose Message
+    </div>
+    <div class="close">&times;</div>
+  </div>
+  <div class="composer">
+    <input class="class-input" type="text" placeholder="Class" value="{{composeFields.class}}"></input>
+    <input class="instance-input" type="text" placeholder="Instance" value="{{composeFields.instance}}"></input>
+    <input class="recipient-input" type="text" placeholder="Recipient" value="{{composeFields.recipient}}"></input>
+    <textarea class="content-input" rows="{{#if onMobile}}2{{else}}6{{/if}}" placeholder="Type your message here">{{composeFields.content}}</textarea>
+    <button class="btn send">Send</button>
+  </div>
+{{else}}
+  <div class="single-bar">
+    <div class="compose">
+      <i class="fa fa-send"></i><span>&nbsp;&nbsp;Compose Message</span>
+    </div>
+    <div class="to-bottom">
+      <i class="fa fa-chevron-down"></i><span>&nbsp;&nbsp;Bottom</span>
+    </div>
+  </div>
+{{/if}}

@@ -1,0 +1,21 @@
+do ->
+  class com.roost.MessageModel extends Backbone.Model
+    defaults: =>
+      auth: 1
+      class: ""
+      classKey: ""
+      classKeyBase: ""
+      conversation: ""
+      id: ""
+      instance: ""
+      instanceKey: ""
+      instanceKeyBase: ""
+      isOutgoing: false
+      isPersonal: false
+      message: ""
+      opcode: ""
+      receiveTime: 0
+      recipient: ""
+      sender: ""
+      signature: ""
+      time: 0

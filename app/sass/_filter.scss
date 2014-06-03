@@ -1,0 +1,105 @@
+.filter-bar {
+  top: 0;
+  position: absolute;
+  left: 0;
+  width: 100%;
+  background-color: #555;
+  color: white;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-shadow: 0px 0px 5px black;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  &.selected {
+    opacity: 1 !important;
+  }
+
+  .top-bar {
+    height: $compose-filter-bar-height;
+    line-height: $compose-filter-bar-height;
+    padding: 0px 25px 0px 10px;
+
+    .title {
+      float: left;
+
+      .msg-class {
+        background-color: #BBB;
+        display: inline-block;
+        position: relative;
+        padding-left: 5px;
+        padding-right: 3px;
+        box-sizing: border-box;
+        float: left;
+        margin-left: -10px;
+        padding-left: 10px;
+      }
+
+      .divider {
+        display: inline-block;
+        border-left: 5px solid #BBB;
+        border-bottom: $compose-filter-bar-height solid transparent;
+        width: 0;
+        height: 0;
+        float: left;
+      }
+
+      .msg-instance {
+        display: inline-block;
+        padding-left: 3px;
+      }
+    }
+
+    .filters {
+      float: right;
+      cursor: pointer;
+      margin-right: 35px;
+      @include user-select(none);
+    }
+
+    .clear-filters {
+      float: right;
+      cursor: pointer;
+      margin-right: 15px;
+      @include user-select(none);
+    }
+
+    .remove {
+      float: right;
+      cursor: pointer;
+      font-size: $compose-filter-bar-height;
+      @include user-select(none);
+
+      &:hover {
+        color: lighten(red, 10%);
+      }
+    }
+  }
+
+  .filter-editor {
+    height: 140px;
+    width: 100%;
+    max-width: 650px;
+    margin: auto;
+    margin-top: 15px;
+
+    input, textarea { 
+      width: 90%;
+      font-size: 14px;
+      padding: 3px 5px;
+      border: none;
+      outline: none;
+      margin-bottom: 5px;
+      margin-left: 5%;
+      margin-right: 5%;
+      font-family: $monospace-font;
+    }
+
+    .set-filters {
+      @include button-variant($primary-btn-color, $primary-btn-bg);
+      float: right;
+      margin-right: 5%;
+    }
+  }
+}
