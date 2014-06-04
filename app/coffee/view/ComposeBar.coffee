@@ -10,11 +10,13 @@ do ->
       eventsHash["#{com.roost.CLICK_EVENT} .send"] = '_sendMessage'
       eventsHash['keydown input'] = '_handleInputsKey'
       eventsHash['keydown textarea'] = '_handleInputsKey'
+      eventsHash['blur .class-input'] = '_checkSubs'
       return eventsHash
 
     initialize: (options) =>
       @paneModel = options.paneModel
       @settings = options.settings
+      @session = options.session
 
       # Re-render, either to show the composer, update fields, or update that this pane
       # is selected.
@@ -37,6 +39,20 @@ do ->
         @$el.addClass('selected')
       else
         @$el.removeClass('selected')
+
+      # Autocomplete currently only works for browser - mobile click event issues
+      if not com.roost.ON_MOBILE
+        @$('.class-input').typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1
+        },
+        {
+          name: 'subs'
+          displayKey: 'value'
+          source: substringMatcher(@session.subscriptions.pluck('class'))
+        })
+        @$('.class-input').typeahead('val', @paneModel.get('filters').class_key_base)
 
       @_focusProperInitialField(composeFields)
 
@@ -105,7 +121,7 @@ do ->
       # The ComposeController associated with this model will hadnle the rest
       if not @paneModel.get('sending')
         @paneModel.set('composeFields',
-          class: @$('.class-input').val()
+          class: @$('.class-input:not(.tt-hint)').val()
           instance: @$('.instance-input').val()
           recipient: @$('.recipient-input').val()
           content: wrapText(@$('.content-input').val())
@@ -125,3 +141,9 @@ do ->
       # Handle escape key (should work in ANY input box)
       if evt.keyCode == 27
         @_hideCompose()
+
+    _checkSubs: =>
+      if not _.contains(@session.subscriptions.pluck('classKey'), @$('.class-input:not(.tt-hint)').val().toLowerCase())
+        @$('.error').show()
+      else
+        @$('.error').hide()

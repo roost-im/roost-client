@@ -93,6 +93,7 @@ do ->
       @composeView = new com.roost.ComposeBar
         paneModel: @model
         settings: @session.settingsModel
+        session: @session
       @composeView.render()
       @$el.append @composeView.$el
 

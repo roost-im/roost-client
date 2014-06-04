@@ -80,3 +80,28 @@
   -o-user-select: $value;
   user-select: $value;
 }
+
+.twitter-typeahead {
+  width: 100%;
+
+  .tt-dropdown-menu {
+    position: absolute;
+    top: 84% !important;
+    z-index: 11 !important;
+    left: 5% !important;
+    right: 3.5% !important;
+    background-color: white;
+    color: black;
+    max-height: 80px;
+    overflow-y: scroll;
+    border: 1px solid grey;
+  }
+
+  p {
+    margin: 0px;
+    padding-left: 5px;
+    border-bottom: 1px solid grey;
+    font-size: 14px;
+    cursor: pointer;
+  }
+}
