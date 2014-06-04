@@ -1,11 +1,13 @@
 do ->
-  class com.roost.SubscriptionPanel extends Backbone.View
-    className: 'subscription-panel'
+  class com.roost.SettingsPanel extends Backbone.View
+    className: 'settings-panel'
 
     events: ->
       eventsHash = {}
       eventsHash["#{com.roost.CLICK_EVENT} .subscribe"] = '_addSubscription'
       eventsHash["#{com.roost.CLICK_EVENT} .close-td"] = '_removeSubscription'
+      eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"] = '_addZsig'
+      eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
       eventsHash["#{com.roost.CLICK_EVENT} .class-td"] = '_addClassPane'
       eventsHash["#{com.roost.CLICK_EVENT} .remove"] = '_hide'
       eventsHash['keyup input'] = '_handleInputKey'
@@ -13,22 +15,25 @@ do ->
 
     initialize: (options) =>
       @subscriptions = options.subscriptions
-      @settings = options.settings
+      @uiState = options.uiState
       @session = options.session
+      @userInfo = @session.api.userInfo()
 
       @listenTo @subscriptions, 'add remove reset sort', @render
-      @listenTo @settings, 'change:showSubs', @_toggleDisplay
-      @listenTo @settings, 'change:showNavbar', @_hide
+      @listenTo @uiState, 'change:showSubs', @_toggleDisplay
+      @listenTo @uiState, 'change:showNavbar', @_hide
 
     render: =>
-      @$el.empty()
-      template = com.roost.templates['SubscriptionPanel']
-      @$el.append template(@subscriptions)
+      @userInfo.ready().then(=>
+        @$el.empty()
+        template = com.roost.templates['SettingsPanel']
+        @$el.append template(
+          subscriptions: @subscriptions, zsigs: @_getZsigs())
 
-      @_toggleDisplay()
+        @_toggleDisplay())
 
     _toggleDisplay: =>
-      if @settings.get('showSubs')
+      if @uiState.get('showSubs')
         @$el.addClass('expanded')
         @$('.class-input').focus()
       else
@@ -39,7 +44,7 @@ do ->
         @$('.recipient-input').val('')
 
     _hide: =>
-      @settings.set('showSubs', false)
+      @uiState.set('showSubs', false)
 
     _addClassPane: (evt) =>
       classKey = $(evt.target).data().class
@@ -50,7 +55,7 @@ do ->
       @session.addPane options
 
     _addSubscription: =>
-      opts = 
+      opts =
         class: @$('.class-input').val()
         instance: @$('.instance-input').val()
         recipient: @$('.recipient-input').val()
@@ -69,9 +74,33 @@ do ->
     _removeSubscription: (evt) =>
       @subscriptions.remove($(evt.target).data().cid)
 
+    _addZsig: =>
+      zsig = @$('#new-zsig').val()
+      oldZsigs = @_getZsigs()
+      @userInfo.set("zsigs", oldZsigs.concat([zsig]))
+      @render()
+
+    _removeZsig: (evt) =>
+      zsigs = @_getZsigs()
+      debugger
+      zsigs.splice($(evt.target).data().zsigIndex, 1)
+      @userInfo.set("zsigs", zsigs)
+      @render()
+
     _handleInputKey: (evt) =>
       # Enter and escape key handling in the input boxes
       if evt.keyCode == 13
         @_addSubscription()
       else if evt.keyCode == 27
-        @settings.set 'showSubs', false
+        @uiState.set 'showSubs', false
+
+
+    _getZsigs: =>
+      # Older versions of Roost store the zsig in 'zsig'. Check both.
+      zsigs = @userInfo.get('zsigs') ? @userInfo.get('zsig')
+      if !zsigs?
+        zsigs = ["Sent from roost"]
+      if typeof zsigs == "string"
+        zsigs = [zsigs]
+      # Defensive object copy so that @userInfo.set will always DTRT.
+      return _.clone(zsigs)

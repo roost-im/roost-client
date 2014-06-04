@@ -15,7 +15,7 @@ do ->
     initialize: (options) =>
       @session = options.session
       @messageLists = options.messageLists
-      @settingsModel = @session.settingsModel
+      @uiStateModel = @session.uiStateModel
 
       # When a model is added to the list (courtesy of the session),
       # add a new view to the DOM as well.
@@ -25,12 +25,12 @@ do ->
       @listenTo @session.userInfo, 'change', @_toggleVisibility
 
       # Since we handle panes, pane selection, and keyboard shortcuts,
-      # listen for any settings changes and act accordingly
-      @listenTo @settingsModel, 'change:showNavbar', @_toggleNavbar
+      # listen for any uiState changes and act accordingly
+      @listenTo @uiStateModel, 'change:showNavbar', @_toggleNavbar
 
       # Hotkeys related to the selected pane.
       # Feel free to add more, just be sure to add any new hotkeys
-      # to the HotkeyHelp modal. 
+      # to the HotkeyHelp modal.
       Mousetrap.bind('left', ((e) => @_moveSelection(1, e)))
       Mousetrap.bind('shift+left', ((e) => @_shiftSelection(-1, e)))
       Mousetrap.bind('right', ((e) => @_moveSelection(-1, e)))
@@ -56,7 +56,7 @@ do ->
       Mousetrap.bind('?', @_showHelp)
       Mousetrap.bind('esc', @_hideHelp)
 
-      # Hotkeys for toggling settings      
+      # Hotkeys for toggling uiState
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
       Mousetrap.bind('alt+s', @_toggleSubSetting)
 
@@ -84,20 +84,20 @@ do ->
       if com.roost.ON_MOBILE
         @$el.addClass('mobile')
 
-      @subView = new com.roost.SubscriptionPanel
-        settings: @settingsModel
+      @subView = new com.roost.SettingsPanel
+        uiState: @uiStateModel
         subscriptions: @session.subscriptions
         session: @session
       @subView.render()
       @$el.append(@subView.$el)
 
-      @_checkSettings()
+      @_checkUiState()
 
-    _checkSettings: =>
+    _checkUiState: =>
       @_toggleNavbar()
 
     _toggleNavbar: =>
-      if not @settingsModel.get('showNavbar')
+      if not @uiStateModel.get('showNavbar')
         @$el.addClass('expanded')
       else
         @$el.removeClass('expanded')
@@ -186,12 +186,12 @@ do ->
       @_moveSelection(1, e)
 
     _toggleNavbarSetting: (e)=>
-      @settingsModel.set 'showNavbar', !@settingsModel.get('showNavbar')
+      @uiStateModel.set 'showNavbar', !@uiStateModel.get('showNavbar')
       e?.preventDefault()
       e?.stopPropagation()
 
     _toggleSubSetting: (e) =>
-      @settingsModel.set 'showSubs', !@settingsModel.get('showSubs')
+      @uiStateModel.set 'showSubs', !@uiStateModel.get('showSubs')
       e?.preventDefault()
       e?.stopPropagation()
 
@@ -286,7 +286,7 @@ do ->
       # Also make sure the navbar is out and we can see it.
       if @messageLists.length == 0
         @$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'))
-        @session.settingsModel.set('showNavbar', true)
+        @session.uiStateModel.set('showNavbar', true)
 
     _recalculateWidth: =>
       # Tell all the child views to recalculate their width.

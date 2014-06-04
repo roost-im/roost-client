@@ -1,6 +1,7 @@
-.subscription-panel {
+.settings-panel {
   transition: width 0.4s;
   background: #EEE;
+  overflow-y: scroll;
 
   position: fixed;
   z-index: 15;
@@ -39,18 +40,31 @@
     }
   }
 
-  .sub-form {
+  div.settings-form {
     padding: 5px;
     margin-top: 5px;
 
-    input {
-      width: 32.5%;
+    input, textarea {
       font-size: 16px;
       padding: 3px 5px;
       box-sizing: border-box;
       border: 1px solid #BBB;
       outline: none;
       font-family: $monospace-font;
+    }
+
+    textarea {
+      width: 100%;
+      display: block;
+    }
+
+    &.subs-form input {
+      width: 32.5%;
+    }
+
+    &.zsig-form input#new-zsig {
+      width: 100%;
+      display: block;
     }
 
     .btn {
@@ -60,37 +74,57 @@
     }
   }
 
-  .subs-label {
+  .zsig-line {
+    /* This table stuff is necessary to vertically center the zsig. */
+    display: table;
+    width: 100%;
+    div.zsig, div.remove-zsig {
+      display: table-cell;
+      vertical-align: middle;
+    }
+
+    div.zsig {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 287px;
+      min-width: 287px;
+      max-width: 287px;
+    }
+  }
+
+  label {
     padding-left: 10px;
     margin-top: 10px;
     font-size: 16px;
     margin-bottom: 5px;
+    display: block;
   }
 
-  .table-container {
+  .remove-button {
+      font-size: 28px;
+      text-align: center;
+      cursor: pointer;
+      min-width: 97px;
+      max-width: 97px;
+
+      &:hover {
+          color: lighten(red, 10%);
+      }
+  }
+
+  .item-list {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .subs-table-container {
     height: 60%;
+    max-height: 500px;
     overflow-y: scroll;
     border-top: 1px solid #BBB;
     border-bottom: 1px solid #BBB;
 
     .subs-table {
-      padding-left: 5px;
-      padding-right: 5px;
-      width: 100%;
-
-      .close-td {
-        font-size: 28px;
-        text-align: center;
-        cursor: pointer;
-        min-width: 30px;
-        max-width: 30px;
-        width: 30px;
-
-        &:hover {
-          color: lighten(red, 10%);
-        }
-      }
-
       .class-td {
         cursor: pointer;
 
@@ -104,12 +138,15 @@
         max-width: 97px;
         overflow: hidden;
         white-space: nowrap;
-        text-overflow: ellipsis;
-        border-bottom: 1px solid #BBB;
         box-sizing: border-box;
-        padding-left: 2px;
-        padding-right: 2px;
       }
     }
+  }
+
+  .zsig-line, .subs-table-container td {
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #BBB;
+    padding-left: 2px;
+    padding-right: 2px;
   }
 }
