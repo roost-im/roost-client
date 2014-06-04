@@ -8,7 +8,7 @@
 @import "compose";
 @import "filter";
 @import "hotkeyHelp";
-@import "subscriptions";
+@import "settings";
 
 html, body {
   width: 100%;
@@ -88,7 +88,7 @@ html, body {
   }
 
   .compose-bar {
-    .single-bar, .top-bar { 
+    .single-bar, .top-bar {
       padding: 0px 10px 0px 10px;
     }
 
