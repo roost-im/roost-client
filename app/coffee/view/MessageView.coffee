@@ -2,7 +2,7 @@ do ->
   QUOTE_LINE_PREFIX = '> '
 
   class com.roost.MessageView extends Backbone.View
-    className: 'message-view'
+    className: 'message-view-full'
 
     events: ->
       eventsHash = {}
