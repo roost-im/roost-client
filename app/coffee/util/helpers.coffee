@@ -87,6 +87,10 @@ do ->
     return time.format(TIME_FORMAT)
   )
 
+  Handlebars.registerHelper('duration', (time) ->
+    return time.humanize()
+  )
+
   Handlebars.registerHelper('gravatar', (user) ->
     name = shortZuser(user)
     realm = zuserRealm(user)

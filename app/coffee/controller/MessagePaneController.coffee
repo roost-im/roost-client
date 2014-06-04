@@ -12,6 +12,8 @@ do ->
   # Whenever a tail gets expanded/closed/recreated, set the step properly.
   # Whenever a tail is recreated, close the previous one.
 
+  com.roost.STARK_LIMIT = moment.duration(3, 'h')
+
   class com.roost.MessagePaneController
     constructor: (options) ->
       $.extend @, Backbone.Events
@@ -107,8 +109,7 @@ do ->
       messages = @model.get 'messages'
 
       # Let's make our times more friendly
-      for message in msgs
-        @_processMesssage(message)
+      @_processMesssages(msgs)
 
       # If this is our first time populating the list, reset
       # Also create the forward tail.
@@ -156,9 +157,7 @@ do ->
       messages = @model.get 'messages'
 
       # Let's make our times more friendly
-      # and remove any trailing whitespace
-      for message in msgs
-        @_processMesssage(message)
+      @_processMesssages(msgs)
 
       # If we are at our cache size, reduce the size of our cache
       # by as many messages as we just received.
@@ -207,6 +206,19 @@ do ->
       @model.set 'bottomDone', false
       @lastForwardStep = 0
 
-    _processMesssage: (message) =>
+    _processMesssages: (msgs) =>
       # Makes times friendly
-      message.time = moment(message.time)
+      lastMessage = null
+      for message in msgs
+        message.time = moment(message.time)
+
+        if lastMessage?
+          if lastMessage.time.isBefore(message.time)
+            difference = message.time.valueOf() - lastMessage.time.valueOf()
+            if difference > com.roost.STARK_LIMIT.valueOf()
+              message.stark = moment.duration(difference)
+          else
+            difference = lastMessage.time.valueOf() - message.time.valueOf()
+            if difference > com.roost.STARK_LIMIT.valueOf()
+              lastMessage.stark = moment.duration(difference)
+        lastMessage = message
