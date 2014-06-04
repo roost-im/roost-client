@@ -52,7 +52,7 @@ do ->
           displayKey: 'value'
           source: substringMatcher(@session.subscriptions.pluck('class'))
         })
-        @$('.class-input').typeahead('val', @paneModel.get('filters').class_key_base)
+        @$('.class-input').typeahead('val', composeFields.class)
 
       @_focusProperInitialField(composeFields)
 

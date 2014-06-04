@@ -208,6 +208,5 @@ do ->
       @lastForwardStep = 0
 
     _processMesssage: (message) =>
-      # Makes times friendly and clears whitespace
+      # Makes times friendly
       message.time = moment(message.time)
-      message.message = message.message.trim()
