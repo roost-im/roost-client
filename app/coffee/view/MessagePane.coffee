@@ -47,6 +47,8 @@ do ->
       Mousetrap.bind('r', @_selectedMessageReply)
       Mousetrap.bind('q', @_selectedMessageQuote)
       Mousetrap.bind('p', @_selectedMessagePM)
+      Mousetrap.bind('alt+n', (=> @_selectedMessageFilter(false)))
+      Mousetrap.bind('alt+shift+n', (=> @_selectedMessageFilter(true)))
 
       # Awkward that this is here, since all it does is call something
       # in the session.
@@ -240,6 +242,9 @@ do ->
       @childViews[@selectedPosition].selectedMessagePM()
       e?.preventDefault()
       e?.stopPropagation()
+
+    _selectedMessageFilter: (withInstance) =>
+      @childViews[@selectedPosition].selectedMessageFilter(withInstance)
       
     _addPaneView: (paneModel, collection, options) =>
       # Well, we have a pane now.

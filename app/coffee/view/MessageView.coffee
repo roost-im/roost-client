@@ -149,8 +149,7 @@ do ->
       @_applyFilter(evt, options)
 
     _filterConversation: (evt) =>
-      # Include class and instance so the filter bar coloring code doesn't
-      # get yet another control flow change.
+      # Include class and instance because... well because.
       options =
         filters:
           class_key_base: @message.get('classKeyBase')
@@ -159,3 +158,16 @@ do ->
         position: @message.get('id')
         posScroll: @$el.offset().top
       @_applyFilter(evt, options)
+
+    filter: (withInstance) =>
+      # Currently filters in same pane.
+      # Some duplicated logic here but a bit lazy to try and negotiate with the
+      # other filtering options.
+      options =
+        filters:
+          class_key_base: @message.get('classKeyBase')
+          instance_key_base: if withInstance then @message.get('instanceKeyBase') else null
+          conversation: if @message.get('conversation') and withInstance then @message.get('conversation') else null
+        position: @message.get('id')
+        posScroll: @$el.offset().top
+      @paneModel.set options

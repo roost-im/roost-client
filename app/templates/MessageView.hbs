@@ -17,7 +17,9 @@
   </div>
   <div class="content {{#if isSentByUser}}outgoing{{/if}}">
     <div class="sender">
-      <img class="gravatar" src="{{gravatar sender}}"><br>
+      {{#if auth}}
+        <img class="gravatar" src="{{gravatar sender}}"><br>
+      {{/if}}
       <span>{{shortZuser sender}}</span>
       {{#unless auth}}
         <br><span class="not-verified">Not Verified</span>

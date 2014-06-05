@@ -27,6 +27,7 @@
     display: inline-block;
     white-space: normal;
     padding-top: $compose-filter-bar-height;
+    transition: opacity 0.2s ease-in;
 
     &.not-loaded {
       opacity: 0.5;

@@ -229,6 +229,10 @@ do ->
       view = @childViews[@_getSelectedViewIndex()]
       view?.openMessageBox()
 
+    selectedMessageFilter: (withInstance) =>
+      view = @childViews[@_getSelectedViewIndex()]
+      view?.filter(withInstance)
+
     _getSelectedViewIndex: =>
       if @model.get('position')?
         for i in [0..@childViews.length - 1]
