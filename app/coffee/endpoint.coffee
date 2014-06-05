@@ -44,5 +44,6 @@ $('document').ready( =>
   messagePane.render()
   $('body').append(messagePane.$el)
 
-  session.loadState()
+  if session.userInfo.get('username')?
+    session.loadState()
 )

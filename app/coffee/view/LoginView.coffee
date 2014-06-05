@@ -5,6 +5,7 @@ do ->
     events: ->
       eventsHash = {}
       eventsHash["#{com.roost.CLICK_EVENT} .login"] = '_handleLogin'
+      eventsHash["#{com.roost.CLICK_EVENT} .logout"] = '_handleLogout'
       return eventsHash
 
     initialize: (options) =>
@@ -23,3 +24,7 @@ do ->
     _handleLogin: =>
       # Trigger the model, AuthenticationController will handle it
       @userInfo.trigger 'login'
+
+    _handleLogout: =>
+      # Trigger the model, AuthenticationController will handle it
+      @userInfo.trigger 'logout'

@@ -29,7 +29,7 @@ do ->
       else
         @$el.removeClass('hidden')
 
-      @$el.append template(_.defaults(@uiState.attributes, @userInfo.attributes))
+      @$el.append template(_.defaults({}, @uiState.attributes, @userInfo.attributes))
 
     _handleLogout: =>
       # Trigger the model, AuthenticationController will handle it
