@@ -10,21 +10,22 @@ do ->
       eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
       eventsHash["#{com.roost.CLICK_EVENT} .class-td"] = '_addClassPane'
       eventsHash["#{com.roost.CLICK_EVENT} .remove"] = '_hide'
-      eventsHash['keyup input'] = '_handleInputKey'
+      eventsHash['keyup #new-zsig'] = '_handleZsigInputKey'
+      eventsHash['keyup .subs-input'] = '_handleSubsInputKey'
       return eventsHash
 
     initialize: (options) =>
       @subscriptions = options.subscriptions
       @uiState = options.uiState
       @session = options.session
-      @userInfo = @session.api.userInfo()
+      @userState = @session.api.userInfo()
 
       @listenTo @subscriptions, 'add remove reset sort', @render
       @listenTo @uiState, 'change:showSubs', @_toggleDisplay
       @listenTo @uiState, 'change:showNavbar', @_hide
 
     render: =>
-      @userInfo.ready().then(=>
+      @userState.ready().then(=>
         @$el.empty()
         template = com.roost.templates['SettingsPanel']
         @$el.append template(
@@ -35,7 +36,7 @@ do ->
     _toggleDisplay: =>
       if @uiState.get('showSubs')
         @$el.addClass('expanded')
-        @$('.class-input').focus()
+        @$('#new-zsig').focus()
       else
         @$el.removeClass('expanded')
         @$('.class-input').blur()
@@ -77,29 +78,36 @@ do ->
     _addZsig: =>
       zsig = @$('#new-zsig').val()
       oldZsigs = @_getZsigs()
-      @userInfo.set("zsigs", oldZsigs.concat([zsig]))
+      @userState.set("zsigs", oldZsigs.concat([zsig]))
       @render()
 
     _removeZsig: (evt) =>
       zsigs = @_getZsigs()
       debugger
       zsigs.splice($(evt.target).data().zsigIndex, 1)
-      @userInfo.set("zsigs", zsigs)
+      @userState.set("zsigs", zsigs)
       @render()
 
-    _handleInputKey: (evt) =>
+    _handleSubsInputKey: (evt) =>
       # Enter and escape key handling in the input boxes
       if evt.keyCode == 13
         @_addSubscription()
       else if evt.keyCode == 27
         @uiState.set 'showSubs', false
 
+    _handleZsigInputKey: (evt) =>
+      # Enter and escape key handling in the input boxes
+      if evt.keyCode == 13
+        @_addZsig()
+      else if evt.keyCode == 27
+        @uiState.set 'showSubs', false
+
     _getZsigs: =>
       # Older versions of Roost store the zsig in 'zsig'. Check both.
-      zsigs = @userInfo.get('zsigs') ? @userInfo.get('zsig')
+      zsigs = @userState.get('zsigs') ? @userState.get('zsig')
       if !zsigs?
         zsigs = ["Sent from roost"]
       if typeof zsigs == "string"
         zsigs = [zsigs]
-      # Defensive object copy so that @userInfo.set will always DTRT.
+      # Defensive object copy so that @userState.set will always DTRT.
       return _.clone(zsigs)

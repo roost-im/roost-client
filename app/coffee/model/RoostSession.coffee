@@ -19,6 +19,7 @@ do ->
 
       # Collection of Message List Models
       @messageLists = new Backbone.Collection()
+      @messageLists.on 'add remove', @_saveState
 
       # Map of message controllers
       @messageControllers = {}
@@ -32,6 +33,7 @@ do ->
       @storageManager = new StorageManager(@localStorage)
       @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
       @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
+      @userState = @api.userInfo()
 
       # UI state - manage what is showing on overall UI/what can be done
       @uiStateModel = new Backbone.Model
@@ -57,6 +59,7 @@ do ->
       # or if we don't have any panes at all.
       # Add a new model
       paneModel = new com.roost.MessagePaneModel(options)
+      paneModel.on 'change:position change:filters', @_saveState
 
       # Add a new controller and fetch data
       paneController = new com.roost.MessagePaneController
@@ -88,11 +91,15 @@ do ->
       # Stop the controllers from listening to the model
       @messageControllers[cid].stopListening()
       @composeControllers[cid].stopListening()
+      model = @messageLists.get(cid)
 
       # Remove references to the model and the controller
       @messageLists.remove(cid)
       delete @messageControllers[cid]
       delete @composeControllers[cid]
+
+      # Stop anything else from listening to this model
+      model.off()
 
       @uiStateModel.set('limitReached', false)
 
@@ -103,3 +110,24 @@ do ->
 
       for cid in cids
         @removePane(cid)
+
+    loadState: =>
+      @userState.ready().then(=>
+        if @userState.get('panes')? and @userState.get('panes').length > 0
+          for pane in @userState.get('panes')
+            pane.messages = new Backbone.Collection()
+            @addPane(pane)
+        else
+          @addPane({})
+          @_saveState()
+      )
+
+    _saveState: =>
+      @userState.ready().then(=>
+        state = []
+        for model in @messageLists.models
+          state.push
+            filters: model.get('filters')
+            position: model.get('position')
+        @userState.set('panes', state)
+      )

@@ -275,9 +275,6 @@ do ->
       @childViews = _.reject(@childViews, ((view) => view.cid == toDelete.cid))
       @_recalculateWidth()
 
-      # Stop anything listening to this model
-      model.off()
-
       # Move the selection off this model
       if model.get('selected')
         @_moveSelection(1)

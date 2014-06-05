@@ -44,7 +44,5 @@ $('document').ready( =>
   messagePane.render()
   $('body').append(messagePane.$el)
 
-  # Add the first pane if the user is logged in
-  if session.userInfo.get('username')?
-    session.addPane {}
+  session.loadState()
 )

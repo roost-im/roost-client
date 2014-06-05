@@ -40,9 +40,7 @@
       });
       messagePane.render();
       $('body').append(messagePane.$el);
-      if (session.userInfo.get('username') != null) {
-        return session.addPane({});
-      }
+      return session.loadState();
     };
   })(this));
 
