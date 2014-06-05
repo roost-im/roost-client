@@ -4,6 +4,8 @@ do ->
 
   RUNWAY = 1000
 
+  com.roost.STARK_LIMIT = moment.duration(3, 'h')
+
   class com.roost.MessagePaneView extends Backbone.View
     className: 'message-pane-view'
 
@@ -313,6 +315,9 @@ do ->
           @_removeTopMessage()
 
     _appendMessage: (message) =>
+      if @childViews[@childViews.length - 1]?
+        @_checkStark(@childViews[@childViews.length - 1].message, message)
+
       # Add the next message before the filler view
       view = new com.roost.MessageView
         message: message
@@ -330,6 +335,8 @@ do ->
     _prependMessage: (message) =>
       # Save off old scroll height
       @_saveScrollHeight()
+      if @childViews[0]?
+        @_checkStark(message, @childViews[0].message)
 
       # Add new view to the top
       view = new com.roost.MessageView
@@ -395,3 +402,8 @@ do ->
         @$el.addClass('not-loaded')
       else
         @$el.removeClass('not-loaded')
+
+    _checkStark: (olderMessage, newerMessage) =>
+      difference = newerMessage.get('time').valueOf() - olderMessage.get('time').valueOf()
+      if difference > com.roost.STARK_LIMIT.valueOf()
+        newerMessage.set('stark', moment.duration(difference))

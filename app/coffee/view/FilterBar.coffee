@@ -91,7 +91,7 @@ do ->
         position: null
 
       # In case we hid it last time for mobile
-      @session.settingsModel.set('showNavbar', true)
+      @session.uiStateModel.set('showNavbar', true)
 
     _handleInputKey: (evt) =>
       # Enter and escape key handling in the input boxes

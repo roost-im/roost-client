@@ -12,8 +12,6 @@ do ->
   # Whenever a tail gets expanded/closed/recreated, set the step properly.
   # Whenever a tail is recreated, close the previous one.
 
-  com.roost.STARK_LIMIT = moment.duration(3, 'h')
-
   class com.roost.MessagePaneController
     constructor: (options) ->
       $.extend @, Backbone.Events
@@ -212,6 +210,9 @@ do ->
       for message in msgs
         message.time = moment(message.time)
 
+        # Get all the starks we can with this batch.
+        # Doesn't catch live starks or between batch starks - that's currently
+        # tacked onto the MessagePaneView >_>.
         if lastMessage?
           if lastMessage.time.isBefore(message.time)
             difference = message.time.valueOf() - lastMessage.time.valueOf()

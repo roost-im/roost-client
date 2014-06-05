@@ -94,7 +94,6 @@ do ->
       else if evt.keyCode == 27
         @uiState.set 'showSubs', false
 
-
     _getZsigs: =>
       # Older versions of Roost store the zsig in 'zsig'. Check both.
       zsigs = @userInfo.get('zsigs') ? @userInfo.get('zsig')
