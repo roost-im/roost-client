@@ -39,7 +39,8 @@ do ->
         @$('#new-zsig').focus()
       else
         @$el.removeClass('expanded')
-        @$('.class-input').blur()
+        @$('input').blur()
+        @$('#new-zsig').val('')
         @$('.class-input').val('')
         @$('.instance-input').val('*')
         @$('.recipient-input').val('')
