@@ -23,6 +23,10 @@
 
     .title {
       float: left;
+      width: 50%;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
 
       .msg-class {
         background-color: #BBB;

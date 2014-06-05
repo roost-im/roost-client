@@ -104,6 +104,10 @@
         display: inline-block;
         padding-left: 3px;
         cursor: pointer;
+        width: 50%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
 
         &:hover {
           text-decoration: underline;
