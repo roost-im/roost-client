@@ -178,6 +178,9 @@ do ->
         # compose bars into the right spots.
         @_recalculateWidth()
 
+        # Update our session to make sure the models are ordered properly as well
+        @session.movePane(@childViews[@selectedPosition].model.cid, @selectedPosition)
+
       e?.preventDefault()
       e?.stopPropagation()
 

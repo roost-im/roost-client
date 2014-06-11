@@ -103,6 +103,12 @@ do ->
 
       @uiStateModel.set('limitReached', false)
 
+    movePane: (cid, newIndex) =>
+      model = @messageLists.get(cid)
+      @messageLists.remove(model, {silent: true})
+      @messageLists.add(model, {at: newIndex, silent: true})
+      @_saveState()
+
     removeAllPanes: =>
       cids = []
       for model in @messageLists.models
