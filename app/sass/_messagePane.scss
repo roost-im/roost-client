@@ -19,7 +19,7 @@
 
   .message-pane-view {
     height: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     border-right: 1px solid #333;
     box-sizing: border-box;
