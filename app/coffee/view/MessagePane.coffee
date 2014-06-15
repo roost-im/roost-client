@@ -56,7 +56,6 @@ do ->
 
       # Hotkeys for showing/hiding the hotkey help.
       Mousetrap.bind('?', @_showHelp)
-      Mousetrap.bind('esc', @_hideHelp)
 
       # Hotkeys for toggling uiState
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
@@ -313,10 +312,5 @@ do ->
     # If this view gets more complex, please please please give it its own view class.
     # Currently duplicated in the Navbar...
     _showHelp: =>
-      if $('.modal-overlay').length == 0
-        $('body').append com.roost.templates['HotkeyHelp']({})
-        $('.close-help').click(@_hideHelp)
-
-    _hideHelp: =>
-      $('.modal-overlay').remove()
-      $('.modal').remove()
+      help = com.roost.templates['HotkeyHelp']()
+      com.roost.ModalController.getInstance().display("Roost Hotkeys", help, 400)

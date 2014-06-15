@@ -15,6 +15,7 @@ do ->
       @session = options.session
       @userInfo = @session.userInfo
       @uiState = @session.uiStateModel
+      @modal = com.roost.ModalController.getInstance()
 
       # Re-render on login/logout or uiState changes.
       @listenTo @userInfo, 'change', @render
@@ -52,10 +53,5 @@ do ->
 
     # Help logic is duplicated between here and the MessagePane...
     _openHelp: =>
-      if $('.modal-overlay').length == 0
-        $('body').append com.roost.templates['HotkeyHelp']({})
-        $('.close-help').click(@_hideHelp)
-
-    _hideHelp: =>
-      $('.modal-overlay').remove()
-      $('.modal').remove()
+      help = com.roost.templates['HotkeyHelp']()
+      com.roost.ModalController.getInstance().display("Roost Hotkeys", help, 400)

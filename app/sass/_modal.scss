@@ -21,20 +21,20 @@ $overlay-z-index: 100;
   margin-top: 110px;
   z-index: $overlay-z-index + 1;
 
-
-  .header {
+  #modal-header {
     position: relative;
     height: 30px;
     line-height: 12px;
     background-color: #333;
+    color: white;
     @include user-select(none);
 
-    .title {
+    #modal-title {
       padding: 10px;
       font-size: 20px;
     }
 
-    .close-help {
+    #close-modal {
       position: absolute;
       right: 10px;
       font-size: 30px;
