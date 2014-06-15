@@ -3,6 +3,7 @@ com.roost.PANE_LIMIT = 10
 com.roost.ON_MOBILE = false
 
 $('document').ready( =>
+  vex.defaultOptions.className = 'vex-theme-top'
   # Create the session
   session = new com.roost.RoostSession()
 

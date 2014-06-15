@@ -1,18 +1,10 @@
 #hotkey-help {
-  width: 400px;
-  background-color: #555;
-  color: white;
-
   .content {
     padding: 10px;
     width: 100%;
     text-align: center;
 
-    th {
-      border: 1px solid white;
-    }
-
-    td {
+    th, td {
       border: 1px solid #BBB;
     }
   }

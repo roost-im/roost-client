@@ -306,11 +306,5 @@ do ->
         view.recalculateWidth index, width
         index += 1
 
-    # Normally you might put a bit more effort into displaying this, especially since we
-    # have to crummily shove it into the body from within this message pane. However,
-    # it's so simple that I've chosen to just inject it into the body from here.
-    # If this view gets more complex, please please please give it its own view class.
-    # Currently duplicated in the Navbar...
     _showHelp: =>
-      help = com.roost.templates['HotkeyHelp']()
-      com.roost.ModalController.getInstance().display("Roost Hotkeys", help, 400)
+      vex.dialog.alert(com.roost.templates['HotkeyHelp']())

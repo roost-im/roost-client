@@ -8,6 +8,7 @@
   $('document').ready((function(_this) {
     return function() {
       var authController, loginView, messagePane, navbar, session, subController;
+      vex.defaultOptions.className = 'vex-theme-top';
       session = new com.roost.RoostSession();
       if (window.mobilecheck()) {
         com.roost.CLICK_EVENT = 'touchend';

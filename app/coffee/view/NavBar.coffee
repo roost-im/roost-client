@@ -8,7 +8,7 @@ do ->
       eventsHash["#{com.roost.CLICK_EVENT} .add-pane"] = '_addPane'
       eventsHash["#{com.roost.CLICK_EVENT} .personal-message"] = '_addPersonalMessagePane'
       eventsHash["#{com.roost.CLICK_EVENT} .user-info"] = '_toggleSubs'
-      eventsHash["#{com.roost.CLICK_EVENT} .help"] = '_openHelp'
+      eventsHash["#{com.roost.CLICK_EVENT} .help"] = '_showHelp'
       return eventsHash
 
     initialize: (options) =>
@@ -51,7 +51,5 @@ do ->
       # Flip on/off showing subscriptions
       @uiState.set 'showSubs', !@uiState.get('showSubs')
 
-    # Help logic is duplicated between here and the MessagePane...
-    _openHelp: =>
-      help = com.roost.templates['HotkeyHelp']()
-      com.roost.ModalController.getInstance().display("Roost Hotkeys", help, 400)
+    _showHelp: =>
+      vex.dialog.alert(com.roost.templates['HotkeyHelp']())
