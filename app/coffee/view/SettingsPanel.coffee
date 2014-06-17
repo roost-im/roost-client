@@ -21,32 +21,17 @@ do ->
       @userState = @session.api.userInfo()
 
       @listenTo @subscriptions, 'add remove reset sort', @render
-      @listenTo @uiState, 'change:showSubs', @_toggleDisplay
-      @listenTo @uiState, 'change:showNavbar', @_hide
 
     render: =>
       @userState.ready().then(=>
         @$el.empty()
         template = com.roost.templates['SettingsPanel']
-        @$el.append template(
-          subscriptions: @subscriptions, zsigs: @_getZsigs())
+        @$el.append(template(
+          subscriptions: @subscriptions, zsigs: @_getZsigs())))
 
-        @_toggleDisplay())
-
-    _toggleDisplay: =>
-      if @uiState.get('showSubs')
-        @$el.addClass('expanded')
-        @$('#new-zsig').focus()
-      else
-        @$el.removeClass('expanded')
-        @$('input').blur()
-        @$('#new-zsig').val('')
-        @$('.class-input').val('')
-        @$('.instance-input').val('*')
-        @$('.recipient-input').val('')
-
-    _hide: =>
-      @uiState.set('showSubs', false)
+    show: =>
+      @render()
+      vex.dialog.alert(message: @$el)
 
     _addClassPane: (evt) =>
       classKey = $(evt.target).data().class

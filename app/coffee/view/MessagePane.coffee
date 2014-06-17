@@ -59,7 +59,6 @@ do ->
 
       # Hotkeys for toggling uiState
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
-      Mousetrap.bind('alt+s', @_toggleSubSetting)
 
       # Set up swiping if on mobile
       if com.roost.ON_MOBILE
@@ -84,13 +83,6 @@ do ->
       # Prevent scrolling in X, rely on swiping
       if com.roost.ON_MOBILE
         @$el.addClass('mobile')
-
-      @subView = new com.roost.SettingsPanel
-        uiState: @uiStateModel
-        subscriptions: @session.subscriptions
-        session: @session
-      @subView.render()
-      @$el.append(@subView.$el)
 
       @_checkUiState()
 

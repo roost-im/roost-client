@@ -7,7 +7,7 @@ do ->
       eventsHash["#{com.roost.CLICK_EVENT} .logout"] = '_handleLogout'
       eventsHash["#{com.roost.CLICK_EVENT} .add-pane"] = '_addPane'
       eventsHash["#{com.roost.CLICK_EVENT} .personal-message"] = '_addPersonalMessagePane'
-      eventsHash["#{com.roost.CLICK_EVENT} .user-info"] = '_toggleSubs'
+      eventsHash["#{com.roost.CLICK_EVENT} .user-info"] = '_showSettings'
       eventsHash["#{com.roost.CLICK_EVENT} .help"] = '_showHelp'
       return eventsHash
 
@@ -16,10 +16,16 @@ do ->
       @userInfo = @session.userInfo
       @uiState = @session.uiStateModel
       @modal = com.roost.ModalController.getInstance()
+      @settingsPanel = new com.roost.SettingsPanel(
+        uiState: @uiState
+        subscriptions: @session.subscriptions
+        session: @session)
 
       # Re-render on login/logout or uiState changes.
       @listenTo @userInfo, 'change', @render
       @listenTo @uiState, 'change:showNavbar change:limitReached', @render
+
+      Mousetrap.bind('alt+s', @_showSettings)
 
     render: =>
       @$el.empty()
@@ -47,7 +53,10 @@ do ->
           filters:
             is_personal: true
 
-    _toggleSubs: =>
+    # Show the settings modal.
+    _showSettings: =>
+      @settingsPanel.show()
+      
       # Flip on/off showing subscriptions
       @uiState.set 'showSubs', !@uiState.get('showSubs')
 
