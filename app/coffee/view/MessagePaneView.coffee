@@ -37,7 +37,6 @@ do ->
       # Throttled scroll handle to avoid firing every event
       # Improves framerate drastically
       @throttled = _.throttle(@_scrollHandle, 50)
-      @$el.scroll(@throttled)
 
       # Do this at the pane level instead of message level since otherwise you're
       # spawning/deleting a ton of intervals with each scroll.
@@ -56,6 +55,9 @@ do ->
       @$el.empty()
       @childViews = []
 
+      @$inner = $('<div class="message-pane-view-inner">').appendTo(@$el)
+      @$inner.scroll(@throttled)
+
       # Add MessageView for each message in the list
       for message in @model.get('messages').models
         view = new com.roost.MessageView
@@ -63,29 +65,30 @@ do ->
           paneModel: @model
           session: @session
         view.render()
-        @$el.append(view.$el)
+        @$inner.append(view.$el)
         @childViews.push(view)
-      
-      @$el.prepend('<div class="notify top">')
-      @$el.append('<div class="notify bottom">')
-      @$el.append('<div class="filler-view">')
+
+      @$inner.prepend('<div class="notify top">')
+      @$inner.append('<div class="notify bottom">')
+      @$inner.append('<div class="filler-view">')
 
       # If we didn't get any messages this time around, then show something informative
       if @model.get('messages').length == 0
         if @model.get('loaded')
           $noMessages = $('<div class="no-messages">').text('No messages')
-          @$el.prepend($noMessages)
+          @$inner.prepend($noMessages)
         else
           $loading = $('<div class="loading">')
           $loading.append('<i class="fa fa-circle-o-notch fa-spin"></i>')
-          @$el.prepend($loading)
+          @$inner.prepend($loading)
       # Otherwise, get our scroll position right
       else
         if @model.get('position')?
           $positionMessage = @$('.positioned')
-          @$el.scrollTop(@$el.scrollTop() + ($positionMessage.offset().top - @model.get('posScroll')))
+          @$inner.scrollTop(@$inner.scrollTop() +
+            ($positionMessage.offset().top - @model.get('posScroll')))
         else
-          @$el.scrollTop(@$el[0].scrollHeight)
+          @$inner.scrollTop(@$inner[0].scrollHeight)
 
       # Mark off which subsection of the cache we are currently showing
       @currentTop = 0
@@ -173,7 +176,7 @@ do ->
           topPoint = $view.offset().top - 80  # correct for top bars
 
           # Check if either the top or bottom point of the view are within the pane
-          if (topPoint < @$el.height() and topPoint > 0) or (bottomPoint > 0 and bottomPoint < @$el.height())
+          if (topPoint < @$inner.height() and topPoint > 0) or (bottomPoint > 0 and bottomPoint < @$inner.height())
             newIndex = Math.min(Math.max(selectedIndex + diff, 0), @childViews.length-1)  # clamp the index
             newSelectedView = @childViews[newIndex]
             @model.set('position', newSelectedView.message.get('id'))
@@ -186,7 +189,7 @@ do ->
           selectedView = @childViews[i]
           $view = selectedView.$el
           bottomPoint = $view.offset().top + $view.height()
-          if bottomPoint < @$el.height()
+          if bottomPoint < @$inner.height()
             @model.set 'position', selectedView.message.get('id')
             break
       # Otherwise, going down, so start from the top
@@ -210,12 +213,12 @@ do ->
 
       if topPoint < 0
         scrollDiff = 70 - topPoint
-      else if bottomPoint > @$el.height()
-        scrollDiff = (@$el.height() - 70) - bottomPoint
+      else if bottomPoint > @$inner.height()
+        scrollDiff = (@$inner.height() - 70) - bottomPoint
       else
         return
 
-      @$el.scrollTop(@$el.scrollTop() - scrollDiff)
+      @$inner.scrollTop(@$inner.scrollTop() - scrollDiff)
 
     selectedMessageReply: =>
       view = @childViews[@_getSelectedViewIndex()]
@@ -379,12 +382,12 @@ do ->
       @currentBottom = @currentTop + @childViews.length
 
     _saveScrollHeight: =>
-      @cachedHeight = @$el[0].scrollHeight
+      @cachedHeight = @$inner[0].scrollHeight
 
     _restoreScrollHeight: =>
-      newHeight = @$el[0].scrollHeight
+      newHeight = @$inner[0].scrollHeight
       change = @cachedHeight - newHeight
-      @$el.scrollTop(@$el.scrollTop() - change)
+      @$inner.scrollTop(@$inner.scrollTop() - change)
 
     _updateNotify: (which) =>
       $notify = @$(".notify.#{which}")
@@ -397,15 +400,15 @@ do ->
     _setPersist: =>
       # Don't let this pane fade completely if compose or fitlers are open
       if @model.get('showCompose') or @model.get('showFilters')
-        @$el.addClass('persist')
+        @$inner.addClass('persist')
       else
-        @$el.removeClass('persist')
+        @$inner.removeClass('persist')
 
     _toggleLoaded: =>
       if !@model.get('loaded')
-        @$el.addClass('not-loaded')
+        @$inner.addClass('not-loaded')
       else
-        @$el.removeClass('not-loaded')
+        @$inner.removeClass('not-loaded')
 
     _checkStark: (olderMessage, newerMessage) =>
       difference = newerMessage.get('time').valueOf() - olderMessage.get('time').valueOf()

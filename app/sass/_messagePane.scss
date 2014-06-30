@@ -29,6 +29,16 @@
     padding-top: $compose-filter-bar-height;
     transition: opacity 0.2s ease-in;
 
+    .message-pane-view-inner {
+      height: 100%;
+      overflow-y: auto;
+
+      // Create a new stacking context.
+      position: relative;
+      z-index: 1;
+
+    }
+
     &.not-loaded {
       opacity: 0.5;
     }
