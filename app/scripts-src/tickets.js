@@ -66,10 +66,11 @@ TicketManager.prototype.refreshInteractive_ = function(callback) {
   }
 
   // Fire a new one.
+  var serverPrincipal = CONFIG.serverPrincipal.split("/");
   var r = webathenaRequest(this.webathenaRoot_, {
     services: [
       {
-        principal: ["HTTP", "roost-api.mit.edu"],
+        principal: serverPrincipal,
         realm: CONFIG.realm
       },
       {
