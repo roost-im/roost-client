@@ -15,7 +15,6 @@ do ->
       @session = options.session
       @userInfo = @session.userInfo
       @uiState = @session.uiStateModel
-      @modal = com.roost.ModalController.getInstance()
       @settingsPanel = new com.roost.SettingsPanel(
         uiState: @uiState
         subscriptions: @session.subscriptions

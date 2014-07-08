@@ -108,13 +108,14 @@ do ->
     openQuoteBox: =>
       # Build the quoted message string using the prefix defined above
       quoted = QUOTE_LINE_PREFIX + @message.get('message').replace(/\n/g, "\n#{QUOTE_LINE_PREFIX}") + '\n\n'
+      recip = if @message.get('isPersonal') then @message.get('conversation') else ''
 
       # Set the fields for the composer open it
       @paneModel.set
         composeFields:
           class: @message.get('class')
           instance: @message.get('instance')
-          recipient: ''
+          recipient: recip
           content: quoted
         showCompose: true
 
