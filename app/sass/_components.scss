@@ -95,6 +95,10 @@
     max-height: 80px;
     overflow-y: scroll;
     border: 1px solid grey;
+
+    .tt-cursor {
+      background: lighten($primary-btn-bg, 20%);
+    }
   }
 
   p {

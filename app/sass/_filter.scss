@@ -28,6 +28,10 @@
       text-overflow: ellipsis;
       overflow: hidden;
 
+      &.classed {
+        margin-left: -10px;
+      }
+
       .msg-class {
         background-color: #BBB;
         display: inline-block;
@@ -36,7 +40,6 @@
         padding-right: 3px;
         box-sizing: border-box;
         float: left;
-        margin-left: -10px;
         padding-left: 10px;
       }
 
