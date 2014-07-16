@@ -137,10 +137,8 @@ do ->
         if messages.length >= com.roost.CACHE_SIZE
           @_clearBottomOfCache(msgs.length)
 
-        # Add all the messages in (reversed because reverse tail)
-        # Messages are added to the START of our list
-        for message in msgs.slice(0).reverse()
-          messages.add message, {at: 0}
+        # Add all the messages in.
+        messages.add(msgs, at: 0)
 
     addMessagesToBottomOfList: (msgs, isDone) =>
       # This means we have a live message

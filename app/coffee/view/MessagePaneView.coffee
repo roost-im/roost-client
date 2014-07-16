@@ -23,7 +23,7 @@ do ->
       # Cache cleanups on non-rendered stuff can be ignored
       # Thus, no handling of the 'remove' event
       @listenTo @model.get('messages'), 'reset', @render
-      @listenTo @model.get('messages'), 'add', @_addMessages
+      @listenTo @model.get('messages'), 'batchAdd', @_addMessages
 
       @listenTo @model, 'change:topLoading change:topDone change:loaded', (=> @_updateNotify('top'))
       @listenTo @model, 'change:bottomLoading, change:bottomDone change:loaded', (=> @_updateNotify('bottom'))
@@ -275,9 +275,12 @@ do ->
         # Check if we have any more messages in our cache
         if @currentTop > 0
           limit = Math.max(@currentTop - com.roost.EXPANSION_SIZE, 0)
+          @_saveScrollHeight()
           for message in messages.slice(limit, @currentTop).reverse()
             @_prependMessage(message)
             @_removeBottomMessage()
+          @_restoreScrollHeight()
+
         # Trigger the scrollup if we're at the top, the top isn't done, and we aren't currently
         # loading more messages at the top.
         else if @currentTop <= 0 and !@model.get('topDone') and !@model.get('topLoading')
@@ -296,27 +299,33 @@ do ->
         else if @currentBottom >= messages.length and !@model.get('bottomDone') and !@model.get('bottomLoading')
           @model.trigger 'scrollDown'
 
-    _addMessages: (message, collection, options) =>
+    _addMessages: (messages, options) =>
       # Since we're adding messages, let's get rid of these.
       @$('.no-messages').remove()
       @$('.loading').remove()
-
       # Check prepend vs append
       if options.at == 0
-        @_prependMessage(message)
+        # The messages are oldest-first, so we reverse them so they're prepended
+        # in the right order.
+        messages.reverse()
+        @_saveScrollHeight()
+        for message in messages
+          @_prependMessage(message)
+        @_restoreScrollHeight()
 
         # Start clearing stuff out if we're past our proper size
-        if @childViews.length > com.roost.STARTING_SIZE
+        while @childViews.length > com.roost.STARTING_SIZE
           @_removeBottomMessage()
       else
-        # Awkward way of avoiding adding live messages when we are not at
-        # the actual bottom.
-        if @currentBottom >= @model.get('messages').length - 1
-          @_appendMessage(message)
+        for message in messages
+          # Awkward way of avoiding adding live messages when we are not at
+          # the actual bottom.
+          if @currentBottom >= @model.get('messages').length - 1
+            @_appendMessage(message)
 
-        # Start clearing stuff out if we're past our proper size
-        if @childViews.length > com.roost.STARTING_SIZE
-          @_removeTopMessage()
+          # Start clearing stuff out if we're past our proper size
+          if @childViews.length > com.roost.STARTING_SIZE
+            @_removeTopMessage()
 
     _appendMessage: (message) =>
       if @childViews[@childViews.length - 1]?
@@ -338,7 +347,6 @@ do ->
 
     _prependMessage: (message) =>
       # Save off old scroll height
-      @_saveScrollHeight()
       if @childViews[0]?
         @_checkStark(message, @childViews[0].message)
 
@@ -355,9 +363,6 @@ do ->
 
       # Update the current top point in the cache
       @currentTop = Math.max(@currentTop - 1, 0)
-
-      # Jump the scroll position by the delta
-      @_restoreScrollHeight()
 
     _removeTopMessage: =>
       # Save off old scroll height
