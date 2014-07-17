@@ -291,9 +291,16 @@ do ->
         # Check if we have any more messages in our cache
         if @currentBottom < messages.length
           limit = Math.min(@currentBottom + com.roost.EXPANSION_SIZE, messages.length)
-          for message in messages.slice(@currentBottom, limit)
+          newMessages = messages.slice(@currentBottom, limit)
+          for message in newMessages
             @_appendMessage(message)
-            @_removeTopMessage()
+
+          @_saveScrollHeight()
+          # Need the if statement because [1..0] is [1, 0].
+          if newMessages.length
+            for message in [1..newMessages.length]
+              @_removeTopMessage()
+          @_restoreScrollHeight()
         # Trigger the scrolldown if we're at the bottom, the bottom isn't done, and we
         # aren't currently loading more messages at the bottom.
         else if @currentBottom >= messages.length and !@model.get('bottomDone') and !@model.get('bottomLoading')
@@ -303,6 +310,7 @@ do ->
       # Since we're adding messages, let's get rid of these.
       @$('.no-messages').remove()
       @$('.loading').remove()
+
       # Check prepend vs append
       if options.at == 0
         # The messages are oldest-first, so we reverse them so they're prepended
@@ -317,6 +325,7 @@ do ->
         while @childViews.length > com.roost.STARTING_SIZE
           @_removeBottomMessage()
       else
+        @_saveScrollHeight()
         for message in messages
           # Awkward way of avoiding adding live messages when we are not at
           # the actual bottom.
@@ -326,6 +335,7 @@ do ->
           # Start clearing stuff out if we're past our proper size
           if @childViews.length > com.roost.STARTING_SIZE
             @_removeTopMessage()
+        @_restoreScrollHeight()
 
     _appendMessage: (message) =>
       if @childViews[@childViews.length - 1]?
@@ -365,18 +375,12 @@ do ->
       @currentTop = Math.max(@currentTop - 1, 0)
 
     _removeTopMessage: =>
-      # Save off old scroll height
-      @_saveScrollHeight()
-
       # Remove the view
       view = @childViews.shift()
       view.remove()
 
       # Move current top point for cache
       @currentTop = @currentBottom - @childViews.length
-
-      # Jump scroll position by the delta
-      @_restoreScrollHeight()
 
     _removeBottomMessage: =>
       view = @childViews.pop()

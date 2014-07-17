@@ -173,8 +173,7 @@ do ->
         messages.reset []
 
       # Add all the messages in correct order to the END of our list
-      for message in msgs.slice(0)
-        messages.add message, {at: messages.length}
+      messages.add(msgs, at: messages.length)
 
     _clearTopOfCache: (length) =>
       # Take a message off the top (beginning of our list)
