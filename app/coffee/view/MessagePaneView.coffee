@@ -311,8 +311,10 @@ do ->
       @$('.no-messages').remove()
       @$('.loading').remove()
 
-      # Check prepend vs append
-      if options.at == 0
+      # Check prepend vs append. Prepend is if we're adding to the start *and*
+      # there were already messages (i.e., the user didn't just go to the
+      # start.)
+      if options.at == 0 && @model.get('messages').length != messages.length
         # The messages are oldest-first, so we reverse them so they're prepended
         # in the right order.
         messages.reverse()
@@ -325,13 +327,14 @@ do ->
         while @childViews.length > com.roost.STARTING_SIZE
           @_removeBottomMessage()
       else
-        @_saveScrollHeight()
         for message in messages
           # Awkward way of avoiding adding live messages when we are not at
           # the actual bottom.
-          if @currentBottom >= @model.get('messages').length - 1
+          if @currentBottom >= @model.get('messages').length - messages.length
             @_appendMessage(message)
 
+        @_saveScrollHeight()
+        for message in messages
           # Start clearing stuff out if we're past our proper size
           if @childViews.length > com.roost.STARTING_SIZE
             @_removeTopMessage()
