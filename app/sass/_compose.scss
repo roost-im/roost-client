@@ -1,7 +1,9 @@
 .compose-bar {
-  bottom: 0;
-  position: absolute;
-  left: 0;
+  -webkit-order: 3;
+  order: 3;
+  -webkit-flex: 0 0 auto;
+  flex: 0 1 auto;
+
   width: 100%;
   background-color: #555;
   color: white;
