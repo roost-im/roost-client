@@ -39,6 +39,11 @@
       flex: 1 1 0px;
       overflow-y: auto;
 
+      // Even though the flex style takes care of height, we need an explicit
+      // height attribute so the div that 'pads' the bottom of the message list
+      //  will get a reasonable value.
+      height: 100%;
+
       // Create a new stacking context.
       position: relative;
       z-index: 1;
