@@ -1,8 +1,4 @@
 do ->
-  # We have to enforce this here, because just doing CSS on the messages
-  # neglects the filter/compose bars, which are also jankily placed.
-  MIN_MESSAGE_WIDTH = 600
-
   class com.roost.MessagePane extends Backbone.View
     className: 'message-pane'
 
@@ -66,8 +62,6 @@ do ->
           swipeLeft: => @_moveSelection(-1)
           swipeRight: => @_moveSelection(1)
         )
-
-      $(window).resize(@_recalculateWidth)
 
     render: =>
       @$el.empty()
@@ -165,10 +159,6 @@ do ->
         # Restore the scroll position
         currentSelected.$el.scrollTop(oldScroll)
 
-        # This seems awkward to do here, but is necessary since recalcWidth also gets the fitler/
-        # compose bars into the right spots.
-        @_recalculateWidth()
-
         # Update our session to make sure the models are ordered properly as well
         @session.movePane(@childViews[@selectedPosition].model.cid, @selectedPosition)
 
@@ -259,9 +249,6 @@ do ->
         @childViews.push paneView
         @$el.append(paneView.$el)
 
-      # Unfortunate width recalculation
-      @_recalculateWidth()
-
       # Select the newly added pane
       @selectedPosition = index
       @_setSelection()
@@ -272,7 +259,6 @@ do ->
           toDelete = view
       toDelete.remove()
       @childViews = _.reject(@childViews, ((view) => view.cid == toDelete.cid))
-      @_recalculateWidth()
 
       # Move the selection off this model
       if model.get('selected')
@@ -283,20 +269,6 @@ do ->
       if @messageLists.length == 0
         @$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'))
         @session.uiStateModel.set('showNavbar', true)
-
-    _recalculateWidth: =>
-      # Tell all the child views to recalculate their width.
-      # This will also move filter/compose bars to the right spots, since the layout for
-      # the pane is actually quite dirty.
-      if @$el.width() < MIN_MESSAGE_WIDTH
-        percentageLimit = 100
-      else
-        percentageLimit = 100 * MIN_MESSAGE_WIDTH/@$el.width()
-      width = Math.max(Math.floor(100/@childViews.length), Math.floor(percentageLimit))
-      index = 0
-      for view in @childViews
-        view.recalculateWidth index, width
-        index += 1
 
     _showHelp: =>
       vex.dialog.alert(com.roost.templates['HotkeyHelp']())

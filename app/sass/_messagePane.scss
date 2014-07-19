@@ -9,6 +9,11 @@
   overflow-y: hidden;
   transition: top 0.2s ease-out;
 
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row nowrap;
+  flex-flow: row nowrap;
+
   &.expanded {
     top: 0px;
   }
@@ -28,6 +33,12 @@
     white-space: normal;
     transition: opacity 0.2s ease-in;
 
+    // There are two levels of flexbox going on here. These attributes are to
+    // keep panes side-by-side...
+    -webkit-flex: 1 0 600px;
+    flex: 1 0 600px;
+
+    // ... and these are to position the compose/filter bar.
     display: -webkit-flex;
     display: flex;
     -webkit-flex-flow: column nowrap;

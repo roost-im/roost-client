@@ -109,36 +109,8 @@ do ->
       @filterView.render()
       @$el.append @filterView.$el
 
-      @recalculateWidth(@index, @width)
       @_updateNotify('bottom')
       @_updateNotify('top')
-
-    recalculateWidth: (index, width) =>
-      # HACK: store whatever we get to use again if rerendered
-      @index = index
-      @width = width
-
-      # Save our current scroll height
-      @_saveScrollHeight()
-
-      # Update the view, the compose bar, and the filter bar
-      # with the right horizontal position/width.
-      @$el.css(
-        width: "#{width}%"
-      )
-
-      @composeView.$el.css(
-        width: "#{width}%"
-        left: "#{index * width}%"
-      )
-
-      @filterView.$el.css(
-        width: "#{width}%"
-        left: "#{index * width}%"
-      )
-
-      # Restore the scroll position, except this isn't working for some reason.
-      @_restoreScrollHeight()
 
     remove: =>
       # Clear out compose and filter
