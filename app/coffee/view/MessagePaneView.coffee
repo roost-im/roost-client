@@ -250,11 +250,16 @@ do ->
         # Check if we have any more messages in our cache
         if @currentTop > 0
           limit = Math.max(@currentTop - com.roost.EXPANSION_SIZE, 0)
+          newMessages = messages.slice(limit, @currentTop).reverse()
           @_saveScrollHeight()
-          for message in messages.slice(limit, @currentTop).reverse()
+          for message in newMessages
             @_prependMessage(message)
-            @_removeBottomMessage()
           @_restoreScrollHeight()
+
+          # Need the if statement because [1..0] is [1, 0].
+          if newMessages.length
+            for message in [1..newMessages.length]
+              @_removeBottomMessage()
 
         # Trigger the scrollup if we're at the top, the top isn't done, and we aren't currently
         # loading more messages at the top.
