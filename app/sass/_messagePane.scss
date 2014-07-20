@@ -23,6 +23,7 @@
   }
 
   .message-pane-view {
+    position: relative; // Necessary to get the bars to the right width.
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
@@ -33,27 +34,14 @@
     white-space: normal;
     transition: opacity 0.2s ease-in;
 
-    // There are two levels of flexbox going on here. These attributes are to
-    // keep panes side-by-side...
+    // Each pane starts out at 600px wide; if there's space left over, it's
+    // allotted to each one equally.
     -webkit-flex: 1 0 600px;
     flex: 1 0 600px;
 
-    // ... and these are to position the compose/filter bar.
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-flow: column nowrap;
-    flex-flow: column nowrap;
-
     .message-pane-view-inner {
-      -webkit-order: 2;
-      order: 2;
-      flex: 1 1 0px;
-      overflow-y: auto;
-
-      // Even though the flex style takes care of height, we need an explicit
-      // height attribute so the div that 'pads' the bottom of the message list
-      //  will get a reasonable value.
       height: 100%;
+      overflow-y: auto;
 
       // Create a new stacking context.
       position: relative;
