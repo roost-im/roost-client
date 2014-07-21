@@ -39,6 +39,12 @@
     -webkit-flex: 1 0 600px;
     flex: 1 0 600px;
 
+    // When the screen is narrower than 600px, just fill the entire screen.
+    @media only screen and (max-width: 600px) {
+      -webkit-flex: 0 0 100%;
+      flex: 0 0 100%;
+    }
+
     .message-pane-view-inner {
       height: 100%;
       overflow-y: auto;
