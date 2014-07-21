@@ -54,12 +54,12 @@ do ->
               is_personal: true
       ))
 
-    addPane: (options, parent) =>
+    addPane: (options, parent, fromState) =>
       # Add a pane to our list if we have the multi-pane setting enabled,
       # or if we don't have any panes at all.
       # Add a new model
       paneModel = new com.roost.MessagePaneModel(options)
-      paneModel.on 'change:position change:filters', @_saveState
+      paneModel.on 'change:position change:filters change:selected', @_saveState
 
       # Add a new controller and fetch data
       paneController = new com.roost.MessagePaneController
@@ -80,7 +80,7 @@ do ->
         index = @messageLists.length
 
       # Save references to the controllers and model
-      @messageLists.add paneModel, {at: index}
+      @messageLists.add paneModel, {at: index, select: !fromState}
       @messageControllers[paneModel.cid] = paneController
       @composeControllers[paneModel.cid] = composeController
 
@@ -122,7 +122,7 @@ do ->
         if @userState.get('panes')? and @userState.get('panes').length > 0
           for pane in @userState.get('panes')
             pane.messages = new com.roost.MessageCollection()
-            @addPane(pane)
+            @addPane(pane, null, true)
         else
           @addPane({})
           @_saveState()
@@ -135,5 +135,6 @@ do ->
           state.push
             filters: model.get('filters')
             position: model.get('position')
+            selected: model.get('selected')
         @userState.set('panes', state)
       )

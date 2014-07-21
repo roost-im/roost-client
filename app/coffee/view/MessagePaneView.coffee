@@ -387,7 +387,7 @@ do ->
         $notify.text('Loading...')
 
     _setPersist: =>
-      # Don't let this pane fade completely if compose or fitlers are open
+      # Don't let this pane fade completely if compose or filters are open
       if @model.get('showCompose') or @model.get('showFilters')
         @$inner.addClass('persist')
       else

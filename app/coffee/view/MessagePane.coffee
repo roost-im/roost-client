@@ -249,9 +249,12 @@ do ->
         @childViews.push paneView
         @$el.append(paneView.$el)
 
-      # Select the newly added pane
-      @selectedPosition = index
-      @_setSelection()
+      # Select the newly added pane, in the case that it's added during use.
+      # Alternatively, if this model comes in as flagged selected, it's part of the
+      # state load, so we should update the position.
+      if options.select or paneModel.get('selected')
+        @selectedPosition = index
+        @_setSelection()
 
     _removePaneView: (model) =>
       for view in @childViews

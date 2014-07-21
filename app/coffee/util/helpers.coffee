@@ -27,7 +27,7 @@ do ->
       header = messageFilterFancy('message') + 'Personal Messages'
     else if filters.conversation?
       header = messageFilterFancy(shortZuser(filters.conversation)) + "Chat with #{shortZuser(filters.conversation)}"
-      if filters.instance_key_base != 'personal'
+      if filters.instance_key_base.toLowerCase() != 'personal'
         header = header + " [#{filters.instance_key_base}]"
     else
       if filters.class_key_base
@@ -72,9 +72,16 @@ do ->
       return lighterColor('message')
   )
 
+  Handlebars.registerHelper('filterTitleMod', (filters) ->
+    if filters.class_key_base? and not filters.conversation? and not filters.is_personal
+      return 'classed'
+    else
+      return ''
+  )
+
   Handlebars.registerHelper('messageConvoHeader', (convo, instance) ->
     header = messageFilterFancy(shortZuser(convo)) + "Chat with #{shortZuser(convo)}"
-    if instance != 'personal'
+    if instance.toLowerCase() != 'personal'
       header = header + " [#{instance}]"
     return new Handlebars.SafeString(header)
   )

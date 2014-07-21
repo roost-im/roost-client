@@ -82,14 +82,15 @@ do ->
       if opts.recipient != ''
         filters.recipient = opts.recipient
 
-      # Set the filters and trigger a reset
+      # Set the filters and trigger a reset only if new filters
       # Clear position on filter change
-      @paneModel.set
-        filters: filters
-        loaded: false
-        showFilters: false
-        position: null
+      if not _.isEqual(filters, @paneModel.get('filters'))
+        @paneModel.set
+          filters: filters
+          loaded: false
+          position: null
 
+      @paneModel.set 'showFilters', false
       # In case we hid it last time for mobile
       @session.uiStateModel.set('showNavbar', true)
 
