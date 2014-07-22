@@ -64,7 +64,14 @@ do ->
         @$el.removeClass('positioned')
 
     updateTime: =>
-      @$('.time.from-now').text(@message.get('time').fromNow())
+      # Use "now" as our time if the message is from before "now".
+      # Sigh clock skew.
+      if @message.get('time').isAfter(moment())
+        relativeTime = moment()
+      else
+        relativeTime = @message.get('time')
+
+      @$('.time.from-now').text(relativeTime.fromNow())
 
     remove: =>
       @undelegateEvents()
