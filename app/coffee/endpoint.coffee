@@ -9,7 +9,6 @@ $('document').ready( =>
 
   # Set 'constants' for mobile
   if window.mobilecheck()
-    com.roost.CLICK_EVENT = 'touchend'
     com.roost.PANE_LIMIT = 6
     com.roost.ON_MOBILE = true
 

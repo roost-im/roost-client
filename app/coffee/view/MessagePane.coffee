@@ -62,6 +62,9 @@ do ->
           swipeLeft: => @_moveSelection(-1)
           swipeRight: => @_moveSelection(1)
         )
+        # Set up FastClick for fake click events. Has to be done here and not on
+        # the body because touchSwipe interferes with it somehow.
+        FastClick.attach(@$el[0])
 
     render: =>
       @$el.empty()

@@ -11,7 +11,6 @@
       vex.defaultOptions.className = 'vex-theme-top';
       session = new com.roost.RoostSession();
       if (window.mobilecheck()) {
-        com.roost.CLICK_EVENT = 'touchend';
         com.roost.PANE_LIMIT = 6;
         com.roost.ON_MOBILE = true;
       }
