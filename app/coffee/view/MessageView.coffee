@@ -57,6 +57,8 @@ do ->
       @updatePosition()
       @updateTime()
 
+      FastClick.attach(@$el[0])
+
     updatePosition: =>
       if @paneModel.get('position') == @message.get('id')
         @$el.addClass('positioned')
