@@ -17,6 +17,9 @@ do ->
     # ztextToDOM returns a fragment and we need to get it as a string to avoid
     # Handlebars escaping it for us.
     div = document.createElement('div')
+    # Only reflow on mobile, because reflow isn't 100% accurate.
+    if com.roost.ON_MOBILE
+      text = com.roost.reflow(text)
     div.appendChild(com.roost.ztext.ztextToDOM(com.roost.ztext.parseZtext(text)))
     return new Handlebars.SafeString(div.innerHTML))
 
