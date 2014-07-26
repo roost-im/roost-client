@@ -59,10 +59,9 @@
       position: relative;
       z-index: 1;
 
-    }
-
-    &.not-loaded {
-      opacity: 0.5;
+      &.not-loaded {
+        opacity: 0.5;
+      }
     }
 
     &:hover, &.persist {

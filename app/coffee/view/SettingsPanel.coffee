@@ -9,7 +9,6 @@ do ->
       eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"] = '_addZsig'
       eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
       eventsHash["#{com.roost.CLICK_EVENT} .class-td"] = '_addClassPane'
-      eventsHash["#{com.roost.CLICK_EVENT} .remove"] = '_hide'
       eventsHash['keyup #new-zsig'] = '_handleZsigInputKey'
       eventsHash['keyup .subs-input'] = '_handleSubsInputKey'
       return eventsHash
