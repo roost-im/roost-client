@@ -1,3 +1,6 @@
+$settings-panel-width : 560px;
+$settings-panel-content-height : 450px; 
+
 .settings-panel {
   &.hidden {
     display: none;
@@ -23,7 +26,7 @@
     left       : 0;
     right      : 0;
     margin     : auto;
-    width      : 560px;
+    width      : $settings-panel-width;
     border     : 1px solid #888;
     box-sizing : border-box;
     box-shadow : 0px 2px 1px #666;
@@ -72,7 +75,7 @@
     }
 
     .tab-content {
-      height   : 400px;
+      height   : $settings-panel-content-height;
       overflow : auto;
 
       .settings-content {
@@ -86,6 +89,7 @@
     }
   }
 
+  // HOTKEY PAGE STYLING
   .hotkey-settings {
     .content {
       width      : 100%;
@@ -96,115 +100,137 @@
       }
     }
   }
+
+  // SUBSCRIPTION PAGE STYLING
+  .subscription-settings {
+    .subs-form {
+      height : 90px;
+    }
+
+    .subs-table-container {
+      height        : $settings-panel-content-height - 115px;
+      overflow-y    : auto;
+
+      .subs-table {
+        width: 100%;
+
+        .class-td {
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        tr:first-child {
+          td {
+            border-top : 1px solid #BBB;
+          }
+        }
+
+        td {
+          text-overflow : ellipsis;
+          border-bottom : 1px solid #BBB;
+          padding-left  : 2px;
+          padding-right : 2px;
+          min-width   : 100px;
+          max-width   : 100px;
+          white-space : nowrap;
+          overflow    : hidden;
+          box-sizing  : border-box;
+
+          &.close-td {
+            min-width   : 25px;
+            max-width   : 25px;
+            font-size   : 28px;
+            cursor      : pointer;
+
+            &:hover {
+              color: lighten(red, 10%);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // SHARED STYLES FOR THE WHOLE FAMILY
+  .settings-form {
+    padding    : 5px;
+    margin-top : 5px;
+    position   : relative;
+    height     : 40%;
+    box-sizing : border-box;
+
+    input, textarea {
+      font-size   : 16px;
+      padding     : 3px 5px;
+      box-sizing  : border-box;
+      border      : 1px solid #BBB;
+      outline     : none;
+      font-family : $monospace-font;
+    }
+
+    textarea {
+      width   : 100%;
+      display : block;
+    }
+
+    &.subs-form input {
+      width: 32.5%;
+    }
+
+    &.zsig-form input#new-zsig {
+      width   : 100%;
+      display : block;
+    }
+
+    .btn {
+      @include button-variant($primary-btn-color, $primary-btn-bg);
+      width      : 100%;
+      margin-top : 10px;
+    }
+  }
+
+  .zsig-line {
+    /* This table stuff is necessary to vertically center the zsig. */
+    display : table;
+    width   : 100%;
+    div.zsig, div.remove-zsig {
+      display        : table-cell;
+      vertical-align : middle;
+    }
+
+    div.zsig {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 287px;
+      min-width: 287px;
+      max-width: 287px;
+    }
+  }
+
+  .remove-button {
+      font-size  : 28px;
+      text-align : center;
+      cursor     : pointer;
+      min-width  : 97px;
+      max-width  : 97px;
+
+      &:hover {
+          color: lighten(red, 10%);
+      }
+  }
+
+  .item-list {
+    padding-left  : 5px;
+    padding-right : 5px;
+  }
+
+  .zsig-line {
+    text-overflow : ellipsis;
+    border-bottom : 1px solid #BBB;
+    padding-left  : 2px;
+    padding-right : 2px;
+  }
 }
-  // div.settings-form {
-  //   padding: 5px;
-  //   margin-top: 5px;
-  //   position: relative;
-  //   height: 40%;
-  //   box-sizing: border-box;
-
-  //   input, textarea {
-  //     font-size: 16px;
-  //     padding: 3px 5px;
-  //     box-sizing: border-box;
-  //     border: 1px solid #BBB;
-  //     outline: none;
-  //     font-family: $monospace-font;
-  //   }
-
-  //   textarea {
-  //     width: 100%;
-  //     display: block;
-  //   }
-
-  //   &.subs-form input {
-  //     width: 32.5%;
-  //   }
-
-  //   &.zsig-form input#new-zsig {
-  //     width: 100%;
-  //     display: block;
-  //   }
-
-  //   .btn {
-  //     @include button-variant($primary-btn-color, $primary-btn-bg);
-  //     width: 100%;
-  //     margin-top: 10px;
-  //   }
-  // }
-
-  // .zsig-line {
-  //   /* This table stuff is necessary to vertically center the zsig. */
-  //   display: table;
-  //   width: 100%;
-  //   div.zsig, div.remove-zsig {
-  //     display: table-cell;
-  //     vertical-align: middle;
-  //   }
-
-  //   div.zsig {
-  //     overflow: hidden;
-  //     text-overflow: ellipsis;
-  //     width: 287px;
-  //     min-width: 287px;
-  //     max-width: 287px;
-  //   }
-  // }
-
-  // label {
-  //   padding-left: 10px;
-  //   margin-top: 10px;
-  //   font-size: 16px;
-  //   margin-bottom: 5px;
-  //   display: block;
-  //   border-bottom: 1px solid #BBB;
-  // }
-
-  // .remove-button {
-  //     font-size: 28px;
-  //     text-align: center;
-  //     cursor: pointer;
-  //     min-width: 97px;
-  //     max-width: 97px;
-
-  //     &:hover {
-  //         color: lighten(red, 10%);
-  //     }
-  // }
-
-  // .item-list {
-  //   padding-left: 5px;
-  //   padding-right: 5px;
-  // }
-
-  // .subs-table-container {
-  //   height: 350px;
-  //   overflow-y: auto;
-  //   border-bottom: 1px solid #BBB;
-
-  //   .subs-table {
-  //     .class-td {
-  //       cursor: pointer;
-
-  //       &:hover {
-  //         text-decoration: underline;
-  //       }
-  //     }
-
-  //     td {
-  //       min-width: 97px;
-  //       max-width: 97px;
-  //       overflow: hidden;
-  //       white-space: nowrap;
-  //       box-sizing: border-box;
-  //     }
-  //   }
-  // }
-
-  // .zsig-line, .subs-table-container td {
-  //   text-overflow: ellipsis;
-  //   border-bottom: 1px solid #BBB;
-  //   padding-left: 2px;
-  //   padding-right: 2px;
-  // }

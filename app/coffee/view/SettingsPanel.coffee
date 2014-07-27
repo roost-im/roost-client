@@ -8,15 +8,14 @@ do ->
       eventsHash["#{com.roost.CLICK_EVENT} .settings-close"] = '_hide'
       eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"]    = '_addZsig'
       eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
-      eventsHash["#{com.roost.CLICK_EVENT} .class-td"]    = '_addClassPane'
       eventsHash['keyup #new-zsig']                       = '_handleZsigInputKey'
-      eventsHash['keyup .subs-input']                     = '_handleSubsInputKey'
       return eventsHash
 
     initialize: (options) =>
       @subscriptions     = options.subscriptions
       @userSettingsModel = options.userSettingsModel
       @uiState           = options.uiState
+      @session           = options.session
 
       @views = 
         general : new com.roost.GeneralSettingsView
@@ -24,6 +23,7 @@ do ->
         subscriptions : new com.roost.SubscriptionSettingsView
           subscriptions : @subscriptions
           userSettings  : @userSettingsModel
+          session       : @session
         zsigs : new com.roost.ZSigSettingsView
           model : @userSettingsModel
         hotkeys : new com.roost.HotkeySettingsView
@@ -112,13 +112,6 @@ do ->
       zsigs.splice($(evt.target).data().zsigIndex, 1)
       @userState.set("zsigs", zsigs)
       @render()
-
-    _handleSubsInputKey: (evt) =>
-      # Enter and escape key handling in the input boxes
-      if evt.keyCode == 13
-        @_addSubscription()
-      else if evt.keyCode == 27
-        @uiState.set 'showSubs', false
 
     _handleZsigInputKey: (evt) =>
       # Enter and escape key handling in the input boxes
