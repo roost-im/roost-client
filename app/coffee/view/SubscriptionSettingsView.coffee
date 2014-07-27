@@ -13,9 +13,11 @@ do ->
     initialize: (options) =>
       @subscriptions = options.subscriptions
       @userSettings  = options.userSettings
+      @uiState       = options.uiState
       @session       = options.session
 
-      @listenTo @subscriptions, 'add remove reset sort', @render
+      @listenTo @subscriptions, 'add reset sort', @render
+      @listenTo @subscriptions, 'remove', @_removeSubscriptionRow
 
     render: =>
       @$el.empty()
@@ -55,3 +57,8 @@ do ->
 
     _removeSubscription: (evt) =>
       @subscriptions.remove($(evt.target).data().cid)
+
+    _removeSubscriptionRow: (sub) =>
+      for row in @$('.subs-table tr')
+        if $(row).data().cid == sub.cid
+          $(row).remove()

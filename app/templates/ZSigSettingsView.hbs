@@ -1,1 +1,16 @@
-ZSIG TODO
+<div class="settings-form zsig-form">
+  <input id="new-zsig" placeholder="Zsig">
+  <button class="btn add-zsig">Add signature</button>
+</div>
+<div class="zsigs item-list">
+  {{#each zsigs}}
+    <div class="zsig-line">
+      <div class="zsig">
+        {{this}}
+      </div>
+      <div class="remove-button remove-zsig" data-zsig-index="{{@index}}">
+        &times;
+      </div>
+    </div>
+  {{/each}}
+</div>

@@ -8,7 +8,7 @@
 <div class="subs-table-container item-list">
   <table cellspacing="0" class="subs-table">
     {{#each subscriptions.models}}
-      <tr>
+      <tr data-cid="{{cid}}">
         <td class="class-td" data-class="{{attributes.classKey}}">{{attributes.class}}</td>
         <td>{{attributes.instance}}</td>
         <td>{{attributes.recipient}}</td>
