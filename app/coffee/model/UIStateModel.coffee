@@ -4,5 +4,5 @@ do ->
       showNavbar   : true
       showSubs     : false
       showSettings : false
-      settingsTab  : 'general'
+      settingsTab  : 'subscriptions'
       limitReached : false

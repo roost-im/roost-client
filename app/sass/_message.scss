@@ -158,6 +158,12 @@
         word-wrap: break-word;
         font-weight: 700;
 
+        &.no-gravatar {
+          .gravatar, br {
+            display: none;
+          }
+        }
+
         .gravatar {
           border: 1px solid #BBB;
           width: $gravatar-size;

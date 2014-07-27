@@ -6,18 +6,19 @@ do ->
 
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .reply"] = 'openReplyBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .pm"] = 'openMessageBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .quote"] = 'openQuoteBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .msg-class"] = '_filterClass'
+      eventsHash["#{com.roost.CLICK_EVENT} .reply"]        = 'openReplyBox'
+      eventsHash["#{com.roost.CLICK_EVENT} .pm"]           = 'openMessageBox'
+      eventsHash["#{com.roost.CLICK_EVENT} .quote"]        = 'openQuoteBox'
+      eventsHash["#{com.roost.CLICK_EVENT} .msg-class"]    = '_filterClass'
       eventsHash["#{com.roost.CLICK_EVENT} .msg-instance"] = '_filterInstance'
-      eventsHash["#{com.roost.CLICK_EVENT} .chat-header"] = '_filterConversation'
+      eventsHash["#{com.roost.CLICK_EVENT} .chat-header"]  = '_filterConversation'
       return eventsHash
 
     initialize: (options) =>
-      @message = options.message
-      @paneModel = options.paneModel
-      @session = options.session
+      @message           = options.message
+      @paneModel         = options.paneModel
+      @session           = options.session
+      @userSettingsModel = @session.userSettingsModel
 
       # One might think of listening to @message for some events, or even
       # @paneModel for events, but that's a bad idea in general. These views
@@ -25,6 +26,8 @@ do ->
       # if listeners are firing in here. Even with proper cleanup, it gets bad.
       # Therefore, all listening to stuff is delegated to the parent view, which
       # then calls into this view to do updates and such.
+
+      @listenTo @userSettingsModel, 'change:showGravatar', @_toggleGravatar
 
     render: =>
       @$el.empty()
@@ -56,6 +59,7 @@ do ->
       # Done separate from handlebars since these things have a habit of changing.
       @updatePosition()
       @updateTime()
+      @_toggleGravatar()
 
       FastClick.attach(@$el[0])
 
@@ -181,3 +185,9 @@ do ->
         position: @message.get('id')
         posScroll: @$el.offset().top
       @paneModel.set options
+
+    _toggleGravatar: =>
+      if @userSettingsModel.get('showGravatar')
+        @$('.sender').removeClass('no-gravatar')
+      else
+        @$('.sender').addClass('no-gravatar')

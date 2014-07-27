@@ -15,6 +15,10 @@ do ->
       .then( =>
         @userSettingsModel.set 'zsigs', @_getZsigs()
         @userSettingsModel.set @_getMiscSettings()
+
+        hasSeenRoost = @userSettingsModel.get('hasSeenRoost')
+        if !hasSeenRoost? or !hasSeenRoost
+          @userSettingsModel.trigger('firstRun')
       )
 
     _getMiscSettings: =>

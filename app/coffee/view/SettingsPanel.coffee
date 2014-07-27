@@ -31,6 +31,7 @@ do ->
 
       @listenTo @uiState, 'change:showSettings', @_toggleVisibility
       @listenTo @uiState, 'change:settingsTab', @_setTab
+      @listenTo @userSettingsModel, 'firstRun', @_firstRun
 
     render: =>
       @$el.empty()
@@ -71,3 +72,9 @@ do ->
       for content in @$('.settings-content')
         if $(content).data().content == @uiState.get('settingsTab')
           $(content).addClass('selected')
+
+    _firstRun: =>
+      @uiState.set
+        showSettings : true
+        settingsTab  : 'help'
+      @userSettingsModel.set('hasSeenRoost', true)
