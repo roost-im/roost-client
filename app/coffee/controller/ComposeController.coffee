@@ -4,15 +4,16 @@ do ->
       $.extend @, Backbone.Events
 
       @api = options.api
+      @userState = options.userState
       @model = options.model
 
       @listenTo @model, 'sendMessage', @_sendMessage
 
     _sendMessage: =>
-      data = @api.userInfo().ready().then( =>
+      data = @userState().ready().then( =>
         # First try loading from 'zsigs', then 'zsig', then the default.
-        zsigs = @api.userInfo().get('zsigs')
-        legacy = @api.userInfo().get('zsig') ? "Sent from Roost"
+        zsigs = @userState().get('zsigs')
+        legacy = @userstate().get('zsig') ? "Sent from Roost"
         zsigs = zsigs ? [legacy]
         zsig = _.sample(zsigs)
         msg = @model.get('composeFields')

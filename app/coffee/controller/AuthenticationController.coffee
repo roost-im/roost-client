@@ -1,15 +1,14 @@
 do ->
-  # TODO: implement with some more robust knowledge of what tickets are
   class com.roost.AuthenticationController
     constructor: (options) ->
       $.extend @, Backbone.Events
 
       @session = options.session
-      @userInfo = options.userInfo
+      @userInfoModel = options.userInfoModel
       @ticketManager = options.ticketManager
 
-      @listenTo @userInfo, 'login', @requestAuth
-      @listenTo @userInfo, 'logout', @removeAuthentication
+      @listenTo @userInfoModel, 'login', @requestAuth
+      @listenTo @userInfoModel, 'logout', @removeAuthentication
 
       @doAuthentication()
 
@@ -19,7 +18,7 @@ do ->
     doAuthentication: =>
       if @isAuthenticated()
         ticket = @ticketManager.getCachedTicket("server")
-        @userInfo.set
+        @userInfoModel.set
           username: ticket.client.principalName.nameString[0]
           realm: ticket.client.realm
 
@@ -30,7 +29,7 @@ do ->
       @ticketManager.expireTickets()
 
       # Reset user info
-      @userInfo.set
+      @userInfoModel.set
           username: null
           realm: null
 
@@ -42,7 +41,7 @@ do ->
       ticket = sessions.server
 
       # Set the user info
-      @userInfo.set
+      @userInfoModel.set
         username: ticket.client.principalName.nameString[0]
         realm: ticket.client.realm
 

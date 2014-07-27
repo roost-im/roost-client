@@ -30,7 +30,7 @@ do ->
       @$el.empty()
       template = com.roost.templates['MessageView']
       # Check if the user sent it
-      isSentByUser = @message.get('sender') == @session.userInfo.get('username') + '@' + @session.userInfo.get('realm')
+      isSentByUser = @message.get('sender') == @session.userInfoModel.get('username') + '@' + @session.userInfoModel.get('realm')
       isSentByUser = @message.get('isOutgoing') or isSentByUser
 
       # Some people have signatures like ") (foo" which assumes the zsig is

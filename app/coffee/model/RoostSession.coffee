@@ -7,14 +7,15 @@ do ->
 
   class com.roost.RoostSession
     constructor: ->
-      # User info
-      @userInfo = new Backbone.Model
-        username: null
-        realm: null
+      # User's login info
+      @userInfoModel = new com.roost.UserInfoModel
+
+      # User's general settings (includes zsigs)
+      @userSettingsModel = new com.roost.UserSettingsModel
 
       # User's subscriptions
-      @subscriptions = new Backbone.Collection()
-      @subscriptions.model = com.roost.SubscriptionModel
+      @subscriptions            = new Backbone.Collection()
+      @subscriptions.model      = com.roost.SubscriptionModel
       @subscriptions.comparator = ((a) => return baseString(a.get('class')))
 
       # Collection of Message List Models
@@ -27,19 +28,16 @@ do ->
       # Map of compose controllers
       @composeControllers = {}
 
-      # Singleton services we need to hold on to
-      # Currently uses old Roost objects
-      @localStorage = new LocalStorageWrapper()
-      @storageManager = new StorageManager(@localStorage)
-      @ticketManager = new TicketManager(CONFIG.webathena, @storageManager)
-      @api = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
-      @userState = @api.userInfo()
-
       # UI state - manage what is showing on overall UI/what can be done
-      @uiStateModel = new Backbone.Model
-        showNavbar: true
-        showSubs: false
-        limitReached: false
+      @uiStateModel = new com.roost.UIStateModel()
+
+      # Singleton services used for storage on frontend/backend
+      # Currently uses old Roost objects
+      @localStorage   = new LocalStorageWrapper()
+      @storageManager = new StorageManager(@localStorage)
+      @ticketManager  = new TicketManager(CONFIG.webathena, @storageManager)
+      @api            = new API(CONFIG.server, CONFIG.serverPrincipal, @storageManager, @ticketManager)
+      @userState      = @api.userInfo()
 
       # I really don't know if this is where the hotkeys go.
       # Most of the hotkeys hang out in the MessagePane view.
@@ -71,6 +69,7 @@ do ->
       composeController = new com.roost.ComposeController
         model: paneModel
         api: @api
+        userState: @userState
 
       # If this pane was added from a parent pane, set proper
       # insertion index.
@@ -117,6 +116,7 @@ do ->
       for cid in cids
         @removePane(cid)
 
+    # This is a bit hacky and might belong in a controller...
     loadState: =>
       @userState.ready().then(=>
         if @userState.get('panes')? and @userState.get('panes').length > 0
@@ -133,8 +133,8 @@ do ->
         state = []
         for model in @messageLists.models
           state.push
-            filters: model.get('filters')
-            position: model.get('position')
-            selected: model.get('selected')
+            filters  : model.get('filters')
+            position : model.get('position')
+            selected : model.get('selected')
         @userState.set('panes', state)
       )

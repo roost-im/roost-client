@@ -10,9 +10,9 @@ do ->
       @api = options.api
 
       # User info
-      @userInfo = options.userInfo
+      @userInfoModel = options.userInfoModel
 
-      @listenTo @userInfo, 'change', @fetchSubscriptions
+      @listenTo @userInfoModel, 'change', @fetchSubscriptions
       @listenTo @subscriptions, 'add', @_subscribe
       @listenTo @subscriptions, 'remove', @_unsubscribe
 

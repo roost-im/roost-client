@@ -9,12 +9,12 @@ do ->
       return eventsHash
 
     initialize: (options) =>
-      @userInfo = options.userInfo
-      @listenTo @userInfo, 'change', @render
+      @userInfoModel = options.userInfoModel
+      @listenTo @userInfoModel, 'change', @render
 
     render: =>
       @$el.empty()
-      if @userInfo.get('username')?
+      if @userInfoModel.get('username')?
         @$el.hide()
       else
         @$el.show()
@@ -23,8 +23,8 @@ do ->
 
     _handleLogin: =>
       # Trigger the model, AuthenticationController will handle it
-      @userInfo.trigger 'login'
+      @userInfoModel.trigger 'login'
 
     _handleLogout: =>
       # Trigger the model, AuthenticationController will handle it
-      @userInfo.trigger 'logout'
+      @userInfoModel.trigger 'logout'

@@ -16,7 +16,6 @@
     "mousetrap": "1.4.6",
     "jquery-linkify": "latest",
     "typeahead.js": "0.10.2",
-    "vex": "2.1.1",
     "fastclick": "1.0.2"
   }
 }

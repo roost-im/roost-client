@@ -18,7 +18,7 @@ do ->
       @listenTo @messageLists, 'add', @_addPaneView
       @listenTo @messageLists, 'remove', @_removePaneView
 
-      @listenTo @session.userInfo, 'change', @_toggleVisibility
+      @listenTo @session.userInfoModel, 'change', @_toggleVisibility
 
       # Since we handle panes, pane selection, and keyboard shortcuts,
       # listen for any uiState changes and act accordingly
@@ -50,8 +50,10 @@ do ->
       # in the session.
       Mousetrap.bind('alt+x', @_closeSelectedPane)
 
-      # Hotkeys for showing/hiding the hotkey help.
+      # Hotkeys for showing/hiding the help or settings.
       Mousetrap.bind('?', @_showHelp)
+      Mousetrap.bind('alt+s', @_showSettings)
+      Mousetrap.bind('esc', @_hideSettings)
 
       # Hotkeys for toggling uiState
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
@@ -93,7 +95,7 @@ do ->
         @$el.removeClass('expanded')
 
     _toggleVisibility: =>
-      if @session.userInfo.get('username')?
+      if @session.userInfoModel.get('username')?
         @$el.show()
       else
         @$el.hide()
@@ -276,5 +278,16 @@ do ->
         @$el.append($('<div class="no-panes">').text('Click "+ New Pane" above to start browsing your messages.'))
         @session.uiStateModel.set('showNavbar', true)
 
+    # Show the settings modal.
+    _showSettings: =>
+      @uiStateModel.set
+        showSettings : true
+
+    _hideSettings: =>
+      @uiStateModel.set
+        showSettings : false
+
     _showHelp: =>
-      vex.dialog.alert(com.roost.templates['HotkeyHelp']())
+      @uiStateModel.set
+        showSettings : true
+        settingsTab  : 'help'

@@ -7,8 +7,7 @@
 
   $('document').ready((function(_this) {
     return function() {
-      var authController, loginView, messagePane, navbar, session, subController;
-      vex.defaultOptions.className = 'vex-theme-top';
+      var authController, loginView, messagePane, navbar, session, settingsController, settingsPanel, subController;
       session = new com.roost.RoostSession();
       if (window.mobilecheck()) {
         com.roost.PANE_LIMIT = 6;
@@ -16,12 +15,17 @@
       }
       subController = new com.roost.SubscriptionController({
         api: session.api,
-        userInfo: session.userInfo,
+        userInfoModel: session.userInfoModel,
         subscriptions: session.subscriptions
+      });
+      settingsController = new com.roost.SettingsController({
+        userState: session.userState,
+        userInfoModel: session.userInfoModel,
+        userSettingsModel: session.userSettingsModel
       });
       authController = new com.roost.AuthenticationController({
         session: session,
-        userInfo: session.userInfo,
+        userInfoModel: session.userInfoModel,
         ticketManager: session.ticketManager
       });
       navbar = new com.roost.NavBar({
@@ -30,7 +34,7 @@
       navbar.render();
       $('body').append(navbar.$el);
       loginView = new com.roost.LoginView({
-        userInfo: session.userInfo
+        userInfoModel: session.userInfoModel
       });
       loginView.render();
       $('body').append(loginView.$el);
@@ -40,7 +44,16 @@
       });
       messagePane.render();
       $('body').append(messagePane.$el);
-      if (session.userInfo.get('username') != null) {
+      settingsPanel = new com.roost.SettingsPanel({
+        session: session,
+        subscriptions: session.subscriptions,
+        userSettingsModel: session.userSettingsModel,
+        uiState: session.uiStateModel,
+        userState: session.userState
+      });
+      settingsPanel.render();
+      $('body').append(settingsPanel.$el);
+      if (session.userInfoModel.get('username') != null) {
         return session.loadState();
       }
     };

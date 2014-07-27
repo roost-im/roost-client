@@ -4,33 +4,74 @@ do ->
 
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .subscribe"] = '_addSubscription'
-      eventsHash["#{com.roost.CLICK_EVENT} .close-td"] = '_removeSubscription'
-      eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"] = '_addZsig'
+      eventsHash["#{com.roost.CLICK_EVENT} .settings-tab"]   = '_changeTab'
+      eventsHash["#{com.roost.CLICK_EVENT} .settings-close"] = '_hide'
+      eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"]    = '_addZsig'
       eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
-      eventsHash["#{com.roost.CLICK_EVENT} .class-td"] = '_addClassPane'
-      eventsHash['keyup #new-zsig'] = '_handleZsigInputKey'
-      eventsHash['keyup .subs-input'] = '_handleSubsInputKey'
+      eventsHash["#{com.roost.CLICK_EVENT} .class-td"]    = '_addClassPane'
+      eventsHash['keyup #new-zsig']                       = '_handleZsigInputKey'
+      eventsHash['keyup .subs-input']                     = '_handleSubsInputKey'
       return eventsHash
 
     initialize: (options) =>
-      @subscriptions = options.subscriptions
-      @uiState = options.uiState
-      @session = options.session
-      @userState = @session.api.userInfo()
+      @subscriptions     = options.subscriptions
+      @userSettingsModel = options.userSettingsModel
+      @uiState           = options.uiState
 
-      @listenTo @subscriptions, 'add remove reset sort', @render
+      @views = 
+        general : new com.roost.GeneralSettingsView
+          model : @userSettingsModel
+        subscriptions : new com.roost.SubscriptionSettingsView
+          subscriptions : @subscriptions
+          userSettings  : @userSettingsModel
+        zsigs : new com.roost.ZSigSettingsView
+          model : @userSettingsModel
+        hotkeys : new com.roost.HotkeySettingsView
+          model : @userSettingsModel
+        help : new com.roost.HelpView()
+
+      @listenTo @uiState, 'change:showSettings', @_toggleVisibility
+      @listenTo @uiState, 'change:settingsTab', @_setTab
 
     render: =>
-      @userState.ready().then(=>
-        @$el.empty()
-        template = com.roost.templates['SettingsPanel']
-        @$el.append(template(
-          subscriptions: @subscriptions, zsigs: @_getZsigs())))
+      @$el.empty()
+      @$el.append com.roost.templates['SettingsPanel']()
 
-    show: =>
-      @render()
-      vex.dialog.alert(message: @$el)
+      for content in @$('.settings-content')
+        key = $(content).data().content
+        @views[key].render()
+        $(content).append @views[key].$el
+
+      if not @uiState.get('showSettings')
+        @$el.addClass('hidden')
+      else
+        @$el.removeClass('hidden')
+
+      @_setTab()
+
+    _toggleVisibility: =>
+      if @uiState.get('showSettings') then @_show() else @_hide()
+
+    _show: =>
+      @$el.removeClass('hidden')
+
+    _hide: =>
+      @uiState.set('showSettings', false)
+      @$el.addClass('hidden')
+
+    _changeTab: (evt) =>
+      @uiState.set 'settingsTab', $(evt.target).data().content
+
+    _setTab: =>
+      @$('.settings-tab').removeClass('selected')
+      @$('.settings-content').removeClass('selected')
+      for tab in @$('.settings-tab')
+        if $(tab).data().content == @uiState.get('settingsTab')
+          $(tab).addClass('selected')
+
+      for content in @$('.settings-content')
+        if $(content).data().content == @uiState.get('settingsTab')
+          $(content).addClass('selected')
 
     _addClassPane: (evt) =>
       classKey = $(evt.target).data().class

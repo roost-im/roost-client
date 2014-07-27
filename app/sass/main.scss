@@ -7,7 +7,6 @@
 @import "message";
 @import "compose";
 @import "filter";
-@import "hotkeyHelp";
 @import "settings";
 @import "media";
 
@@ -27,11 +26,4 @@ html, body {
   .logout {
     display: none !important;
   }
-}
-
-// Disable scrolling the container; this means that rapidly scrolling a message
-// pane won't wind up causing the outer element to scroll and look bad on OSes
-// with 'inertial' scroll.
-html {
-  overflow: hidden;
 }
