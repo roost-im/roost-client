@@ -53,6 +53,7 @@
       .time {
         position: absolute;
         right: 0;
+        top: 0;
         padding-right: 5px;
         opacity: 1;
         transition: opacity 0.2s 0.5s;
@@ -88,7 +89,7 @@
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
-        max-width: 25%;
+        max-width: 35%;
 
         &:hover {
           text-decoration: underline;
@@ -108,7 +109,7 @@
         display: inline-block;
         padding-left: 3px;
         cursor: pointer;
-        max-width: 25%;
+        max-width: 35%;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
