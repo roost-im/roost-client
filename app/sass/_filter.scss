@@ -94,8 +94,12 @@
     .remove {
       float: right;
       cursor: pointer;
-      font-size: $compose-filter-bar-height;
+      font-size: $compose-filter-bar-height - 5px;
       @include user-select(none);
+
+      &.hidden {
+        opacity: 0;
+      }
 
       &:hover {
         color: lighten(red, 10%);

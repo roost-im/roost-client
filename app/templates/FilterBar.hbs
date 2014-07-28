@@ -2,9 +2,7 @@
   <div class="title {{filterTitleMod filters}}">
     {{filterHeader filters}}
   </div>
-  {{#unless showFilters}}
-    <div class="remove">&times;</div>
-  {{/unless}}
+  <div class="remove {{#if showFilters}}hidden{{/if}}">&times;</div>
   <div class="filters">
     {{#if showFilters}}
       <i class="fa fa-filter"></i><span>&nbsp;&nbsp;Hide Filters</span>
