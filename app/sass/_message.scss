@@ -85,6 +85,10 @@
         box-sizing: border-box;
         float: left;
         cursor: pointer;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        max-width: 25%;
 
         &:hover {
           text-decoration: underline;
@@ -104,7 +108,7 @@
         display: inline-block;
         padding-left: 3px;
         cursor: pointer;
-        width: 45%;
+        max-width: 25%;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
