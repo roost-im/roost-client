@@ -4,14 +4,14 @@ do ->
   class com.roost.MessageView extends Backbone.View
     className: 'message-view-full'
 
-    events: ->
+    tapClickEvents: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .reply"] = 'openReplyBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .pm"] = 'openMessageBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .quote"] = 'openQuoteBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .msg-class"] = '_filterClass'
-      eventsHash["#{com.roost.CLICK_EVENT} .msg-instance"] = '_filterInstance'
-      eventsHash["#{com.roost.CLICK_EVENT} .chat-header"] = '_filterConversation'
+      eventsHash[".reply"] = 'openReplyBox'
+      eventsHash[".pm"] = 'openMessageBox'
+      eventsHash[".quote"] = 'openQuoteBox'
+      eventsHash[".msg-class"] = '_filterClass'
+      eventsHash[".msg-instance"] = '_filterInstance'
+      eventsHash[".chat-header"] = '_filterConversation'
       return eventsHash
 
     initialize: (options) =>
@@ -27,6 +27,7 @@ do ->
       # then calls into this view to do updates and such.
 
     render: =>
+      super()
       @$el.empty()
       template = com.roost.templates['MessageView']
       # Check if the user sent it
@@ -56,8 +57,6 @@ do ->
       # Done separate from handlebars since these things have a habit of changing.
       @updatePosition()
       @updateTime()
-
-      FastClick.attach(@$el[0])
 
     updatePosition: =>
       if @paneModel.get('position') == @message.get('id')

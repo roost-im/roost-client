@@ -1,0 +1,1 @@
+../bower_components/hammerjs/hammer.js

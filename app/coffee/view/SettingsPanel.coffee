@@ -2,14 +2,16 @@ do ->
   class com.roost.SettingsPanel extends Backbone.View
     className: 'settings-panel'
 
+    tapClickEvents:
+      '.subscribe': '_addSubscription'
+      '.close-td': '_removeSubscription'
+      '.add-zsig': '_addZsig'
+      '.remove-zsig': '_removeZsig'
+      '.class-td': '_addClassPane'
+      '.remove': '_hide'
+
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .subscribe"] = '_addSubscription'
-      eventsHash["#{com.roost.CLICK_EVENT} .close-td"] = '_removeSubscription'
-      eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"] = '_addZsig'
-      eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
-      eventsHash["#{com.roost.CLICK_EVENT} .class-td"] = '_addClassPane'
-      eventsHash["#{com.roost.CLICK_EVENT} .remove"] = '_hide'
       eventsHash['keyup #new-zsig'] = '_handleZsigInputKey'
       eventsHash['keyup .subs-input'] = '_handleSubsInputKey'
       return eventsHash
@@ -23,6 +25,7 @@ do ->
       @listenTo @subscriptions, 'add remove reset sort', @render
 
     render: =>
+      super()
       @userState.ready().then(=>
         @$el.empty()
         template = com.roost.templates['SettingsPanel']

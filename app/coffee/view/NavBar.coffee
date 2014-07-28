@@ -2,13 +2,16 @@ do ->
   class com.roost.NavBar extends Backbone.View
     className: 'navbar'
 
+    tapClickEvents:
+      '.logout': '_handleLogout'
+      '.add-pane': '_addPane'
+      '.personal-message': '_addPersonalMessagePane'
+      '.user-info': '_showSettings'
+      '.help': '_showHelp'
+
+
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .logout"] = '_handleLogout'
-      eventsHash["#{com.roost.CLICK_EVENT} .add-pane"] = '_addPane'
-      eventsHash["#{com.roost.CLICK_EVENT} .personal-message"] = '_addPersonalMessagePane'
-      eventsHash["#{com.roost.CLICK_EVENT} .user-info"] = '_showSettings'
-      eventsHash["#{com.roost.CLICK_EVENT} .help"] = '_showHelp'
       return eventsHash
 
     initialize: (options) =>
@@ -27,6 +30,7 @@ do ->
       Mousetrap.bind('alt+s', @_showSettings)
 
     render: =>
+      super()
       @$el.empty()
       template = com.roost.templates['NavBar']
 

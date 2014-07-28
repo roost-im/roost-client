@@ -5,7 +5,7 @@ do ->
     events: ->
       eventsHash = {}
       if !com.roost.ON_MOBILE
-        eventsHash["#{com.roost.CLICK_EVENT} .message-pane-view"] = '_setSelectionOnClick'
+        eventsHash["click .message-pane-view"] = '_setSelectionOnClick'
       return eventsHash
 
     initialize: (options) =>
@@ -56,17 +56,18 @@ do ->
       # Hotkeys for toggling uiState
       Mousetrap.bind('alt+h', @_toggleNavbarSetting)
 
-      # Set up swiping if on mobile
-      if com.roost.ON_MOBILE
-        @$el.swipe(
-          swipeLeft: => @_moveSelection(-1)
-          swipeRight: => @_moveSelection(1)
-        )
-        # Set up FastClick for fake click events. Has to be done here and not on
-        # the body because touchSwipe interferes with it somehow.
-        FastClick.attach(@$el[0])
+      # By default HammerJS disables selecting, so we tell it not to put any CSS
+      # properties on it. We also set touchAction to auto because whatever
+      # Hammer does to emulate it on iOS Safari sucks.
+      @hammer = new Hammer(@$el[0],
+        recognizers: [[Hammer.Swipe, direction: Hammer.DIRECTION_HORIZONTAL]]
+        cssProps: {}
+        touchAction: 'auto')
+        .on('swipeleft', => @_moveSelection(-1))
+        .on('swiperight', => @_moveSelection(1))
 
     render: =>
+      super()
       @$el.empty()
       @childViews = []
       @selectedPosition = 0
@@ -167,12 +168,6 @@ do ->
 
       e?.preventDefault()
       e?.stopPropagation()
-
-    _handleSwipeLeft: (e) =>
-      @_moveSelection(-1, e)
-
-    _handleSwipeRight: (e) =>
-      @_moveSelection(1, e)
 
     _toggleNavbarSetting: (e)=>
       @uiStateModel.set 'showNavbar', !@uiStateModel.get('showNavbar')
