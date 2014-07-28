@@ -69,7 +69,7 @@ do ->
       composeController = new com.roost.ComposeController
         model: paneModel
         api: @api
-        userState: @userState
+        userSettings: @userSettingsModel
 
       # If this pane was added from a parent pane, set proper
       # insertion index.
