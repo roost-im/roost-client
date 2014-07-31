@@ -55,7 +55,8 @@ Backbone.View = View.extend({
           # Give each element that matches the selector its own Hammer instance.
           $el = $(this)
           if not $el.data('hammer')
-            $el.data('hammer', new Hammer(this, tap: true))
+            $el.data('hammer', new Hammer(this,
+              recognizers: [[Hammer.Tap]]))
           $el.data('hammer').on('tap', method)
         )
     )
