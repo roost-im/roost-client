@@ -47,6 +47,7 @@ do ->
       @width = 100
 
     render: =>
+      super()
       # Clear out old views
       for view in @childViews
         view.remove()

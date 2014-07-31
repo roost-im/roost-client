@@ -2,12 +2,14 @@ do ->
   class com.roost.FilterBar extends Backbone.View
     className: 'filter-bar'
 
+    tapClickEvents:
+      '.filters': '_toggleFilters'
+      '.clear-filters': '_removeFilters'
+      '.remove': '_removePane'
+      '.set-filters': '_setFilters'
+
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .filters"] = '_toggleFilters'
-      eventsHash["#{com.roost.CLICK_EVENT} .clear-filters"] = '_removeFilters'
-      eventsHash["#{com.roost.CLICK_EVENT} .remove"] = '_removePane'
-      eventsHash["#{com.roost.CLICK_EVENT} .set-filters"] = '_setFilters'
       eventsHash['keydown input'] = '_handleInputKey'
       return eventsHash
 
@@ -18,6 +20,7 @@ do ->
       @listenTo @paneModel, 'change:showFilters change:filters change:selected', @render
 
     render: =>
+      super()
       @$el.empty()
       template = com.roost.templates['FilterBar']
 

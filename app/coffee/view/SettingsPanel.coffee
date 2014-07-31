@@ -2,11 +2,9 @@ do ->
   class com.roost.SettingsPanel extends Backbone.View
     className: 'settings-panel'
 
-    events: ->
-      eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .settings-tab"]   = '_changeTab'
-      eventsHash["#{com.roost.CLICK_EVENT} .settings-close"] = '_hide'
-      return eventsHash
+    tapClickEvents:
+      '.settings-tab': '_changeTab'
+      '.settings-close': '_hide'
 
     initialize: (options) =>
       @subscriptions     = options.subscriptions
@@ -34,6 +32,7 @@ do ->
       @listenTo @userSettingsModel, 'firstRun', @_firstRun
 
     render: =>
+      super()
       @$el.empty()
       @$el.append com.roost.templates['SettingsPanel']()
 

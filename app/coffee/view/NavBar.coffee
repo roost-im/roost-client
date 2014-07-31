@@ -2,14 +2,12 @@ do ->
   class com.roost.NavBar extends Backbone.View
     className: 'navbar'
 
-    events: ->
-      eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .logout"]           = '_handleLogout'
-      eventsHash["#{com.roost.CLICK_EVENT} .add-pane"]         = '_addPane'
-      eventsHash["#{com.roost.CLICK_EVENT} .personal-message"] = '_addPersonalMessagePane'
-      eventsHash["#{com.roost.CLICK_EVENT} .user-info"]        = '_showSettings'
-      eventsHash["#{com.roost.CLICK_EVENT} .help"]             = '_showHelp'
-      return eventsHash
+    tapClickEvents:
+      '.logout': '_handleLogout'
+      '.add-pane': '_addPane'
+      '.personal-message': '_addPersonalMessagePane'
+      '.user-info': '_showSettings'
+      '.help': '_showHelp'
 
     initialize: (options) =>
       @session = options.session
@@ -21,6 +19,7 @@ do ->
       @listenTo @uiState, 'change:showNavbar change:limitReached', @render
 
     render: =>
+      super()
       @$el.empty()
       template = com.roost.templates['NavBar']
 

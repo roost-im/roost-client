@@ -4,15 +4,13 @@ do ->
   class com.roost.MessageView extends Backbone.View
     className: 'message-view-full'
 
-    events: ->
-      eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .reply"]        = 'openReplyBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .pm"]           = 'openMessageBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .quote"]        = 'openQuoteBox'
-      eventsHash["#{com.roost.CLICK_EVENT} .msg-class"]    = '_filterClass'
-      eventsHash["#{com.roost.CLICK_EVENT} .msg-instance"] = '_filterInstance'
-      eventsHash["#{com.roost.CLICK_EVENT} .chat-header"]  = '_filterConversation'
-      return eventsHash
+    tapClickEvents:
+      '.reply': 'openReplyBox'
+      '.pm': 'openMessageBox'
+      '.quote': 'openQuoteBox'
+      '.msg-class': '_filterClass'
+      '.msg-instance': '_filterInstance'
+      '.chat-header': '_filterConversation'
 
     initialize: (options) =>
       @message           = options.message
@@ -30,6 +28,7 @@ do ->
       @listenTo @userSettingsModel, 'change:showGravatar', @_toggleGravatar
 
     render: =>
+      super()
       @$el.empty()
       template = com.roost.templates['MessageView']
       # Check if the user sent it
@@ -60,8 +59,6 @@ do ->
       @updatePosition()
       @updateTime()
       @_toggleGravatar()
-
-      FastClick.attach(@$el[0])
 
     updatePosition: =>
       if @paneModel.get('position') == @message.get('id')

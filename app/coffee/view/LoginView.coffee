@@ -2,10 +2,12 @@ do ->
   class com.roost.LoginView extends Backbone.View
     className: 'login-view'
 
+    tapClickEvents:
+      '.login': '_handleLogin'
+      '.logout': '_handleLogout'
+
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .login"] = '_handleLogin'
-      eventsHash["#{com.roost.CLICK_EVENT} .logout"] = '_handleLogout'
       return eventsHash
 
     initialize: (options) =>
@@ -13,6 +15,7 @@ do ->
       @listenTo @userInfoModel, 'change', @render
 
     render: =>
+      super()
       @$el.empty()
       if @userInfoModel.get('username')?
         @$el.hide()

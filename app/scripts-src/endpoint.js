@@ -1,6 +1,4 @@
 (function() {
-  com.roost.CLICK_EVENT = 'click';
-
   com.roost.PANE_LIMIT = 10;
 
   com.roost.ON_MOBILE = false;

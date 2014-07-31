@@ -2,12 +2,14 @@ do ->
   class com.roost.ComposeBar extends Backbone.View
     className: 'compose-bar'
 
+    tapClickEvents:
+      '.compose': '_showCompose'
+      '.close': '_hideCompose'
+      '.to-bottom': '_jumpToBottom'
+      '.send': '_sendMessage'
+
     events: ->
       eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .compose"] = '_showCompose'
-      eventsHash["#{com.roost.CLICK_EVENT} .close"] = '_hideCompose'
-      eventsHash["#{com.roost.CLICK_EVENT} .to-bottom"] = '_jumpToBottom'
-      eventsHash["#{com.roost.CLICK_EVENT} .send"] = '_sendMessage'
       eventsHash['keydown input'] = '_handleInputsKey'
       eventsHash['keydown textarea'] = '_handleInputsKey'
       eventsHash['blur .class-input'] = '_checkSubs'
@@ -26,6 +28,7 @@ do ->
       @listenTo @paneModel, 'change:sending', @_updateButton
 
     render: =>
+      super()
       @$el.empty()
 
       defaultFields = @_getDefaultFields()
@@ -144,6 +147,7 @@ do ->
     _handleInputsKey: (evt) =>
       # Handle escape key (should work in ANY input box)
       if evt.keyCode == 27
+        debugger
         @_hideCompose()
 
     _checkSubs: =>
