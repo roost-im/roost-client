@@ -141,13 +141,7 @@ do ->
         messages.add(msgs, at: 0)
 
     addMessagesToBottomOfList: (msgs, isDone) =>
-      # This means we have a live message
-      if @model.get('bottomDone') and isDone
-        @lastForwardStep += 1
-        @forwardTail.expandTo(@lastForwardStep)
-        live = true
-
-      @model.set 
+      @model.set
         bottomDone: isDone
         bottomLoading: false
       messages = @model.get 'messages'
@@ -158,12 +152,7 @@ do ->
       # If we are at our cache size, reduce the size of our cache
       # by as many messages as we just received.
       if messages.length >= com.roost.CACHE_SIZE
-        # If this is a live message, we really don't want to add it to our list when the cache
-        # is full. This will give us a jump in time in our messages in the cache.
-        if live
-          return
-        else
-          @_clearTopOfCache(msgs.length)
+        @_clearTopOfCache(msgs.length)
 
       # If we aren't loaded yet, let's clear our messages out.
       # We don't reset with our messages since it will jump the scrolling down.
