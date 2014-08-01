@@ -56,7 +56,8 @@ Backbone.View = View.extend({
           $el = $(this)
           if not $el.data('hammer')
             $el.data('hammer', new Hammer(this,
-              recognizers: [[Hammer.Tap]]))
+              recognizers: [[Hammer.Tap]],
+              touchAction: 'auto'))
           $el.data('hammer').on('tap', method)
         )
     )
