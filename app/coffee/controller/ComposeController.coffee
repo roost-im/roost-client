@@ -20,7 +20,7 @@ do ->
           instance: msg.instance
           recipient: msg.recipient
           opcode: ""
-          signature: _.sample(@userSettings.get('zsigs'))
+          signature: _.sample(@userSettings.get('zsigs')) or "Sent from Roost"
           message: msg.content
       }
 
