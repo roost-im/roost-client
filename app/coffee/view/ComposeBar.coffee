@@ -147,7 +147,6 @@ do ->
     _handleInputsKey: (evt) =>
       # Handle escape key (should work in ANY input box)
       if evt.keyCode == 27
-        debugger
         @_hideCompose()
 
     _checkSubs: =>
