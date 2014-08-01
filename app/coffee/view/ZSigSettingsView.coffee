@@ -2,12 +2,12 @@ do ->
   class com.roost.ZSigSettingsView extends Backbone.View
     className : 'zsig-settings'
 
-    events: ->
-      eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .add-zsig"]    = '_addZsig'
-      eventsHash["#{com.roost.CLICK_EVENT} .remove-zsig"] = '_removeZsig'
-      eventsHash['keyup #new-zsig']                       = '_handleZsigInputKey'
-      return eventsHash
+    tapClickEvents:
+      '.add-zsig': '_addZsig'
+      '.remove-zsig': '_removeZsig'
+
+    events:
+      'keyup #new-zsig': '_handleZsigInputKey'
 
     initialize: =>
       @listenTo @model, 'change:zsigs', @render

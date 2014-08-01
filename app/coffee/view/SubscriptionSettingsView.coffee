@@ -2,13 +2,13 @@ do ->
   class com.roost.SubscriptionSettingsView extends Backbone.View
     className : 'subscription-settings'
 
-    events: ->
-      eventsHash = {}
-      eventsHash["#{com.roost.CLICK_EVENT} .class-td"]  = '_addClassPane'
-      eventsHash["#{com.roost.CLICK_EVENT} .subscribe"] = '_addSubscription'
-      eventsHash["#{com.roost.CLICK_EVENT} .close-td"]  = '_removeSubscription'
-      eventsHash['keyup .subs-input']                   = '_handleSubsInputKey'
-      return eventsHash
+    tapClickEvents:
+      '.class-td': '_addClassPane'
+      '.subscribe': '_addSubscription'
+      '.close-td': '_removeSubscription'
+
+    events:
+      'keyup .subs-input': '_handleSubsInputKey'
 
     initialize: (options) =>
       @subscriptions = options.subscriptions
