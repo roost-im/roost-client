@@ -121,7 +121,6 @@ do ->
       @userState.ready().then(=>
         if @userState.get('panes')? and @userState.get('panes').length > 0
           for pane in @userState.get('panes')
-            pane.messages = new com.roost.MessageCollection()
             @addPane(pane, null, true)
         else
           @addPane({})
