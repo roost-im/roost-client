@@ -62,14 +62,12 @@ do ->
     _focusProperInitialField: (composeFields) =>
       # An .instance of `null` means no instance is set, an .instance of ''
       # means "empty instance".
-      if composeFields.class != '' and composeFields.instance? and
-      composeFields.recipient != ''
+      if composeFields.class != '' and composeFields.instance? and composeFields.recipient != ''
         # Hack to get the cursor to the end of the input
         oldVal = @$('.content-input').val()
         @$('.content-input').focus().val("").val(oldVal)
       # If it's a personal message filter but NO RECIPIENT yet, focus recipient
-      else if @paneModel.get('filters').is_personal and
-      composeFields.recipient == ''
+      else if @paneModel.get('filters').is_personal and composeFields.recipient == ''
         @$('.recipient-input').focus()
       # If we have a class and an instance, focus on the content at the end
       else if composeFields.class != '' and composeFields.instance?

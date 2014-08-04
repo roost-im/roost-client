@@ -13,7 +13,15 @@ do ->
     div2 = $('<div class="fancy down">').css('border-left-color', color)
     return div1[0].outerHTML + div2[0].outerHTML
 
-  Handlebars.registerHelper('ztext', (text) ->
+  shortZusers = (string) ->
+    return _.map(string.split('\0'), shortZuser).join(', ')
+
+  Handlebars.registerHelper('ztext', (text, conversation) ->
+    # Strip the CC header if the conversation has more than one
+    # participant. This means that for CCs that the server isn't 'aware' of, we
+    # leave the header in. This is a hack.
+    if typeof conversation == "string" and shortZusers(conversation).length > 1
+      text = text.replace(/^CC:.*\n/, "")
     # ztextToDOM returns a fragment and we need to get it as a string to avoid
     # Handlebars escaping it for us.
     div = document.createElement('div')
@@ -29,7 +37,8 @@ do ->
     else if filters.is_personal
       header = messageFilterFancy('message') + 'Personal Messages'
     else if filters.conversation?
-      header = messageFilterFancy(shortZuser(filters.conversation)) + "Chat with #{shortZuser(filters.conversation)}"
+      header = messageFilterFancy(shortZuser(filters.conversation)) +
+        "Chat with #{shortZusers(filters.conversation)}"
       if filters.instance_key_base.toLowerCase() != 'personal'
         header = header + " [#{filters.instance_key_base}]"
     else
@@ -83,7 +92,8 @@ do ->
   )
 
   Handlebars.registerHelper('messageConvoHeader', (convo, instance) ->
-    header = messageFilterFancy(shortZuser(convo)) + "Chat with #{shortZuser(convo)}"
+    header = messageFilterFancy(shortZuser(convo)) +
+      "Chat with #{shortZusers(convo)}"
     if instance.toLowerCase() != 'personal'
       header = header + " [#{instance}]"
     return new Handlebars.SafeString(header)
@@ -91,6 +101,10 @@ do ->
 
   Handlebars.registerHelper('shortZuser', (user) ->
     return shortZuser(user)
+  )
+
+  Handlebars.registerHelper('shortZusers', (user) ->
+    return shortZusers(user)
   )
 
   Handlebars.registerHelper('absoluteTime', (time) ->

@@ -18,7 +18,7 @@ do ->
         message:
           class: msg.class
           instance: msg.instance
-          recipient: msg.recipient
+          recipient: msg.recipient.split(/,?\s+/).join('\0')
           opcode: ""
           signature: _.sample(@userSettings.get('zsigs')) or "Sent from Roost"
           message: msg.content
