@@ -252,10 +252,10 @@ do ->
         if @currentTop > 0
           limit = Math.max(@currentTop - com.roost.EXPANSION_SIZE, 0)
           newMessages = messages.slice(limit, @currentTop).reverse()
-          @_saveScrollHeight()
-          for message in newMessages
-            @_prependMessage(message)
-          @_restoreScrollHeight()
+          @_preservingPosition(=>
+            for message in newMessages
+              @_prependMessage(message)
+          )
 
           # Need the if statement because [1..0] is [1, 0].
           if newMessages.length
@@ -276,12 +276,12 @@ do ->
           for message in newMessages
             @_appendMessage(message)
 
-          @_saveScrollHeight()
-          # Need the if statement because [1..0] is [1, 0].
-          if newMessages.length
-            for message in [1..newMessages.length]
-              @_removeTopMessage()
-          @_restoreScrollHeight()
+          @_preservingPosition( =>
+            # Need the if statement because [1..0] is [1, 0].
+            if newMessages.length
+              for message in [1..newMessages.length]
+                @_removeTopMessage()
+          )
         # Trigger the scrolldown if we're at the bottom, the bottom isn't done, and we
         # aren't currently loading more messages at the bottom.
         else if @currentBottom >= messages.length and !@model.get('bottomDone') and !@model.get('bottomLoading')
@@ -299,10 +299,10 @@ do ->
         # The messages are oldest-first, so we reverse them so they're prepended
         # in the right order.
         messages.reverse()
-        @_saveScrollHeight()
-        for message in messages
-          @_prependMessage(message)
-        @_restoreScrollHeight()
+        @_preservingPosition( =>
+          for message in messages
+            @_prependMessage(message)
+        )
 
         # Start clearing stuff out if we're past our proper size
         while @childViews.length > com.roost.STARTING_SIZE
@@ -314,12 +314,12 @@ do ->
           if @currentBottom >= @model.get('messages').length - messages.length
             @_appendMessage(message)
 
-        @_saveScrollHeight()
-        for message in messages
-          # Start clearing stuff out if we're past our proper size
-          if @childViews.length > com.roost.STARTING_SIZE
-            @_removeTopMessage()
-        @_restoreScrollHeight()
+        @_preservingPosition( =>
+          for message in messages
+            # Start clearing stuff out if we're past our proper size
+            if @childViews.length > com.roost.STARTING_SIZE
+              @_removeTopMessage()
+        )
 
     _appendMessage: (message) =>
       if @childViews[@childViews.length - 1]?
@@ -371,13 +371,35 @@ do ->
       view.remove()
       @currentBottom = @currentTop + @childViews.length
 
-    _saveScrollHeight: =>
-      @cachedHeight = @$inner[0].scrollHeight
 
-    _restoreScrollHeight: =>
-      newHeight = @$inner[0].scrollHeight
-      change = @cachedHeight - newHeight
-      @$inner.scrollTop(@$inner.scrollTop() - change)
+    # We save and restore the position by saving the ID of the top visible
+    # message. It might not *actually* be visible because of the filter bar but
+    # whatever.
+    _markPosition: =>
+      firstVisible = _.find(@childViews, (childView) ->
+        return childView.$el.position().top + childView.$el.height() > 0)
+      if not firstVisible? then return null
+      return {
+        messageId: firstVisible.message.get('id')
+        position: firstVisible.$el.position().top
+      }
+
+    _restorePosition: (position) =>
+      if not position? then return
+      positioningView = _.find(@childViews, (childView) ->
+        return childView.message.get('id') == position.messageId)
+      if not positioningView? then return
+      delta = positioningView.$el.position().top - position.position
+      @$inner.scrollTop(@$inner.scrollTop() + delta)
+
+    # Do something while preserving the position. Will still preserve it even in
+    # the case an exception is thrown.
+    _preservingPosition: (action) =>
+      marked = @_markPosition()
+      try
+        action()
+      finally
+        @_restorePosition(marked)
 
     _updateNotify: (which) =>
       $notify = @$(".notify.#{which}")
