@@ -56,7 +56,10 @@ do ->
       @$el.empty()
       @childViews = []
 
-      @$inner = $('<div class="message-pane-view-inner">').appendTo(@$el)
+      # tabIndex = -1 lets us focus it without actually making it
+      # 'tabbable'.
+      @$inner = $('<div class="message-pane-view-inner" tabIndex=-1>')
+        .appendTo(@$el)
       @$inner.scroll(@throttled)
 
       # Add MessageView for each message in the list
@@ -109,6 +112,10 @@ do ->
         session: @session
       @filterView.render()
       @$el.append @filterView.$el
+
+      # Focus ourselves if we're selected.
+      if @model.get('selected')
+        @$inner.focus()
 
       @_updateNotify('bottom')
       @_updateNotify('top')
