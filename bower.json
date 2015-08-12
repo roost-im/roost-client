@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "q": "~0.9.4",
-    "winchan": "https://github.com/mozilla/winchan.git",
+    "winchan": "git+https://github.com/endel/winchan#a80356547c6e93c5b1faf5f8a2a256477d308e0f",
     "webathena": "https://github.com/davidben/webathena.git",
     "angular": "~1.0.7",
     "bootstrap": "3.0.3",
